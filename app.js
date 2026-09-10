@@ -164,12 +164,21 @@ function switchProfile(id) {
   loadState();
   tab('home');
 }
-function addProfile(name) {
+function uniqueName(name) {
+  let n = name.trim().slice(0, 24) || 'Imported';
+  if (!P.list.some(p => p.name.toLowerCase() === n.toLowerCase())) return n;
+  for (let i = 2; ; i++) {
+    const c = n + ' ' + i;
+    if (!P.list.some(p => p.name.toLowerCase() === c.toLowerCase())) return c;
+  }
+}
+function addProfile(name, data) {
   const id = newId();
-  P.list.push({ id: id, name: name });
+  P.list.push({ id: id, name: uniqueName(name) });
   saveProfiles();
-  writeJSON(dataKey(id), blank());
+  writeJSON(dataKey(id), data ? migrate(data) : blank());
   switchProfile(id);
+  return id;
 }
 function deleteProfile(id) {
   if (P.list.length < 2) return;
@@ -1083,36 +1092,23 @@ VIEWS.sources = function () {
       to move a profile between devices.</div>
     <div class="brow" style="margin-top:12px">
       <button class="btn sec" id="exp">Export ${esc(activeName())}</button>
-      <button class="btn sec" id="imp">Import</button></div>
-    <button class="btn dgr sm" style="margin-top:12px" id="wipe">Erase this profile’s progress</button>`);
-  $('#exp').onclick = () => {
+      <button class="btn sec" id="imp">Import a file</button></div>
+    ${P.list.length > 1 ? `<button class="btn sec sm" style="margin-top:10px" id="expAll">Back up all ${P.list.length} profiles</button>` : ''}
+    <button class="btn dgr sm" style="margin-top:10px" id="wipe">Erase this profile’s progress</button>`);
+
+  $('#exp').onclick = () => download(
+    { app: 'ppl-theory', kind: 'profile', name: activeName(), exported: new Date().toISOString(), data: (flush(), S) },
+    'ppl-' + slug(activeName()) + '.json');
+
+  if ($('#expAll')) $('#expAll').onclick = () => {
     flush();
-    const payload = { app: 'ppl-theory', name: activeName(), exported: new Date().toISOString(), data: S };
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(payload)], { type: 'application/json' }));
-    a.download = 'ppl-' + activeName().toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.json';
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+    download({
+      app: 'ppl-theory', kind: 'backup', exported: new Date().toISOString(), theme: P.theme,
+      profiles: P.list.map(pr => ({ name: pr.name, data: readJSON(dataKey(pr.id), blank()) }))
+    }, 'ppl-backup-' + new Date().toISOString().slice(0, 10) + '.json');
   };
-  $('#imp').onclick = () => {
-    const f = document.createElement('input');
-    f.type = 'file'; f.accept = 'application/json,.json';
-    f.onchange = () => {
-      const r = new FileReader();
-      r.onload = () => {
-        try {
-          const j = JSON.parse(r.result);
-          const d = j && j.data ? j.data : j;          // accept wrapped or bare exports
-          if (!d || typeof d !== 'object' || (!d.lo && !d.subj && !d.srs)) throw 0;
-          const who = (j && j.name) || 'the file';
-          if (!confirm('Overwrite ' + activeName() + '\u2019s progress with ' + who + '?')) return;
-          S = migrate(d); flush(); tab('home');
-        } catch (e) { alert('That file could not be read as progress data.'); }
-      };
-      r.readAsText(f.files[0]);
-    };
-    f.click();
-  };
+
+  $('#imp').onclick = pickImportFile;
   $('#wipe').onclick = () => {
     if (confirm('Erase all of ' + activeName() + '\u2019s progress? This cannot be undone.')) {
       S = blank(); flush(); tab('home');
@@ -1122,6 +1118,169 @@ VIEWS.sources = function () {
   html(`<div class="foot">Personal revision aid — not a CAA publication and not instruction.<br>
     Articles, quiz questions and flashcards were written for this app; the learning objectives are
     verbatim CAA. Confirm anything that matters with your ATO/DTO, Ground Examiner or the CAA.</div>`);
+};
+
+/* ============================ IMPORT / EXPORT ============================ */
+
+const slug = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'profile';
+
+function download(obj, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 1)], { type: 'application/json' }));
+  a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+/** Rough summary of a progress blob, for the import preview. */
+function summarise(d) {
+  return {
+    pass: Object.values(d.subj || {}).filter(v => v && v.st === 'passed').length,
+    read: Object.keys(d.read || {}).length,
+    lo: Object.keys(d.lo || {}).length,
+    srs: Object.keys(d.srs || {}).length
+  };
+}
+const looksLikeProgress = d => !!(d && typeof d === 'object' && (d.lo || d.subj || d.srs || d.read));
+
+let IMPORTING = null;
+
+function pickImportFile() {
+  const f = document.createElement('input');
+  f.type = 'file'; f.accept = 'application/json,.json';
+  f.onchange = () => {
+    if (!f.files || !f.files[0]) return;
+    const r = new FileReader();
+    r.onload = () => {
+      let j = null;
+      try { j = JSON.parse(r.result); } catch (e) { j = null; }
+      if (j === null) {
+        IMPORTING = { kind: 'error', msg: 'That file is not valid JSON. Make sure you picked a file exported by this app and that it downloaded completely.' };
+      } else if (Array.isArray(j.profiles) && j.profiles.length) {
+        IMPORTING = { kind: 'backup', payload: j };
+      } else {
+        const d = j.data ? j.data : j;
+        IMPORTING = looksLikeProgress(d)
+          ? { kind: 'profile', name: j.name || 'Imported', data: d, exported: j.exported }
+          : { kind: 'error', msg: 'That file is valid JSON but does not contain PPL Theory progress. Export a profile from this app to see the expected format.' };
+      }
+      go('importfile');
+    };
+    r.readAsText(f.files[0]);
+  };
+  f.click();
+}
+
+/** prompt() is blocked in some embedded browsers, so names are entered in-app. */
+VIEWS.nameentry = function (p) {
+  const renaming = p.mode === 'rename';
+  const pr = renaming ? P.list.find(x => x.id === p.id) : null;
+  if (renaming && !pr) { back(); return; }
+  navbar(renaming ? 'Rename' : 'Add someone', '');
+  html(`<div class="hd" style="padding-top:14px">
+    <h1 style="font-size:30px">${renaming ? 'Rename profile' : 'Who else is studying?'}</h1>
+    <div class="sub">${renaming ? 'Only the name changes — progress is untouched.'
+      : 'They get their own articles, objectives, exam record, quiz history and flashcards.'}</div></div>`);
+  html(`<div class="card">
+    <label class="f" for="nmIn">Name</label>
+    <input type="text" id="nmIn" maxlength="24" autocomplete="off" autocapitalize="words"
+      placeholder="e.g. Phoebe" value="${renaming ? esc(pr.name) : ''}"
+      style="width:100%;background:var(--fill);color:var(--tx);border:0;border-radius:10px;
+        padding:12px;font:inherit;font-size:17px">
+    <div id="nmErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
+  </div>
+  <button class="btn" style="margin-top:14px" id="nmSave">${renaming ? 'Save' : 'Create profile'}</button>
+  <button class="btn grey" style="margin-top:10px" id="nmCancel">Cancel</button>`);
+
+  const inp = $('#nmIn'), err = $('#nmErr');
+  setTimeout(() => { try { inp.focus(); } catch (e) {} }, 60);
+  const fail = m => { err.textContent = m; err.style.display = 'block'; };
+  const submit = () => {
+    const n = inp.value.trim().slice(0, 24);
+    if (!n) return fail('Give them a name.');
+    const taken = P.list.some(x => x.name.toLowerCase() === n.toLowerCase() && (!pr || x.id !== pr.id));
+    if (taken) return fail('There is already a profile called ' + n + '.');
+    if (renaming) { pr.name = n; saveProfiles(); back(); }
+    else { stack.pop(); addProfile(n); }
+  };
+  $('#nmSave').onclick = submit;
+  $('#nmCancel').onclick = back;
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+};
+
+VIEWS.importfile = function () {
+  navbar('Import', '');
+  if (!IMPORTING) { back(); return; }
+  if (IMPORTING.kind === 'error') {
+    html(`<div class="empty"><div class="em">&#128533;</div><h3>That file could not be read</h3>
+      <p>${esc(IMPORTING.msg)}</p></div>
+      <button class="btn" id="tryAgain">Pick another file</button>
+      <button class="btn grey" style="margin-top:10px" id="cancelImp">Cancel</button>`);
+    $('#tryAgain').onclick = () => { IMPORTING = null; stack.pop(); pickImportFile(); };
+    $('#cancelImp').onclick = () => { IMPORTING = null; back(); };
+    return;
+  }
+  const when = IMPORTING.exported || (IMPORTING.payload && IMPORTING.payload.exported);
+  const dateLine = when ? 'Exported ' + fmt(new Date(when)) : 'No export date in the file';
+
+  if (IMPORTING.kind === 'backup') {
+    const list = IMPORTING.payload.profiles;
+    html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Whole-device backup</h1>
+      <div class="sub">${list.length} profiles · ${esc(dateLine)}</div></div>`);
+    html('<div class="grp">' + list.map(pr => {
+      const t = summarise(pr.data || {});
+      return `<div class="row"><div class="ic" style="background:var(--blue)">${esc(initials(pr.name || '?'))}</div>
+        <div class="tx"><b>${esc(pr.name || 'Unnamed')}</b><i>${t.pass}/9 exams · ${t.read} article${t.read === 1 ? '' : 's'} · ${t.lo} objective${t.lo === 1 ? '' : 's'}</i></div></div>`;
+    }).join('') + '</div>');
+    html(`<div class="note r" style="margin-top:16px"><b>This replaces everything</b>
+      Every profile currently on this device, and all of their progress, will be removed and
+      replaced by the ${list.length} above.</div>
+      <button class="btn dgr" style="margin-top:14px" id="doRestore">Replace all profiles</button>
+      <button class="btn grey" style="margin-top:10px" id="cancelImp">Cancel</button>`);
+    $('#doRestore').onclick = () => {
+      if (!confirm('Replace all profiles on this device? This cannot be undone.')) return;
+      P.list.forEach(pr => { try { localStorage.removeItem(dataKey(pr.id)); } catch (e) {} });
+      const fresh = [];
+      list.forEach(pr => {
+        const id = newId();
+        fresh.push({ id: id, name: (pr.name || 'Imported').slice(0, 24) });
+        writeJSON(dataKey(id), migrate(pr.data || {}));
+      });
+      P = { list: fresh, active: fresh[0].id, theme: IMPORTING.payload.theme || P.theme };
+      saveProfiles(); loadState(); IMPORTING = null;
+      if (P.theme) document.documentElement.dataset.t = P.theme; else document.documentElement.removeAttribute('data-t');
+      tab('home');
+    };
+    $('#cancelImp').onclick = () => { IMPORTING = null; back(); };
+    return;
+  }
+
+  const t = summarise(IMPORTING.data);
+  const clash = P.list.some(p => p.name.toLowerCase() === IMPORTING.name.toLowerCase());
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">${esc(IMPORTING.name)}</h1>
+    <div class="sub">${esc(dateLine)}</div></div>`);
+  html(`<div class="grp"><div class="row">
+      <div class="ic" style="background:var(--blue)">${esc(initials(IMPORTING.name))}</div>
+      <div class="tx"><b>In this file</b><i>${t.pass}/9 exams passed · ${t.read} article${t.read === 1 ? '' : 's'} read ·
+        ${t.lo} objective${t.lo === 1 ? '' : 's'} ticked · ${t.srs} card${t.srs === 1 ? '' : 's'} scheduled</i></div></div></div>`);
+
+  html(`<h2 class="sec">Bring it in as</h2>
+    <button class="btn" id="asNew">A new profile${clash ? ' (name will be numbered)' : ': ' + esc(IMPORTING.name)}</button>
+    <div class="note b" style="margin-top:10px">Nothing already on this device is touched. Use this
+    to move a profile from another phone or laptop, or to restore a backup alongside what you have.</div>
+
+    <button class="btn dgr" style="margin-top:18px" id="asOver">Overwrite ${esc(activeName())}</button>
+    <div class="note r" style="margin-top:10px">Replaces ${esc(activeName())}’s articles, objectives,
+    exam record, quiz history and flashcard schedule. Cannot be undone.</div>
+
+    <button class="btn grey" style="margin-top:18px" id="cancelImp">Cancel</button>`);
+
+  $('#asNew').onclick = () => { const d = IMPORTING.data, n = IMPORTING.name; IMPORTING = null; addProfile(n, d); };
+  $('#asOver').onclick = () => {
+    if (!confirm('Overwrite ' + activeName() + '\u2019s progress with ' + IMPORTING.name + '? This cannot be undone.')) return;
+    S = migrate(IMPORTING.data); flush(); IMPORTING = null; tab('home');
+  };
+  $('#cancelImp').onclick = () => { IMPORTING = null; back(); };
 };
 
 /* ============================ PROFILES ============================ */
@@ -1149,13 +1308,10 @@ VIEWS.profiles = function () {
     if (id === P.active) go('profedit', { id: id }); else switchProfile(id);
   });
 
-  html(`<button class="btn sec" style="margin-top:14px" id="addP">Add someone</button>`);
-  $('#addP').onclick = () => {
-    const n = (prompt('Their name') || '').trim();
-    if (!n) return;
-    if (P.list.some(x => x.name.toLowerCase() === n.toLowerCase())) { alert('There is already a profile with that name.'); return; }
-    addProfile(n.slice(0, 24));
-  };
+  html(`<button class="btn sec" style="margin-top:14px" id="addP">Add someone</button>
+    <button class="btn sec" style="margin-top:10px" id="impP">Import someone from a file</button>`);
+  $('#impP').onclick = pickImportFile;
+  $('#addP').onclick = () => go('nameentry', { mode: 'add' });
 
   html(`<div class="foot">Tap a profile to switch to it. Tap the active one to rename or remove it.<br>
     Switching profiles does not upload anything — it just points the app at a different set of
@@ -1173,11 +1329,7 @@ VIEWS.profedit = function (p) {
     ${P.list.length > 1 ? `<button class="row" id="del"><div class="tx"><b style="color:var(--red)">Delete this profile</b>
       <i>Erases its progress on this device</i></div></button>` : ''}
   </div>`);
-  $('#ren').onclick = () => {
-    const n = (prompt('New name', pr.name) || '').trim();
-    if (!n) return;
-    pr.name = n.slice(0, 24); saveProfiles(); render();
-  };
+  $('#ren').onclick = () => go('nameentry', { mode: 'rename', id: pr.id });
   if ($('#del')) $('#del').onclick = () => {
     if (!confirm('Delete ' + pr.name + ' and all of their progress on this device? This cannot be undone.')) return;
     deleteProfile(pr.id);

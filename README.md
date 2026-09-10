@@ -16,10 +16,28 @@ anything back. Progress is saved in `localStorage` in **the browser on the devic
   to switch, rename or add someone. Each profile keeps its own articles, objectives, exam record,
   quiz history and flashcard schedule.
 - **One person, multiple devices** — *not* synced. Your phone and your laptop keep two
-  independent sets of progress. Use **Export** and **Import** (Sources & settings) to move a
-  profile between them.
-- Clearing site data, or using a private window, loses that browser's progress. Export
+  independent sets of progress. Use Export and Import to move a profile between them.
+- Clearing site data, or using a private window, loses that browser's progress. Back up
   occasionally if it matters.
+
+### Export and import
+
+Three actions, all under **Sources & settings** (import is also on the Profiles screen):
+
+| Action | What it does |
+| --- | --- |
+| **Export \<name\>** | Downloads just the **active** profile as `ppl-<name>.json`, stamped with the profile name and date |
+| **Back up all N profiles** | Downloads every profile on the device in one `ppl-backup-<date>.json` |
+| **Import a file** | Reads either kind, shows you what's inside, and asks what to do with it |
+
+Importing never overwrites anything silently. A single-profile file gives you two clearly
+labelled choices — **add as a new profile** (nothing existing is touched; names are
+auto-numbered on a clash) or **overwrite the active profile** (destructive, and confirmed
+twice). A whole-device backup offers only a full restore, which replaces every profile, and
+says so plainly before you commit.
+
+On an iPhone, Export saves into Files and Import opens the Files picker, so AirDrop or
+iCloud Drive is the easy way to move a profile between devices.
 
 Real cross-device sync would need a backend — this repo deliberately has none.
 
