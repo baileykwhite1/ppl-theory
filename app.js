@@ -123,18 +123,20 @@ function readJSON(k, dflt) {
 function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 const newId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
+let LEGACY = null;   // progress found from the single-user version, offered on the setup screen
+
 function loadProfiles() {
   P = readJSON(PKEY, null);
-  if (!P || !P.list || !P.list.length) {
-    // First run, or upgrading from the single-user version: adopt whatever is already stored.
-    const legacy = readJSON('ppl-v2', null) || readJSON('ppl-theory-v1', null);
-    const id = newId();
-    P = { list: [{ id: id, name: 'Me' }], active: id, theme: (legacy && legacy.theme) || '' };
-    if (legacy) writeJSON(dataKey(id), migrate(legacy));
-    writeJSON(PKEY, P);
+  if (!P || !Array.isArray(P.list)) P = { list: [], active: '', theme: '' };
+  if (!P.list.length) {
+    const l = readJSON('ppl-v2', null) || readJSON('ppl-theory-v1', null);
+    LEGACY = (l && typeof l === 'object' && (l.lo || l.subj || l.srs || l.read)) ? l : null;
+    if (LEGACY && LEGACY.theme) P.theme = LEGACY.theme;
   }
-  if (!P.list.some(p => p.id === P.active)) P.active = P.list[0].id;
+  if (P.list.length && !P.list.some(p => p.id === P.active)) P.active = P.list[0].id;
 }
+/** True until at least one profile exists. */
+const needsSetup = () => !P.list.length;
 /** Accept either app version's shape. */
 function migrate(old) {
   const s = blank();
@@ -145,7 +147,7 @@ function migrate(old) {
   s.hist = old.hist || []; s.d1 = old.d1 || ''; s.d2 = old.d2 || '';
   return s;
 }
-function loadState() { S = Object.assign(blank(), readJSON(dataKey(P.active), {})); }
+function loadState() { S = P.active ? Object.assign(blank(), readJSON(dataKey(P.active), {})) : blank(); }
 
 const activeName = () => (P.list.find(p => p.id === P.active) || { name: '?' }).name;
 const initials = n => n.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
@@ -155,7 +157,7 @@ function save() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(flush, 120);
 }
-function flush() { clearTimeout(saveTimer); writeJSON(dataKey(P.active), S); }
+function flush() { clearTimeout(saveTimer); if (P.active) writeJSON(dataKey(P.active), S); }
 function saveProfiles() { writeJSON(PKEY, P); }
 
 function switchProfile(id) {
@@ -173,11 +175,13 @@ function uniqueName(name) {
   }
 }
 function addProfile(name, data) {
+  const first = !P.list.length;
   const id = newId();
   P.list.push({ id: id, name: uniqueName(name) });
   saveProfiles();
   writeJSON(dataKey(id), data ? migrate(data) : blank());
-  switchProfile(id);
+  if (first) LEGACY = null;
+  switchProfile(id);            // flushes the outgoing profile, then loads this one
   return id;
 }
 function deleteProfile(id) {
@@ -248,7 +252,13 @@ function go(v, p) { stack.push({ v: v, p: p }); render(); }
 function back() { if (stack.length > 1) { stack.pop(); render(); } }
 function tab(v) { stack = [{ v: v }]; render(); }
 
+const SETUP_OK = { welcome: 1, importfile: 1 };
+
 function render() {
+  if (needsSetup() && !SETUP_OK[stack[stack.length - 1].v]) stack = [{ v: 'welcome' }];
+  const setup = needsSetup();
+  document.getElementById('tabs').hidden = setup;
+  APP.style.paddingBottom = setup ? '40px' : '';
   const top = stack[stack.length - 1];
   APP.scrollTop = 0;
   APP.innerHTML = '';
@@ -284,7 +294,7 @@ VIEWS.home = function () {
 
   html(`<div class="hd" style="display:flex;align-items:flex-start;gap:12px">
     <div style="flex:1;min-width:0">
-      <h1>${greet}${P.list.length > 1 ? ', ' + esc(activeName().split(' ')[0]) : ''}</h1>
+      <h1>${greet}, ${esc(activeName().split(' ')[0])}</h1>
       <div class="sub">${p === 9 ? 'All nine exams passed.' : (9 - p) + ' exam' + (p === 8 ? '' : 's') + ' to go · ' + dnArt + '/' + totArt + ' articles read'}</div>
     </div>
     <button id="avat" title="Switch profile" style="flex:none;width:40px;height:40px;border-radius:50%;
@@ -1171,6 +1181,65 @@ function pickImportFile() {
   f.click();
 }
 
+/* ============================ FIRST RUN ============================ */
+
+VIEWS.welcome = function () {
+  const totLO = SUBJECTS.reduce((a, x) => a + allLO(x), 0);
+  const totArt = SUBJECTS.reduce((a, x) => a + arts(x.code).length, 0);
+  const totQ = SUBJECTS.reduce((a, x) => a + SC[x.code].quiz.length, 0);
+  const totC = SUBJECTS.reduce((a, x) => a + SC[x.code].cards.length, 0);
+
+  html(`<div class="hd" style="padding-top:34px">
+    <h1 style="font-size:38px;line-height:1.05">UK PPL(A)<br>Theory</h1>
+    <div class="sub" style="font-size:17px;margin-top:10px">Articles, mock exams and spaced-repetition
+      flashcards for the nine CAA theoretical knowledge exams.</div></div>`);
+
+  html(`<div class="grp" style="margin-top:20px">
+    <div class="row"><div class="ic" style="background:var(--blue)">${totArt}</div>
+      <div class="tx"><b>Articles</b><i>Across all nine subjects, with the exam traps flagged</i></div></div>
+    <div class="row"><div class="ic" style="background:var(--indigo)">${totQ}</div>
+      <div class="tx"><b>Questions</b><i>Mock exams marked against the real 75% pass mark</i></div></div>
+    <div class="row"><div class="ic" style="background:var(--green)">${totC}</div>
+      <div class="tx"><b>Flashcards</b><i>Scheduled so you review just before you would forget</i></div></div>
+    <div class="row"><div class="ic" style="background:var(--orange)">${totLO}</div>
+      <div class="tx"><b>Learning objectives</b><i>Verbatim from the CAA’s own CAP2090 documents</i></div></div>
+  </div>`);
+
+  if (LEGACY) {
+    const t = summarise(LEGACY);
+    html(`<div class="note b" style="margin-top:18px"><b>Existing progress found on this device</b>
+      ${t.pass}/9 exams, ${t.read} article${t.read === 1 ? '' : 's'} and ${t.lo} objective${t.lo === 1 ? '' : 's'}
+      from an earlier version. Put your name in and it will be saved under it.</div>`);
+  }
+
+  html(`<h2 class="sec">Who is this for?</h2>
+    <div class="card">
+      <label class="f" for="wName">Your name</label>
+      <input type="text" id="wName" maxlength="24" autocomplete="given-name" autocapitalize="words"
+        placeholder="e.g. Bailey"
+        style="width:100%;background:var(--fill);color:var(--tx);border:0;border-radius:10px;
+          padding:12px;font:inherit;font-size:17px">
+      <div id="wErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
+      <div class="tiny" style="margin-top:9px">You can add more people later — everyone gets their own
+        progress, kept separately on this device.</div>
+    </div>
+    <button class="btn" style="margin-top:14px" id="wGo">Start studying</button>
+    <button class="btn sec" style="margin-top:10px" id="wImp">I already have a progress file</button>
+    <div class="foot">Nothing is uploaded anywhere. Progress is saved in this browser on this device.<br>
+      A personal revision aid — not a CAA publication.</div>`);
+
+  const inp = $('#wName'), err = $('#wErr');
+  setTimeout(() => { try { inp.focus(); } catch (e) {} }, 80);
+  const submit = () => {
+    const n = inp.value.trim().slice(0, 24);
+    if (!n) { err.textContent = 'Put a name in so we know whose progress this is.'; err.style.display = 'block'; return; }
+    addProfile(n, LEGACY);
+  };
+  $('#wGo').onclick = submit;
+  $('#wImp').onclick = pickImportFile;
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+};
+
 /** prompt() is blocked in some embedded browsers, so names are entered in-app. */
 VIEWS.nameentry = function (p) {
   const renaming = p.mode === 'rename';
@@ -1264,19 +1333,22 @@ VIEWS.importfile = function () {
       <div class="tx"><b>In this file</b><i>${t.pass}/9 exams passed · ${t.read} article${t.read === 1 ? '' : 's'} read ·
         ${t.lo} objective${t.lo === 1 ? '' : 's'} ticked · ${t.srs} card${t.srs === 1 ? '' : 's'} scheduled</i></div></div></div>`);
 
-  html(`<h2 class="sec">Bring it in as</h2>
-    <button class="btn" id="asNew">A new profile${clash ? ' (name will be numbered)' : ': ' + esc(IMPORTING.name)}</button>
-    <div class="note b" style="margin-top:10px">Nothing already on this device is touched. Use this
-    to move a profile from another phone or laptop, or to restore a backup alongside what you have.</div>
+  const first = needsSetup();
+  html(`<h2 class="sec">${first ? 'Ready to go' : 'Bring it in as'}</h2>
+    <button class="btn" id="asNew">${first ? 'Use this progress'
+      : 'A new profile' + (clash ? ' (name will be numbered)' : ': ' + esc(IMPORTING.name))}</button>
+    <div class="note b" style="margin-top:10px">${first
+      ? 'This becomes your profile on this device. You can rename it or add other people afterwards.'
+      : 'Nothing already on this device is touched. Use this to move a profile from another phone or laptop, or to restore a backup alongside what you have.'}</div>
 
-    <button class="btn dgr" style="margin-top:18px" id="asOver">Overwrite ${esc(activeName())}</button>
+    ${first ? '' : `<button class="btn dgr" style="margin-top:18px" id="asOver">Overwrite ${esc(activeName())}</button>
     <div class="note r" style="margin-top:10px">Replaces ${esc(activeName())}’s articles, objectives,
-    exam record, quiz history and flashcard schedule. Cannot be undone.</div>
+    exam record, quiz history and flashcard schedule. Cannot be undone.</div>`}
 
     <button class="btn grey" style="margin-top:18px" id="cancelImp">Cancel</button>`);
 
   $('#asNew').onclick = () => { const d = IMPORTING.data, n = IMPORTING.name; IMPORTING = null; addProfile(n, d); };
-  $('#asOver').onclick = () => {
+  if ($('#asOver')) $('#asOver').onclick = () => {
     if (!confirm('Overwrite ' + activeName() + '\u2019s progress with ' + IMPORTING.name + '? This cannot be undone.')) return;
     S = migrate(IMPORTING.data); flush(); IMPORTING = null; tab('home');
   };
