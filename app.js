@@ -177,7 +177,8 @@ const NEW_CARDS_PER_DAY = 20;
 const PKEY = 'ppl-profiles';
 const dataKey = id => 'ppl-v2:' + id;
 const blank = () => ({ lo: {}, subj: {}, read: {}, srs: {}, hist: [], d1: '', d2: '',
-  newToday: {}, best: {}, stage: '', field: '', wx: '', planId: 'blocks', customOrder: null });
+  newToday: {}, best: {}, stage: '', field: '', wx: '', planId: 'blocks', customOrder: null,
+  wrong: {}, seen: {} });
 
 let P;   // { list: [{id, name}], active: id, theme }
 let S;   // the active profile's progress
@@ -210,6 +211,7 @@ function migrate(old) {
   Object.entries(old.subj || {}).forEach(([k, v]) => s.subj[k] = Object.assign({}, v));
   Object.assign(s.read, old.read || {}); Object.assign(s.srs, old.srs || {});
   Object.assign(s.newToday, old.newToday || {}); Object.assign(s.best, old.best || {});
+  Object.assign(s.wrong, old.wrong || {}); Object.assign(s.seen, old.seen || {});
   s.hist = old.hist || []; s.d1 = old.d1 || ''; s.d2 = old.d2 || '';
   // profile settings — these were silently dropped before, which lost the whole setup
   ['stage', 'field', 'wx', 'planId', 'learnSort'].forEach(k => { if (old[k]) s[k] = old[k]; });
@@ -266,6 +268,27 @@ loadProfiles();
 loadState();
 
 const sub = c => (S.subj[c] = Object.assign({ st: 'none', att: 0, score: '', date: '' }, S.subj[c]));
+
+/* The 18- and 24-month clocks used to depend on two dates typed by hand, which meant the
+   app's most important safety feature stayed silent for anyone who recorded pass dates
+   per subject instead. Both are now derived from the exam record unless overridden. */
+
+/** Every pass date recorded against a subject, sorted. */
+function recordedDates() {
+  return SUBJECTS.map(x => sub(x.code).date).filter(Boolean).sort();
+}
+/** Earliest recorded pass — a lower bound on when the clock really started. */
+function autoD1() { const d = recordedDates(); return d.length ? d[0] : ''; }
+/** Latest recorded pass, but only once all nine are actually passed. */
+function autoD2() {
+  if (passed() < 9) return '';
+  const d = SUBJECTS.filter(x => sub(x.code).st === 'passed').map(x => sub(x.code).date).filter(Boolean).sort();
+  return d.length === 9 ? d[8] : '';
+}
+const getD1 = () => S.d1 || autoD1();
+const getD2 = () => S.d2 || autoD2();
+const d1IsDerived = () => !S.d1 && !!autoD1();
+const d2IsDerived = () => !S.d2 && !!autoD2();
 
 /* ============================ helpers ============================ */
 
@@ -367,9 +390,14 @@ VIEWS.home = function () {
       <h1>${greet}, ${esc(activeName().split(' ')[0])}</h1>
       <div class="sub">${p === 9 ? 'All nine exams passed.' : (9 - p) + ' exam' + (p === 8 ? '' : 's') + ' to go · ' + dnArt + '/' + totArt + ' articles read'}</div>
     </div>
+    <button id="srch" aria-label="Search" style="flex:none;width:40px;height:40px;border-radius:50%;
+      background:var(--fill);margin-top:4px;display:grid;place-items:center">
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:var(--tx2);stroke-width:2;
+        stroke-linecap:round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg></button>
     <button id="avat" title="Switch profile" style="flex:none;width:40px;height:40px;border-radius:50%;
       background:var(--blue);color:#fff;font-size:15px;font-weight:600;margin-top:4px">${esc(initials(activeName()))}</button>
   </div>`);
+  $('#srch').onclick = () => { SEARCH_Q = ''; go('search'); };
   $('#avat').onclick = () => go('profiles');
 
   const strip = wxStrip();
@@ -435,7 +463,7 @@ VIEWS.home = function () {
   }
 
   // --- deadline strip, only once relevant
-  const dl = deadline18(S.d1), vd = deadline24(S.d2);
+  const dl = deadline18(getD1()), vd = deadline24(getD2());
   if (dl || vd) {
     const rows = [];
     if (dl && p < 9) {
@@ -505,6 +533,12 @@ VIEWS.learn = function () {
   const order = (S.learnSort === 'block')
     ? SUBJECTS.slice().sort((a, b) => posOf(a.code) - posOf(b.code) || a.code.localeCompare(b.code))
     : SUBJECTS;
+  html(`<button class="grp row" id="lsearch" style="margin-bottom:14px">
+    <div class="ic" style="--c:var(--tx3)">&#9906;</div>
+    <div class="tx"><b>Search everything</b><i>Articles, objectives, questions and cards</i></div>
+    <div class="chev">&#8250;</div></button>`);
+  $('#lsearch').onclick = () => { SEARCH_Q = ''; go('search'); };
+
   html(`<div class="seg" id="lsort">
     <button data-s="code" aria-selected="${S.learnSort !== 'block'}">By subject number</button>
     <button data-s="block" aria-selected="${S.learnSort === 'block'}">By exam block</button></div>`);
@@ -663,20 +697,50 @@ function bank(codes) {
   return out;
 }
 
+const qKey = q => q.code + ':' + q.i;
+
+/** Present a bank question with its options shuffled, keeping its identity. */
+function prep(q) {
+  const pairs = q.a.map((t, i) => ({ t: t, ok: i === q.c }));
+  shuffle(pairs);
+  return { code: q.code, i: q.i, q: q.q, opts: pairs.map(x => x.t),
+           c: pairs.findIndex(x => x.ok), why: q.why, ref: q.ref };
+}
+
+/** Prefer questions you have seen least, so a small bank does not just repeat. */
+function pickLeastSeen(pool, n) {
+  return shuffle(pool)
+    .map(q => ({ q: q, s: S.seen[qKey(q)] || 0 }))
+    .sort((a, b) => a.s - b.s)
+    .slice(0, n).map(x => x.q);
+}
+
 function startQuiz(opt) {
-  const pool = shuffle(bank(opt.codes));
-  const qs = pool.slice(0, Math.min(opt.n, pool.length)).map(q => {
-    // shuffle the options, tracking where the correct one lands
-    const pairs = q.a.map((t, i) => ({ t: t, ok: i === q.c }));
-    shuffle(pairs);
-    return { code: q.code, q: q.q, opts: pairs.map(x => x.t), c: pairs.findIndex(x => x.ok), why: q.why, ref: q.ref };
-  });
-  Q = { qs: qs, at: 0, ans: new Array(qs.length).fill(-1), mode: opt.mode, title: opt.title, t0: Date.now(), codes: opt.codes };
+  const pool = opt.pool || bank(opt.codes);
+  const qs = pickLeastSeen(pool, Math.min(opt.n, pool.length)).map(prep);
+  Q = { qs: qs, at: 0, ans: new Array(qs.length).fill(-1), mode: opt.mode, title: opt.title,
+        t0: Date.now(), codes: opt.codes, drill: !!opt.drill };
   go('quizrun');
 }
 
 VIEWS.quiz = function () {
   html(`<div class="hd"><h1>Quiz</h1><div class="sub">385 questions across the nine subjects</div></div>`);
+
+  const mp = mistakePool();
+  if (mp.length) {
+    html(`<h2 class="sec">Your weak spots</h2><div class="grp">
+      <button class="row" id="drill"><div class="ic" style="--c:var(--red)">${mp.length}</div>
+        <div class="tx"><b>Drill my mistakes</b><i>Questions you have got wrong, worst first.
+          Get one right and it leaves the pile</i></div><div class="chev">&#8250;</div></button></div>`);
+    $('#drill').onclick = () => startQuiz({
+      codes: [...new Set(mp.map(q => q.code))], pool: mp,
+      n: Math.min(20, mp.length), mode: 'practice', title: 'My mistakes', drill: true });
+    const bySub = {};
+    mp.forEach(q => bySub[q.code] = (bySub[q.code] || 0) + 1);
+    const worst = Object.entries(bySub).sort((a, b) => b[1] - a[1]).slice(0, 3);
+    if (worst.length) html(`<div class="tiny" style="margin:8px 0 0 4px">Most mistakes in
+      ${worst.map(([c, k]) => esc(byCode[c].name) + ' (' + k + ')').join(', ')}.</div>`);
+  }
 
   html(`<h2 class="sec">Full mock</h2><div class="grp">
     <button class="row" id="m45"><div class="ic" style="--c:var(--blue)">45</div>
@@ -694,7 +758,8 @@ VIEWS.quiz = function () {
     const m = META[s.code], b = S.best[s.code];
     return `<button class="row" data-mk="${s.code}">
       <div class="ic" style="--c:var(--${m.c})">${s.code}</div>
-      <div class="tx"><b>${esc(s.name)}</b><i>${SC[s.code].quiz.length} questions available</i></div>
+      <div class="tx"><b>${esc(s.name)}</b><i>${SC[s.code].quiz.length} questions · ${
+        bank([s.code]).filter(q => !S.seen[qKey(q)]).length} not yet seen</i></div>
       ${b != null ? `<span class="bdg ${b >= PASS_MARK ? 'g' : 'o'}">${b}%</span>` : '<span class="bdg">—</span>'}
       <div class="chev">&#8250;</div></button>`;
   }).join('') + '</div>');
@@ -719,18 +784,18 @@ VIEWS.quiz = function () {
 /** A mock that draws an equal number from every subject. */
 function startBalanced(per, mode, title) {
   let qs = [];
-  SUBJECTS.forEach(s => { qs = qs.concat(shuffle(bank([s.code])).slice(0, per)); });
+  SUBJECTS.forEach(s => { qs = qs.concat(pickLeastSeen(bank([s.code]), per)); });
   shuffle(qs);
-  Q = {
-    qs: qs.map(q => {
-      const pairs = q.a.map((t, i) => ({ t: t, ok: i === q.c }));
-      shuffle(pairs);
-      return { code: q.code, q: q.q, opts: pairs.map(x => x.t), c: pairs.findIndex(x => x.ok), why: q.why, ref: q.ref };
-    }),
-    at: 0, ans: new Array(qs.length).fill(-1), mode: mode, title: title, t0: Date.now(),
-    codes: SUBJECTS.map(s => s.code)
-  };
+  Q = { qs: qs.map(prep), at: 0, ans: new Array(qs.length).fill(-1), mode: mode, title: title,
+        t0: Date.now(), codes: SUBJECTS.map(s => s.code), drill: false };
   go('quizrun');
+}
+
+/** Questions previously answered wrong, worst first. */
+function mistakePool() {
+  const all = bank(SUBJECTS.map(x => x.code));
+  return all.filter(q => (S.wrong[qKey(q)] || 0) > 0)
+            .sort((a, b) => (S.wrong[qKey(b)] || 0) - (S.wrong[qKey(a)] || 0));
 }
 
 VIEWS.quizrun = function () {
@@ -776,6 +841,13 @@ VIEWS.quizrun = function () {
 };
 
 function finishQuiz() {
+  // remember what was got wrong, so it can be drilled later
+  Q.qs.forEach((q, i) => {
+    const k = qKey(q);
+    S.seen[k] = (S.seen[k] || 0) + 1;
+    if (Q.ans[i] === q.c) { if (S.wrong[k]) { S.wrong[k]--; if (!S.wrong[k]) delete S.wrong[k]; } }
+    else S.wrong[k] = (S.wrong[k] || 0) + 1;
+  });
   const correct = Q.qs.reduce((a, q, i) => a + (Q.ans[i] === q.c ? 1 : 0), 0);
   Q.correct = correct;
   Q.pct = Math.round(correct / Q.qs.length * 100);
@@ -1030,17 +1102,23 @@ VIEWS.plan = function () {
   const p = passed();
   html(`<div class="hd"><h1>Exams</h1><div class="sub">The clock, your attempts, and the order to sit them in</div></div>`);
 
-  const dateField = (id, label, val, hint) => `<div class="fld">
+  const dateField = (id, label, val, derived, hint) => `<div class="fld">
     <div class="flabel"><label class="f" for="${id}">${label}</label>
       ${val ? `<button class="clr" data-clr="${id}">Clear</button>` : ''}</div>
-    <input type="date" id="${id}" value="${val}">
-    <div class="tiny" style="margin-top:6px">${hint}</div></div>`;
+    <input type="date" id="${id}" value="${val || derived}">
+    <div class="tiny" style="margin-top:6px">${!val && derived
+      ? '<b style="color:var(--green)">Taken from your exam record.</b> Set a date here to override it.'
+      : hint}</div></div>`;
   html(`<div class="card">
-    ${dateField('d1', 'Date of your first exam attempt', S.d1,
+    ${dateField('d1', 'First exam attempt', S.d1, autoD1(),
       'Starts the 18-month window. Any attempt counts, pass or fail.')}
-    ${dateField('d2', 'Date your ninth exam was passed', S.d2,
+    ${dateField('d2', 'Ninth exam passed', S.d2, autoD2(),
       'Starts the 24 months you have to apply for the licence.')}
   </div>`);
+  if (d1IsDerived()) html(`<div class="note o" style="margin-top:10px"><b>Check this date</b>
+    It is your earliest recorded <b>pass</b>. The 18-month clock legally starts at your first
+    <b>attempt</b>, so if you sat and failed a paper before ${fmt(new Date(autoD1() + 'T00:00:00'))},
+    your real deadline is earlier. Enter that date above if so.</div>`);
   $('#d1').onchange = e => { S.d1 = e.target.value; save(); render(); };
   $('#d2').onchange = e => { S.d2 = e.target.value; save(); render(); };
   bind('[data-clr]', e => {
@@ -1048,7 +1126,7 @@ VIEWS.plan = function () {
     save(); render();
   });
 
-  const dl = deadline18(S.d1), vd = deadline24(S.d2);
+  const dl = deadline18(getD1()), vd = deadline24(getD2());
   html(`<div class="tiles" style="margin-top:12px">
     <div class="tile"><div class="k">Exams passed</div><div class="n">${p}<span class="of">/9</span></div>
       <div class="s">${p === 9 ? 'complete set' : (9 - p) + ' to go'}</div></div>
@@ -1137,7 +1215,7 @@ function risks() {
     two.map(s => s.name).join(', ') + ' — one more failure and you are into the further-training ' +
     'requirement before a fourth and final attempt.']);
 
-  const dl = deadline18(S.d1);
+  const dl = deadline18(getD1());
   if (dl && p < 9) {
     const n = daysTo(dl), left = 9 - p, per = Math.floor(n / left), s = left > 1 ? 's' : '';
     if (n < 0) out.push(['r', '18-month window has expired',
@@ -1150,16 +1228,17 @@ function risks() {
     else if (n < 180) out.push(['o', 'Deadline inside six months',
       left + ' exam' + s + ' by ' + fmt(dl) + ' — about ' + per + ' days each, room for one resit apiece.']);
   }
-  if (!S.d1 && p === 0) out.push(['b', 'Nothing at risk yet',
+  if (!getD1() && p === 0) out.push(['b', 'Nothing at risk yet',
     'Your 18-month clock has not started. It starts at the end of the calendar month in which you ' +
     'first sit any paper — so sit exam one when you are genuinely into ground school, not as a way ' +
     'of feeling started.']);
 
-  const vd = deadline24(S.d2);
+  const vd = deadline24(getD2());
   if (vd && daysTo(vd) >= 0 && daysTo(vd) < 180) out.push(['o', 'Theory validity running down',
     'Your completed set expires ' + fmt(vd) + '. The licence application must be in by then.']);
-  if (p === 9 && !S.d2) out.push(['o', 'Add your final pass date',
-    'All nine are marked passed but the completion date is blank, so the 24-month clock is not being tracked.']);
+  if (p === 9 && !getD2()) out.push(['o', 'Add your final pass date',
+    'All nine are marked passed but no pass date is recorded against them, so the 24-month clock '
+    + 'is not being tracked. Add the date to any subject on the Exams list, or type it above.']);
 
   if (!out.length) out.push(['g', 'Nothing flagged', 'No attempt or deadline risks detected.']);
   return out;
@@ -1498,6 +1577,121 @@ VIEWS.wx = function () {
   if (WX.at) html(`<div class="foot">Model data fetched ${new Date(WX.at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}, cached for 20 minutes.</div>`);
 };
 
+/* ============================ SEARCH ============================ */
+
+let IDX = null;
+let SEARCH_Q = '';
+const strip = h => h.replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/g, ' ').replace(/\s+/g, ' ').trim();
+
+/** Built once, lazily: articles, objectives, questions and cards in one flat list. */
+function buildIndex() {
+  if (IDX) return IDX;
+  IDX = [];
+  SUBJECTS.forEach(sj => {
+    const c = sj.code;
+    arts(c).forEach(a => IDX.push({
+      t: 'article', code: c, id: a.id, title: a.title,
+      sub: sj.name + ' · ' + a.mins + ' min', hay: (a.title + ' ' + strip(a.body)).toLowerCase()
+    }));
+    sj.groups.forEach(g => g.items.forEach(it => IDX.push({
+      t: 'objective', code: c, id: it.c, title: it.t,
+      sub: sj.name + ' · ' + it.c, hay: (it.t + ' ' + it.c).toLowerCase()
+    })));
+    (SC[c].quiz || []).forEach((q, i) => IDX.push({
+      t: 'question', code: c, id: i, title: q.q, body: q.a[q.c], why: q.why,
+      sub: sj.name, hay: (q.q + ' ' + q.a.join(' ') + ' ' + q.why).toLowerCase()
+    }));
+    (SC[c].cards || []).forEach((cd, i) => IDX.push({
+      t: 'card', code: c, id: i, title: cd.f, body: cd.b,
+      sub: sj.name, hay: (cd.f + ' ' + cd.b).toLowerCase()
+    }));
+  });
+  return IDX;
+}
+
+const TYPE_ORDER = { article: 0, objective: 1, question: 2, card: 3 };
+
+function runSearch(q) {
+  q = q.trim().toLowerCase();
+  if (q.length < 2) return [];
+  const terms = q.split(/\s+/).filter(Boolean);
+  const out = [];
+  buildIndex().forEach(e => {
+    if (!terms.every(t => e.hay.indexOf(t) >= 0)) return;
+    // rank: a hit in the title beats one buried in the body
+    const inTitle = e.title.toLowerCase().indexOf(terms[0]);
+    let score = inTitle === 0 ? 0 : inTitle > 0 ? 1 : 3;
+    score += TYPE_ORDER[e.t] * 0.1;
+    out.push({ e: e, score: score });
+  });
+  return out.sort((a, b) => a.score - b.score).slice(0, 60).map(x => x.e);
+}
+
+const TYPE_LABEL = { article: 'Article', objective: 'Objective', question: 'Question', card: 'Card' };
+const TYPE_COLOUR = { article: 'blue', objective: 'orange', question: 'indigo', card: 'green' };
+
+VIEWS.search = function (p) {
+  navbar('Search', '');
+  const q = (p && p.q) || SEARCH_Q || '';
+  html(`<div class="hd" style="padding-top:14px">
+    <input type="search" id="sq" class="ti" placeholder="Carb icing, VMC, Va…" value="${esc(q)}"
+      autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="search"
+      style="font-size:17px"></div>
+    <div id="sres"></div>`);
+  const inp = $('#sq');
+  setTimeout(() => { try { inp.focus(); } catch (e) {} }, 60);
+
+  const paint = () => {
+    SEARCH_Q = inp.value;
+    const res = runSearch(inp.value);
+    const box = $('#sres');
+    if (inp.value.trim().length < 2) {
+      box.innerHTML = `<div class="tiny" style="margin:14px 4px">Searches ${
+        buildIndex().length} items: every article, learning objective, quiz question and
+        flashcard.</div>`;
+      return;
+    }
+    if (!res.length) {
+      box.innerHTML = `<div class="empty"><div class="em">&#128269;</div><h3>Nothing found</h3>
+        <p>No article, objective, question or card matches “${esc(inp.value)}”.</p></div>`;
+      return;
+    }
+    const counts = {};
+    res.forEach(r => counts[r.t] = (counts[r.t] || 0) + 1);
+    box.innerHTML = `<div class="tiny" style="margin:10px 4px 10px">${res.length} result${res.length === 1 ? '' : 's'} — ${
+      Object.keys(counts).sort((a, b) => TYPE_ORDER[a] - TYPE_ORDER[b])
+        .map(k => counts[k] + ' ' + TYPE_LABEL[k].toLowerCase() + (counts[k] === 1 ? '' : 's')).join(', ')}</div>
+      <div class="grp">` + res.map((r, i) => `
+      <button class="row" data-r="${i}">
+        <div class="ic" style="--c:var(--${TYPE_COLOUR[r.t]})">${r.code}</div>
+        <div class="tx"><b>${esc(r.title.length > 110 ? r.title.slice(0, 110) + '…' : r.title)}</b>
+          <i>${TYPE_LABEL[r.t]} · ${esc(r.sub)}</i>
+          ${r.t === 'card' || r.t === 'question'
+            ? `<i style="color:var(--tx2);margin-top:4px">${esc((r.body || '').slice(0, 130))}</i>` : ''}</div>
+        ${r.t === 'article' || r.t === 'objective' ? '<div class="chev">&#8250;</div>' : ''}
+      </button>`).join('') + '</div>';
+
+    box.querySelectorAll('[data-r]').forEach(b => b.onclick = () => {
+      const r = res[+b.dataset.r];
+      if (r.t === 'article') go('article', { code: r.code, id: r.id });
+      else if (r.t === 'objective') go('subject', { code: r.code, tab: 'obj' });
+      else if (r.t === 'question') {
+        const full = SC[r.code].quiz[r.id];
+        askConfirm({ title: full.q, body: full.a[full.c] + '\n\n' + strip(full.why),
+          yes: 'Practise ' + byCode[r.code].name },
+          () => startQuiz({ codes: [r.code], n: 15, mode: 'practice', title: byCode[r.code].name }));
+      } else {
+        const cd = SC[r.code].cards[r.id];
+        askConfirm({ title: cd.f, body: cd.b, yes: 'Review ' + byCode[r.code].name + ' cards' },
+          () => { S.cardSubs = [r.code]; save(); tab('cards'); });
+      }
+    });
+  };
+  inp.addEventListener('input', paint);
+  paint();
+};
+
+
 /* ============================ CLOCK EXPLAINERS ============================ */
 
 VIEWS.clockinfo = function (p) {
@@ -1505,7 +1699,7 @@ VIEWS.clockinfo = function (p) {
   const is18 = p.id === 'm18';
   navbar(is18 ? '18-month window' : '24-month validity', '');
 
-  const dl = deadline18(S.d1), vd = deadline24(S.d2);
+  const dl = deadline18(getD1()), vd = deadline24(getD2());
   const d = is18 ? dl : vd;
 
   html(`<div class="hd" style="padding-top:14px">
@@ -2188,8 +2382,7 @@ VIEWS.welcome = function () {
         <input type="text" id="wName" maxlength="24" autocomplete="given-name" autocapitalize="words"
           placeholder="e.g. Bailey" value="${esc(SETUP.name)}" class="ti">
         <div id="wErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
-        <div class="tiny" style="margin-top:9px">${adding ? 'Anything already on this device is untouched.'
-          : 'You can add more people later — everyone gets their own progress, kept separately on this device.'}</div>
+        ${adding ? '<div class="tiny" style="margin-top:9px">Anything already on this device is untouched.</div>' : ''}
       </div>
       <button class="btn" style="margin-top:14px" id="wNext">Continue</button>
       <button class="btn sec" style="margin-top:10px" id="wImp">${adding ? 'Import them from a file' : 'I already have a progress file'}</button>
@@ -2231,7 +2424,7 @@ VIEWS.welcome = function () {
 
   // step 3 — home airfield
   setupHead(3, adding ? 'Where do they fly from?' : 'Where do you fly from?',
-    'Optional. It personalises the app and gives a one-tap weather link.');
+    'Optional. It personalises the app and puts conditions at your field on the home screen.');
   html(`<div class="card">
     <label class="f" for="wIcao">Home airfield</label>
     <input type="text" id="wIcao" maxlength="28" autocapitalize="characters" autocomplete="off"
@@ -2242,21 +2435,21 @@ VIEWS.welcome = function () {
     <div id="wIcaoErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
   </div>
   <div class="card" style="margin-top:12px">
-    <label class="f" for="wWx">Club weather page (optional)</label>
-    <input type="url" id="wWx" inputmode="url" autocapitalize="none" autocomplete="off" spellcheck="false"
-      placeholder="https://…" value="${esc(SETUP.wx)}" class="ti" style="font-size:15px">
-    <div class="tiny" style="margin-top:9px">Most small GA fields do not issue a METAR, so a club
-      weather page is often the only live source. If your field does report, the app links to its
-      METAR and TAF automatically.</div>
+    <label class="f" for="wKey">Weather API key (optional)</label>
+    <input type="text" id="wKey" autocomplete="off" spellcheck="false"
+      placeholder="Paste a CheckWX key" value="${esc(P.cwKey || '')}" class="ti"
+      style="font-size:14px;font-family:ui-monospace,Menlo,monospace">
+    <div class="tiny" style="margin-top:9px">Without one, Home shows a forecast-model estimate.
+      With one it shows the <b>real METAR</b> and its official flight category, where your field
+      publishes one. Free keys at
+      <a href="https://www.checkwxapi.com" target="_blank" rel="noopener">checkwxapi.com</a> —
+      the key is saved on this device only.</div>
   </div>
   <button class="btn" style="margin-top:14px" id="s3done">Start studying</button>
   <button class="btn grey" style="margin-top:10px" id="s3back">Back</button>`);
 
   const ic = $('#wIcao');
-  wireAirfield('#wIcao', '#wList', '#wFound', row => {
-    const k = CLUB_WX[row[0]];
-    if (k && !$('#wWx').value) $('#wWx').value = k.url;
-  });
+  wireAirfield('#wIcao', '#wList', '#wFound', null);
   $('#s3back').onclick = () => { SETUP.step = 2; render(); };
   $('#s3done').onclick = () => {
     if (P.list.some(x => x.name.toLowerCase() === SETUP.name.toLowerCase())) {
@@ -2267,9 +2460,10 @@ VIEWS.welcome = function () {
       $('#wIcaoErr').textContent = 'Pick an airfield from the list, or clear the box to skip.';
       $('#wIcaoErr').style.display = 'block'; return;
     }
-    const wx = $('#wWx').value.trim();
+    const key = $('#wKey').value.trim();
+    if (key !== (P.cwKey || '')) { P.cwKey = key; saveProfiles(); }
     const data = blank();
-    data.stage = SETUP.stage; data.field = v; data.wx = /^https?:\/\//i.test(wx) ? wx : '';
+    data.stage = SETUP.stage; data.field = v; data.wx = '';
     data.planId = suggestPlan(SETUP.stage);
     if (LEGACY && !adding) Object.assign(data, migrate(LEGACY),
       { stage: data.stage, field: data.field, wx: data.wx, planId: data.planId });
