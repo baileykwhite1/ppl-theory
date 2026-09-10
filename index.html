@@ -109,7 +109,12 @@ h2.sec:first-child{margin-top:14px}
 .card + .card{margin-top:12px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .tile{background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--sh);
-  display:flex;flex-direction:column;gap:2px;text-align:left}
+  display:flex;flex-direction:column;gap:2px;text-align:left;position:relative}
+.tile .k{padding-right:26px}
+.info{position:absolute;top:9px;right:9px;width:22px;height:22px;border-radius:50%;
+  background:var(--fill);color:var(--tx2);font:700 12px/1 Georgia,"Times New Roman",serif;
+  font-style:italic;display:grid;place-items:center;flex:none}
+.info:active{background:var(--fill2);color:var(--blue)}
 .tile .k{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;
   color:var(--tx2)}
 .tile .n{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-top:4px}

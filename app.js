@@ -1037,15 +1037,19 @@ VIEWS.plan = function () {
   html(`<div class="tiles" style="margin-top:12px">
     <div class="tile"><div class="k">Exams passed</div><div class="n">${p}<span style="font-size:18px;color:var(--tx2)">/9</span></div>
       <div class="s">${p === 9 ? 'complete set' : (9 - p) + ' to go'}</div></div>
-    ${dl ? tileFor('18-month deadline', dl, p >= 9) : `<div class="tile"><div class="k">18-month window</div>
+    ${dl ? tileFor('18-month deadline', dl, p >= 9, 'm18') : `<div class="tile">${infoBtn('m18')}
+      <div class="k">18-month window</div>
       <div class="n" style="color:var(--tx3)">—</div><div class="s">Not started</div></div>`}
-    ${vd ? tileFor('Apply by', vd, false) : `<div class="tile"><div class="k">24-month validity</div>
+    ${vd ? tileFor('Apply by', vd, false, 'm24') : `<div class="tile">${infoBtn('m24')}
+      <div class="k">24-month validity</div>
       <div class="n" style="color:var(--tx3)">—</div><div class="s">Set once all nine pass</div></div>`}
-    <div class="tile"><div class="k">Attempts at risk</div>
+    <div class="tile">${infoBtn('att')}<div class="k">Attempts at risk</div>
       <div class="n" style="color:var(--${SUBJECTS.some(s => sub(s.code).att >= 3 && sub(s.code).st !== 'passed') ? 'red' : 'green'})">
         ${SUBJECTS.filter(s => sub(s.code).att >= 3 && sub(s.code).st !== 'passed').length}</div>
       <div class="s">subjects on 3 of 4</div></div>
   </div>`);
+
+  bind('[data-info]', e => { e.stopPropagation(); go('clockinfo', { id: e.currentTarget.dataset.info }); });
 
   // --- risk watch
   html('<h2 class="sec">Risk watch</h2>');
@@ -1095,10 +1099,12 @@ VIEWS.plan = function () {
   $('#pr3').onclick = () => go('sources');
 };
 
-function tileFor(k, d, muted) {
+const infoBtn = id => `<button class="info" data-info="${id}" aria-label="More about this">i</button>`;
+
+function tileFor(k, d, muted, info) {
   const n = daysTo(d);
   const col = muted ? 'tx3' : n < 0 ? 'red' : n < 90 ? 'red' : n < 180 ? 'orange' : 'green';
-  return `<div class="tile"><div class="k">${k}</div>
+  return `<div class="tile">${info ? infoBtn(info) : ''}<div class="k">${k}</div>
     <div class="n" style="color:var(--${col})">${n < 0 ? 'over' : n}</div>
     <div class="s">${n < 0 ? 'expired ' + fmt(d) : 'days · ' + fmt(d)}</div></div>`;
 }
@@ -1476,6 +1482,195 @@ VIEWS.wx = function () {
 
   if (WX.at) html(`<div class="foot">Model data fetched ${new Date(WX.at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}, cached for 20 minutes.</div>`);
 };
+
+/* ============================ CLOCK EXPLAINERS ============================ */
+
+VIEWS.clockinfo = function (p) {
+  if (p.id === 'att') return attemptsInfo();
+  const is18 = p.id === 'm18';
+  navbar(is18 ? '18-month window' : '24-month validity', '');
+
+  const dl = deadline18(S.d1), vd = deadline24(S.d2);
+  const d = is18 ? dl : vd;
+
+  html(`<div class="hd" style="padding-top:14px">
+    <h1 style="font-size:30px">${is18 ? 'All nine within 18 months' : 'Valid for 24 months'}</h1>
+    <div class="sub">${is18 ? 'FCL.025(b)(2)' : 'FCL.025(c)(1)(i)'}</div></div>`);
+
+  // where this profile actually stands
+  if (d) {
+    const n = daysTo(d);
+    html(`<div class="card" style="margin-top:14px;text-align:center">
+      <div style="font:800 40px/1 -apple-system,system-ui;letter-spacing:-.03em;
+        color:var(--${n < 0 ? 'red' : n < 90 ? 'red' : n < 180 ? 'orange' : 'green'});
+        font-variant-numeric:tabular-nums">${n < 0 ? 'Expired' : n + ' days'}</div>
+      <div class="tiny" style="margin-top:7px">${is18
+        ? 'All nine must be passed by ' + fmt(d) : 'Licence application must be in by ' + fmt(d)}</div></div>`);
+  } else {
+    html(`<div class="note b" style="margin-top:14px"><b>Not running yet</b>
+      ${is18 ? 'The clock starts when you first sit any paper. Put that date on the Exams tab and this will track it.'
+             : 'This starts the day you pass your ninth exam. Add that date on the Exams tab.'}</div>`);
+  }
+
+  if (is18) {
+    html(`<h2 class="sec">When the clock starts</h2>
+      <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+        Not on the day you sit exam one — at the <b>end of the calendar month</b> in which you first
+        <b>attempt</b> any paper. Attempt, not pass: sitting one and failing it starts the clock just
+        the same.</div>
+      <div class="mono" style="margin-top:12px;background:var(--card2);padding:12px;border-radius:9px;
+        font-size:13px;line-height:1.7">First attempt&#160;&#160;20 Mar 2026<br>
+        End of month&#160;&#160;31 Mar 2026<br>
+        Plus 18 months&#160;<b>30 Sep 2027</b></div></div>`);
+
+    html(`<h2 class="sec">If you miss it</h2>
+      <div class="note r"><b>The whole set goes</b>
+        Under FCL.025(b)(4) you retake <b>all nine</b> papers, not just the outstanding ones. Before
+        retaking, FCL.025(b)(5) requires further training at your DTO or ATO, the extent of which
+        they determine.</div>`);
+
+    html(`<h2 class="sec">The regulation</h2>
+      <div class="card"><div style="font-size:14.5px;line-height:1.55">
+        “Unless otherwise determined in this Part, an applicant has successfully completed the
+        required theoretical knowledge examination for the appropriate pilot licence or rating if he
+        or she has passed all the required theoretical knowledge examination papers <b>within a
+        period of 18 months counted from the end of the calendar month when the applicant first
+        attempted an examination</b>.”</div>
+        <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(b)(2)</div></div>`);
+
+    html(`<h2 class="sec">What this means in practice</h2>
+      <div class="grp">
+        <div class="row plain"><div style="font-size:14.5px;line-height:1.5">Do not sit one paper early
+          just to feel started. That single attempt commits you to finishing the other eight inside
+          18 months.</div></div>
+        <div class="row plain"><div style="font-size:14.5px;line-height:1.5">Leave room for a resit.
+          A failed paper cannot be re-sat inside the same sitting window, so budget more than the
+          bare minimum per exam.</div></div>
+        <div class="row plain"><div style="font-size:14.5px;line-height:1.5">There is <b>no limit on
+          sittings</b> for a PPL, so the 18 months and the four attempts per paper are the only
+          things rationing you.</div></div>
+      </div>`);
+
+  } else {
+    html(`<h2 class="sec">What the 24 months covers</h2>
+      <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+        Once you have passed all nine, the <b>completed set</b> stays valid for 24 months, counted
+        from the day you passed the last one. You must have <b>applied for the licence</b> inside
+        that window. It is not 24 months per exam — it is 24 months for the set.</div></div>`);
+
+    html(`<h2 class="sec">If you miss it</h2>
+      <div class="note r"><b>The theory expires</b>
+        The completed set is no longer valid towards licence issue, and you are back to sitting
+        exams. This is why finishing all nine long before you have the hours is a risk rather than
+        being ahead.</div>`);
+
+    html(`<h2 class="sec">The regulation</h2>
+      <div class="card"><div style="font-size:14.5px;line-height:1.55">
+        “The successful completion of the theoretical knowledge examinations will be valid: (i) for
+        the issue of a light aircraft pilot licence or a private pilot licence, <b>for a period of
+        24 months</b>… counted from the day when the pilot successfully completes the theoretical
+        knowledge examination.”</div>
+        <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(c)(1)(i) and (iii)</div></div>`);
+
+    html(`<h2 class="sec">A change is coming — but is not here</h2>
+      <div class="note o"><b>36 months has been agreed, not implemented</b>
+        The CAA decided in January 2026 to extend PPL exam validity from 24 to 36 months
+        (CAP3212, Decision no. 3). It is <b>not in force</b>: the July 2026 Part-FCL rulebook still
+        says 24 months, and it needs a legislative change through the DfT plus funding to modify the
+        e-Exam platform. Plan on 24 until the CAA says otherwise.</div>`);
+
+    html(`<h2 class="sec">Do not confuse it with</h2>
+      <div class="grp">
+        <div class="row"><div class="tx"><b>The 18-month window</b><i>Time to pass all nine, from your first attempt</i></div>
+          <button class="btn sec sm" style="width:auto;padding:8px 12px" id="to18">Open</button></div>
+        <div class="row"><div class="tx"><b>DTO/ATO recommendation</b><i>Valid 12 months — FCL.025(a)(3)</i></div></div>
+        <div class="row"><div class="tx"><b>Class 2 medical</b><i>60, 24 or 12 months depending on age</i></div></div>
+      </div>`);
+    if ($('#to18')) $('#to18').onclick = () => { stack[stack.length - 1] = { v: 'clockinfo', p: { id: 'm18' } }; render(); };
+  }
+
+  html(`<div class="foot">Quoted from the CAA consolidated Part-FCL rulebook, page footers dated
+    July 2026. See Sources for the document.</div>`);
+};
+
+/** The four-attempt rule, which is the one that can undo everything. */
+function attemptsInfo() {
+  navbar('Attempts', '');
+  const risky = SUBJECTS.filter(x => sub(x.code).att >= 3 && sub(x.code).st !== 'passed');
+  const used = SUBJECTS.filter(x => sub(x.code).att > 0);
+
+  html(`<div class="hd" style="padding-top:14px">
+    <h1 style="font-size:30px">Four attempts per paper</h1>
+    <div class="sub">FCL.025(b)(4) · Standards Document 11 §11.1.22–36</div></div>`);
+
+  html(`<div class="note ${risky.length ? 'r' : 'b'}" style="margin-top:14px">
+    <b>${risky.length ? risky.length + ' subject' + (risky.length > 1 ? 's are' : ' is') + ' on the final attempt'
+      : 'Nothing at the limit'}</b>
+    ${risky.length ? risky.map(x => x.name).join(', ') + ' — the next failure voids every pass you hold.'
+      : 'No subject has used three attempts. Keep it that way and this rule never bites.'}</div>`);
+
+  if (used.length) {
+    html('<h2 class="sec">Attempts used</h2><div class="grp">' + used.map(x => {
+      const st = sub(x.code), left = 4 - st.att;
+      return `<div class="row"><div class="ic" style="--c:var(--${META[x.code].c})">${x.code}</div>
+        <div class="tx"><b>${esc(x.name)}</b><i>${st.st === 'passed' ? 'passed' : left + ' attempt' + (left === 1 ? '' : 's') + ' remaining'}</i></div>
+        <span class="bdg ${st.st === 'passed' ? 'g' : st.att >= 3 ? 'r' : st.att === 2 ? 'o' : ''}">${st.att} of 4</span></div>`;
+    }).join('') + '</div>');
+  }
+
+  html(`<h2 class="sec">How it works</h2>
+    <div class="grp">
+      <div class="row"><div class="ic" style="--c:var(--green)">1–2</div>
+        <div class="tx"><b>First two attempts</b><i>Book and sit them normally</i></div></div>
+      <div class="row"><div class="ic" style="--c:var(--orange)">3</div>
+        <div class="tx"><b>After a third failure</b><i>Further training first, as your school determines.
+          The fourth attempt is then booked normally at the organisation — there is no requirement to
+          attend the CAA at Gatwick</i></div></div>
+      <div class="row"><div class="ic" style="--c:var(--red)">4</div>
+        <div class="tx"><b>If the fourth fails</b><i>Automatic stand-down in the e-Exams system, and
+          every pass in every subject is void</i></div></div>
+    </div>`);
+
+  html(`<h2 class="sec">What a fourth failure actually costs</h2>
+    <div class="note r"><b>Not just that subject — all nine</b>
+      Eight passes you already hold are cancelled along with the one you failed. You then need
+      further theoretical knowledge training, a fresh recommendation from your school, and the CAA
+      to release you from stand-down before you can start a new series.</div>
+    <div class="card" style="margin-top:12px"><div style="font-size:14.5px;line-height:1.55">
+      “ALL previous examination passes, in ALL subjects currently being sat are rendered null and
+      void by a fourth attempt failure.”</div>
+      <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">Standards Document 11 §11.1.33</div></div>`);
+
+  html(`<h2 class="sec">The regulation</h2>
+    <div class="card"><div style="font-size:14.5px;line-height:1.55">
+      “If an applicant for the issue of a light aircraft pilot licence (LAPL) or a private pilot
+      licence (PPL) has failed to pass one of the theoretical knowledge examination papers
+      <b>within four attempts</b> or has failed to pass all papers within the period mentioned in
+      point (b)(2), he or she shall retake the complete set of theoretical knowledge examination
+      papers in order to obtain the licence.”</div>
+      <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(b)(4)</div></div>`);
+
+  html(`<h2 class="sec">Practical consequences</h2>
+    <div class="grp">
+      <div class="row plain"><div style="font-size:14.5px;line-height:1.5">It is <b>per paper</b>, not
+        across the set. Four attempts at Meteorology, four at Air Law, and so on.</div></div>
+      <div class="row plain"><div style="font-size:14.5px;line-height:1.5">You cannot re-sit the
+        <b>same</b> paper twice inside one sitting — a sitting being up to ten consecutive days
+        (GM1 FCL.025). Different subjects on the same day are fine.</div></div>
+      <div class="row plain"><div style="font-size:14.5px;line-height:1.5">Because sittings are not
+        rationed for a PPL, there is no reason to sit a paper you are not confident on. Use the mock
+        exams in this app until you are comfortably above 75%.</div></div>
+      <div class="row plain"><div style="font-size:14.5px;line-height:1.5">A confirmed case of
+        cheating is separate and worse: a minimum twelve-month ban, and all previously attempted
+        exams void (ARA.FCL.300).</div></div>
+    </div>`);
+
+  html(`<button class="btn sec" style="margin-top:16px" id="attMock">Take a mock exam instead</button>`);
+  $('#attMock').onclick = () => { stack.pop(); tab('quiz'); };
+
+  html(`<div class="foot">Quoted from the CAA consolidated Part-FCL rulebook (July 2026) and
+    Standards Document 11, Revision 15. See Sources.</div>`);
+}
 
 /* ============================ MY TRAINING ============================ */
 
@@ -1901,7 +2096,6 @@ VIEWS.welcome = function () {
     <div id="wFound" class="acfound" style="display:none"></div>
     <div id="wList" class="aclist" style="display:none"></div>
     <div id="wIcaoErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
-    <div class="tiny" style="margin-top:9px">${AF().length} UK aerodromes, searchable offline.</div>
   </div>
   <div class="card" style="margin-top:12px">
     <label class="f" for="wWx">Club weather page (optional)</label>
