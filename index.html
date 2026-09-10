@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1520">
+<title>PPL(A) Theory</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#f4f6f9; --panel:#ffffff; --panel-2:#eef2f7; --line:#d5dde7;
+  --ink:#111a24; --ink-2:#4a5a6b; --ink-3:#7d8b9a;
+  --accent:#0a5fb4; --accent-ink:#ffffff;
+  --ok:#0f7a3d; --warn:#a35b00; --bad:#b3231f;
+  --ok-bg:#e6f4ea; --warn-bg:#fdf3e2; --bad-bg:#fdeceb;
+  --shadow:0 1px 2px rgba(16,32,48,.08), 0 4px 14px rgba(16,32,48,.05);
+  --r:12px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1520; --panel:#151f2d; --panel-2:#1c2836; --line:#2b3a4c;
+    --ink:#e8eef5; --ink-2:#a7b6c6; --ink-3:#76879a;
+    --accent:#4b9bf0; --accent-ink:#07121f;
+    --ok:#5cd68a; --warn:#f0b45e; --bad:#ff8078;
+    --ok-bg:#12301f; --warn-bg:#33260f; --bad-bg:#3a1614;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1520; --panel:#151f2d; --panel-2:#1c2836; --line:#2b3a4c;
+  --ink:#e8eef5; --ink-2:#a7b6c6; --ink-3:#76879a;
+  --accent:#4b9bf0; --accent-ink:#07121f;
+  --ok:#5cd68a; --warn:#f0b45e; --bad:#ff8078;
+  --ok-bg:#12301f; --warn-bg:#33260f; --bad-bg:#3a1614;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  padding-bottom:env(safe-area-inset-bottom)}
+h1,h2,h3{line-height:1.25;margin:0}
+a{color:var(--accent)}
+[hidden]{display:none!important}
+.wrap{max-width:860px;margin:0 auto;padding:0 14px 64px}
+
+/* ---------- header ---------- */
+header{position:sticky;top:0;z-index:20;background:var(--bg);
+  border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+.hd{max-width:860px;margin:0 auto;padding:12px 14px 10px;display:flex;align-items:center;gap:12px}
+.hd h1{font-size:17px;letter-spacing:-.2px;flex:1}
+.hd h1 small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-3);letter-spacing:0}
+.ring{width:44px;height:44px;flex:none}
+.ring text{font:700 12px var(--mono);fill:var(--ink)}
+.iconbtn{background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2);
+  border-radius:9px;width:34px;height:34px;font-size:15px;cursor:pointer;flex:none}
+nav{max-width:860px;margin:0 auto;display:flex;gap:4px;padding:0 10px 8px;overflow-x:auto;
+  scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:none;background:none;border:0;color:var(--ink-3);font:600 13.5px/1 inherit;
+  padding:9px 12px;border-radius:8px;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+
+/* ---------- generic ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);margin:14px 0;overflow:hidden}
+.card>.pad{padding:14px}
+.card h2{font-size:14px;text-transform:uppercase;letter-spacing:.7px;color:var(--ink-3);
+  padding:13px 14px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+p{margin:0 0 10px}
+p:last-child{margin-bottom:0}
+.muted{color:var(--ink-2)}
+.tiny{font-size:12.5px;line-height:1.5;color:var(--ink-3)}
+.mono{font-family:var(--mono);font-size:12px}
+.pill{display:inline-block;padding:2px 8px;border-radius:99px;font:600 11px/1.6 var(--mono);
+  border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2)}
+.pill.ok{background:var(--ok-bg);border-color:transparent;color:var(--ok)}
+.pill.warn{background:var(--warn-bg);border-color:transparent;color:var(--warn)}
+.pill.bad{background:var(--bad-bg);border-color:transparent;color:var(--bad)}
+.bar{height:5px;background:var(--panel-2);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;
+  transition:width .25s ease}
+.grid{display:grid;gap:10px}
+@media(min-width:620px){.grid.two{grid-template-columns:1fr 1fr}}
+input[type=date],input[type=number],select{background:var(--panel-2);color:var(--ink);
+  border:1px solid var(--line);border-radius:8px;padding:8px 9px;font:inherit;font-size:14px;
+  width:100%;min-width:0}
+label.f{display:block;font:600 11.5px/1.6 inherit;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--ink-3);margin-bottom:4px}
+
+/* ---------- callouts ---------- */
+.note{border-left:3px solid var(--accent);background:var(--panel-2);
+  padding:11px 13px;border-radius:0 8px 8px 0;margin:0 0 12px;font-size:14px}
+.note.bad{border-color:var(--bad);background:var(--bad-bg)}
+.note.warn{border-color:var(--warn);background:var(--warn-bg)}
+.note.ok{border-color:var(--ok);background:var(--ok-bg)}
+.note>b:first-child{display:block;margin-bottom:4px;font-size:14.5px}
+
+/* ---------- countdown ---------- */
+.cd{display:flex;gap:10px;flex-wrap:wrap}
+.cd>div{flex:1 1 150px;background:var(--panel-2);border-radius:10px;padding:11px 12px}
+.cd .n{font:700 24px/1.1 var(--mono);letter-spacing:-1px}
+.cd .k{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-3);
+  margin-bottom:5px}
+.cd .s{font-size:12px;color:var(--ink-2);margin-top:3px}
+
+/* ---------- blocks / subjects ---------- */
+.blk{border:1px solid var(--line);border-radius:10px;margin:0 0 10px;overflow:hidden}
+.blk>.h{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--panel-2)}
+.blk>.h .no{font:700 12px/1 var(--mono);background:var(--accent);color:var(--accent-ink);
+  width:24px;height:24px;border-radius:6px;display:grid;place-items:center;flex:none}
+.blk>.h .t{flex:1;font-weight:650;font-size:14px}
+.blk>.b{padding:11px 12px}
+.srow{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--line)}
+.srow:first-child{border-top:0}
+.srow .code{font:700 11px/1 var(--mono);color:var(--ink-3);width:26px;flex:none}
+.srow .nm{flex:1;font-size:13.5px;min-width:0}
+.srow .nm i{display:block;font-style:normal;font-size:11.5px;color:var(--ink-3);
+  margin-top:2px}
+
+details.subj{border:1px solid var(--line);border-radius:10px;margin:0 0 10px;
+  background:var(--panel);overflow:hidden}
+details.subj>summary{list-style:none;cursor:pointer;padding:12px;display:flex;
+  align-items:center;gap:10px}
+details.subj>summary::-webkit-details-marker{display:none}
+details.subj>summary .code{font:700 12px/1 var(--mono);background:var(--panel-2);
+  border:1px solid var(--line);padding:5px 6px;border-radius:6px;color:var(--ink-2);flex:none}
+details.subj>summary .nm{flex:1;font-weight:650;font-size:14.5px;min-width:0}
+details.subj>summary .nm i{display:block;font-style:normal;font-weight:400;font-size:11.5px;
+  color:var(--ink-3);margin-top:2px}
+details.subj>summary .pc{font:700 13px/1 var(--mono);color:var(--ink-2);flex:none}
+details.subj .body{padding:0 12px 12px;border-top:1px solid var(--line)}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0}
+@media(min-width:520px){.ctl{grid-template-columns:repeat(4,1fr)}}
+.gtitle{font:650 12.5px/1.4 inherit;color:var(--ink-2);margin:14px 0 5px;
+  padding-bottom:4px;border-bottom:1px solid var(--line);display:flex;gap:8px}
+.gtitle span{font-family:var(--mono);font-size:11px;color:var(--ink-3);flex:none}
+.lo{display:flex;gap:9px;align-items:flex-start;padding:5px 0;font-size:13.5px;
+  line-height:1.45;cursor:pointer}
+.lo input{margin:2px 0 0;flex:none;width:17px;height:17px;accent-color:var(--accent)}
+.lo.done>span{color:var(--ink-3);text-decoration:line-through;
+  text-decoration-color:var(--ink-3)}
+.lo em{font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);
+  display:block;margin-top:1px}
+.lo .ctx{display:inline-block;font:600 9.5px/1.5 var(--mono);color:var(--warn);
+  border:1px solid currentColor;border-radius:4px;padding:0 3px;margin-left:5px;
+  vertical-align:1px}
+
+/* ---------- rules / sources ---------- */
+.rule{padding:12px 0;border-top:1px solid var(--line)}
+.rule:first-of-type{border-top:0;padding-top:0}
+.rule h3{font-size:14.5px;margin-bottom:5px;display:flex;gap:8px;align-items:baseline}
+.rule .cite{font:600 11px/1.5 var(--mono);color:var(--ink-3)}
+.rule blockquote{margin:8px 0 0;padding:9px 11px;background:var(--panel-2);
+  border-radius:8px;font-size:13px;color:var(--ink-2);border-left:2px solid var(--line)}
+.src{padding:11px 0;border-top:1px solid var(--line);font-size:13.5px}
+.src:first-of-type{border-top:0}
+.src .t{font-weight:650}
+.src .m{font:400 12px/1.5 var(--mono);color:var(--ink-3);word-break:break-all}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:650 11px/1.4 inherit;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-3)}
+td.mono{font-family:var(--mono);font-size:11.5px;white-space:nowrap}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+footer{text-align:center;padding:22px 14px 34px;font-size:12px;color:var(--ink-3)}
+button.lnk{background:none;border:0;color:var(--accent);font:inherit;font-size:13px;
+  cursor:pointer;padding:0;text-decoration:underline}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hd">
+    <svg class="ring" viewBox="0 0 44 44" aria-hidden="true">
+      <circle cx="22" cy="22" r="18" fill="none" stroke="var(--panel-2)" stroke-width="5"/>
+      <circle id="ringArc" cx="22" cy="22" r="18" fill="none" stroke="var(--accent)"
+        stroke-width="5" stroke-linecap="round" stroke-dasharray="113.1"
+        stroke-dashoffset="113.1" transform="rotate(-90 22 22)"/>
+      <text id="ringTxt" x="22" y="26" text-anchor="middle">0%</text>
+    </svg>
+    <h1>UK PPL(A) Theory<small id="hdSub">9 exams · CAA e-Exams</small></h1>
+    <button class="iconbtn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">◐</button>
+  </div>
+  <nav role="tablist">
+    <button role="tab" data-v="plan" aria-selected="true">Plan</button>
+    <button role="tab" data-v="subjects" aria-selected="false">Subjects</button>
+    <button role="tab" data-v="rules" aria-selected="false">Rules</button>
+    <button role="tab" data-v="books" aria-selected="false">Books</button>
+    <button role="tab" data-v="sources" aria-selected="false">Sources</button>
+  </nav>
+</header>
+
+<div class="wrap">
+
+<!-- ============ PLAN ============ -->
+<section id="v-plan">
+  <div class="note bad" id="premiseNote">
+    <b>Before you plan around six sittings — that rule is not yours</b>
+    The “nine exams within six sittings” limit in <span class="mono">FCL.025(b)(3)</span> applies
+    only to applicants for the <b>ATPL theory, CPL or IR</b>. For a <b>LAPL or PPL</b>,
+    <span class="mono">FCL.025(b)(4)</span> imposes <b>no limit on the number of sittings</b>,
+    and the UK CAA removed the sittings cap from its GA exam procedures in December 2020.
+    You do not need to hold sittings in reserve. See <button class="lnk" data-go="rules">the Rules tab</button>
+    for the quoted regulation.
+  </div>
+
+  <div class="card">
+    <h2>Your two real deadlines</h2>
+    <div class="pad">
+      <div class="grid two" style="margin-bottom:12px">
+        <div>
+          <label class="f" for="d1">Date of your first exam attempt</label>
+          <input type="date" id="d1">
+          <p class="tiny" style="margin-top:5px">Starts the 18-month clock. Leave blank until you sit exam #1.</p>
+        </div>
+        <div>
+          <label class="f" for="d2">Date your 9th exam was passed</label>
+          <input type="date" id="d2">
+          <p class="tiny" style="margin-top:5px">Starts the 24-month licence-application clock.</p>
+        </div>
+      </div>
+      <div class="cd" id="cd"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Risk watch</h2>
+    <div class="pad" id="risks"></div>
+  </div>
+
+  <div class="card">
+    <h2>Suggested exam blocks</h2>
+    <div class="pad">
+      <p class="tiny" style="margin-bottom:12px">Because sittings are unlimited for a PPL, these
+      blocks are grouped for <b>study efficiency and flight-training order</b>, not to ration
+      sittings. Tick subjects off in the Subjects tab and the blocks update.</p>
+      <div id="blocks"></div>
+      <p class="tiny" style="margin-top:12px"><b>Why Operational Procedures last:</b> Pooleys note
+      that its material is common to the other subjects and recommend sitting it after working
+      through the other volumes.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Exam status</h2>
+    <div class="scroll"><table id="statusTable"></table></div>
+    <div class="pad tiny">Edit attempts, scores and pass dates per subject in the Subjects tab.</div>
+  </div>
+</section>
+
+<!-- ============ SUBJECTS ============ -->
+<section id="v-subjects" hidden>
+  <div class="card">
+    <div class="pad">
+      <div class="grid two">
+        <div>
+          <label class="f" for="filter">Show</label>
+          <select id="filter">
+            <option value="all">All learning objectives</option>
+            <option value="todo">Only unstudied</option>
+            <option value="done">Only studied</option>
+          </select>
+        </div>
+        <div>
+          <label class="f" for="sortSel">Order subjects by</label>
+          <select id="sortSel">
+            <option value="code">CAA subject number</option>
+            <option value="block">Suggested exam block</option>
+            <option value="progress">Least progress first</option>
+          </select>
+        </div>
+      </div>
+      <p class="tiny" style="margin-top:10px">Every item below is a learning objective taken
+      verbatim from the CAA’s own <span class="mono">CAP2090</span> learning-objective documents —
+      the syllabus your e-Exam questions are written against.
+      <span class="ctx" style="margin:0">CTX</span> marks an objective printed in the document but
+      not ticked in its PPL&nbsp;Aeroplane column.</p>
+    </div>
+  </div>
+  <div id="subjects"></div>
+</section>
+
+<!-- ============ RULES ============ -->
+<section id="v-rules" hidden>
+  <div class="note warn">
+    <b>Verified against the current rulebook</b>
+    Every rule below is quoted from the UK CAA’s consolidated
+    <span class="mono">UK Regulation (EU) No. 1178/2011 Annex I Part-FCL</span> rulebook whose page
+    footers are dated <b>July 2026</b>, or from CAA Standards Document 11. Nothing here is from
+    memory or a third-party study site.
+  </div>
+  <div class="card"><h2>The rules that bind you</h2><div class="pad" id="rules"></div></div>
+  <div class="card"><h2>Changes decided but not yet in force</h2><div class="pad" id="pending"></div></div>
+  <div class="card"><h2>Not published by the CAA</h2><div class="pad" id="unknowns"></div></div>
+</section>
+
+<!-- ============ BOOKS ============ -->
+<section id="v-books" hidden>
+  <div class="card">
+    <h2>Pooleys Air Pilot’s Manual → CAA exam</h2>
+    <div class="pad">
+      <p class="tiny" style="margin-bottom:12px">Volumes and editions confirmed on Pooleys’ own
+      product pages, September 2026. The PPL(A) set is volumes <b>1–4, 6 and 7</b>; volume 5
+      (Radio Navigation &amp; Instrument Flying) is not a PPL theory subject.</p>
+      <div class="scroll"><table id="booksTable"></table></div>
+      <div class="note" style="margin-top:14px">
+        <b>Worth having</b> Pooleys publish a free <i>PPL e-Exam Learning Objectives Guide</i>
+        that cross-references each CAA learning objective to the chapter that covers it — linked
+        from the Air Pilot’s Manual product pages.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOURCES ============ -->
+<section id="v-sources" hidden>
+  <div class="card">
+    <h2>Every source used</h2>
+    <div class="pad" id="sources"></div>
+  </div>
+  <div class="card">
+    <h2>How the syllabus data was produced</h2>
+    <div class="pad">
+      <p class="tiny">The nine <span class="mono">CAP2090</span> PDFs were downloaded from
+      caa.co.uk and parsed as tables. Each row’s PPL-Aeroplane tick column was read directly from
+      the PDF table cell, giving <b id="loCount">0</b> learning objectives of which
+      <b id="loTicked">0</b> are ticked for PPL(A). Those two counts were cross-checked against an
+      independent pass that classified tick marks by their x-coordinate on the page; both methods
+      agreed exactly. No objective text was paraphrased.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Your data</h2>
+    <div class="pad">
+      <p class="tiny" style="margin-bottom:10px">Progress is stored only in this browser’s
+      localStorage — it is never uploaded, so each device tracks separately. Export to move it.</p>
+      <div class="grid two">
+        <button class="iconbtn" id="expBtn" style="width:auto;height:36px;padding:0 12px">Export progress</button>
+        <button class="iconbtn" id="impBtn" style="width:auto;height:36px;padding:0 12px">Import progress</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Personal revision aid — not a CAA publication. Confirm anything that matters with your
+  ATO/DTO, Ground Examiner, or the CAA before acting on it.<br>
+  Built 10 September 2026.
+</footer>
+</div>
+
+<script src="data/syllabus.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

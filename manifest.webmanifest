@@ -1,0 +1,9 @@
+{
+  "name": "UK PPL(A) Theory",
+  "short_name": "PPL Theory",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0d1520",
+  "theme_color": "#0d1520",
+  "description": "Revision dashboard for the nine UK CAA PPL(A) theoretical knowledge exams."
+}
