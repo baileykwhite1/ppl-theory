@@ -7,6 +7,10 @@ that actually bind you.
 Static site — no build step, no dependencies, no backend. Designed mobile-first; add it to your
 home screen and it runs standalone.
 
+**It works offline.** A service worker pre-caches the whole app — articles, diagrams, questions,
+flashcards, 2,766 aerodromes and the coastlines — so it opens with no signal, which is the point
+at an airfield. Only the live weather needs a connection, and it fails quietly without one.
+
 ## How saving works — read this first
 
 **GitHub does not store your progress.** GitHub Pages only serves the files; it never receives
@@ -16,7 +20,9 @@ anything back. Progress is saved in `localStorage` in **the browser on the devic
   to switch, rename or add someone. Each profile keeps its own articles, objectives, exam record,
   quiz history and flashcard schedule.
 - **One person, multiple devices** — *not* synced. Your phone and your laptop keep two
-  independent sets of progress. Use Export and Import to move a profile between them.
+  independent sets of progress. Export writes one file with everything (progress, exam record,
+  flashcard scheduling, flight log and settings); import restores it elsewhere. That is also how
+  a second person uses the app: their own device, their own file.
 - Clearing site data, or using a private window, loses that browser's progress. Back up
   occasionally if it matters.
 
@@ -53,26 +59,33 @@ Real cross-device sync would need a backend — this repo deliberately has none.
 | **Quiz** | **385 questions.** All-subject mock (45, balanced 5 per subject), mixed practice, quick ten, or a 20-question mock in any single subject. Exam mode withholds feedback; practice mode explains as you go. Scored against the real 75% pass mark, with per-subject breakdown and mistake review |
 | **Cards** | **327 flashcards** on an SM-2 style spaced-repetition schedule — Again / Hard / Good / Easy, 20 new cards a day, filterable by subject |
 | **Exams** | The 18-month and 24-month clocks, a risk watch that reacts to your attempts and dates, and five selectable exam orderings (or your own) |
-| Profiles | Several people can share one device, each with completely separate progress |
+| **Profile** | A route map of everywhere you have flown, hours, landings, distance, time per registration and aircraft type, airfields visited, and your study record |
+| Flight log | Log flights with route, hours, landings and aircraft; tracks progress against the FCL.210.A experience requirements, including the qualifying cross-country |
 | Reference | Every rule quoted with its citation; what's decided but not yet in force; what the CAA doesn't publish; the Pooleys volume for each exam; and every source with a URL |
 
 ## Setup, airfield and weather
 
 First launch asks three things: your name, where you are in your training (which picks a
 sensible starting exam order), and your home airfield. Adding a second person runs the same
-flow. **215 UK aerodromes** are bundled from [OurAirports](https://ourairports.com/) (public
-domain) and searchable offline by ICAO code, name or town.
+flow. **2,766 aerodromes** — every UK `EG**` field and every US field with a four-letter ICAO code —
+are bundled from [OurAirports](https://ourairports.com/) (public domain) and searchable offline
+by code, name or town. The learning content remains UK CAA throughout; only the airfield data,
+weather and flight log are international.
 
 The Home screen carries a thin METAR-style strip — `EGLM 22010G20KT 9999 OVC016 17/13 Q1015` —
 with a flight-category chip, which doubles as decoding practice. Two honest caveats are built
 into the UI:
 
-- Without a **CheckWX API key** the figures come from the **Open-Meteo forecast model**, not an
-  observation, and are tagged `MODEL`. The official METAR feeds (aviationweather.gov, AVWX)
-  refuse browser requests from another origin, so a static site cannot reach them.
-- Add your own free CheckWX key in Sources & settings and the strip switches to the real METAR,
-  tagged `METAR`, with the official flight category. **The key is stored in your browser only** —
-  never committed, since anyone can read a key in a public repo.
+- A **CheckWX key ships with the app**, so real METARs work out of the box. It is a free tier
+  with a daily cap shared by everyone using this build. Anyone can read it in a public repo — if
+  the quota gets burned, put your own key in Sources & settings and it is used instead.
+- **Where your field issues no METAR** — as EGLM does not — the app asks CheckWX for the nearest
+  station that does, shows that instead, and says which one and how far away (EGLM falls back to
+  EGLL, 12 NM). Failing that it drops to an **Open-Meteo forecast model** estimate, tagged
+  `MODEL`, with the cloud base estimated from the temperature/dew-point spread.
+- aviationweather.gov and AVWX both refuse browser requests from another origin, so a static site
+  cannot use them. CheckWX sends `access-control-allow-origin: *` on a successful response, which
+  is why it is the one that works.
 
 Either way the app links out to the real sources: the club weather station (White Waltham's is
 built in), metar-taf.com, and the Met Office GA page. Nothing here is for flight planning.
@@ -177,7 +190,9 @@ index.html            shell, tab bar and all CSS
 app.js                profiles, router, views, quiz engine, SM-2 scheduler
 data/syllabus.js      551 CAA learning objectives (generated)
 data/diagrams.js      23 inline SVG diagrams, theme-aware
-data/airfields.js     215 UK aerodromes from OurAirports (generated)
+data/airfields.js     2,766 UK and US aerodromes from OurAirports (generated)
+data/coast.js         simplified coastlines for the flight-log map (generated)
+sw.js                 service worker: offline pre-cache of the whole app
 data/content/0NN.js   articles, quiz bank and flashcards, one file per subject
 tools/                syllabus generator
 ```

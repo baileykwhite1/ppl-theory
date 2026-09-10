@@ -178,7 +178,7 @@ const PKEY = 'ppl-profiles';
 const dataKey = id => 'ppl-v2:' + id;
 const blank = () => ({ lo: {}, subj: {}, read: {}, srs: {}, hist: [], d1: '', d2: '',
   newToday: {}, best: {}, stage: '', field: '', wx: '', planId: 'blocks', customOrder: null,
-  wrong: {}, seen: {} });
+  wrong: {}, seen: {}, flights: [] });
 
 let P;   // { list: [{id, name}], active: id, theme }
 let S;   // the active profile's progress
@@ -212,6 +212,7 @@ function migrate(old) {
   Object.assign(s.read, old.read || {}); Object.assign(s.srs, old.srs || {});
   Object.assign(s.newToday, old.newToday || {}); Object.assign(s.best, old.best || {});
   Object.assign(s.wrong, old.wrong || {}); Object.assign(s.seen, old.seen || {});
+  if (Array.isArray(old.flights)) s.flights = old.flights.slice();
   s.hist = old.hist || []; s.d1 = old.d1 || ''; s.d2 = old.d2 || '';
   // profile settings — these were silently dropped before, which lost the whole setup
   ['stage', 'field', 'wx', 'planId', 'learnSort'].forEach(k => { if (old[k]) s[k] = old[k]; });
@@ -267,11 +268,21 @@ function deleteProfile(id) {
 loadProfiles();
 loadState();
 
-const sub = c => (S.subj[c] = Object.assign({ st: 'none', att: 0, score: '', date: '' }, S.subj[c]));
+const sub = c => (S.subj[c] = Object.assign({ st: 'none', att: 0, score: '', date: '', booked: '' }, S.subj[c]));
 
 /* The 18- and 24-month clocks used to depend on two dates typed by hand, which meant the
    app's most important safety feature stayed silent for anyone who recorded pass dates
    per subject instead. Both are now derived from the exam record unless overridden. */
+
+/** Exams with a future booking, soonest first. */
+function upcoming() {
+  const t = today();
+  return SUBJECTS.map(x => ({ s: x, b: sub(x.code).booked }))
+    .filter(o => o.b && sub(o.s.code).st !== 'passed' &&
+                 new Date(o.b + 'T00:00:00').getTime() >= t)
+    .sort((a, b) => a.b.localeCompare(b.b));
+}
+const daysUntil = iso => daysTo(new Date(iso + 'T00:00:00'));
 
 /** Every pass date recorded against a subject, sorted. */
 function recordedDates() {
@@ -442,6 +453,30 @@ VIEWS.home = function () {
     </button></div>`);
   $('#tCards').onclick = () => tab('cards');
   $('#tQuiz').onclick = () => startQuiz({ codes: SUBJECTS.map(s => s.code), n: 10, mode: 'practice', title: 'Quick quiz' });
+
+  // --- what is booked next
+  const up = upcoming();
+  if (up.length) {
+    html('<h2 class="sec">Booked</h2><div class="grp">' + up.slice(0, 3).map(o => {
+      const n = daysUntil(o.b);
+      return `<button class="row" data-bk="${o.s.code}">
+        <div class="ic" style="--c:var(--${META[o.s.code].c})">${o.s.code}</div>
+        <div class="tx"><b>${esc(o.s.name)}</b><i>${fmt(new Date(o.b + 'T00:00:00'))} · ${pctLO(o.s)}% of the syllabus studied</i></div>
+        <span class="bdg ${n <= 3 ? 'r' : n <= 10 ? 'o' : 'b'}">${n === 0 ? 'today' : n === 1 ? 'tomorrow' : n + ' days'}</span>
+        <div class="chev">&#8250;</div></button>`;
+    }).join('') + '</div>');
+    bind('[data-bk]', e => go('subject', { code: e.currentTarget.dataset.bk, tab: 'ex' }));
+  }
+
+  // --- flying
+  const lg = logStats();
+  html(`<h2 class="sec">Flying</h2>
+    <button class="grp row" id="hLog">
+      <div class="ic" style="--c:var(--teal)">&#9992;</div>
+      <div class="tx"><b>Flight log</b><i>${lg.n ? lg.total.toFixed(1) + ' hours · ' + lg.n + ' flight' + (lg.n === 1 ? '' : 's') + ' · ' + lg.solo.toFixed(1) + ' solo'
+        : 'Log your hours and track them against the PPL requirements'}</i></div>
+      <div class="chev">&#8250;</div></button>`);
+  $('#hLog').onclick = () => go('log');
 
   // --- home airfield
   if (S.field || S.wx || CLUB_WX[S.field]) {
@@ -625,11 +660,14 @@ VIEWS.subject = function (p) {
         <select id="fAt">${[0, 1, 2, 3, 4].map(v => `<option value="${v}"${v === st.att ? ' selected' : ''}>${v} of 4</option>`).join('')}</select></div>
       <div class="fld"><label class="f">Score achieved</label><input type="number" id="fSc" min="0" max="100" placeholder="%" value="${st.score}"></div>
       <div class="fld"><label class="f">Date passed</label><input type="date" id="fDt" value="${st.date}"></div>
+      <div class="fld"><label class="f">Booked for</label><input type="date" id="fBk" value="${st.booked || ''}">
+        <div class="tiny" style="margin-top:5px">Shows a countdown on Home and the Exams tab.</div></div>
     </div>`);
     $('#fSt').onchange = e => { st.st = e.target.value; save(); };
     $('#fAt').onchange = e => { st.att = +e.target.value; save(); render(); };
     $('#fSc').oninput = e => { st.score = e.target.value; save(); };
     $('#fDt').onchange = e => { st.date = e.target.value; save(); };
+    $('#fBk').onchange = e => { st.booked = e.target.value; save(); };
 
     if (st.att >= 3 && st.st !== 'passed')
       html(`<div class="note r" style="margin-top:12px"><b>Three attempts used</b>
@@ -1144,6 +1182,20 @@ VIEWS.plan = function () {
 
   bind('[data-info]', e => { e.stopPropagation(); go('clockinfo', { id: e.currentTarget.dataset.info }); });
 
+  // --- booked
+  const upc = upcoming();
+  if (upc.length) {
+    html('<h2 class="sec">Booked</h2><div class="grp">' + upc.map(o => {
+      const n = daysUntil(o.b);
+      return `<button class="row" data-bk2="${o.s.code}">
+        <div class="ic" style="--c:var(--${META[o.s.code].c})">${o.s.code}</div>
+        <div class="tx"><b>${esc(o.s.name)}</b><i>${fmt(new Date(o.b + 'T00:00:00'))} · ${sub(o.s.code).att} of 4 attempts used</i></div>
+        <span class="bdg ${n <= 3 ? 'r' : n <= 10 ? 'o' : 'b'}">${n === 0 ? 'today' : n === 1 ? 'tomorrow' : n + ' days'}</span>
+        <div class="chev">&#8250;</div></button>`;
+    }).join('') + '</div>');
+    bind('[data-bk2]', e => go('subject', { code: e.currentTarget.dataset.bk2, tab: 'ex' }));
+  }
+
   // --- risk watch
   html('<h2 class="sec">Risk watch</h2>');
   risks().forEach(r => html(`<div class="note ${r[0]}"><b>${esc(r[1])}</b>${r[2]}</div>`));
@@ -1240,6 +1292,16 @@ function risks() {
     'All nine are marked passed but no pass date is recorded against them, so the 24-month clock '
     + 'is not being tracked. Add the date to any subject on the Exams list, or type it above.']);
 
+  upcoming().forEach(o => {
+    const n = daysUntil(o.b), pc = pctLO(o.s), best = S.best[o.s.code];
+    if (n <= 14 && (pc < 80 || (best != null && best < PASS_MARK))) {
+      out.push(['o', o.s.name + ' in ' + (n === 0 ? 'less than a day' : n + ' day' + (n === 1 ? '' : 's')),
+        pc < 80 ? 'Only ' + pc + '% of the objectives are ticked'
+                : 'Your best mock is ' + best + '%, below the 75% pass mark'
+        + '. Sittings are not rationed for a PPL — moving the booking costs you nothing but the fee.']);
+    }
+  });
+
   if (!out.length) out.push(['g', 'Nothing flagged', 'No attempt or deadline risks detected.']);
   return out;
 }
@@ -1259,6 +1321,9 @@ function clubWx(code) {
 }
 
 const AF = () => window.AIRFIELDS || [];
+/** Split a comma or space separated list into known ICAO codes. */
+const codesOf = v => (v || '').toUpperCase().split(/[,\s]+/).map(x => x.trim())
+  .filter(x => x.length === 4 && afByCode(x));
 const afByCode = c => AF().find(a => a[0] === c);
 
 /** Up to `n` airfields matching a code prefix, or a word in the name or town. */
@@ -1274,17 +1339,23 @@ function afSearch(q, n) {
 }
 
 /** Wire an ICAO input to a suggestion list and a resolved-name line. */
-function wireAirfield(inputSel, listSel, foundSel, onPick) {
+function wireAirfield(inputSel, listSel, foundSel, onPick, multi) {
   const inp = $(inputSel), list = $(listSel), found = $(foundSel);
   if (!inp || !list || !found) return;
+  // for a via field, only the segment after the last comma is being typed
+  const head = () => multi ? inp.value.slice(0, inp.value.lastIndexOf(',') + 1) : '';
+  const tail = () => (multi ? inp.value.slice(inp.value.lastIndexOf(',') + 1) : inp.value).trim();
   let lastExact = '';
   const paint = () => {
-    const v = inp.value.trim().toUpperCase();
+    const v = tail().toUpperCase();
     const exact = v.length === 4 ? afByCode(v) : null;
     // typing a code in full counts as picking it, so callers still get their callback
     if (exact && exact[0] !== lastExact) { lastExact = exact[0]; if (onPick) onPick(exact); }
     if (!exact) lastExact = '';
-    found.innerHTML = exact ? esc(exact[1]) + (exact[2] ? '<i>' + esc(exact[2]) + '</i>' : '') : '';
+    found.innerHTML = exact
+      ? (multi ? codesOf(inp.value).map(c => (afByCode(c) || [c, c])[1]).join(' → ')
+               : esc(exact[1]) + (exact[2] ? '<i>' + esc(exact[2]) + '</i>' : ''))
+      : '';
     found.style.display = exact ? 'block' : 'none';
     const hits = exact ? [] : afSearch(v, 6);
     list.innerHTML = hits.map(a => '<button data-af="' + a[0] + '"><span class="cd">' + a[0] +
@@ -1292,15 +1363,17 @@ function wireAirfield(inputSel, listSel, foundSel, onPick) {
       '</span></button>').join('');
     list.style.display = hits.length ? 'block' : 'none';
     list.querySelectorAll('[data-af]').forEach(b => b.onclick = () => {
-      inp.value = b.dataset.af;
+      inp.value = multi ? (head() + (head() ? ' ' : '') + b.dataset.af) : b.dataset.af;
       const row = afByCode(b.dataset.af);
       if (onPick && row) onPick(row);
+      inp.dispatchEvent(new Event('input'));
       paint();
     });
   };
   // Allow a longer string so places can be searched by name, not just by code.
   inp.addEventListener('input', () => {
-    inp.value = inp.value.toUpperCase().replace(/[^A-Z0-9 '-]/g, '').slice(0, 28);
+    const ok = multi ? /[^A-Z0-9 ,'-]/g : /[^A-Z0-9 '-]/g;
+    inp.value = inp.value.toUpperCase().replace(ok, '').slice(0, multi ? 60 : 28);
     paint();
   });
   paint();
@@ -1313,6 +1386,13 @@ function wireAirfield(inputSel, listSel, foundSel, onPick) {
    labelled as a model estimate, and the UI says plainly that it is not for flight
    planning. The ceiling is estimated from the temperature/dew-point spread, the same
    rule of thumb taught in the Meteorology articles. */
+
+/* A CheckWX key ships with the app at the owner's explicit request: it is a free tier with a
+   daily cap, shared with friends and family. Anyone can read it in a public repo, so if the
+   quota gets burned, clear it in Sources & settings and use your own. A key entered there
+   always wins over this one. */
+const DEFAULT_CW_KEY = '7875a97109c94fac9d12bb1461470397';
+const cwKey = () => (P.cwKey || DEFAULT_CW_KEY);
 
 const WX_TTL = 20 * 60 * 1000;
 let WX = { state: 'idle', data: null, code: '' };
@@ -1378,8 +1458,7 @@ function metarString(d, code) {
   bits.push(pad(dir10, 3) + pad(d.wspd, 2) + (d.gust ? 'G' + pad(d.gust, 2) : '') + 'KT');
   bits.push(visGroup(d.visM));
   const cc = cloudCode(d.lowCloud);
-  if (cc === 'NCD' || cc == null) bits.push('NCD');
-  else bits.push(cc + pad(Math.round(d.ceilFt / 100), 3));
+  bits.push((cc === 'NCD' || cc == null) ? 'NCD' : cc + pad(Math.round(d.ceilFt / 100), 3));
   if (d.temp != null && d.dew != null) bits.push(tGroup(d.temp) + '/' + tGroup(d.dew));
   if (d.qnh) bits.push('Q' + pad(d.qnh, 4));
   return bits.filter(Boolean).join(' ');
@@ -1392,10 +1471,14 @@ function metarDecode(d) {
     'from ' + pad(Math.round(d.wdir / 10) * 10 % 360 || 360, 3) + '° true at ' + d.wspd + ' kt' +
     (d.gust ? ', gusting ' + d.gust + ' kt' : '')]);
   out.push(['Visibility', d.visM >= 9999 ? '10 km or more' : visLabel(d.visM)]);
-  const cc = cloudCode(d.lowCloud);
-  out.push(['Cloud', (cc === 'NCD' || cc == null) ? 'no significant cloud detected'
-    : ({ FEW: 'few (1–2 oktas)', SCT: 'scattered (3–4)', BKN: 'broken (5–7)', OVC: 'overcast (8)' }[cc]) +
-      ' at about ' + (Math.round(d.ceilFt / 100) * 100) + ' ft']);
+  const NAMES = { FEW: 'few (1–2 oktas)', SCT: 'scattered (3–4)', BKN: 'broken (5–7)', OVC: 'overcast (8)' };
+  if (d.source === 'metar') {
+    out.push(['Cloud', d.clouds || d.cloudGroup || 'no significant cloud reported']);
+  } else {
+    const cc = cloudCode(d.lowCloud);
+    out.push(['Cloud', (cc === 'NCD' || cc == null) ? 'no significant cloud detected'
+      : NAMES[cc] + ' at about ' + (Math.round(d.ceilFt / 100) * 100) + ' ft']);
+  }
   if (d.temp != null) out.push(['Temperature / dew point', d.temp + '°C / ' + d.dew + '°C' +
     (d.spread != null ? ' — spread ' + d.spread.toFixed(1) + '°C' : '')]);
   if (d.qnh) out.push(['QNH', d.qnh + ' hPa']);
@@ -1405,20 +1488,28 @@ function metarDecode(d) {
 /** Parse a CheckWX decoded METAR into the same shape as the model estimate. */
 function wxFromMetar(m) {
   const w = m.wind || {}, v = m.visibility || {}, c = (m.clouds || []);
-  const ceilLayer = c.find(x => x.code === 'BKN' || x.code === 'OVC');
+  // CheckWX reports layer height as `feet`; there is also a top-level ceiling object
+  const ft = x => x ? (x.feet != null ? x.feet : x.base_feet_agl) : null;
+  const ceilLayer = m.ceiling || c.find(x => x.code === 'BKN' || x.code === 'OVC');
   const cat = (m.flight_category || '').toUpperCase();
   const col = cat === 'VFR' ? 'green' : cat === 'MVFR' ? 'orange' : cat ? 'red' : 'blue';
+  // the reported layers, so the card can show the real group rather than guessing from cover
+  const layer = ceilLayer || c.find(x => ft(x) != null) || null;
   return {
     source: 'metar', raw: m.raw_text || '', observed: m.observed || '',
-    visM: v.meters_float != null ? Math.round(v.meters_float) : (v.meters ? parseInt(v.meters, 10) : 20000),
-    ceilFt: ceilLayer && ceilLayer.base_feet_agl != null ? ceilLayer.base_feet_agl : 99999,
-    lowCloud: c.length ? null : 0, spread: null,
+    visM: v.meters != null ? Math.round(parseFloat(v.meters)) : 20000,
+    ceilFt: ft(ceilLayer) != null ? ft(ceilLayer) : 99999,
+    cloudGroup: layer && ft(layer) != null
+      ? (layer.code || '') + pad(Math.round(ft(layer) / 100), 3)
+      : (c.length ? (c[0].code || 'NSC') : 'NCD'),
+    qnh: m.barometer ? Math.round(m.barometer.hpa != null ? m.barometer.hpa : m.barometer.mb) : null,
+    lowCloud: null, spread: null,
     wdir: w.degrees == null ? 0 : Math.round(w.degrees),
     wspd: w.speed_kts == null ? 0 : Math.round(w.speed_kts),
     gust: w.gust_kts == null ? null : Math.round(w.gust_kts),
     temp: m.temperature && m.temperature.celsius != null ? Math.round(m.temperature.celsius) : null,
     dew: m.dewpoint && m.dewpoint.celsius != null ? Math.round(m.dewpoint.celsius) : null,
-    clouds: c.map(x => (x.code || '') + (x.base_feet_agl != null ? ' ' + x.base_feet_agl + ' ft' : '')).join(', '),
+    clouds: c.map(x => (x.text || x.code || '') + (ft(x) != null ? ' at ' + ft(x) + ' ft' : '')).join(', '),
     cat: cat || 'METAR', col: col
   };
 }
@@ -1458,16 +1549,34 @@ function wxLoad(code, done) {
     }).catch(() => fail(note));
   };
 
-  // Real observation first, if a CheckWX key has been added on this device.
-  if (P.cwKey) {
-    fetch('https://api.checkwx.com/metar/' + encodeURIComponent(code) + '/decoded',
-      { headers: { 'X-API-Key': P.cwKey } })
+  // A real observation first: this field, then the nearest field that does report,
+  // then the forecast model. Small GA strips almost never publish a METAR.
+  const key = cwKey();
+  if (key) {
+    const hdr = { headers: { 'X-API-Key': key } };
+    const one = j => (j && j.data && j.data.length && typeof j.data[0] === 'object') ? j.data[0] : null;
+
+    fetch('https://api.checkwx.com/metar/' + encodeURIComponent(code) + '/decoded', hdr)
       .then(r => r.json())
       .then(j => {
-        if (j && j.data && j.data.length && typeof j.data[0] === 'object') settle(wxFromMetar(j.data[0]));
-        else model(code + ' does not publish a METAR, so this is model data.');
+        const m = one(j);
+        if (m) return settle(wxFromMetar(m));
+        // nothing here — ask for the closest reporting station instead
+        return fetch('https://api.checkwx.com/metar/lat/' + af[3] + '/lon/' + af[4] +
+                     '/radius/60/decoded', hdr)
+          .then(r2 => r2.json())
+          .then(j2 => {
+            const near = one(j2);
+            if (!near) return model(code + ' publishes no METAR and none was found nearby.');
+            const d = wxFromMetar(near);
+            const st = afByCode((near.icao || '').toUpperCase());
+            d.nearest = (near.icao || '').toUpperCase();
+            d.nearestName = (near.station && near.station.name) || (st && st[1]) || '';
+            d.nearestNM = st ? Math.round(haversineNM([af[3], af[4]], [st[3], st[4]])) : null;
+            settle(d);
+          });
       })
-      .catch(() => model('CheckWX could not be reached from the browser, so this is model data.'));
+      .catch(() => model('The weather service could not be reached, so this is model data.'));
     return;
   }
   model('');
@@ -1497,12 +1606,15 @@ function wxStrip() {
   const d = WX.data;
   const dir10 = pad(Math.round(d.wdir / 10) * 10 % 360 || (d.wspd ? 360 : 0), 3);
   const cc = cloudCode(d.lowCloud);
-  const cloudTxt = (cc === 'NCD' || cc == null) ? 'NCD' : cc + pad(Math.round(d.ceilFt / 100), 3);
+  const cloudTxt = d.cloudGroup || ((cc === 'NCD' || cc == null) ? 'NCD' : cc + pad(Math.round(d.ceilFt / 100), 3));
   const stat = (k, v) => `<div class="wxst"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const shown = d.nearest || code;
   return `<button class="wxcard" id="wxb">
     <div class="wxtop">
-      <span class="wxid">${esc(code)}</span>
-      <span class="wxplace">${esc(place)}</span>
+      <span class="wxid">${esc(shown)}</span>
+      <span class="wxplace">${d.nearest
+        ? esc(d.nearestNM != null ? d.nearestNM + ' NM from ' + code : 'nearest to ' + code)
+        : esc(place)}</span>
       <span class="wxcat" style="--c:var(--${d.col})">${esc(d.cat)}</span>
     </div>
     <div class="wxraw">${esc(metarString(d, '').trim())}</div>
@@ -1512,8 +1624,11 @@ function wxStrip() {
       ${stat('Cloud', cloudTxt)}
       ${stat('QNH', d.qnh || '—')}
     </div>
-    <div class="wxfoot"><span class="wxsrc">${d.source === 'metar' ? 'METAR' : 'MODEL'}</span>
-      <span>${d.source === 'metar' ? 'Official observation' : 'Forecast model — not an observation'}</span>
+    <div class="wxfoot"><span class="wxsrc">${d.source === 'metar' ? (d.nearest ? 'NEAREST' : 'METAR') : 'MODEL'}</span>
+      <span>${d.source === 'metar'
+        ? (d.nearest ? esc(d.nearestName || d.nearest) + ' — ' + esc(code) + ' issues none'
+                     : 'Official observation')
+        : 'Forecast model — not an observation'}</span>
       <span class="wxgo">&#8250;</span></div>
   </button>`;
 }
@@ -1548,17 +1663,21 @@ VIEWS.wx = function () {
       in the Meteorology articles — and only counted as a ceiling when low cloud is 50% or more.</div>`);
   }
 
-  if (d && d.source === 'metar') {
+  if (d && d.source === 'metar' && d.nearest) {
+    html(`<div class="note o" style="margin-top:12px"><b>This is ${esc(d.nearest)}, not ${esc(code)}</b>
+      ${esc(code)} issues no METAR, so this is the nearest station that does${
+        d.nearestNM != null ? ' — ' + esc(d.nearestName || d.nearest) + ', about ' + d.nearestNM + ' NM away' : ''}.
+      Useful for the general picture, but conditions at your field can differ, especially
+      visibility and cloud base. Check the club's own weather before you fly.</div>`);
+  } else if (d && d.source === 'metar') {
     html(`<div class="note o" style="margin-top:12px"><b>A real observation, but still check it yourself</b>
-      This is the published METAR for ${esc(code)} via CheckWX${d.observed ? ', observed ' + esc(String(d.observed).replace('T', ' ').slice(0, 16)) + 'Z' : ''}.
-      It can still be stale or unrepresentative of conditions on your route. Never treat one number
-      as a go/no-go decision.</div>`);
+      The published METAR for ${esc(code)}${d.observed ? ', observed ' + esc(String(d.observed).replace('T', ' ').slice(0, 16)) + 'Z' : ''}.
+      It can be stale or unrepresentative of your route. Never treat one number as a go/no-go
+      decision.</div>`);
   } else {
     html(`<div class="note r" style="margin-top:12px"><b>Not for flight planning</b>
       This is <b>Open-Meteo forecast model</b> output, not a METAR.${d && d.note ? ' ' + esc(d.note) : ''}
-      Add a free CheckWX key in Sources &amp; settings to get the real observation where the field
-      publishes one. Treat this as a rough look out of the window and use the links below before
-      you fly.</div>`);
+      Treat it as a rough look out of the window and use the links below before you fly.</div>`);
   }
 
   const links = [];
@@ -2203,13 +2322,12 @@ VIEWS.sources = function () {
       <label class="f" for="cwKey">CheckWX API key (optional)</label>
       <input type="text" id="cwKey" autocomplete="off" spellcheck="false" placeholder="Paste your own key"
         value="${esc(P.cwKey || '')}" class="ti" style="font-size:14px;font-family:ui-monospace,Menlo,monospace">
-      <div class="tiny" style="margin-top:9px">Without a key the app shows an <b>Open-Meteo forecast
-        model</b> estimate. With one it shows the <b>real METAR</b> and its official flight category,
-        where the field publishes one.
+      <div class="tiny" style="margin-top:9px">A shared key ships with the app, so real METARs work
+        out of the box. It is a free tier with a daily cap across everyone using it — if it runs out,
+        put your own key here and it will be used instead.
         <a href="https://www.checkwxapi.com" target="_blank" rel="noopener">Free keys at checkwxapi.com</a>.</div>
-      <div class="tiny" style="margin-top:8px;color:var(--orange)"><b>Your key stays on this device.</b>
-        It is saved in this browser only, never committed to the repository, and sent nowhere but
-        CheckWX. Anyone who can read a public repo can read a key committed into it — so keep it here.</div>
+      <div class="tiny" style="margin-top:8px">Where your field issues no METAR, the app falls back to
+        the nearest station that does, and says which one. Failing that, a forecast model.</div>
       <div class="brow" style="margin-top:12px">
         <button class="btn sec sm" id="cwSave">Save key</button>
         <button class="btn grey sm" id="cwClear">Remove</button></div>
@@ -2240,9 +2358,7 @@ VIEWS.sources = function () {
     ${P.list.length > 1 ? `<button class="btn sec sm" style="margin-top:10px" id="expAll">Back up all ${P.list.length} profiles</button>` : ''}
     <button class="btn dgr sm" style="margin-top:10px" id="wipe">Erase this profile’s progress</button>`);
 
-  $('#exp').onclick = () => download(
-    { app: 'ppl-theory', kind: 'profile', name: activeName(), exported: new Date().toISOString(), data: (flush(), S) },
-    'ppl-' + slug(activeName()) + '.json');
+  $('#exp').onclick = exportProfile;
 
   if ($('#expAll')) $('#expAll').onclick = () => {
     flush();
@@ -2313,7 +2429,7 @@ function pickImportFile() {
       } else {
         const d = j.data ? j.data : j;
         IMPORTING = looksLikeProgress(d)
-          ? { kind: 'profile', name: j.name || 'Imported', data: d, exported: j.exported }
+          ? { kind: 'profile', name: j.name || 'Imported', data: d, exported: j.exported, settings: j.settings }
           : { kind: 'error', msg: 'That file is valid JSON but does not contain PPL Theory progress. Export a profile from this app to see the expected format.' };
       }
       go('importfile');
@@ -2432,17 +2548,9 @@ VIEWS.welcome = function () {
     <div id="wList" class="aclist" style="display:none"></div>
     <div id="wIcaoErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
   </div>
-  <div class="card" style="margin-top:12px">
-    <label class="f" for="wKey">Weather API key (optional)</label>
-    <input type="text" id="wKey" autocomplete="off" spellcheck="false"
-      placeholder="Paste a CheckWX key" value="${esc(P.cwKey || '')}" class="ti"
-      style="font-size:14px;font-family:ui-monospace,Menlo,monospace">
-    <div class="tiny" style="margin-top:9px">Without one, Home shows a forecast-model estimate.
-      With one it shows the <b>real METAR</b> and its official flight category, where your field
-      publishes one. Free keys at
-      <a href="https://www.checkwxapi.com" target="_blank" rel="noopener">checkwxapi.com</a> —
-      the key is saved on this device only.</div>
-  </div>
+  <div class="note b" style="margin-top:12px"><b>Conditions come with it</b>
+    Home will show the METAR for your field, or the nearest station that issues one — most small
+    GA strips do not. No setup needed.</div>
   <button class="btn" style="margin-top:14px" id="s3done">Start studying</button>
   <button class="btn grey" style="margin-top:10px" id="s3back">Back</button>`);
 
@@ -2458,8 +2566,6 @@ VIEWS.welcome = function () {
       $('#wIcaoErr').textContent = 'Pick an airfield from the list, or clear the box to skip.';
       $('#wIcaoErr').style.display = 'block'; return;
     }
-    const key = $('#wKey').value.trim();
-    if (key !== (P.cwKey || '')) { P.cwKey = key; saveProfiles(); }
     const data = blank();
     data.stage = SETUP.stage; data.field = v; data.wx = '';
     data.planId = suggestPlan(SETUP.stage);
@@ -2580,29 +2686,37 @@ VIEWS.importfile = function () {
         ${t.lo} objective${t.lo === 1 ? '' : 's'} ticked · ${t.srs} card${t.srs === 1 ? '' : 's'} scheduled</i></div></div></div>`);
 
   const first = needsSetup();
-  html(`<h2 class="sec">${first ? 'Ready to go' : 'Bring it in as'}</h2>
-    <button class="btn" id="asNew">${first ? 'Use this progress'
-      : 'A new profile' + (clash ? ' (name will be numbered)' : ': ' + esc(IMPORTING.name))}</button>
-    <div class="note b" style="margin-top:10px">${first
-      ? 'This becomes your profile on this device. You can rename it or add other people afterwards.'
-      : 'Nothing already on this device is touched. Use this to move a profile from another phone or laptop, or to restore a backup alongside what you have.'}</div>
-
-    ${first ? '' : `<button class="btn dgr" style="margin-top:18px" id="asOver">Overwrite ${esc(activeName())}</button>
-    <div class="note r" style="margin-top:10px">Replaces ${esc(activeName())}’s articles, objectives,
-    exam record, quiz history and flashcard schedule. Cannot be undone.</div>`}
-
+  html(`<h2 class="sec">${first ? 'Ready to go' : 'Restore this'}</h2>
+    <button class="btn ${first ? '' : 'dgr'}" id="asNew">${first ? 'Use this' : 'Replace what is on this device'}</button>
+    <div class="note ${first ? 'b' : 'r'}" style="margin-top:10px">${first
+      ? 'This becomes your record on this device — progress, exam record, flashcards, flight log and settings.'
+      : 'Everything currently here is replaced: progress, exam record, flashcards, flight log and settings. Export first if you might want it back.'}</div>
     <button class="btn grey" style="margin-top:18px" id="cancelImp">Cancel</button>`);
 
-  $('#asNew').onclick = () => { const d = IMPORTING.data, n = IMPORTING.name; IMPORTING = null; addProfile(n, d); };
-  if ($('#asOver')) $('#asOver').onclick = () => {
-    const who = IMPORTING.name;
-    askConfirm({ title: 'Overwrite ' + activeName() + '?',
-      body: activeName() + '\u2019s articles, objectives, exam record, quiz history and flashcards ' +
-        'will be replaced by ' + who + '\u2019s. This cannot be undone.',
-      yes: 'Overwrite', danger: true }, () => {
-      S = migrate(IMPORTING.data); flush(); IMPORTING = null; tab('home');
-      alertish('Imported ' + who + '\u2019s progress.');
-    });
+  $('#asNew').onclick = () => {
+    const imp = IMPORTING;
+    const apply = () => {
+      // settings travel with the file so a new device comes up configured
+      if (imp.settings) {
+        if (imp.settings.theme != null) P.theme = imp.settings.theme;
+        if (imp.settings.cwKey) P.cwKey = imp.settings.cwKey;
+      }
+      if (needsSetup()) { IMPORTING = null; addProfile(imp.name, imp.data); }
+      else {
+        const pr = P.list.find(x => x.id === P.active);
+        if (pr && imp.name) pr.name = imp.name;
+        saveProfiles();
+        S = migrate(imp.data); flush(); IMPORTING = null; tab('home');
+      }
+      if (P.theme) document.documentElement.dataset.t = P.theme;
+      else document.documentElement.removeAttribute('data-t');
+      alertish('Restored ' + imp.name + '.');
+    };
+    if (needsSetup()) apply();
+    else askConfirm({ title: 'Replace everything on this device?',
+      body: 'Your current progress, exam record, flashcards, flight log and settings are '
+        + 'overwritten by ' + imp.name + '\u2019s. This cannot be undone.',
+      yes: 'Replace', danger: true }, apply);
   };
   $('#cancelImp').onclick = () => { IMPORTING = null; back(); };
 };
@@ -2610,67 +2724,407 @@ VIEWS.importfile = function () {
 /* ============================ PROFILES ============================ */
 
 VIEWS.profiles = function () {
-  navbar('Profiles', '');
-  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">Who is studying?</h1>
-    <div class="sub">Each profile keeps its own articles, objectives, exam record, quiz history
-    and flashcard schedule. Everything is stored in this browser on this device.</div></div>`);
+  navbar('Profile', '');
+  const t = summarise(S);
+  const st = logStats();
+  const F = (S.flights || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
-  html('<div class="grp">' + P.list.map(pr => {
-    const d = readJSON(dataKey(pr.id), {});
-    const nLO = Object.keys(d.lo || {}).length;
-    const nRead = Object.keys(d.read || {}).length;
-    const nPass = Object.values(d.subj || {}).filter(v => v.st === 'passed').length;
-    const on = pr.id === P.active;
-    return `<button class="row" data-pick="${pr.id}">
-      <div class="ic" style="--c:var(--${on ? 'blue' : 'tx3'})">${esc(initials(pr.name))}</div>
-      <div class="tx"><b>${esc(pr.name)}</b><i>${nPass}/9 exams · ${nRead} article${nRead === 1 ? '' : 's'} · ${nLO} objective${nLO === 1 ? '' : 's'}</i></div>
-      ${on ? '<span class="bdg b">Active</span>' : ''}
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">${esc(activeName())}</h1>
+    <div class="sub">${S.stage ? esc(stageLabel(S.stage)) : 'Stage not set'}${
+      S.field ? ' · based at ' + esc(S.field) : ''}</div></div>`);
+
+  // --- the map, or a prompt to make one
+  if (F.length) {
+    html(`<div class="mapwrap" style="margin-top:14px">${routeMap(F, S.field, 320)}</div>`);
+  } else if (S.field && afByCode(S.field)) {
+    html(`<div class="mapwrap" style="margin-top:14px">${routeMap([], S.field, 220)}</div>
+      <div class="tiny" style="margin:8px 0 0 4px">Log a flight and the routes appear here.</div>`);
+  }
+
+  html(`<div class="big2" style="margin-top:12px">
+    <div class="s"><div class="v">${st.total.toFixed(1)}</div><div class="l">Hours</div></div>
+    <div class="s"><div class="v">${st.n}</div><div class="l">Flights</div></div>
+    <div class="s"><div class="v">${st.nFields}</div><div class="l">Airfields</div></div>
+  </div>
+  <div class="big2" style="margin-top:10px">
+    <div class="s"><div class="v">${st.solo.toFixed(1)}</div><div class="l">Solo</div></div>
+    <div class="s"><div class="v">${st.ldg}</div><div class="l">Landings</div></div>
+    <div class="s"><div class="v">${st.nm.toLocaleString('en-GB')}</div><div class="l">NM flown</div></div>
+  </div>`);
+
+  // --- time by aircraft
+  const regs = Object.entries(st.regs).sort((a, b) => b[1].h - a[1].h);
+  if (regs.length) {
+    const max = regs[0][1].h || 1;
+    html('<h2 class="sec">Time in type</h2><div class="grp">' + regs.map(([reg, r]) => `
+      <div class="row">
+        <div class="ic" style="--c:var(--teal)">&#9992;</div>
+        <div class="tx"><b>${esc(reg)}</b><i>${esc(r.type || 'Type not recorded')} · ${r.n} flight${r.n === 1 ? '' : 's'}</i>
+          <div class="pbar" style="margin-top:7px"><i style="width:${Math.round(r.h / max * 100)}%;background:var(--teal)"></i></div></div>
+        <span class="hrs">${r.h.toFixed(1)}<small>hours</small></span>
+      </div>`).join('') + '</div>');
+  }
+
+  // --- airfields
+  const flds = Object.entries(st.fields).sort((a, b) => b[1] - a[1]);
+  if (flds.length) {
+    html('<h2 class="sec">Airfields visited</h2><div class="grp">' + flds.slice(0, 8).map(([c, k]) => {
+      const a = afByCode(c);
+      return `<div class="row"><div class="ic wide" style="--c:var(--${c === S.field ? 'orange' : 'blue'})">${esc(c)}</div>
+        <div class="tx"><b>${esc(a ? a[1] : c)}</b><i>${esc(a && a[2] ? a[2] : '')}</i></div>
+        <div class="val">${k} visit${k === 1 ? '' : 's'}</div></div>`;
+    }).join('') + '</div>');
+    if (st.longest && routeNM(st.longest) >= 1) html(`<div class="tiny" style="margin:8px 0 0 4px">
+      Longest route: ${esc(legs(st.longest).join(' → '))} — ${Math.round(routeNM(st.longest))} NM.</div>`);
+  }
+
+  html(`<h2 class="sec">Study record</h2><div class="grp">
+    <div class="row"><div class="tx"><b>Exams passed</b></div><div class="val">${t.pass} of 9</div></div>
+    <div class="row"><div class="tx"><b>Articles read</b></div><div class="val">${t.read} of 37</div></div>
+    <div class="row"><div class="tx"><b>Objectives studied</b></div><div class="val">${t.lo} of 551</div></div>
+    <div class="row"><div class="tx"><b>Flashcards started</b></div><div class="val">${t.srs} of 327</div></div>
+    <div class="row"><div class="tx"><b>Quiz attempts</b></div><div class="val">${(S.hist || []).length}</div></div>
+    <div class="row"><div class="tx"><b>Questions still wrong</b></div><div class="val">${Object.keys(S.wrong || {}).length}</div></div>
+  </div>`);
+
+  html(`<h2 class="sec">Details</h2><div class="grp">
+    <button class="row" id="pLog"><div class="ic" style="--c:var(--teal)">&#9992;</div>
+      <div class="tx"><b>Flight log</b></div><div class="val">${st.n} flight${st.n === 1 ? '' : 's'}</div><div class="chev">&#8250;</div></button>
+    <button class="row" id="pRen"><div class="tx"><b>Name</b></div>
+      <div class="val">${esc(activeName())}</div><div class="chev">&#8250;</div></button>
+    <button class="row" id="pTrn"><div class="tx"><b>Training and airfield</b></div>
+      <div class="val">${S.field ? esc(S.field) : 'Not set'}</div><div class="chev">&#8250;</div></button>
+  </div>`);
+  $('#pLog').onclick = () => go('log');
+  $('#pRen').onclick = () => go('nameentry', { mode: 'rename', id: P.active });
+  $('#pTrn').onclick = () => go('training');
+
+  html(`<h2 class="sec">Move to another device</h2>
+    <div class="note b">Everything lives in this browser. Export writes one file with your progress,
+    exam record, flashcard scheduling, flight log and settings; import restores it elsewhere. That
+    is also how someone else uses the app — their own device, their own file.</div>
+    <div class="brow" style="margin-top:12px">
+      <button class="btn sec" id="pExp">Export everything</button>
+      <button class="btn sec" id="pImp">Import</button></div>
+    <button class="btn dgr sm" style="margin-top:12px" id="pWipe">Start again</button>`);
+  $('#pExp').onclick = exportProfile;
+  $('#pImp').onclick = pickImportFile;
+  $('#pWipe').onclick = () => askConfirm({
+    title: 'Start again?',
+    body: 'Everything is erased — progress, exam record, flashcards, flight log and settings — and '
+      + 'you go back to setup. Export first if you might want any of it.',
+    yes: 'Erase and start again', danger: true
+  }, () => { deleteProfile(P.active); SETUP = null; stack = [{ v: 'welcome' }]; render(); });
+};
+
+/** One file with the lot. */
+function exportProfile() {
+  flush();
+  download({ app: 'ppl-theory', kind: 'profile', name: activeName(),
+             exported: new Date().toISOString(), settings: { theme: P.theme, cwKey: P.cwKey || '' },
+             data: S },
+    'ppl-' + slug(activeName()) + '.json');
+}
+
+/* ============================ FLIGHT LOG ============================ */
+/* A simple logbook, plus the thing that makes it worth keeping here: progress
+   against the PPL(A) experience requirements in FCL.210.A, which the app already
+   quotes. Distances come from the bundled airfield coordinates. */
+
+const NM_PER_KM = 0.539957;
+function haversineNM(a, b) {
+  const R = 3440.065, r = Math.PI / 180;
+  const dLat = (b[0] - a[0]) * r, dLon = (b[1] - a[1]) * r;
+  const h = Math.sin(dLat / 2) ** 2 +
+    Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+/** ICAO codes of a flight, in order, ignoring anything we do not know. */
+function legs(f) {
+  return [f.from].concat((f.via || '').split(/[,\s]+/)).concat([f.to])
+    .map(x => (x || '').trim().toUpperCase()).filter(Boolean)
+    .filter((v, i, a) => i === 0 || v !== a[i - 1]);
+}
+function routeNM(f) {
+  const pts = legs(f).map(afByCode).filter(Boolean).map(a => [a[3], a[4]]);
+  let d = 0;
+  for (let i = 1; i < pts.length; i++) d += haversineNM(pts[i - 1], pts[i]);
+  return d;
+}
+const hrs = v => (Math.round((+v || 0) * 10) / 10);
+const fTotal = f => hrs((+f.dual || 0) + (+f.p1 || 0));
+const isSolo = f => (+f.p1 || 0) > 0 && (+f.dual || 0) === 0;
+const isXC = f => legs(f).length > 1;
+
+/** Totals and PPL(A) requirement progress. */
+function logStats() {
+  const F = S.flights || [];
+  const t = { n: F.length, total: 0, dual: 0, p1: 0, solo: 0, soloXC: 0, ldg: 0, nm: 0,
+              qxc: null, longest: null, types: {}, regs: {}, fields: {} };
+  F.forEach(f => {
+    const h = fTotal(f), d = routeNM(f);
+    t.total += h; t.dual += (+f.dual || 0); t.p1 += (+f.p1 || 0);
+    t.ldg += (+f.ldg || 0); t.nm += d;
+    if (isSolo(f)) { t.solo += (+f.p1 || 0); if (isXC(f)) t.soloXC += (+f.p1 || 0); }
+    if (f.type) t.types[f.type] = hrs((t.types[f.type] || 0) + h);
+    if (f.reg) {
+      const r = t.regs[f.reg] || (t.regs[f.reg] = { h: 0, n: 0, type: f.type || '' });
+      r.h = hrs(r.h + h); r.n++; if (!r.type && f.type) r.type = f.type;
+    }
+    legs(f).forEach(c => t.fields[c] = (t.fields[c] || 0) + 1);
+    if (!t.longest || d > routeNM(t.longest)) t.longest = f;
+    // the qualifying cross-country: solo, 270 km / 150 NM, landings away
+    if (isSolo(f) && d >= 150 && legs(f).length >= 3) {
+      if (!t.qxc || d > routeNM(t.qxc)) t.qxc = f;
+    }
+  });
+  ['total', 'dual', 'p1', 'solo', 'soloXC'].forEach(k => t[k] = hrs(t[k]));
+  t.nm = Math.round(t.nm);
+  t.nFields = Object.keys(t.fields).length;
+  return t;
+}
+
+/* ---- the map ---- */
+
+function bbox(pts, pad) {
+  let a = 90, b = -90, c = 180, d = -180;
+  pts.forEach(p => { a = Math.min(a, p[0]); b = Math.max(b, p[0]); c = Math.min(c, p[1]); d = Math.max(d, p[1]); });
+  const dy = Math.max(b - a, 0.6) * pad, dx = Math.max(d - c, 0.9) * pad;
+  return [a - dy, b + dy, c - dx, d + dx];
+}
+
+/**
+ * Route map. Equirectangular with an x scale of cos(mid latitude), which keeps
+ * shapes honest over a country-sized area without needing a projection library.
+ */
+function routeMap(flights, homeCode, h) {
+  const pts = [];
+  flights.forEach(f => legs(f).map(afByCode).filter(Boolean).forEach(a => pts.push([a[3], a[4]])));
+  const home = afByCode(homeCode);
+  if (home) pts.push([home[3], home[4]]);
+  if (!pts.length) return '';
+
+  const [la0, la1, lo0, lo1] = bbox(pts, 0.35);
+  const midLat = (la0 + la1) / 2, kx = Math.cos(midLat * Math.PI / 180);
+  const W = 640, H = h || 380;
+  const spanX = (lo1 - lo0) * kx, spanY = (la1 - la0);
+  const sc = Math.min(W / spanX, H / spanY);
+  const ox = (W - spanX * sc) / 2, oy = (H - spanY * sc) / 2;
+  const X = lon => ox + (lon - lo0) * kx * sc;
+  const Y = lat => oy + (la1 - lat) * sc;
+
+  // detailed coastline when the whole view sits inside the British Isles
+  const inUK = lo0 > -12 && lo1 < 4 && la0 > 48 && la1 < 62;
+  const rings = (inUK && window.COAST_UK) ? window.COAST_UK : (window.COAST || []);
+  const land = rings.map(r => {
+    const inside = r.some(p => p[1] > la0 - 6 && p[1] < la1 + 6 && p[0] > lo0 - 8 && p[0] < lo1 + 8);
+    if (!inside) return '';
+    return '<path class="land" d="M' + r.map(p => X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1)).join('L') + 'Z"/>';
+  }).join('');
+
+  const routes = flights.map(f => {
+    const p = legs(f).map(afByCode).filter(Boolean);
+    if (p.length < 2) return '';
+    return '<path class="route" d="M' + p.map(a => X(a[4]).toFixed(1) + ' ' + Y(a[3]).toFixed(1)).join('L') + '"/>';
+  }).join('');
+
+  const visits = {};
+  flights.forEach(f => legs(f).forEach(c => visits[c] = (visits[c] || 0) + 1));
+  if (homeCode) visits[homeCode] = visits[homeCode] || 1;
+  const dots = Object.keys(visits).map(c => {
+    const a = afByCode(c); if (!a) return '';
+    const r = Math.min(5.5, 2.4 + Math.log2(visits[c] + 1));
+    const isHome = c === homeCode;
+    return `<circle class="${isHome ? 'home' : 'fld'}" cx="${X(a[4]).toFixed(1)}" cy="${Y(a[3]).toFixed(1)}" r="${r.toFixed(1)}"/>
+      <text x="${(X(a[4]) + r + 3).toFixed(1)}" y="${(Y(a[3]) + 3).toFixed(1)}">${esc(c)}</text>`;
+  }).join('');
+
+  return `<svg class="map" viewBox="0 0 ${W} ${H}" role="img"
+    aria-label="Map of the aerodromes you have flown between">
+    ${land}${routes}${dots}</svg>`;
+}
+
+/* ---- views ---- */
+
+VIEWS.log = function () {
+  navbar('Flight log', '');
+  const F = (S.flights || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const t = logStats();
+
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">Flight log</h1>
+    <div class="sub">${t.n} flight${t.n === 1 ? '' : 's'} · ${t.total.toFixed(1)} hours total</div></div>`);
+
+  if (F.length) {
+    html(`<div class="mapwrap" style="margin-top:14px">${routeMap(F, S.field, 300)}</div>`);
+    html(`<div class="big2" style="margin-top:12px">
+      <div class="s"><div class="v">${t.total.toFixed(1)}</div><div class="l">Total hours</div></div>
+      <div class="s"><div class="v">${t.p1.toFixed(1)}</div><div class="l">As P1</div></div>
+      <div class="s"><div class="v">${t.ldg}</div><div class="l">Landings</div></div>
+    </div>`);
+  }
+
+  html(`<button class="btn" style="margin-top:14px" id="addF">Log a flight</button>`);
+  $('#addF').onclick = () => go('logedit', { id: null });
+
+  // --- PPL(A) requirement progress
+  const reqs = [
+    ['Total flight time', t.total, 40, 'hours', 'FCL.210.A(a) — 35 on an approved ATO course'],
+    ['Supervised solo', t.solo, 10, 'hours', 'FCL.210.A(a)(2)'],
+    ['Solo cross-country', t.soloXC, 5, 'hours', 'FCL.210.A(a)(2)']
+  ];
+  html('<h2 class="sec">Towards the PPL(A)</h2><div class="grp">' + reqs.map(([nm, have, need, unit, cite]) => {
+    const pc = Math.min(100, Math.round(have / need * 100));
+    const done = have >= need;
+    return `<div class="req">
+      <div class="tick" style="background:var(--${done ? 'green' : 'fill'});color:var(--${done ? 'x' : 'tx3'})">${done ? '&#10003;' : ''}</div>
+      <div class="rn"><b>${nm}</b><i>${cite}</i>
+        <div class="pbar" style="margin-top:7px"><i style="width:${pc}%;background:var(--${done ? 'green' : 'blue'})"></i></div></div>
+      <div class="logrow hrs"><span class="hrs">${have.toFixed(1)}<small>of ${need}</small></span></div>
+    </div>`;
+  }).join('') + `
+    <div class="req">
+      <div class="tick" style="background:var(--${t.qxc ? 'green' : 'fill'});color:#fff">${t.qxc ? '&#10003;' : ''}</div>
+      <div class="rn"><b>Qualifying cross-country</b>
+        <i>${t.qxc ? esc(legs(t.qxc).join(' → ')) + ' · ' + Math.round(routeNM(t.qxc)) + ' NM'
+          : 'Solo, at least 270 km (150 NM), full-stop landings at two aerodromes other than departure'}</i></div>
+    </div></div>`);
+  html(`<div class="tiny" style="margin:8px 0 0 4px">Solo hours are flights logged with P1 time and
+    no dual. Cross-country means the route has more than one aerodrome. Distances come from the
+    bundled airfield coordinates — check them against your own planning.</div>`);
+
+  // --- the flights
+  if (!F.length) {
+    html(`<div class="empty" style="padding-top:30px"><div class="em">&#9992;</div>
+      <h3>No flights yet</h3><p>Log one and the map, totals and PPL progress fill in.</p></div>`);
+    return;
+  }
+  html('<h2 class="sec">Flights</h2><div class="grp">' + F.map(f => {
+    const nm = routeNM(f);
+    return `<button class="row logrow" data-f="${esc(f.id)}">
+      <div class="ic" style="--c:var(--${isSolo(f) ? 'green' : 'blue'})">${isSolo(f) ? 'S' : 'D'}</div>
+      <div class="tx"><b>${esc(legs(f).join(' → ') || 'Local')}</b>
+        <i>${f.date ? fmt(new Date(f.date + 'T00:00:00')) : 'No date'}${f.reg ? ' · ' + esc(f.reg) : ''}${f.type ? ' · ' + esc(f.type) : ''}${nm >= 1 ? ' · ' + Math.round(nm) + ' NM' : ''}</i></div>
+      <span class="hrs">${fTotal(f).toFixed(1)}<small>${isSolo(f) ? 'solo' : 'dual'}</small></span>
       <div class="chev">&#8250;</div></button>`;
   }).join('') + '</div>');
-  bind('[data-pick]', e => {
-    const id = e.currentTarget.dataset.pick;
-    if (id === P.active) go('profedit', { id: id }); else switchProfile(id);
+  bind('[data-f]', e => go('logedit', { id: e.currentTarget.dataset.f }));
+};
+
+VIEWS.logedit = function (p) {
+  const editing = !!p.id;
+  const f = editing ? (S.flights || []).find(x => x.id === p.id) : null;
+  if (editing && !f) { back(); return; }
+  const v = f || { date: new Date().toISOString().slice(0, 10), type: '', reg: '',
+                   from: S.field || '', via: '', to: S.field || '', dual: '', p1: '', ldg: 1, notes: '' };
+  navbar(editing ? 'Edit flight' : 'Log a flight', '');
+
+  const fld = (id, label, val, attrs, hint) => `<div class="fld">
+    <label class="f" for="${id}">${label}</label>
+    <input id="${id}" class="ti" value="${esc(val == null ? '' : String(val))}" ${attrs}>
+    ${hint ? `<div class="tiny" style="margin-top:5px">${hint}</div>` : ''}</div>`;
+
+  html(`<div class="card" style="margin-top:14px">
+    ${fld('lfDate', 'Date', v.date, 'type="date"')}
+    <div class="fld"><label class="f" for="lfFrom">From</label>
+      <input id="lfFrom" class="ti" value="${esc(v.from)}" maxlength="28" autocapitalize="characters"
+        spellcheck="false" placeholder="Code or name" style="text-transform:uppercase">
+      <div id="lfFromFound" class="acfound" style="display:none"></div>
+      <div id="lfFromList" class="aclist" style="display:none"></div></div>
+    <div class="fld"><label class="f" for="lfVia">Via (optional)</label>
+      <input id="lfVia" class="ti" value="${esc(v.via || '')}" maxlength="60" autocapitalize="characters"
+        spellcheck="false" placeholder="Stops, e.g. EGBJ EGHR" style="text-transform:uppercase">
+      <div id="lfViaFound" class="acfound" style="display:none"></div>
+      <div id="lfViaList" class="aclist" style="display:none"></div>
+      <div class="tiny" style="margin-top:5px">Search and tap to add each stop in order.</div></div>
+    <div class="fld"><label class="f" for="lfTo">To</label>
+      <input id="lfTo" class="ti" value="${esc(v.to)}" maxlength="28" autocapitalize="characters"
+        spellcheck="false" placeholder="Code or name" style="text-transform:uppercase">
+      <div id="lfToFound" class="acfound" style="display:none"></div>
+      <div id="lfToList" class="aclist" style="display:none"></div></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    ${fld('lfDual', 'Dual hours', v.dual, 'type="number" step="0.1" min="0" inputmode="decimal" placeholder="0.0"')}
+    ${fld('lfP1', 'P1 hours', v.p1, 'type="number" step="0.1" min="0" inputmode="decimal" placeholder="0.0"', 'Includes supervised solo. Leave dual blank for a solo flight.')}
+    ${fld('lfLdg', 'Landings', v.ldg, 'type="number" step="1" min="0" inputmode="numeric"')}
+  </div>
+  <div class="card" style="margin-top:12px">
+    ${fld('lfType', 'Aircraft type', v.type, 'maxlength="24" placeholder="PA-28-161"')}
+    ${fld('lfReg', 'Registration', v.reg, 'maxlength="10" autocapitalize="characters" spellcheck="false" placeholder="G-ABCD" style="text-transform:uppercase"')}
+    ${fld('lfNotes', 'Notes', v.notes, 'maxlength="120" placeholder="Steep turns, PFLs"')}
+  </div>
+  <div id="lfCalc" class="note b" style="margin-top:12px"></div>
+  <button class="btn" style="margin-top:12px" id="lfSave">${editing ? 'Save changes' : 'Add flight'}</button>
+  ${editing ? '<button class="btn dgr sm" style="margin-top:10px" id="lfDel">Delete this flight</button>' : ''}`);
+
+  wireAirfield('#lfFrom', '#lfFromList', '#lfFromFound', null);
+  wireAirfield('#lfVia', '#lfViaList', '#lfViaFound', null, true);
+  wireAirfield('#lfTo', '#lfToList', '#lfToFound', null);
+
+  const read = () => ({
+    id: v.id || ('f' + Date.now().toString(36)),
+    date: $('#lfDate').value,
+    from: $('#lfFrom').value.trim().toUpperCase(),
+    via: $('#lfVia').value.trim().toUpperCase(),
+    to: $('#lfTo').value.trim().toUpperCase(),
+    dual: +$('#lfDual').value || 0, p1: +$('#lfP1').value || 0,
+    ldg: +$('#lfLdg').value || 0,
+    type: $('#lfType').value.trim(), reg: $('#lfReg').value.trim().toUpperCase(),
+    notes: $('#lfNotes').value.trim()
   });
-
-  html(`<button class="btn sec" style="margin-top:14px" id="addP">Add someone</button>
-    <button class="btn sec" style="margin-top:10px" id="impP">Import someone from a file</button>`);
-  $('#impP').onclick = pickImportFile;
-  $('#addP').onclick = () => startSetup('add');
-
-
-  html(`<div class="foot">Tap a profile to switch to it. Tap the active one to rename or remove it.<br>
-    Switching profiles does not upload anything — it just points the app at a different set of
-    saved progress in this browser.</div>`);
-};
-
-VIEWS.profedit = function (p) {
-  const pr = P.list.find(x => x.id === p.id);
-  if (!pr) { back(); return; }
-  navbar(pr.name, '');
-  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">${esc(pr.name)}</h1>
-    <div class="sub">Active profile</div></div>`);
-  html(`<div class="grp">
-    <button class="row" id="ren"><div class="tx"><b>Rename</b></div><div class="chev">&#8250;</div></button>
-    <button class="row" id="del"><div class="tx"><b style="color:var(--red)">Delete this profile</b>
-      <i>${P.list.length > 1 ? 'Erases its progress on this device'
-        : 'The only profile — you will be taken back to setup'}</i></div></button>
-  </div>`);
-  $('#ren').onclick = () => go('nameentry', { mode: 'rename', id: pr.id });
-  if ($('#del')) $('#del').onclick = () => {
-    askConfirm({ title: 'Delete ' + pr.name + '?',
-      body: 'Their progress on this device is erased. This cannot be undone — export first if you '
-        + 'might want it back.' + (P.list.length < 2 ? ' This is the only profile, so you will be taken back to setup.' : ''),
-      yes: 'Delete profile', danger: true }, () => {
-      deleteProfile(pr.id);
-      if (needsSetup()) { SETUP = null; stack = [{ v: 'welcome' }]; render(); }
-      else { stack.pop(); render(); }
-    });
+  const recalc = () => {
+    const d = read(), nm = routeNM(d), tot = fTotal(d);
+    $('#lfCalc').innerHTML = `<b>${tot.toFixed(1)} hours${isSolo(d) ? ' solo' : d.dual ? ' with an instructor' : ''}</b>`
+      + (nm >= 1 ? Math.round(nm) + ' NM over ' + legs(d).length + ' aerodromes'
+        + (isSolo(d) && nm >= 150 && legs(d).length >= 3 ? ' — counts as a qualifying cross-country' : '')
+        : 'Add aerodromes to get a distance.');
   };
-  html(`<div class="foot">Export from Sources &amp; settings before deleting if you might want it back.</div>`);
+  ['lfFrom', 'lfVia', 'lfTo', 'lfDual', 'lfP1'].forEach(id =>
+    $('#' + id).addEventListener('input', recalc));
+  recalc();
+
+  $('#lfSave').onclick = () => {
+    const d = read();
+    if (!d.date) { alertish('Give the flight a date.'); return; }
+    if (!d.dual && !d.p1) { alertish('Log some dual or P1 time.'); return; }
+    S.flights = S.flights || [];
+    const i = S.flights.findIndex(x => x.id === d.id);
+    if (i >= 0) S.flights[i] = d; else S.flights.push(d);
+    save(); back();
+    alertish(editing ? 'Flight updated.' : 'Flight logged.');
+  };
+  if ($('#lfDel')) $('#lfDel').onclick = () => askConfirm({
+    title: 'Delete this flight?', body: 'It is removed from your log, totals and map.',
+    yes: 'Delete', danger: true
+  }, () => { S.flights = S.flights.filter(x => x.id !== v.id); save(); stack.pop(); render(); });
 };
+
+/* ============================ offline ============================ */
+
+let SW_READY = false, SW_UPDATE = false;
+
+function initOffline() {
+  if (!('serviceWorker' in navigator)) return;
+  // file:// has no service worker scope, and it is not needed there anyway
+  if (location.protocol === 'file:') return;
+  navigator.serviceWorker.register('sw.js').then(reg => {
+    SW_READY = true;
+    reg.addEventListener('updatefound', () => {
+      const w = reg.installing;
+      if (!w) return;
+      w.addEventListener('statechange', () => {
+        // a new shell is waiting and an old one is already in control
+        if (w.state === 'installed' && navigator.serviceWorker.controller) {
+          SW_UPDATE = true;
+          alertish('An update is ready — reopen the app to use it.');
+        }
+      });
+    });
+  }).catch(() => {});
+}
 
 /* ============================ init ============================ */
 
 if (P.theme) document.documentElement.dataset.t = P.theme;
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => tab(b.dataset.v));
 render();
+initOffline();
