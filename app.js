@@ -214,10 +214,20 @@ function migrate(old) {
   Object.assign(s.wrong, old.wrong || {}); Object.assign(s.seen, old.seen || {});
   if (Array.isArray(old.flights)) s.flights = old.flights.slice();
   s.hist = old.hist || []; s.d1 = old.d1 || ''; s.d2 = old.d2 || '';
-  // profile settings — these were silently dropped before, which lost the whole setup
-  ['stage', 'field', 'wx', 'planId', 'learnSort'].forEach(k => { if (old[k]) s[k] = old[k]; });
+  // profile settings — these were silently dropped once, which lost the whole setup
+  ['stage', 'field', 'wx', 'planId', 'learnSort', 'medical', 'medClass'].forEach(k => {
+    if (old[k]) s[k] = old[k];
+  });
   if (Array.isArray(old.customOrder) && old.customOrder.length === 9) s.customOrder = old.customOrder.slice();
   if (Array.isArray(old.cardSubs)) s.cardSubs = old.cardSubs.slice();
+  // Anything else the file carries is copied verbatim. A whitelist silently drops new
+  // fields the day they are added, which is exactly how the setup got lost before.
+  Object.keys(old).forEach(k => {
+    if (k in s) return;
+    const v = old[k];
+    if (v == null || typeof v === 'function') return;
+    s[k] = (typeof v === 'object') ? JSON.parse(JSON.stringify(v)) : v;
+  });
   return s;
 }
 function loadState() { S = P.active ? Object.assign(blank(), readJSON(dataKey(P.active), {})) : blank(); }
@@ -1292,6 +1302,16 @@ function risks() {
     'All nine are marked passed but no pass date is recorded against them, so the 24-month clock '
     + 'is not being tracked. Add the date to any subject on the Exams list, or type it above.']);
 
+  if (S.medical) {
+    const dm = daysTo(new Date(S.medical + 'T00:00:00'));
+    if (dm < 0) out.push(['r', 'Medical certificate has expired',
+      'It lapsed on ' + fmt(new Date(S.medical + 'T00:00:00')) + '. You cannot fly solo without a '
+      + 'valid medical — book a renewal before your next lesson.']);
+    else if (dm < 60) out.push(['o', 'Medical expires in ' + dm + ' day' + (dm === 1 ? '' : 's'),
+      'Renew before ' + fmt(new Date(S.medical + 'T00:00:00')) + '. AME appointments are not always '
+      + 'quick to get.']);
+  }
+
   upcoming().forEach(o => {
     const n = daysUntil(o.b), pc = pctLO(o.s), best = S.best[o.s.code];
     if (n <= 14 && (pc < 80 || (best != null && best < PASS_MARK))) {
@@ -2113,6 +2133,24 @@ VIEWS.training = function () {
       <div class="tx"><b>${t}</b><i>${d}</i></div></button>`).join('') + '</div>');
   bind('[data-st2]', e => { S.stage = e.currentTarget.dataset.st2; save(); render(); });
 
+  html(`<h2 class="sec">Medical</h2>
+    <div class="card">
+      <div class="fld"><label class="f" for="tMedC">Certificate</label>
+        <select id="tMedC">
+          <option value=""${!S.medClass ? ' selected' : ''}>Not set</option>
+          <option value="2"${S.medClass === '2' ? ' selected' : ''}>Class 2</option>
+          <option value="lapl"${S.medClass === 'lapl' ? ' selected' : ''}>LAPL medical</option>
+          <option value="1"${S.medClass === '1' ? ' selected' : ''}>Class 1</option>
+        </select></div>
+      <div class="fld"><label class="f" for="tMed">Valid until</label>
+        <input type="date" id="tMed" value="${esc(S.medical || '')}">
+        <div class="tiny" style="margin-top:5px">The expiry printed on your certificate. A Class 2
+          runs 60 months under 40, 24 months from 40 to 50, and 12 months above 50 — and one issued
+          before you turn 40 stops at 42 regardless (MED.A.045).</div></div>
+    </div>`);
+  $('#tMedC').onchange = e => { S.medClass = e.target.value; save(); };
+  $('#tMed').onchange = e => { S.medical = e.target.value; save(); };
+
   html(`<h2 class="sec">Home airfield</h2>
     <div class="card">
       <label class="f" for="tIcao">Airfield</label>
@@ -2776,6 +2814,17 @@ VIEWS.profiles = function () {
     }).join('') + '</div>');
     if (st.longest && routeNM(st.longest) >= 1) html(`<div class="tiny" style="margin:8px 0 0 4px">
       Longest route: ${esc(legs(st.longest).join(' → '))} — ${Math.round(routeNM(st.longest))} NM.</div>`);
+  }
+
+  if (S.medical) {
+    const md = new Date(S.medical + 'T00:00:00'), dleft = daysTo(md);
+    const col = dleft < 0 ? 'red' : dleft < 30 ? 'red' : dleft < 90 ? 'orange' : 'green';
+    html(`<h2 class="sec">Medical</h2><div class="grp">
+      <div class="row"><div class="ic" style="--c:var(--${col})">&#10010;</div>
+        <div class="tx"><b>${S.medClass === '1' ? 'Class 1' : S.medClass === 'lapl' ? 'LAPL medical' : 'Class 2'}</b>
+          <i>${dleft < 0 ? 'Expired ' + fmt(md) : 'Valid until ' + fmt(md)}</i></div>
+        <span class="bdg ${col === 'green' ? 'g' : col === 'orange' ? 'o' : 'r'}">${
+          dleft < 0 ? 'expired' : dleft + ' days'}</span></div></div>`);
   }
 
   html(`<h2 class="sec">Study record</h2><div class="grp">

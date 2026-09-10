@@ -20,9 +20,14 @@ anything back. Progress is saved in `localStorage` in **the browser on the devic
   to switch, rename or add someone. Each profile keeps its own articles, objectives, exam record,
   quiz history and flashcard schedule.
 - **One person, multiple devices** — *not* synced. Your phone and your laptop keep two
-  independent sets of progress. Export writes one file with everything (progress, exam record,
-  flashcard scheduling, flight log and settings); import restores it elsewhere. That is also how
-  a second person uses the app: their own device, their own file.
+  independent sets of progress. Export writes one file with everything; import restores it
+  elsewhere. That is also how a second person uses the app: their own device, their own file.
+
+  *Everything* means everything: objectives ticked, articles read, exam record and attempts,
+  booked dates, quiz history, best scores, per-question seen/wrong counts, flashcard scheduling,
+  the flight log, your airfield, medical, training stage, exam order and theme. The import path
+  copies any field it does not recognise rather than whitelisting, so adding a feature cannot
+  silently start dropping data — a round-trip test asserts nothing is lost.
 - Clearing site data, or using a private window, loses that browser's progress. Back up
   occasionally if it matters.
 

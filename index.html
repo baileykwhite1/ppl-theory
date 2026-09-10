@@ -104,14 +104,15 @@ h2.sec:first-child{margin-top:14px}
 .row + .row::before{content:"";position:absolute;left:16px;right:0;top:0;height:.5px;
   background:var(--sep2)}
 .row:active{background:var(--fill)}
-/* a four-letter ICAO needs a wider tile than a three-digit subject code */
-.ic.wide{width:46px;font-size:11px;letter-spacing:.02em}
 .row .ic,.ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none;
   color:#fff;font-size:12px;font-weight:700;letter-spacing:0;
   background:linear-gradient(145deg,
     color-mix(in srgb, var(--c,var(--blue)) 100%, #fff 16%),
     color-mix(in srgb, var(--c,var(--blue)) 82%, #000 18%));
   box-shadow:0 1px 3px color-mix(in srgb, var(--c,var(--blue)) 40%, transparent)}
+/* a four-letter ICAO needs a wider tile than a three-digit subject code.
+   Declared after the base .ic rule so it wins on equal specificity. */
+.row .ic.wide,.ic.wide{width:52px;font-size:11.5px;letter-spacing:.01em}
 .row .tx{flex:1;min-width:0}
 .row .tx b{display:block;font-weight:450;font-size:16.5px;letter-spacing:-.012em}
 .row .tx i{display:block;font-style:normal;font-size:13px;line-height:1.4;color:var(--tx2);margin-top:2px}

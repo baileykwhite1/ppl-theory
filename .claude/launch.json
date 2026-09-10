@@ -4,8 +4,8 @@
     {
       "name": "ppl",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8791"],
-      "port": 8791
+      "runtimeArgs": [".claude/serve.py", "8799"],
+      "port": 8799
     }
   ]
 }
