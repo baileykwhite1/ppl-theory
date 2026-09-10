@@ -6,7 +6,7 @@
    Bump CACHE_VERSION whenever the shell changes; the old cache is deleted on
    activate and every open tab is told to reload. */
 
-const CACHE_VERSION = 'ppl-2026-09-10-a';
+const CACHE_VERSION = 'ppl-2026-09-11-b';
 
 const SHELL = [
   './',

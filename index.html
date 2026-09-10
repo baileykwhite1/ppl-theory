@@ -91,8 +91,8 @@ h2.sec:first-child{margin-top:14px}
   -webkit-backdrop-filter:saturate(180%) blur(20px);
   border-top:.5px solid var(--sep);padding-bottom:env(safe-area-inset-bottom)}
 #tabs button{flex:1;padding:7px 0 5px;display:flex;flex-direction:column;align-items:center;
-  gap:2px;color:var(--tx3);font-size:10px;font-weight:500;letter-spacing:0}
-#tabs button svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;
+  gap:2px;color:var(--tx3);font-size:9.5px;font-weight:500;letter-spacing:0;min-width:0}
+#tabs button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;
   stroke-linecap:round;stroke-linejoin:round}
 #tabs button[aria-selected="true"]{color:var(--blue)}
 
@@ -135,7 +135,9 @@ h2.sec:first-child{margin-top:14px}
   color:var(--tx2);line-height:1.25;min-height:2.5em;display:flex;align-items:flex-start}
 .tile .n{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-top:4px;
   display:flex;align-items:baseline;gap:1px}
-.tile .n .of{font-size:.62em;font-weight:700;color:var(--tx3);letter-spacing:-.02em}
+/* the denominator is context, not part of the number — give it room and step it back */
+.tile .n .of{display:inline-block;margin-left:5px;font-size:.44em;font-weight:600;
+  color:var(--tx3);letter-spacing:.01em;vertical-align:.28em}
 .tile .s{font-size:13px;color:var(--tx2)}
 
 /* buttons */
@@ -203,6 +205,29 @@ h2.sec:first-child{margin-top:14px}
 .map .route{fill:none;stroke:var(--blue);stroke-width:1.6;stroke-linecap:round;opacity:.75}
 .map .fld{fill:var(--blue)}
 .map .home{fill:var(--orange)}
+/* Google layer sits in the same rounded frame; the toggle floats over it. */
+.mapwrap{position:relative}
+.dmap{width:100%;border-radius:10px;overflow:hidden;background:var(--card2)}
+.dmap .maplibregl-ctrl-attrib{font-size:10px}
+.dmap .maplibregl-ctrl-group{border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+/* airfield pins: a dot with its code beside it, in the app's own type */
+.mpin{display:flex;align-items:center;gap:5px;white-space:nowrap;cursor:default}
+.mpin i{width:9px;height:9px;flex:none;border-radius:50%;background:var(--blue);
+  border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.28)}
+.mpin.home i{width:11px;height:11px;background:var(--orange)}
+.mpin span{font:600 10.5px/1 ui-monospace,Menlo,monospace;letter-spacing:.04em;color:#111;
+  background:rgba(255,255,255,.86);padding:2px 4px;border-radius:4px;
+  box-shadow:0 1px 2px rgba(0,0,0,.18)}
+[data-t="dark"] .mpin span{color:#f2f2f7;background:rgba(20,20,22,.82)}
+@media (prefers-color-scheme:dark){:root:not([data-t="light"]) .mpin span{
+  color:#f2f2f7;background:rgba(20,20,22,.82)}}
+.mapnote{font-size:11.5px;color:var(--tx3);padding:7px 4px 1px;line-height:1.35}
+/* circular icon button — the glyph should fill the bubble, not float in it */
+.rndbtn{flex:none;width:38px;height:38px;border:0;padding:0;border-radius:50%;
+  background:var(--fill);color:var(--tx2);display:grid;place-items:center;cursor:pointer}
+.rndbtn:active{background:var(--fill2)}
+.rndbtn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
 .map text{font:600 8px ui-monospace,Menlo,monospace;fill:currentColor;opacity:.75}
 .hrs{font:700 15px/1 ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;
   color:var(--tx);flex:none;text-align:right}
@@ -461,6 +486,41 @@ label.f{display:block;font-size:12px;font-weight:600;text-transform:uppercase;
 .clr:active{opacity:.6}
 .fld + .fld{margin-top:14px}
 .fld .tiny{font-size:11.5px;line-height:1.4;color:var(--tx3);margin-left:2px}
+
+/* ---------- stage progression ----------
+   Training is a ladder, not a menu: picking a rung means every rung below it is
+   already behind you. The rail and the fill make that literal, so the control
+   cannot be misread as "tick one of six unrelated options". */
+.lad{background:var(--card);border-radius:14px;overflow:hidden;box-shadow:var(--sh)}
+.lad button{display:flex;width:100%;gap:13px;align-items:flex-start;padding:0 15px 0 16px;
+  background:none;border:0;text-align:left;color:inherit;font:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+.lad button:active{background:var(--fill)}
+.rail{position:relative;width:22px;flex:none;align-self:stretch}
+/* the connector, drawn between this dot and the one below */
+.rail::after{content:"";position:absolute;left:50%;transform:translateX(-50%);
+  top:30px;bottom:0;width:2px;background:var(--sep2);border-radius:2px}
+.lad button:last-child .rail::after{display:none}
+.lad button.done .rail::after{background:var(--sc);opacity:.55}
+.dot{position:absolute;top:16px;left:50%;transform:translateX(-50%);
+  width:15px;height:15px;border-radius:50%;box-sizing:border-box;
+  border:2px solid var(--sep);background:var(--bg2);z-index:1;
+  transition:background .18s,border-color .18s,box-shadow .18s}
+.lad button.done .dot{background:var(--sc);border-color:var(--sc)}
+.lad button.here .dot{width:19px;height:19px;top:14px;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--sc) 22%,transparent)}
+.ladtx{flex:1;min-width:0;padding:14px 0 15px;border-bottom:.5px solid var(--sep2)}
+.lad button:last-child .ladtx{border-bottom:0}
+.ladtx b{display:block;font-size:16px;font-weight:590;letter-spacing:-.01em;
+  color:var(--tx3);transition:color .18s}
+.ladtx i{display:block;font-style:normal;font-size:13px;line-height:1.35;
+  color:var(--tx3);margin-top:2px}
+.lad button.done .ladtx b{color:var(--tx)}
+.lad button.done .ladtx i{color:var(--tx2)}
+.ladnow{display:inline-block;margin-left:7px;vertical-align:1px;font-size:10.5px;
+  font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:2px 6px;border-radius:5px;color:var(--sc);
+  background:color-mix(in srgb,var(--sc) 15%,transparent)}
 </style>
 </head>
 <body>
@@ -472,6 +532,7 @@ label.f{display:block;font-size:12px;font-weight:600;text-transform:uppercase;
   <button role="tab" data-v="quiz" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7v.5"/><path d="M12 17.5h.01"/><circle cx="12" cy="12" r="9"/></svg>Quiz</button>
   <button role="tab" data-v="cards" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="14" height="12" rx="2"/><path d="M7 4h11a2 2 0 0 1 2 2v10"/></svg>Cards</button>
   <button role="tab" data-v="plan" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></svg>Exams</button>
+  <button role="tab" data-v="profiles" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>You</button>
 </nav>
 
 <script src="data/syllabus.js"></script>

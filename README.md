@@ -92,8 +92,25 @@ into the UI:
   cannot use them. CheckWX sends `access-control-allow-origin: *` on a successful response, which
   is why it is the one that works.
 
-Either way the app links out to the real sources: the club weather station (White Waltham's is
-built in), metar-taf.com, and the Met Office GA page. Nothing here is for flight planning.
+Either way the app links out to the real sources: metar-taf.com and the Met Office GA page.
+Nothing here is for flight planning.
+
+## The map
+
+The flight log draws routes on a real basemap: **OpenStreetMap vector tiles from
+[OpenFreeMap](https://openfreemap.org)**, rendered with MapLibre GL JS (pinned to 5.24.0 from
+unpkg). No API key, no account, no billing and no usage limits — which is why it is on by
+default rather than hidden behind a setting. The OpenStreetMap credit is required under ODbL,
+so it stays; it is just collapsed to the small circled *i*.
+
+Behind it there is still a **built-in vector map** — Natural Earth coastlines, Douglas-Peucker
+simplified into `data/coast.js`. It is a few kB, follows the app's light and dark themes, and
+draws with no signal. That one renders first, so the card is never blank, and the basemap is
+swapped in on top once it loads. Offline, or if the CDN or tiles cannot be reached, the built-in
+map is simply what you keep, with a line saying so.
+
+Google Maps was the other candidate and was rejected: it needs a billing-enabled key, the key is
+readable by anyone who opens a public page, and its terms forbid caching tiles.
 
 ## The correction this repo exists to make
 

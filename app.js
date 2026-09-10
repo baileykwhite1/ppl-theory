@@ -358,7 +358,7 @@ const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.f
 
 /* ============================ router ============================ */
 
-const TABS = ['home', 'learn', 'quiz', 'cards', 'plan'];
+const TABS = ['home', 'learn', 'quiz', 'cards', 'plan', 'profiles'];
 let stack = [{ v: 'home' }];
 const VIEWS = {};
 
@@ -380,14 +380,17 @@ function render() {
   const root = TABS.indexOf(stack[0].v) >= 0 ? stack[0].v : 'home';
   document.querySelectorAll('#tabs button').forEach(b =>
     b.setAttribute('aria-selected', b.dataset.v === root));
+  mountMaps();
   window.scrollTo(0, 0);
 }
 
 function html(s) { APP.insertAdjacentHTML('beforeend', s); }
 function navbar(title, rightHtml) {
-  html(`<div class="nav"><button class="back" id="nbBack">&#8249;&nbsp;Back</button>
+  const root = stack.length < 2;
+  html(`<div class="nav">${root ? '<div class="back" style="visibility:hidden">&#8249;</div>'
+      : '<button class="back" id="nbBack">&#8249;&nbsp;Back</button>'}
     <div class="ttl">${esc(title)}</div><div class="rt">${rightHtml || ''}</div></div>`);
-  $('#nbBack').onclick = back;
+  if ($('#nbBack')) $('#nbBack').onclick = back;
 }
 function bind(sel, fn, ev) {
   document.querySelectorAll(sel).forEach(n => n.addEventListener(ev || 'click', fn));
@@ -403,12 +406,11 @@ VIEWS.home = function () {
   const p = passed();
   const due = dueCards().length;
   const newAvail = Math.max(0, NEW_CARDS_PER_DAY - (S.newToday[todayKey()] || 0));
-  const hour = new Date().getHours();
-  const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const greet = greeting(activeName().split(' ')[0]);
 
   html(`<div class="hd" style="display:flex;align-items:flex-start;gap:12px">
     <div style="flex:1;min-width:0">
-      <h1>${greet}, ${esc(activeName().split(' ')[0])}</h1>
+      <h1>${greet}</h1>
       <div class="sub">${p === 9 ? 'All nine exams passed.' : (9 - p) + ' exam' + (p === 8 ? '' : 's') + ' to go · ' + dnArt + '/' + totArt + ' articles read'}</div>
     </div>
     <button id="srch" aria-label="Search" style="flex:none;width:40px;height:40px;border-radius:50%;
@@ -489,12 +491,8 @@ VIEWS.home = function () {
   $('#hLog').onclick = () => go('log');
 
   // --- home airfield
-  if (S.field || S.wx || CLUB_WX[S.field]) {
+  if (S.field) {
     const links = [];
-    const cw = clubWx(S.field);
-    if (cw) links.push(`<a class="row" href="${esc(cw.url)}" target="_blank" rel="noopener">
-      <div class="ic" style="--c:var(--teal)">&#9925;</div>
-      <div class="tx"><b>${esc(cw.name)}</b><i>Live observation at the field</i></div><div class="chev">&#8599;</div></a>`);
     if (S.field) links.push(`<a class="row" href="https://metar-taf.com/${esc(S.field)}" target="_blank" rel="noopener">
       <div class="ic" style="--c:var(--indigo)">&#9788;</div>
       <div class="tx"><b>METAR &amp; TAF</b><i>${esc(S.field)} — if the field reports one</i></div><div class="chev">&#8599;</div></a>`);
@@ -555,6 +553,27 @@ VIEWS.home = function () {
   html(`<div class="foot">Personal revision aid — not a CAA publication.<br>
     Confirm anything that matters with your ATO/DTO, Ground Examiner or the CAA.</div>`);
 };
+
+/* A few phrasings per time of day, so opening the app twice does not feel scripted.
+   The small hours belong to the night before, not to the morning. */
+const GREETINGS = [
+  [5,  ['Still up, {n}?', 'Burning the midnight oil, {n}', 'Late one, {n}',
+        'Can\u2019t sleep, {n}?', 'Night flying, {n}?']],
+  [12, ['Good morning, {n}', 'Morning, {n}', 'Morning, {n}', 'Up early, {n}?']],
+  [18, ['Good afternoon, {n}', 'Afternoon, {n}', 'Afternoon, {n}']],
+  [24, ['Good evening, {n}', 'Evening, {n}', 'Evening, {n}']]
+];
+
+/**
+ * Stable for the whole of one day in one band: a greeting that changed on every
+ * render would flicker every time you switched tab.
+ */
+function greeting(name) {
+  const d = new Date(), h = d.getHours();
+  const pool = (GREETINGS.find(g => h < g[0]) || GREETINGS[3])[1];
+  const seed = d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate() + (h < 5 ? 7 : h < 12 ? 1 : h < 18 ? 3 : 5);
+  return esc(pool[seed % pool.length].replace('{n}', name));
+}
 
 /** The single most useful next action: an unread article, else an unstudied subject. */
 function nextUp() {
@@ -1176,7 +1195,7 @@ VIEWS.plan = function () {
 
   const dl = deadline18(getD1()), vd = deadline24(getD2());
   html(`<div class="tiles" style="margin-top:12px">
-    <div class="tile"><div class="k">Exams passed</div><div class="n">${p}<span class="of">/9</span></div>
+    <div class="tile"><div class="k">Exams passed</div><div class="n">${p}<span class="of">of 9</span></div>
       <div class="s">${p === 9 ? 'complete set' : (9 - p) + ' to go'}</div></div>
     ${dl ? tileFor('18-month window', dl, p >= 9, 'm18') : `<div class="tile">${infoBtn('m18')}
       <div class="k">18-month window</div>
@@ -1327,18 +1346,6 @@ function risks() {
 }
 
 /* ============================ AIRFIELD LOOKUP ============================ */
-
-/* Club weather stations we know about, so the link is there without anyone configuring it.
-   Small GA fields rarely publish a METAR, so the club's own station is the real source. */
-const CLUB_WX = {
-  EGLM: { url: 'https://www.wlac.co.uk/weather/index.html', name: 'West London Aero Club' }
-};
-/** The best live-observation link for a field: the profile's own, else one we know. */
-function clubWx(code) {
-  if (S.wx) return { url: S.wx, name: 'Club weather station' };
-  const k = CLUB_WX[code];
-  return k ? { url: k.url, name: k.name } : null;
-}
 
 const AF = () => window.AIRFIELDS || [];
 /** Split a comma or space separated list into known ICAO codes. */
@@ -1688,7 +1695,7 @@ VIEWS.wx = function () {
       ${esc(code)} issues no METAR, so this is the nearest station that does${
         d.nearestNM != null ? ' — ' + esc(d.nearestName || d.nearest) + ', about ' + d.nearestNM + ' NM away' : ''}.
       Useful for the general picture, but conditions at your field can differ, especially
-      visibility and cloud base. Check the club's own weather before you fly.</div>`);
+      visibility and cloud base. Check the official forecast before you fly.</div>`);
   } else if (d && d.source === 'metar') {
     html(`<div class="note o" style="margin-top:12px"><b>A real observation, but still check it yourself</b>
       The published METAR for ${esc(code)}${d.observed ? ', observed ' + esc(String(d.observed).replace('T', ' ').slice(0, 16)) + 'Z' : ''}.
@@ -1701,10 +1708,6 @@ VIEWS.wx = function () {
   }
 
   const links = [];
-  const cw = clubWx(code);
-  if (cw) links.push(`<a class="row" href="${esc(cw.url)}" target="_blank" rel="noopener">
-    <div class="ic" style="--c:var(--teal)">&#9925;</div>
-    <div class="tx"><b>${esc(cw.name)}</b><i>Live observation at the field</i></div><div class="chev">&#8599;</div></a>`);
   if (code) links.push(`<a class="row" href="https://metar-taf.com/${esc(code)}" target="_blank" rel="noopener">
     <div class="ic" style="--c:var(--indigo)">&#9788;</div>
     <div class="tx"><b>METAR &amp; TAF</b><i>Official observation, if ${esc(code)} reports one</i></div><div class="chev">&#8599;</div></a>`);
@@ -2127,10 +2130,7 @@ VIEWS.training = function () {
     <div class="sub">Used to personalise the app and suggest an exam order. Nothing here is sent
     anywhere.</div></div>`);
 
-  html('<h2 class="sec">Stage</h2><div class="grp">' + STAGES.map(([k, t, d]) => `
-    <button class="row" data-st2="${k}">
-      <div class="ic" style="--c:var(--${S.stage === k ? 'blue' : 'tx3'})">${S.stage === k ? '&#10003;' : '&#8226;'}</div>
-      <div class="tx"><b>${t}</b><i>${d}</i></div></button>`).join('') + '</div>');
+  html('<h2 class="sec">Stage</h2>' + stageLadder(S.stage, 'data-st2'));
   bind('[data-st2]', e => { S.stage = e.currentTarget.dataset.st2; save(); render(); });
 
   html(`<h2 class="sec">Medical</h2>
@@ -2151,6 +2151,15 @@ VIEWS.training = function () {
   $('#tMedC').onchange = e => { S.medClass = e.target.value; save(); };
   $('#tMed').onchange = e => { S.medical = e.target.value; save(); };
 
+  html(`<h2 class="sec">You</h2><div class="grp">
+    <button class="row" id="tRen"><div class="tx"><b>Name</b></div>
+      <div class="val">${esc(activeName())}</div><div class="chev">&#8250;</div></button>
+    <button class="row" id="tLog"><div class="tx"><b>Flight log</b></div>
+      <div class="val">${logStats().n} flight${logStats().n === 1 ? '' : 's'}</div><div class="chev">&#8250;</div></button>
+  </div>`);
+  $('#tRen').onclick = () => go('nameentry', { mode: 'rename', id: P.active });
+  $('#tLog').onclick = () => go('log');
+
   html(`<h2 class="sec">Home airfield</h2>
     <div class="card">
       <label class="f" for="tIcao">Airfield</label>
@@ -2160,27 +2169,41 @@ VIEWS.training = function () {
       <div id="tFound" class="acfound" style="display:none"></div>
       <div id="tList" class="aclist" style="display:none"></div>
     </div>
-    <div class="card" style="margin-top:12px">
-      <label class="f" for="tWx">Club weather page</label>
-      <input type="url" id="tWx" inputmode="url" autocapitalize="none" spellcheck="false"
-        placeholder="https://…" value="${esc(S.wx || '')}" class="ti" style="font-size:15px">
-      <div class="tiny" style="margin-top:9px">Most small GA fields issue no METAR, so a club page
-        is often the only live source. The METAR link on Home uses your ICAO code and will simply
-        show nothing if your field does not report.</div>
-    </div>
-    <button class="btn" style="margin-top:14px" id="tSave">Save</button>`);
-  wireAirfield('#tIcao', '#tList', '#tFound', row => {
-    const k = CLUB_WX[row[0]];
-    if (k && !$('#tWx').value) $('#tWx').value = k.url;
-  });
+    <div class="tiny" style="margin-top:9px;margin-left:2px">Where your field publishes no METAR,
+      the app uses the nearest station that does and says which one.</div>
+    <button class="btn" style="margin-top:14px" id="tSave">Save airfield</button>`);
+  wireAirfield('#tIcao', '#tList', '#tFound');
   $('#tSave').onclick = () => {
     const v = $('#tIcao').value.trim().toUpperCase();
     if (v && !afByCode(v)) { alertish('Pick an airfield from the list, or clear the box.'); return; }
     if (v !== (S.field || '')) { try { localStorage.removeItem(wxCacheKey(v)); } catch (e) {} WX = { state: 'idle' }; }
-    const wx = $('#tWx').value.trim();
-    S.field = v; S.wx = /^https?:\/\//i.test(wx) ? wx : '';
-    save(); back();
+    S.field = v; S.wx = '';
+    save(); alertish('Airfield saved.');
   };
+
+  html(`<h2 class="sec">Data and sources</h2><div class="grp">
+    <button class="row" id="tSrc"><div class="ic" style="--c:var(--indigo)">&#9788;</div>
+      <div class="tx"><b>Sources &amp; settings</b><i>Weather data, appearance, where the syllabus came from</i></div>
+      <div class="chev">&#8250;</div></button></div>`);
+  $('#tSrc').onclick = () => go('sources');
+
+  html(`<h2 class="sec">Back up and move</h2>
+    <div class="note b">Everything lives in this browser. Export writes one file with the lot —
+    progress, exam record, flashcards, flight log, medical and settings — and import restores it
+    on another device. That is also how someone else uses the app: their own device, their own
+    file.</div>
+    <div class="brow" style="margin-top:12px">
+      <button class="btn sec" id="tExp">Export everything</button>
+      <button class="btn sec" id="tImp">Import</button></div>
+    <button class="btn dgr sm" style="margin-top:12px" id="tWipe">Start again</button>`);
+  $('#tExp').onclick = exportProfile;
+  $('#tImp').onclick = pickImportFile;
+  $('#tWipe').onclick = () => askConfirm({
+    title: 'Start again?',
+    body: 'Everything is erased — progress, exam record, flashcards, flight log, medical and '
+      + 'settings — and you go back to setup. Export first if you might want any of it.',
+    yes: 'Erase and start again', danger: true
+  }, () => { deleteProfile(P.active); SETUP = null; stack = [{ v: 'welcome' }]; render(); });
 };
 
 /**
@@ -2480,14 +2503,32 @@ function pickImportFile() {
 /* ============================ FIRST RUN ============================ */
 
 const STAGES = [
-  ['none',  'Not started yet',        'Booking the first lesson'],
-  ['trial', 'Had a trial lesson',     'One or two flights in the logbook'],
-  ['early', 'Flying regularly',       'Circuits and general handling, pre-solo'],
-  ['solo',  'Gone solo',              'First solo done'],
-  ['nav',   'Navigation phase',       'Cross-country and the qualifying flight'],
-  ['test',  'Preparing for the test', 'Close to the skill test']
+  ['none',  'Not started yet',        'Booking the first lesson',                    'tx3'],
+  ['trial', 'Had a trial lesson',     'One or two flights in the logbook',           'teal'],
+  ['early', 'Flying regularly',       'Circuits and general handling, pre-solo',     'blue'],
+  ['solo',  'Gone solo',              'First solo done',                             'indigo'],
+  ['nav',   'Navigation phase',       'Cross-country and the qualifying flight',     'purple'],
+  ['test',  'Preparing for the test', 'Close to the skill test',                     'green']
 ];
 const stageLabel = k => (STAGES.find(x => x[0] === k) || ['', 'Not set'])[1];
+const stageIdx = k => STAGES.findIndex(x => x[0] === k);
+
+/**
+ * Training is a ladder, so the picker is drawn as one: choosing a rung fills in
+ * everything below it. Six flat radio rows read as "pick one of six unrelated
+ * things", which is exactly the wrong mental model.
+ */
+function stageLadder(sel, attr) {
+  const at = stageIdx(sel);
+  return '<div class="lad">' + STAGES.map(([k, t, d, c], i) => {
+    const done = at >= 0 && i <= at, here = k === sel;
+    return `<button ${attr}="${k}" style="--sc:var(--${c})"
+      class="${done ? 'done ' : ''}${here ? 'here' : ''}" aria-pressed="${here}">
+      <span class="rail"><span class="dot"></span></span>
+      <span class="ladtx"><b>${t}${here ? '<span class="ladnow">You are here</span>' : ''}</b>
+        <i>${d}</i></span></button>`;
+  }).join('') + '</div>';
+}
 /** The plan that suits where someone is in their flying. */
 const suggestPlan = stage => (stage === 'solo' || stage === 'nav' || stage === 'test') ? 'training' : 'blocks';
 
@@ -2499,7 +2540,8 @@ function startSetup(mode) {
 }
 
 VIEWS.welcome = function () {
-  if (!SETUP) SETUP = { step: 1, mode: 'first', name: '', stage: '', field: '', wx: '' };
+  if (!SETUP) SETUP = { step: 1, mode: 'first', name: '', stage: '', field: '', wx: '',
+                        med: '', medIssue: '', dob: '', medClass: '2' };
   const step = SETUP.step, adding = SETUP.mode === 'add';
   if (adding) { navbar(step === 1 ? 'Add someone' : 'New profile', ''); }
 
@@ -2556,11 +2598,9 @@ VIEWS.welcome = function () {
 
   if (step === 2) {
     setupHead(2, adding ? 'Where are they up to?' : 'Where are you up to?',
-      'This only sets a sensible starting exam order — it can be changed any time.');
-    html('<div class="grp">' + STAGES.map(([k, t, d]) => `
-      <button class="row" data-stage="${k}">
-        <div class="ic" style="--c:var(--${SETUP.stage === k ? 'blue' : 'tx3'})">${SETUP.stage === k ? '&#10003;' : '&#8226;'}</div>
-        <div class="tx"><b>${t}</b><i>${d}</i></div></button>`).join('') + '</div>');
+      'Tap the furthest point you have reached. This only sets a sensible starting exam '
+      + 'order — it can be changed any time.');
+    html(stageLadder(SETUP.stage, 'data-stage'));
     bind('[data-stage]', e => { SETUP.stage = e.currentTarget.dataset.stage; render(); });
     if (SETUP.stage) {
       const pid = suggestPlan(SETUP.stage);
@@ -2573,6 +2613,10 @@ VIEWS.welcome = function () {
     $('#s2back').onclick = () => { SETUP.step = 1; render(); };
     return;
   }
+
+  // a stage change can make the medical step inapplicable — never strand the user on it
+  if (step === 4 && !medStep()) SETUP.step = 3;
+  if (SETUP.step === 4) return setupMedical(adding);
 
   // step 3 — home airfield
   setupHead(3, adding ? 'Where do they fly from?' : 'Where do you fly from?',
@@ -2589,7 +2633,7 @@ VIEWS.welcome = function () {
   <div class="note b" style="margin-top:12px"><b>Conditions come with it</b>
     Home will show the METAR for your field, or the nearest station that issues one — most small
     GA strips do not. No setup needed.</div>
-  <button class="btn" style="margin-top:14px" id="s3done">Start studying</button>
+  <button class="btn" style="margin-top:14px" id="s3done">${medStep() ? 'Continue' : 'Start studying'}</button>
   <button class="btn grey" style="margin-top:10px" id="s3back">Back</button>`);
 
   const ic = $('#wIcao');
@@ -2604,22 +2648,130 @@ VIEWS.welcome = function () {
       $('#wIcaoErr').textContent = 'Pick an airfield from the list, or clear the box to skip.';
       $('#wIcaoErr').style.display = 'block'; return;
     }
-    const data = blank();
-    data.stage = SETUP.stage; data.field = v; data.wx = '';
-    data.planId = suggestPlan(SETUP.stage);
-    if (LEGACY && !adding) Object.assign(data, migrate(LEGACY),
-      { stage: data.stage, field: data.field, wx: data.wx, planId: data.planId });
-    const n = SETUP.name; SETUP = null;
-    addProfile(n, data);
+    SETUP.field = v;
+    if (medStep()) { SETUP.step = 4; render(); } else finishSetup(adding);
   };
 };
 
+/** Turn the answers into a profile and open the app. */
+function finishSetup(adding) {
+  const data = blank();
+  data.stage = SETUP.stage; data.field = SETUP.field; data.wx = '';
+  data.planId = suggestPlan(SETUP.stage);
+  if (SETUP.med === 'yes') {
+    const r = medExpiry(SETUP.medIssue, SETUP.dob);
+    data.medClass = SETUP.medClass;
+    if (r) data.medical = iso(r.exp);
+    if (SETUP.dob) data.dob = SETUP.dob;
+  }
+  if (LEGACY && !adding) Object.assign(data, migrate(LEGACY),
+    { stage: data.stage, field: data.field, planId: data.planId,
+      medical: data.medical, medClass: data.medClass, dob: data.dob });
+  const nm = SETUP.name; SETUP = null;
+  addProfile(nm, data);
+}
+
+/** Step 4 — the medical, which gates first solo. */
+function setupMedical(adding) {
+  const held = medHeld(), who = adding ? 'they' : 'you', Who = adding ? 'They' : 'You';
+  if (held && !SETUP.med) SETUP.med = 'yes';
+
+  setupHead(4,
+    held ? (adding ? 'Their medical' : 'Your medical')
+         : (adding ? 'Do they have a medical?' : 'Do you have a medical?'),
+    held ? Who + ' will already hold one — nobody flies solo without it. Add the dates and the '
+           + 'app will keep an eye on the expiry.'
+         : 'Not needed yet, but it has to be in hand before ' + who + ' can fly solo.');
+
+  const opts = held
+    ? [['yes', 'Yes \u2014 add the dates', 'The expiry is worked out for you'],
+       ['skip', 'Add it later', 'Set it in settings whenever']]
+    : [['yes', 'Yes, I have one', 'Enter the dates and the expiry is worked out'],
+       ['no', 'Not yet', 'We will show you what is involved'],
+       ['skip', 'Skip for now', 'Add it later in settings']];
+  html('<div class="grp">' + opts.map(([k, t, d]) => `
+    <button class="row" data-med="${k}">
+      <div class="ic" style="--c:var(--${SETUP.med === k ? 'blue' : 'tx3'})">${SETUP.med === k ? '&#10003;' : '&#8226;'}</div>
+      <div class="tx"><b>${t}</b><i>${d}</i></div></button>`).join('') + '</div>');
+  bind('[data-med]', e => { SETUP.med = e.currentTarget.dataset.med; render(); });
+
+  if (SETUP.med === 'yes') {
+    html(`<div class="card" style="margin-top:14px">
+      <div class="fld"><label class="f" for="mCls">Certificate</label>
+        <select id="mCls">
+          <option value="2"${SETUP.medClass === '2' ? ' selected' : ''}>Class 2</option>
+          <option value="lapl"${SETUP.medClass === 'lapl' ? ' selected' : ''}>LAPL medical</option>
+          <option value="1"${SETUP.medClass === '1' ? ' selected' : ''}>Class 1</option>
+        </select></div>
+      <div class="fld"><label class="f" for="mIss">Date of the medical</label>
+        <input type="date" id="mIss" value="${esc(SETUP.medIssue)}"></div>
+      <div class="fld"><label class="f" for="mDob">Your date of birth</label>
+        <input type="date" id="mDob" value="${esc(SETUP.dob)}">
+        <div class="tiny" style="margin-top:5px">Only used to work out the expiry — validity depends
+          on your age when it was issued.</div></div>
+      <div id="mOut" class="note b" style="margin-top:12px;display:none"></div>
+    </div>`);
+    const recalc = () => {
+      SETUP.medClass = $('#mCls').value; SETUP.medIssue = $('#mIss').value; SETUP.dob = $('#mDob').value;
+      const r = medExpiry(SETUP.medIssue, SETUP.dob);
+      const box = $('#mOut');
+      if (!r) { box.style.display = 'none'; return; }
+      box.style.display = 'block';
+      box.innerHTML = `<b>Valid until ${fmt(r.exp)}</b>Issued at ${r.age}, so ${r.months} months`
+        + (r.capped ? ' — capped, because a certificate issued before '
+            + (r.age < 40 ? '40 stops at 42' : '50 stops at 51') + ' (MED.A.045).' : '.')
+        + ' Check it against the certificate.';
+    };
+    ['mCls', 'mIss', 'mDob'].forEach(id => $('#' + id).addEventListener('input', recalc));
+    $('#mCls').addEventListener('change', recalc);
+    recalc();
+  }
+
+  if (SETUP.med === 'no') {
+    html(`<div class="note o" style="margin-top:14px"><b>You need one before your first solo</b>
+      Part-FCL is explicit that the appropriate medical certificate must be obtained before solo
+      flying is permitted. Most PPL students get a <b>Class 2</b>. Leave it late and it becomes the
+      thing holding up your training.</div>
+      <h2 class="sec">What is involved</h2><div class="grp">
+        <div class="row"><div class="ic" style="--c:var(--blue)">1</div>
+          <div class="tx"><b>CAA Customer Portal account</b><i>The same login you will need for the
+            e-Exams, so set it up once</i></div></div>
+        <div class="row"><div class="ic" style="--c:var(--indigo)">2</div>
+          <div class="tx"><b>Apply in Cellma</b><i>The CAA medical records system, reached through
+            the portal. Complete the application <b>before</b> your appointment — it replaced the
+            old paper forms and also lets you track progress</i></div></div>
+        <div class="row"><div class="ic" style="--c:var(--green)">3</div>
+          <div class="tx"><b>See an AME</b><i>Book an Aeromedical Examiner directly. A Class 2 can be
+            done with any UK AME. They charge for the examination on top of the CAA fee</i></div></div>
+      </div>
+      <a class="btn sec" style="margin-top:12px;display:block;text-decoration:none"
+        href="https://www.caa.co.uk/general-aviation/pilot-licences/applications/medical/apply-for-a-class-2-medical-certificate/"
+        target="_blank" rel="noopener">How to apply for a Class 2 &#8599;</a>`);
+  }
+
+  html(`<button class="btn" style="margin-top:14px" id="s4done">Start studying</button>
+    <button class="btn grey" style="margin-top:10px" id="s4back">Back</button>`);
+  $('#s4back').onclick = () => { SETUP.step = 3; render(); };
+  $('#s4done').onclick = () => finishSetup(adding);
+}
+
+/**
+ * The medical only matters once someone is actually flying: before that it is a
+ * question with no useful answer. From "flying regularly" on it is worth asking,
+ * and from first solo on they must already hold one — so that becomes a
+ * confirmation rather than a question.
+ */
+const medStep = () => !SETUP.stage || stageIdx(SETUP.stage) >= stageIdx('early');
+const medHeld = () => stageIdx(SETUP.stage) >= stageIdx('solo');
+const setupSteps = () => medStep() ? 4 : 3;
+
 function setupHead(n, title, sub) {
+  const tot = setupSteps();
   html(`<div class="hd" style="padding-top:26px">
     <div style="display:flex;gap:6px;margin-bottom:14px">
-      ${[1, 2, 3].map(i => `<div style="flex:1;height:4px;border-radius:99px;background:var(--${i <= n ? 'blue' : 'fill'})"></div>`).join('')}
+      ${Array.from({ length: tot }, (_, i) => `<div style="flex:1;height:4px;border-radius:99px;background:var(--${i < n ? 'blue' : 'fill'})"></div>`).join('')}
     </div>
-    <div class="sub" style="margin-bottom:4px">Step ${n} of 3</div>
+    <div class="sub" style="margin-bottom:4px">Step ${n} of ${tot}</div>
     <h1 class="vt">${esc(title)}</h1>
     <div class="sub" style="margin-top:8px">${esc(sub)}</div></div>`);
 }
@@ -2761,119 +2913,144 @@ VIEWS.importfile = function () {
 
 /* ============================ PROFILES ============================ */
 
-VIEWS.profiles = function () {
-  navbar('Profile', '');
+VIEWS.profiles = function (p) {
+  const which = (p && p.tab) || 'flying';
+  navbar('You', '');
   const t = summarise(S);
   const st = logStats();
   const F = (S.flights || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
-  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">${esc(activeName())}</h1>
-    <div class="sub">${S.stage ? esc(stageLabel(S.stage)) : 'Stage not set'}${
-      S.field ? ' · based at ' + esc(S.field) : ''}</div></div>`);
+  html(`<div class="hd" style="padding-top:12px;display:flex;align-items:center;gap:12px">
+    <div style="flex:1;min-width:0">
+      <h1 class="vt">${esc(activeName())}</h1>
+      <div class="sub">${S.stage ? esc(stageLabel(S.stage)) : 'Stage not set'}${
+        S.field ? ' · ' + esc(S.field) : ''}</div></div>
+    <button id="pSet" class="rndbtn" aria-label="Settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.1"/>
+        <path d="M19.4 14.5a1.6 1.6 0 0 0 .33 1.78l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.6 1.6 0 0 0-1.78-.33 1.6 1.6 0 0 0-1 1.47V21a2 2 0 1 1-4 0v-.11a1.6 1.6 0 0 0-1.05-1.47 1.6 1.6 0 0 0-1.78.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .33-1.78 1.6 1.6 0 0 0-1.47-1H3a2 2 0 1 1 0-4h.11a1.6 1.6 0 0 0 1.47-1.05 1.6 1.6 0 0 0-.33-1.78l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.78.33H9a1.6 1.6 0 0 0 1-1.47V3a2 2 0 1 1 4 0v.11a1.6 1.6 0 0 0 1 1.47 1.6 1.6 0 0 0 1.78-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.33 1.78V9a1.6 1.6 0 0 0 1.47 1H21a2 2 0 1 1 0 4h-.11a1.6 1.6 0 0 0-1.47 1z"/></svg>
+    </button>
+  </div>`);
+  $('#pSet').onclick = () => go('training');
 
-  // --- the map, or a prompt to make one
-  if (F.length) {
-    html(`<div class="mapwrap" style="margin-top:14px">${routeMap(F, S.field, 320)}</div>`);
-  } else if (S.field && afByCode(S.field)) {
-    html(`<div class="mapwrap" style="margin-top:14px">${routeMap([], S.field, 220)}</div>
-      <div class="tiny" style="margin:8px 0 0 4px">Log a flight and the routes appear here.</div>`);
-  }
+  // A map of one home airfield says nothing, and the empty state below already
+  // covers it — so the map appears once there is a route to draw.
+  if (F.length) html(mapFrame(F, S.field, 300));
 
   html(`<div class="big2" style="margin-top:12px">
     <div class="s"><div class="v">${st.total.toFixed(1)}</div><div class="l">Hours</div></div>
-    <div class="s"><div class="v">${st.n}</div><div class="l">Flights</div></div>
+    <div class="s"><div class="v">${t.pass}</div><div class="l">of 9 exams</div></div>
     <div class="s"><div class="v">${st.nFields}</div><div class="l">Airfields</div></div>
-  </div>
-  <div class="big2" style="margin-top:10px">
-    <div class="s"><div class="v">${st.solo.toFixed(1)}</div><div class="l">Solo</div></div>
-    <div class="s"><div class="v">${st.ldg}</div><div class="l">Landings</div></div>
-    <div class="s"><div class="v">${st.nm.toLocaleString('en-GB')}</div><div class="l">NM flown</div></div>
   </div>`);
 
-  // --- time by aircraft
-  const regs = Object.entries(st.regs).sort((a, b) => b[1].h - a[1].h);
-  if (regs.length) {
-    const max = regs[0][1].h || 1;
-    html('<h2 class="sec">Time in type</h2><div class="grp">' + regs.map(([reg, r]) => `
-      <div class="row">
-        <div class="ic" style="--c:var(--teal)">&#9992;</div>
-        <div class="tx"><b>${esc(reg)}</b><i>${esc(r.type || 'Type not recorded')} · ${r.n} flight${r.n === 1 ? '' : 's'}</i>
-          <div class="pbar" style="margin-top:7px"><i style="width:${Math.round(r.h / max * 100)}%;background:var(--teal)"></i></div></div>
-        <span class="hrs">${r.h.toFixed(1)}<small>hours</small></span>
-      </div>`).join('') + '</div>');
+  html(`<div class="seg" id="ptab" style="margin-top:14px">
+    <button data-x="flying" aria-selected="${which === 'flying'}">Flying</button>
+    <button data-x="study" aria-selected="${which === 'study'}">Study</button></div>`);
+  bind('#ptab button', e => { stack[stack.length - 1].p = { tab: e.currentTarget.dataset.x }; render(); });
+
+  if (which === 'flying') {
+    html(`<div class="grp">
+      <button class="row" id="pLog"><div class="ic" style="--c:var(--teal)">&#9992;</div>
+        <div class="tx"><b>Flight log</b><i>${st.n ? st.n + ' flight' + (st.n === 1 ? '' : 's') + ' · ' + st.solo.toFixed(1) + ' solo · ' + st.ldg + ' landings' : 'Nothing logged yet'}</i></div>
+        <div class="chev">&#8250;</div></button>
+      ${st.nm ? `<div class="row"><div class="tx"><b>Distance flown</b>${st.longest && routeNM(st.longest) >= 1
+        ? '<i>Longest: ' + esc(legs(st.longest).join(' → ')) + ', ' + Math.round(routeNM(st.longest)) + ' NM</i>' : ''}</div>
+        <div class="val">${st.nm.toLocaleString('en-GB')} NM</div></div>` : ''}
+    </div>`);
+    $('#pLog').onclick = () => go('log');
+
+    const regs = Object.entries(st.regs).sort((a, b) => b[1].h - a[1].h);
+    if (regs.length) {
+      const max = regs[0][1].h || 1;
+      html('<h2 class="sec">Time in type</h2><div class="grp">' + regs.map(([reg, r]) => `
+        <div class="row"><div class="ic" style="--c:var(--teal)">&#9992;</div>
+          <div class="tx"><b>${esc(reg)}</b><i>${esc(r.type || 'Type not recorded')} · ${r.n} flight${r.n === 1 ? '' : 's'}</i>
+            <div class="pbar" style="margin-top:7px"><i style="width:${Math.round(r.h / max * 100)}%;background:var(--teal)"></i></div></div>
+          <span class="hrs">${r.h.toFixed(1)}<small>hours</small></span></div>`).join('') + '</div>');
+    }
+
+    const flds = Object.entries(st.fields).sort((a, b) => b[1] - a[1]);
+    if (flds.length) {
+      html('<h2 class="sec">Airfields visited</h2><div class="grp">' + flds.slice(0, 8).map(([c, k]) => {
+        const a = afByCode(c);
+        return `<div class="row"><div class="ic wide" style="--c:var(--${c === S.field ? 'orange' : 'blue'})">${esc(c)}</div>
+          <div class="tx"><b>${esc(a ? a[1] : c)}</b><i>${esc(a && a[2] ? a[2] : '')}</i></div>
+          <div class="val">${k}</div></div>`;
+      }).join('') + '</div>');
+    }
+
+    if (S.medical) {
+      const md = new Date(S.medical + 'T00:00:00'), dl = daysTo(md);
+      const col = dl < 0 ? 'red' : dl < 60 ? 'orange' : 'green';
+      html(`<h2 class="sec">Medical</h2><div class="grp">
+        <button class="row" id="pMed"><div class="ic" style="--c:var(--${col})">&#10010;</div>
+          <div class="tx"><b>${S.medClass === '1' ? 'Class 1' : S.medClass === 'lapl' ? 'LAPL medical' : 'Class 2'}</b>
+            <i>${dl < 0 ? 'Expired ' + fmt(md) : 'Valid until ' + fmt(md)}</i></div>
+          <span class="bdg ${col === 'green' ? 'g' : col === 'orange' ? 'o' : 'r'}">${dl < 0 ? 'expired' : dl + ' days'}</span>
+          <div class="chev">&#8250;</div></button></div>`);
+      $('#pMed').onclick = () => go('training');
+    } else {
+      html(`<div class="note o" style="margin-top:14px"><b>No medical recorded</b>
+        You need one before you can fly solo. Add it in settings and it will be tracked here.</div>`);
+    }
+    if (!F.length) html(`<div class="empty" style="padding-top:24px"><div class="em">&#9992;</div>
+      <h3>No flights yet</h3><p>Log one and the map, hours and PPL progress fill in.</p></div>`);
+
+  } else {
+    html('<div class="grp">' + [
+      ['Exams passed', t.pass + ' of 9'], ['Articles read', t.read + ' of 37'],
+      ['Objectives studied', t.lo + ' of 551'], ['Flashcards started', t.srs + ' of 327'],
+      ['Quiz attempts', String((S.hist || []).length)],
+      ['Questions still wrong', String(Object.keys(S.wrong || {}).length)]
+    ].map(([k, v]) => `<div class="row"><div class="tx"><b>${k}</b></div><div class="val">${v}</div></div>`).join('') + '</div>');
+
+    const bests = SUBJECTS.filter(x => S.best[x.code] != null);
+    if (bests.length) html('<h2 class="sec">Best mock scores</h2><div class="grp">' + bests.map(x => `
+      <div class="row"><div class="ic" style="--c:var(--${META[x.code].c})">${x.code}</div>
+        <div class="tx"><b>${esc(x.name)}</b></div>
+        <span class="bdg ${S.best[x.code] >= PASS_MARK ? 'g' : 'o'}">${S.best[x.code]}%</span></div>`).join('') + '</div>');
+
+    html(`<button class="btn sec" style="margin-top:14px" id="pExams">Open the Exams tab</button>`);
+    $('#pExams').onclick = () => tab('plan');
   }
 
-  // --- airfields
-  const flds = Object.entries(st.fields).sort((a, b) => b[1] - a[1]);
-  if (flds.length) {
-    html('<h2 class="sec">Airfields visited</h2><div class="grp">' + flds.slice(0, 8).map(([c, k]) => {
-      const a = afByCode(c);
-      return `<div class="row"><div class="ic wide" style="--c:var(--${c === S.field ? 'orange' : 'blue'})">${esc(c)}</div>
-        <div class="tx"><b>${esc(a ? a[1] : c)}</b><i>${esc(a && a[2] ? a[2] : '')}</i></div>
-        <div class="val">${k} visit${k === 1 ? '' : 's'}</div></div>`;
-    }).join('') + '</div>');
-    if (st.longest && routeNM(st.longest) >= 1) html(`<div class="tiny" style="margin:8px 0 0 4px">
-      Longest route: ${esc(legs(st.longest).join(' → '))} — ${Math.round(routeNM(st.longest))} NM.</div>`);
-  }
-
-  if (S.medical) {
-    const md = new Date(S.medical + 'T00:00:00'), dleft = daysTo(md);
-    const col = dleft < 0 ? 'red' : dleft < 30 ? 'red' : dleft < 90 ? 'orange' : 'green';
-    html(`<h2 class="sec">Medical</h2><div class="grp">
-      <div class="row"><div class="ic" style="--c:var(--${col})">&#10010;</div>
-        <div class="tx"><b>${S.medClass === '1' ? 'Class 1' : S.medClass === 'lapl' ? 'LAPL medical' : 'Class 2'}</b>
-          <i>${dleft < 0 ? 'Expired ' + fmt(md) : 'Valid until ' + fmt(md)}</i></div>
-        <span class="bdg ${col === 'green' ? 'g' : col === 'orange' ? 'o' : 'r'}">${
-          dleft < 0 ? 'expired' : dleft + ' days'}</span></div></div>`);
-  }
-
-  html(`<h2 class="sec">Study record</h2><div class="grp">
-    <div class="row"><div class="tx"><b>Exams passed</b></div><div class="val">${t.pass} of 9</div></div>
-    <div class="row"><div class="tx"><b>Articles read</b></div><div class="val">${t.read} of 37</div></div>
-    <div class="row"><div class="tx"><b>Objectives studied</b></div><div class="val">${t.lo} of 551</div></div>
-    <div class="row"><div class="tx"><b>Flashcards started</b></div><div class="val">${t.srs} of 327</div></div>
-    <div class="row"><div class="tx"><b>Quiz attempts</b></div><div class="val">${(S.hist || []).length}</div></div>
-    <div class="row"><div class="tx"><b>Questions still wrong</b></div><div class="val">${Object.keys(S.wrong || {}).length}</div></div>
-  </div>`);
-
-  html(`<h2 class="sec">Details</h2><div class="grp">
-    <button class="row" id="pLog"><div class="ic" style="--c:var(--teal)">&#9992;</div>
-      <div class="tx"><b>Flight log</b></div><div class="val">${st.n} flight${st.n === 1 ? '' : 's'}</div><div class="chev">&#8250;</div></button>
-    <button class="row" id="pRen"><div class="tx"><b>Name</b></div>
-      <div class="val">${esc(activeName())}</div><div class="chev">&#8250;</div></button>
-    <button class="row" id="pTrn"><div class="tx"><b>Training and airfield</b></div>
-      <div class="val">${S.field ? esc(S.field) : 'Not set'}</div><div class="chev">&#8250;</div></button>
-  </div>`);
-  $('#pLog').onclick = () => go('log');
-  $('#pRen').onclick = () => go('nameentry', { mode: 'rename', id: P.active });
-  $('#pTrn').onclick = () => go('training');
-
-  html(`<h2 class="sec">Move to another device</h2>
-    <div class="note b">Everything lives in this browser. Export writes one file with your progress,
-    exam record, flashcard scheduling, flight log and settings; import restores it elsewhere. That
-    is also how someone else uses the app — their own device, their own file.</div>
-    <div class="brow" style="margin-top:12px">
-      <button class="btn sec" id="pExp">Export everything</button>
-      <button class="btn sec" id="pImp">Import</button></div>
-    <button class="btn dgr sm" style="margin-top:12px" id="pWipe">Start again</button>`);
-  $('#pExp').onclick = exportProfile;
-  $('#pImp').onclick = pickImportFile;
-  $('#pWipe').onclick = () => askConfirm({
-    title: 'Start again?',
-    body: 'Everything is erased — progress, exam record, flashcards, flight log and settings — and '
-      + 'you go back to setup. Export first if you might want any of it.',
-    yes: 'Erase and start again', danger: true
-  }, () => { deleteProfile(P.active); SETUP = null; stack = [{ v: 'welcome' }]; render(); });
+  html(`<div class="foot">Everything lives in this browser. Back it up from
+    <button class="lnk" id="pSet2" style="background:none;border:0;color:var(--blue);
+      font:inherit;text-decoration:underline;cursor:pointer">settings</button>.</div>`);
+  $('#pSet2').onclick = () => go('training');
 };
 
 /** One file with the lot. */
 function exportProfile() {
   flush();
   download({ app: 'ppl-theory', kind: 'profile', name: activeName(),
-             exported: new Date().toISOString(), settings: { theme: P.theme, cwKey: P.cwKey || '' },
+             exported: new Date().toISOString(),
+             settings: { theme: P.theme, cwKey: P.cwKey || '' },
              data: S },
     'ppl-' + slug(activeName()) + '.json');
 }
+
+/**
+ * Class 2 validity per MED.A.045(a)(3): 60 months under 40, 24 months from 40 to 50,
+ * 12 months above 50 — with the hard stops that one issued before 40 ceases at 42, and
+ * one issued before 50 ceases at 51.
+ */
+function medExpiry(issueISO, dobISO) {
+  if (!issueISO || !dobISO) return null;
+  const issue = new Date(issueISO + 'T00:00:00'), dob = new Date(dobISO + 'T00:00:00');
+  if (isNaN(issue) || isNaN(dob)) return null;
+  let age = issue.getFullYear() - dob.getFullYear();
+  const m = issue.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && issue.getDate() < dob.getDate())) age--;
+  const months = age < 40 ? 60 : age < 50 ? 24 : 12;
+  let exp = new Date(issue.getFullYear(), issue.getMonth() + months, issue.getDate());
+  const birthday = nth => new Date(dob.getFullYear() + nth, dob.getMonth(), dob.getDate());
+  if (age < 40 && exp > birthday(42)) exp = birthday(42);
+  if (age >= 40 && age < 50 && exp > birthday(51)) exp = birthday(51);
+  return { exp: exp, age: age, months: months,
+           capped: (age < 40 && exp.getTime() === birthday(42).getTime()) ||
+                   (age >= 40 && age < 50 && exp.getTime() === birthday(51).getTime()) };
+}
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1, 2) + '-' + pad(d.getDate(), 2);
 
 /* ============================ FLIGHT LOG ============================ */
 /* A simple logbook, plus the thing that makes it worth keeping here: progress
@@ -2993,6 +3170,146 @@ function routeMap(flights, homeCode, h) {
     ${land}${routes}${dots}</svg>`;
 }
 
+/* ---------------- detailed map layer ----------------
+   The SVG map above stays the default fallback: a few kB, themed with the app,
+   and it still draws with no signal, which is the whole reason the service worker
+   exists. On top of it sits a real basemap from OpenFreeMap — OpenStreetMap
+   vector tiles served free, with no key, no account and no billing, drawn by
+   MapLibre GL. It is a few hundred kB from a CDN and the tiles are cross-origin,
+   so it needs a connection; anything that goes wrong falls straight back to the
+   SVG. */
+
+const MAPLIBRE_VER = '5.24.0';   // pinned: a style/API break should not reach the app silently
+const OFM_STYLE = dark => 'https://tiles.openfreemap.org/styles/' + (dark ? 'fiord' : 'positron');
+
+let ML = null;        // the loader promise, created once
+let ML_BAD = '';      // set once loading has failed, so we stop retrying every render
+const mapOn = () => !ML_BAD && navigator.onLine;
+
+function loadMapLibre() {
+  if (ML) return ML;
+  ML = new Promise((ok, bad) => {
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/maplibre-gl@' + MAPLIBRE_VER + '/dist/maplibre-gl.css';
+    document.head.appendChild(css);
+    const el = document.createElement('script');
+    el.src = 'https://unpkg.com/maplibre-gl@' + MAPLIBRE_VER + '/dist/maplibre-gl.js';
+    el.async = true;
+    el.onload = () => window.maplibregl ? ok(window.maplibregl) : bad(new Error('no maplibregl'));
+    el.onerror = () => bad(new Error('map library did not load'));
+    document.head.appendChild(el);
+  });
+  return ML;
+}
+
+const isDark = () => (P.theme === 'dark') ||
+  (!P.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+
+/** Draw the same routes and airfields onto a real basemap. */
+function drawDetail(el, ml, flights, homeCode) {
+  const dark = isDark();
+  const map = new ml.Map({
+    container: el, style: OFM_STYLE(dark),
+    dragRotate: false, pitchWithRotate: false, touchZoomRotate: true,
+    attributionControl: { compact: true }
+  });
+  map.touchZoomRotate.disableRotation();
+  map.addControl(new ml.NavigationControl({ showCompass: false }), 'top-left');
+  // OpenStreetMap data is ODbL: the credit has to stay. Collapse it to the small
+  // (i) instead, which is what compact mode is for.
+  map.on('load', () => {
+    const a = el.querySelector('.maplibregl-ctrl-attrib');
+    if (a) a.classList.remove('maplibregl-compact-show');
+  });
+
+  const at = a => [a[4], a[3]];                       // MapLibre wants [lon, lat]
+  const lines = [], seen = {}, bounds = new ml.LngLatBounds();
+
+  flights.forEach(f => {
+    const p = legs(f).map(afByCode).filter(Boolean);
+    if (p.length < 2) return;
+    lines.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: p.map(at) } });
+  });
+  flights.forEach(f => legs(f).forEach(c => seen[c] = (seen[c] || 0) + 1));
+  if (homeCode) seen[homeCode] = seen[homeCode] || 1;
+
+  map.on('load', () => {
+    map.addSource('routes', { type: 'geojson',
+      data: { type: 'FeatureCollection', features: lines } });
+    // a casing under the line, so it stays readable over any tile colour
+    map.addLayer({ id: 'route-case', type: 'line', source: 'routes',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': dark ? '#000000' : '#ffffff',
+               'line-opacity': .55, 'line-width': 6 } });
+    map.addLayer({ id: 'route', type: 'line', source: 'routes',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': dark ? '#4da3ff' : '#007aff', 'line-width': 2.4 } });
+  });
+
+  // HTML markers rather than symbol layers: no dependency on the style's glyphs,
+  // and the codes then match the app's own typography.
+  Object.keys(seen).forEach(c => {
+    const a = afByCode(c); if (!a) return;
+    bounds.extend(at(a));
+    const n = document.createElement('div');
+    n.className = 'mpin' + (c === homeCode ? ' home' : '');
+    n.innerHTML = '<i></i><span>' + esc(c) + '</span>';
+    n.title = c + ' \u2014 ' + a[1];
+    new ml.Marker({ element: n, anchor: 'center' }).setLngLat(at(a)).addTo(map);
+  });
+
+  if (bounds.isEmpty()) map.jumpTo({ center: [-2.5, 54], zoom: 4.6 });
+  else if (Object.keys(seen).length === 1) map.jumpTo({ center: bounds.getCenter(), zoom: 9.5 });
+  else map.fitBounds(bounds, { padding: 42, animate: false, maxZoom: 11 });
+}
+
+/**
+ * Emit a map frame. The SVG renders immediately so there is never a blank box,
+ * then the basemap is swapped in over it if it is switched on and actually loads.
+ */
+function mapFrame(flights, homeCode, h) {
+  const svg = routeMap(flights, homeCode, h);
+  if (!svg) return '';
+  const id = 'mf' + (mapFrame.n = (mapFrame.n || 0) + 1);
+  MAP_PENDING.push({ id: id, flights: flights, home: homeCode, h: h });
+  return `<div class="mapwrap" id="${id}" style="margin-top:12px">${svg}</div>`;
+}
+
+const MAP_PENDING = [];
+
+/** Run after render(): upgrade any frames that asked for Google, and wire the switch. */
+function mountMaps() {
+  const jobs = MAP_PENDING.splice(0);
+  if (!mapOn()) {
+    if (jobs.length) note(jobs[0].id, ML_BAD || 'No connection \u2014 showing the built-in map.');
+    return;
+  }
+  jobs.forEach(j => {
+    const wrap = $('#' + j.id); if (!wrap) return;
+    loadMapLibre().then(ml => {
+      const svg = wrap.querySelector('svg.map'); if (!svg) return;
+      const el = document.createElement('div');
+      el.className = 'dmap';
+      el.style.height = Math.round((j.h || 300) * 0.62) + 'px';
+      svg.replaceWith(el);
+      drawDetail(el, ml, j.flights, j.home);
+    }).catch(() => {
+      // CDN blocked, tiles unreachable, or offline — the SVG is already on screen
+      ML = null;
+      ML_BAD = 'Detailed map could not load — showing the built-in map.';
+      note(j.id, ML_BAD);
+    });
+  });
+
+  function note(id, msg) {
+    const w = $('#' + id);
+    if (w && !w.querySelector('.mapnote')) {
+      w.insertAdjacentHTML('beforeend', '<div class="mapnote">' + esc(msg) + '</div>');
+    }
+  }
+}
+
 /* ---- views ---- */
 
 VIEWS.log = function () {
@@ -3004,7 +3321,7 @@ VIEWS.log = function () {
     <div class="sub">${t.n} flight${t.n === 1 ? '' : 's'} · ${t.total.toFixed(1)} hours total</div></div>`);
 
   if (F.length) {
-    html(`<div class="mapwrap" style="margin-top:14px">${routeMap(F, S.field, 300)}</div>`);
+    html(mapFrame(F, S.field, 300));
     html(`<div class="big2" style="margin-top:12px">
       <div class="s"><div class="v">${t.total.toFixed(1)}</div><div class="l">Total hours</div></div>
       <div class="s"><div class="v">${t.p1.toFixed(1)}</div><div class="l">As P1</div></div>
