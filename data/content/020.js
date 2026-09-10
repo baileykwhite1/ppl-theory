@@ -79,6 +79,7 @@ valve opens before top dead centre and closes after bottom dead centre, exploiti
 to improve charging. Ignition occurs <b>before</b> top dead centre, because combustion takes
 time and peak pressure should arrive just after TDC.</p>
 
+<figure data-d="fourstroke"></figure>
 <h3>Mixture</h3>
 <p>The chemically correct (stoichiometric) air/fuel ratio is about <b>15:1</b> by weight. Best
 power is a little rich of that, around 12.5:1; best economy is a little lean, around 16:1.</p>
@@ -225,6 +226,7 @@ static pressure against a subscale reference. <b>VSI</b> — the rate of change 
 using a calibrated leak, which is why it lags by two or three seconds and why it briefly shows
 the wrong sense at the start of a change.</p>
 
+<figure data-d="pitotstatic"></figure>
 <h3>Blockages — learn these as a table</h3>
 <table>
 <thead><tr><th>Blockage</th><th>ASI</th><th>Altimeter</th><th>VSI</th></tr></thead>

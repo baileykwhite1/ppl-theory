@@ -132,6 +132,7 @@ gives boredom, complacency and missed cues. Too much gives narrowed attention, r
 earlier habits, and eventually panic. Peak performance is in the middle, and the middle is
 narrower for unfamiliar tasks.</p>
 
+<figure data-d="arousal"></figure>
 <h3>Stress</h3>
 <p><b>Acute</b> stress is short-term and situational — an engine rough-running, a diversion in
 poor weather. <b>Chronic</b> stress accumulates from life: work, money, relationships, poor

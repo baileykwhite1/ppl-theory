@@ -63,6 +63,7 @@ red</b> — too low ("all red, you're dead"). <b>Two white, two red</b> — on t
 approach path, typically 3&deg;. Three white one red is slightly high; one white three red
 slightly low.</p>
 
+<figure data-d="papi"></figure>
 <h3>The circuit</h3>
 <p>Standard circuit direction is <b>left-hand</b> unless otherwise notified. The pattern is
 take-off, <b>crosswind</b>, <b>downwind</b>, <b>base</b>, <b>final</b>. Circuit height is
@@ -78,6 +79,7 @@ in front of or overtake one already on final.</li>
 the circuit is where the mid-air risk concentrates.</li>
 </ul>
 
+<figure data-d="circuit"></figure>
 <h3>Right of way, generally</h3>
 <ul>
 <li><b>Head-on</b>: both alter <b>heading to the right</b>.</li>

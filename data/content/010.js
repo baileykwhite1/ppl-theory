@@ -12,6 +12,7 @@ articles: [
 the answer comes down to three things — do I need a clearance, will anyone separate me from
 other traffic, and is there a speed limit.</p>
 
+<figure data-d="airspace"></figure>
 <h3>The table you actually need</h3>
 <table>
 <thead><tr><th>Class</th><th>VFR allowed?</th><th>Clearance needed?</th><th>Separation from other VFR</th><th>Service</th></tr></thead>
@@ -72,6 +73,7 @@ avoidance.</p>
 <p>VFR is a promise you make about visibility and distance from cloud. Break it and you are
 either illegal or in cloud, and usually both.</p>
 
+<figure data-d="vmc"></figure>
 <h3>Table S5-1, the whole thing</h3>
 <table>
 <thead><tr><th>Where</th><th>Class</th><th>Flight visibility</th><th>Distance from cloud</th></tr></thead>
@@ -130,6 +132,7 @@ boundary moves up with the ground.</li>
 <p>An altimeter is a barometer with an optimistic dial. What it reads depends entirely on the
 number in the subscale, so the discipline is knowing which number belongs in there and when.</p>
 
+<figure data-d="altimetry"></figure>
 <h3>Three settings, three meanings</h3>
 <ul>
 <li><b>QFE</b> — set it and the altimeter reads <b>height above the aerodrome datum</b>. Reads

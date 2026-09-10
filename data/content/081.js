@@ -27,6 +27,7 @@ third law the reaction is upwards. Both descriptions are correct and describe th
 phenomenon. What matters practically is the <b>pressure distribution</b>: most of the lift comes
 from <b>reduced pressure on the upper surface</b>, not from increased pressure below.</p>
 
+<figure data-d="aerofoil"></figure>
 <h3>The lift formula</h3>
 <p class="mono">L = C<sub>L</sub> &frac12; &rho; V&sup2; S</p>
 <p>Where C<sub>L</sub> is the lift coefficient (a function of angle of attack and aerofoil
@@ -98,6 +99,7 @@ induced drag are <b>equal</b>, and it is the single most useful speed on the aer
 command, where flying <em>slower</em> requires <em>more</em> power, and where speed stability
 is poor. That is where a badly-flown final approach lives.</p>
 
+<figure data-d="dragcurve"></figure>
 <h3>Minimum power versus minimum drag</h3>
 <p>Power required is drag multiplied by speed, so the minimum-power speed is <b>slower</b> than
 the minimum-drag speed — roughly 76% of V<sub>MD</sub>. Minimum power gives <b>maximum
@@ -148,6 +150,7 @@ of attack is exceeded, causing a loss of lift and a large increase in drag. It h
 do with the engine, and everything to do with angle of attack. You can stall at any speed and
 in any attitude — including nose-down at high speed, if you pull hard enough.</p>
 
+<figure data-d="clcurve"></figure>
 <h3>What changes the stall speed</h3>
 <table>
 <thead><tr><th>Factor</th><th>Effect on stall speed</th><th>Why</th></tr></thead>
@@ -177,6 +180,7 @@ increases by the square root of n:</p>
 <p>Sixty degrees of bank doubles your effective weight and adds 41% to your stall speed. That is
 the arithmetic behind the base-to-final stall-spin accident.</p>
 
+<figure data-d="turnforces"></figure>
 <h3>Symptoms and recovery</h3>
 <p>Approaching the stall: decreasing airspeed, high nose attitude, reduced effectiveness and
 sloppiness of the controls, buffet, the stall warner, and a sinking feeling. Recovery, in
@@ -359,6 +363,7 @@ Second, <b>V<sub>A</sub> reduces as weight reduces</b> — a lighter aeroplane a
 limit load factor more readily, so it must be flown more slowly in turbulence. It is the one
 limitation that gets <em>more</em> restrictive as you get lighter.</p>
 
+<figure data-d="asiarcs"></figure>
 <h3>Airspeeds, in order</h3>
 <p><b>IAS</b> what the instrument shows. Correct for instrument and position error to get
 <b>CAS</b>. Correct for compressibility (irrelevant below about 200 kt) to get <b>EAS</b>.

@@ -6,27 +6,92 @@
 /* ============================ configuration ============================ */
 
 const META = {
-  '010': { c: 'blue',   book: 'APM 2',     blk: 1 },
-  '090': { c: 'teal',   book: 'APM 7',     blk: 1 },
-  '040': { c: 'pink',   book: 'APM 6',     blk: 2 },
-  '050': { c: 'indigo', book: 'APM 2',     blk: 2 },
-  '081': { c: 'purple', book: 'APM 4',     blk: 3 },
-  '020': { c: 'brown',  book: 'APM 4',     blk: 3 },
-  '060': { c: 'green',  book: 'APM 3',     blk: 4 },
-  '030': { c: 'orange', book: 'APM 3 + 4', blk: 4 },
-  '070': { c: 'red',    book: 'APM 6',     blk: 4 }
+  '010': { c: 'blue',   book: 'APM 2' },
+  '090': { c: 'teal',   book: 'APM 7' },
+  '040': { c: 'pink',   book: 'APM 6' },
+  '050': { c: 'indigo', book: 'APM 2' },
+  '081': { c: 'purple', book: 'APM 4' },
+  '020': { c: 'brown',  book: 'APM 4' },
+  '060': { c: 'green',  book: 'APM 3' },
+  '030': { c: 'orange', book: 'APM 3 + 4' },
+  '070': { c: 'red',    book: 'APM 6' }
 };
 
-const BLOCKS = [
-  { no: 1, title: 'Ground school foundation', subs: ['010', '090'],
-    why: 'Schools commonly want Air Law passed before first solo — check what yours requires. Communications is the same paper (subject 090) that FRTOL examiners use, so a pass here counts both ways.' },
-  { no: 2, title: 'The pilot and the sky', subs: ['040', '050'],
-    why: 'Human Performance is short and self-contained. Meteorology is long — start it early, sit it once you can read a TAF, METAR and Form 214 cold.' },
-  { no: 3, title: 'The aeroplane', subs: ['081', '020'],
-    why: 'Principles of Flight and Aircraft General Knowledge share a book and overlap heavily. The cheapest pairing in the set.' },
-  { no: 4, title: 'Cross-country and consolidation', subs: ['060', '030', '070'],
-    why: 'Navigation and Flight Performance & Planning are what the qualifying cross-country actually tests. Operational Procedures draws on all eight others, so it goes last.' }
+/* Exam orderings. There is no CAA-mandated order, and no sittings limit for a PPL, so this
+   is purely about how you want to study. Each plan is a full ordering of the nine subjects
+   plus a suggested grouping into study blocks. */
+const PLANS = [
+  { id: 'blocks', name: 'Study-efficient blocks', tag: 'Recommended',
+    desc: 'Pairs subjects that share a book or overlap heavily, so each block is cheaper than the sum of its parts.',
+    order: ['010', '090', '040', '050', '081', '020', '060', '030', '070'],
+    split: [2, 2, 2, 3],
+    titles: ['Ground school foundation', 'The pilot and the sky', 'The aeroplane', 'Cross-country and consolidation'],
+    notes: [
+      'Schools commonly want Air Law passed before first solo — check what yours requires. Communications is the same paper (subject 090) FRTOL examiners use, so a pass counts both ways.',
+      'Human Performance is short and self-contained. Meteorology is long — start it early and sit it once you can read a TAF, METAR and Form 214 cold.',
+      'Principles of Flight and Aircraft General Knowledge share a book and overlap heavily. The cheapest pairing in the set.',
+      'Navigation and Flight Performance & Planning are what the qualifying cross-country actually tests. Operational Procedures draws on all eight others, so it goes last.'
+    ] },
+  { id: 'training', name: 'Follow your flight training',
+    desc: 'Ordered against the milestones, so each exam lands just before the flying that needs it.',
+    order: ['010', '090', '040', '050', '060', '030', '081', '020', '070'],
+    split: [2, 2, 2, 2, 1],
+    titles: ['Before first solo', 'Before solo navigation', 'Before the qualifying cross-country', 'Consolidation', 'Last'],
+    notes: [
+      'The two most schools want signed off before they send you solo.',
+      'You cannot judge whether to launch without Meteorology, and Human Performance is the shortest paper in the set.',
+      'Navigation and Flight Performance & Planning are exactly what the 150 NM qualifying flight tests.',
+      'The technical pair, once you have the handling experience to make it concrete.',
+      'Operational Procedures draws on all eight others.'
+    ] },
+  { id: 'quick', name: 'Quick wins first',
+    desc: 'Smallest syllabus first. Three passes on the board early is worth a lot when motivation is the constraint.',
+    order: ['090', '040', '070', '010', '030', '081', '050', '060', '020'],
+    split: [3, 3, 3],
+    titles: ['Short papers', 'Middleweight', 'The big three'],
+    notes: ['The three smallest learning-objective counts in the set.',
+      'Manageable, and Flight Performance & Planning starts paying off in your flight planning.',
+      'The heaviest syllabuses, tackled once you have momentum and a working study habit.'] },
+  { id: 'heavy', name: 'Heaviest first',
+    desc: 'Biggest subjects while enthusiasm is highest, leaving short papers for when you are tired of studying.',
+    order: ['020', '060', '050', '081', '030', '010', '070', '040', '090'],
+    split: [3, 3, 3],
+    titles: ['The big three', 'Middleweight', 'Short papers'],
+    notes: ['Aircraft General Knowledge, Navigation and Meteorology are the three largest.',
+      'Substantial but not enormous.',
+      'Short papers to finish on, when study fatigue has set in.'] },
+  { id: 'custom', name: 'My own order',
+    desc: 'Arrange the nine however you like. Useful if your school runs ground school in a fixed sequence.',
+    order: ['010', '090', '040', '050', '081', '020', '060', '030', '070'],
+    split: [3, 3, 3],
+    titles: ['First three', 'Next three', 'Last three'],
+    notes: ['', '', ''] }
 ];
+
+const planById = id => PLANS.find(p => p.id === id) || PLANS[0];
+function activePlan() { return planById(S.planId || 'blocks'); }
+/** The nine subject codes in the order this profile has chosen. */
+function planOrder() {
+  const p = activePlan();
+  if (p.id === 'custom' && Array.isArray(S.customOrder) && S.customOrder.length === 9) return S.customOrder.slice();
+  return p.order.slice();
+}
+/** Chunk the ordering into the plan's study blocks. */
+function planBlocks() {
+  const p = activePlan(), order = planOrder(), out = [];
+  let i = 0;
+  p.split.forEach((n, gi) => {
+    out.push({ no: gi + 1, title: p.titles[gi], why: p.notes[gi], subs: order.slice(i, i + n) });
+    i += n;
+  });
+  if (i < order.length) out.push({ no: out.length + 1, title: 'Remaining', why: '', subs: order.slice(i) });
+  return out;
+}
+const blockOf = code => {
+  const b = planBlocks().find(x => x.subs.indexOf(code) >= 0);
+  return b ? b.no : 1;
+};
+const posOf = code => planOrder().indexOf(code) + 1;
 
 const BOOKS = {
   '010': ['APM 2', 'Aviation Law &amp; Meteorology', '17th revised ed., Feb 2025'],
@@ -111,7 +176,8 @@ const NEW_CARDS_PER_DAY = 20;
 
 const PKEY = 'ppl-profiles';
 const dataKey = id => 'ppl-v2:' + id;
-const blank = () => ({ lo: {}, subj: {}, read: {}, srs: {}, hist: [], d1: '', d2: '', newToday: {}, best: {} });
+const blank = () => ({ lo: {}, subj: {}, read: {}, srs: {}, hist: [], d1: '', d2: '',
+  newToday: {}, best: {}, stage: '', field: '', wx: '', planId: 'blocks', customOrder: null });
 
 let P;   // { list: [{id, name}], active: id, theme }
 let S;   // the active profile's progress
@@ -145,6 +211,10 @@ function migrate(old) {
   Object.assign(s.read, old.read || {}); Object.assign(s.srs, old.srs || {});
   Object.assign(s.newToday, old.newToday || {}); Object.assign(s.best, old.best || {});
   s.hist = old.hist || []; s.d1 = old.d1 || ''; s.d2 = old.d2 || '';
+  // profile settings — these were silently dropped before, which lost the whole setup
+  ['stage', 'field', 'wx', 'planId', 'learnSort'].forEach(k => { if (old[k]) s[k] = old[k]; });
+  if (Array.isArray(old.customOrder) && old.customOrder.length === 9) s.customOrder = old.customOrder.slice();
+  if (Array.isArray(old.cardSubs)) s.cardSubs = old.cardSubs.slice();
   return s;
 }
 function loadState() { S = P.active ? Object.assign(blank(), readJSON(dataKey(P.active), {})) : blank(); }
@@ -252,7 +322,7 @@ function go(v, p) { stack.push({ v: v, p: p }); render(); }
 function back() { if (stack.length > 1) { stack.pop(); render(); } }
 function tab(v) { stack = [{ v: v }]; render(); }
 
-const SETUP_OK = { welcome: 1, importfile: 1 };
+const SETUP_OK = { welcome: 1, importfile: 1 };   // views allowed before any profile exists
 
 function render() {
   if (needsSetup() && !SETUP_OK[stack[stack.length - 1].v]) stack = [{ v: 'welcome' }];
@@ -302,9 +372,12 @@ VIEWS.home = function () {
   </div>`);
   $('#avat').onclick = () => go('profiles');
 
+  const strip = wxStrip();
+  if (strip) { html(strip); $('#wxb').onclick = () => go('wx'); }
+
   // --- overall progress
   const overall = Math.round((dnLO / Math.max(1, totLO) * 0.6 + dnArt / Math.max(1, totArt) * 0.4) * 100);
-  html(`<div class="card" style="display:flex;align-items:center;gap:16px">
+  html(`<div class="hero" style="display:flex;align-items:center;gap:16px">
     <div style="position:relative;flex:none">${ring(overall, 68, 'blue', 6)}
       <div style="position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:700">${overall}%</div></div>
     <div style="flex:1;min-width:0">
@@ -319,7 +392,7 @@ VIEWS.home = function () {
     const m = META[next.code];
     html(`<h2 class="sec">Pick up where you left off</h2>
       <button class="grp row" id="nextUp">
-        <div class="ic" style="background:var(--${m.c})">${next.code}</div>
+        <div class="ic" style="--c:var(--${m.c})">${next.code}</div>
         <div class="tx"><b>${esc(next.label)}</b><i>${esc(byCode[next.code].name)}</i></div>
         <div class="chev">&#8250;</div></button>`);
     $('#nextUp').onclick = () => next.go();
@@ -342,18 +415,37 @@ VIEWS.home = function () {
   $('#tCards').onclick = () => tab('cards');
   $('#tQuiz').onclick = () => startQuiz({ codes: SUBJECTS.map(s => s.code), n: 10, mode: 'practice', title: 'Quick quiz' });
 
+  // --- home airfield
+  if (S.field || S.wx || CLUB_WX[S.field]) {
+    const links = [];
+    const cw = clubWx(S.field);
+    if (cw) links.push(`<a class="row" href="${esc(cw.url)}" target="_blank" rel="noopener">
+      <div class="ic" style="--c:var(--teal)">&#9925;</div>
+      <div class="tx"><b>${esc(cw.name)}</b><i>Live observation at the field</i></div><div class="chev">&#8599;</div></a>`);
+    if (S.field) links.push(`<a class="row" href="https://metar-taf.com/${esc(S.field)}" target="_blank" rel="noopener">
+      <div class="ic" style="--c:var(--indigo)">&#9788;</div>
+      <div class="tx"><b>METAR &amp; TAF</b><i>${esc(S.field)} — if the field reports one</i></div><div class="chev">&#8599;</div></a>`);
+    const af = S.field && afByCode(S.field);
+    html(`<h2 class="sec">${af ? esc(af[1]) : (S.field ? esc(S.field) : 'My airfield')}</h2>
+      <div class="grp">${links.join('')}</div>`);
+    if (S.field) {
+      html(`<button class="btn sec sm" style="margin-top:10px" id="wxMore">Conditions at ${esc(S.field)}</button>`);
+      $('#wxMore').onclick = () => go('wx');
+    }
+  }
+
   // --- deadline strip, only once relevant
   const dl = deadline18(S.d1), vd = deadline24(S.d2);
   if (dl || vd) {
     const rows = [];
     if (dl && p < 9) {
       const n = daysTo(dl);
-      rows.push(`<button class="row" data-goplan="1"><div class="ic" style="background:var(--${n < 90 ? 'red' : n < 180 ? 'orange' : 'green'})">18</div>
+      rows.push(`<button class="row" data-goplan="1"><div class="ic" style="--c:var(--${n < 90 ? 'red' : n < 180 ? 'orange' : 'green'})">18</div>
         <div class="tx"><b>${n < 0 ? 'Window expired' : n + ' days left'}</b><i>All nine by ${fmt(dl)}</i></div><div class="chev">&#8250;</div></button>`);
     }
     if (vd) {
       const n = daysTo(vd);
-      rows.push(`<button class="row" data-goplan="1"><div class="ic" style="background:var(--${n < 90 ? 'red' : n < 180 ? 'orange' : 'green'})">24</div>
+      rows.push(`<button class="row" data-goplan="1"><div class="ic" style="--c:var(--${n < 90 ? 'red' : n < 180 ? 'orange' : 'green'})">24</div>
         <div class="tx"><b>${n < 0 ? 'Theory expired' : n + ' days left'}</b><i>Apply for the licence by ${fmt(vd)}</i></div><div class="chev">&#8250;</div></button>`);
     }
     if (rows.length) { html(`<h2 class="sec">Clock</h2><div class="grp">${rows.join('')}</div>`); }
@@ -361,11 +453,11 @@ VIEWS.home = function () {
   }
 
   // --- exam blocks at a glance
-  html('<h2 class="sec">Exam blocks</h2><div class="grp">' + BLOCKS.map(b => {
+  html('<h2 class="sec">Exam blocks</h2><div class="grp">' + planBlocks().map(b => {
     const done = b.subs.filter(c => sub(c).st === 'passed').length;
     const pc = Math.round(b.subs.reduce((a, c) => a + pctLO(byCode[c]), 0) / b.subs.length);
     return `<button class="row" data-blk="${b.no}">
-      <div class="ic" style="background:var(--${done === b.subs.length ? 'green' : 'blue'})">${b.no}</div>
+      <div class="ic" style="--c:var(--${done === b.subs.length ? 'green' : 'blue'})">${b.no}</div>
       <div class="tx"><b>${esc(b.title)}</b><i>${b.subs.map(c => byCode[c].name).join(' · ')}</i>
         <div class="pbar" style="margin-top:7px"><i style="width:${pc}%"></i></div></div>
       <div class="val">${done}/${b.subs.length}</div></button>`;
@@ -373,13 +465,16 @@ VIEWS.home = function () {
   bind('[data-blk]', e => tab('plan'));
 
   html(`<h2 class="sec">Reference</h2><div class="grp">
-    <button class="row" id="rRules"><div class="ic" style="background:var(--indigo)">&#167;</div>
+    <button class="row" id="rRules"><div class="ic" style="--c:var(--indigo)">&#167;</div>
       <div class="tx"><b>The rules that bind you</b><i>Quoted from Part-FCL, July 2026</i></div><div class="chev">&#8250;</div></button>
-    <button class="row" id="rBooks"><div class="ic" style="background:var(--brown)">&#128214;</div>
+    <button class="row" id="rBooks"><div class="ic" style="--c:var(--brown)">&#128214;</div>
       <div class="tx"><b>Books</b><i>Pooleys volume for each exam</i></div><div class="chev">&#8250;</div></button>
-    <button class="row" id="rSrc"><div class="ic" style="background:var(--tx3)">&#8599;</div>
+    <button class="row" id="rTrn"><div class="ic" style="--c:var(--teal)">&#9992;</div>
+      <div class="tx"><b>My training</b><i>${S.stage ? esc(stageLabel(S.stage)) : 'Stage not set'}${S.field ? ' · ' + esc(S.field) : ''}</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="rSrc"><div class="ic" style="--c:var(--tx3)">&#8599;</div>
       <div class="tx"><b>Sources &amp; settings</b><i>Every source, plus export</i></div><div class="chev">&#8250;</div></button>
     </div>`);
+  $('#rTrn').onclick = () => go('training');
   $('#rRules').onclick = () => go('rules');
   $('#rBooks').onclick = () => go('books');
   $('#rSrc').onclick = () => go('sources');
@@ -390,7 +485,7 @@ VIEWS.home = function () {
 
 /** The single most useful next action: an unread article, else an unstudied subject. */
 function nextUp() {
-  const order = SUBJECTS.slice().sort((a, b) => META[a.code].blk - META[b.code].blk || a.code.localeCompare(b.code));
+  const order = SUBJECTS.slice().sort((a, b) => posOf(a.code) - posOf(b.code) || a.code.localeCompare(b.code));
   for (const s of order) {
     if (sub(s.code).st === 'passed') continue;
     const a = arts(s.code).find(x => !S.read[x.id]);
@@ -408,7 +503,7 @@ function nextUp() {
 VIEWS.learn = function () {
   html(`<div class="hd"><h1>Learn</h1><div class="sub">37 articles and 551 learning objectives across nine subjects</div></div>`);
   const order = (S.learnSort === 'block')
-    ? SUBJECTS.slice().sort((a, b) => META[a.code].blk - META[b.code].blk || a.code.localeCompare(b.code))
+    ? SUBJECTS.slice().sort((a, b) => posOf(a.code) - posOf(b.code) || a.code.localeCompare(b.code))
     : SUBJECTS;
   html(`<div class="seg" id="lsort">
     <button data-s="code" aria-selected="${S.learnSort !== 'block'}">By subject number</button>
@@ -419,7 +514,7 @@ VIEWS.learn = function () {
     const m = META[s.code], st = sub(s.code), pc = pctLO(s);
     const ra = readCount(s.code), ta = arts(s.code).length;
     return `<button class="row" data-sub="${s.code}">
-      <div class="ic" style="background:var(--${m.c})">${s.code}</div>
+      <div class="ic" style="--c:var(--${m.c})">${s.code}</div>
       <div class="tx"><b>${esc(s.name)}</b>
         <i>${ra}/${ta} articles · ${doneLO(s)}/${allLO(s)} objectives · ${m.book}</i>
         <div class="pbar" style="margin-top:7px"><i style="width:${pc}%;background:var(--${m.c})"></i></div></div>
@@ -433,8 +528,15 @@ VIEWS.subject = function (p) {
   const s = byCode[p.code], m = META[p.code], st = sub(p.code);
   const which = p.tab || 'art';
   navbar(s.name, '');
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:28px">${esc(s.name)}</h1>
-    <div class="sub">Subject ${s.code} · Block ${m.blk} · ${m.book} · CAA ${s.cap} (${esc(s.version)})</div></div>`);
+  const pc0 = pctLO(s);
+  html(`<div class="banner" style="--c:var(--${m.c})">
+    <div class="code">${s.code}</div>
+    <h1>${esc(s.name)}</h1>
+    <div class="m">Block ${blockOf(s.code)} of your plan · ${m.book} · CAA ${s.cap}</div>
+    <div class="pb"><i style="width:${pc0}%"></i></div>
+    <div class="m" style="margin-top:8px">${readCount(s.code)}/${arts(s.code).length} articles ·
+      ${doneLO(s)}/${allLO(s)} objectives${st.st === 'passed' ? ' · exam passed' : ''}</div>
+  </div>`);
 
   html(`<div class="seg" id="stab">
     <button data-x="art" aria-selected="${which === 'art'}">Articles</button>
@@ -447,7 +549,7 @@ VIEWS.subject = function (p) {
     $('#qz').onclick = () => startQuiz({ codes: [s.code], n: 20, mode: 'exam', title: s.name });
     html('<div class="grp">' + arts(s.code).map(a => `
       <button class="row" data-art="${a.id}">
-        <div class="ic" style="background:var(--${S.read[a.id] ? 'green' : m.c})">${S.read[a.id] ? '&#10003;' : '&#9679;'}</div>
+        <div class="ic" style="--c:var(--${S.read[a.id] ? 'green' : m.c})">${S.read[a.id] ? '&#10003;' : '&#9679;'}</div>
         <div class="tx"><b>${esc(a.title)}</b><i>${a.mins} min read</i></div>
         <div class="chev">&#8250;</div></button>`).join('') + '</div>');
     bind('[data-art]', e => go('article', { code: s.code, id: e.currentTarget.dataset.art }));
@@ -517,10 +619,12 @@ VIEWS.article = function (p) {
   const a = arts(p.code).find(x => x.id === p.id);
   const list = arts(p.code), idx = list.indexOf(a);
   navbar(s.name, '');
-  html(`<div class="hd" style="padding-top:16px">
-    <div class="sub" style="margin-bottom:4px">${s.code} ${esc(s.name)} · ${a.mins} min read</div>
-    <h1 style="font-size:30px">${esc(a.title)}</h1></div>`);
+  html(`<div class="banner" style="--c:var(--${META[p.code].c})">
+    <div class="code">${s.code}</div>
+    <div class="m" style="margin:0 0 6px">${esc(s.name)} · ${a.mins} min read</div>
+    <h1>${esc(a.title)}</h1></div>`);
   html(`<div class="article">${a.body}</div>`);
+  expandDiagrams();
 
   const done = !!S.read[a.id];
   html(`<button class="btn ${done ? 'grey' : 'grn'}" id="mk">${done ? '&#10003; Read' : 'Mark as read'}</button>`);
@@ -535,6 +639,19 @@ VIEWS.article = function (p) {
   html(`<button class="btn sec" style="margin-top:10px" id="tq">Test me on ${esc(s.name)}</button>`);
   $('#tq').onclick = () => startQuiz({ codes: [s.code], n: 15, mode: 'practice', title: s.name });
 };
+
+/** Replace <figure data-d="id"> placeholders with the drawing, caption and a11y label. */
+function expandDiagrams() {
+  document.querySelectorAll('figure[data-d]').forEach(f => {
+    const d = window.DIAG && window.DIAG[f.dataset.d];
+    if (!d) { f.remove(); return; }        // never leave an empty box behind
+    f.innerHTML = '<div class="dgwrap">' + d.svg + '</div>' +
+      '<div class="swipe">Swipe the diagram sideways to see all of it</div>' +
+      '<figcaption>' + d.cap + '</figcaption>';
+    const svg = f.querySelector('svg');
+    if (svg && d.alt) svg.setAttribute('aria-label', d.alt);
+  });
+}
 
 /* ============================ QUIZ ============================ */
 
@@ -562,11 +679,11 @@ VIEWS.quiz = function () {
   html(`<div class="hd"><h1>Quiz</h1><div class="sub">385 questions across the nine subjects</div></div>`);
 
   html(`<h2 class="sec">Full mock</h2><div class="grp">
-    <button class="row" id="m45"><div class="ic" style="background:var(--blue)">45</div>
+    <button class="row" id="m45"><div class="ic" style="--c:var(--blue)">45</div>
       <div class="tx"><b>All-subject mock</b><i>45 questions, 5 per subject, exam mode</i></div><div class="chev">&#8250;</div></button>
-    <button class="row" id="m30"><div class="ic" style="background:var(--indigo)">30</div>
+    <button class="row" id="m30"><div class="ic" style="--c:var(--indigo)">30</div>
       <div class="tx"><b>Mixed practice</b><i>30 questions with instant explanations</i></div><div class="chev">&#8250;</div></button>
-    <button class="row" id="m10"><div class="ic" style="background:var(--teal)">10</div>
+    <button class="row" id="m10"><div class="ic" style="--c:var(--teal)">10</div>
       <div class="tx"><b>Quick ten</b><i>A short mixed set</i></div><div class="chev">&#8250;</div></button>
   </div>`);
   $('#m45').onclick = () => startBalanced(5, 'exam', 'All-subject mock');
@@ -576,7 +693,7 @@ VIEWS.quiz = function () {
   html('<h2 class="sec">Single-subject mock</h2><div class="grp">' + SUBJECTS.map(s => {
     const m = META[s.code], b = S.best[s.code];
     return `<button class="row" data-mk="${s.code}">
-      <div class="ic" style="background:var(--${m.c})">${s.code}</div>
+      <div class="ic" style="--c:var(--${m.c})">${s.code}</div>
       <div class="tx"><b>${esc(s.name)}</b><i>${SC[s.code].quiz.length} questions available</i></div>
       ${b != null ? `<span class="bdg ${b >= PASS_MARK ? 'g' : 'o'}">${b}%</span>` : '<span class="bdg">—</span>'}
       <div class="chev">&#8250;</div></button>`;
@@ -588,7 +705,7 @@ VIEWS.quiz = function () {
 
   if (S.hist.length) {
     html('<h2 class="sec">Recent attempts</h2><div class="grp">' + S.hist.slice(0, 10).map(h =>
-      `<div class="row"><div class="ic" style="background:var(--${h.p >= PASS_MARK ? 'green' : 'red'})">${h.p}</div>
+      `<div class="row"><div class="ic" style="--c:var(--${h.p >= PASS_MARK ? 'green' : 'red'})">${h.p}</div>
         <div class="tx"><b>${esc(h.t)}</b><i>${h.c}/${h.n} correct · ${new Date(h.d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</i></div>
         <span class="bdg ${h.p >= PASS_MARK ? 'g' : 'r'}">${h.p >= PASS_MARK ? 'Pass' : 'Fail'}</span></div>`).join('') + '</div>');
     html(`<button class="btn grey sm" style="margin-top:12px" id="clrH">Clear history</button>`);
@@ -693,7 +810,7 @@ VIEWS.quizres = function () {
     });
     html('<h2 class="sec">By subject</h2><div class="grp">' + Object.keys(by).sort().map(c => {
       const b = by[c], p = Math.round(b.c / b.n * 100);
-      return `<div class="row"><div class="ic" style="background:var(--${META[c].c})">${c}</div>
+      return `<div class="row"><div class="ic" style="--c:var(--${META[c].c})">${c}</div>
         <div class="tx"><b>${esc(byCode[c].name)}</b><i>${b.c} of ${b.n} correct</i>
         <div class="pbar" style="margin-top:7px"><i style="width:${p}%;background:var(--${p >= PASS_MARK ? 'green' : 'orange'})"></i></div></div>
         <div class="val">${p}%</div></div>`;
@@ -828,7 +945,7 @@ VIEWS.cards = function () {
     const on = !codes || codes.indexOf(s.code) >= 0;
     const d = dueCards([s.code]).length, tot = SC[s.code].cards.length;
     return `<button class="row" data-cs="${s.code}">
-      <div class="ic" style="background:var(--${on ? META[s.code].c : 'tx3'})">${s.code}</div>
+      <div class="ic" style="--c:var(--${on ? META[s.code].c : 'tx3'})">${s.code}</div>
       <div class="tx"><b>${esc(s.name)}</b><i>${tot} cards${d ? ' · ' + d + ' due' : ''}</i></div>
       <div class="val" style="color:var(--${on ? 'blue' : 'tx3'})">${on ? '&#10003;' : ''}</div></button>`;
   }).join('') + '</div>');
@@ -906,7 +1023,7 @@ VIEWS.cardrun = function () {
 
 VIEWS.plan = function () {
   const p = passed();
-  html(`<div class="hd"><h1>Plan</h1><div class="sub">The clock, the attempts, and the order to sit them in</div></div>`);
+  html(`<div class="hd"><h1>Exams</h1><div class="sub">The clock, your attempts, and the order to sit them in</div></div>`);
 
   html(`<div class="card">
     <div class="fld"><label class="f">Date of your first exam attempt</label>
@@ -934,23 +1051,29 @@ VIEWS.plan = function () {
   html('<h2 class="sec">Risk watch</h2>');
   risks().forEach(r => html(`<div class="note ${r[0]}"><b>${esc(r[1])}</b>${r[2]}</div>`));
 
-  // --- blocks
-  html(`<h2 class="sec">Suggested order</h2>
-    <div class="note b"><b>Sittings are not rationed for a PPL</b>
-      These blocks group subjects for study efficiency and flight-training order, not to conserve
-      sittings. See the Reference tab for the regulation.</div>`);
-  BLOCKS.forEach(b => {
+  // --- order
+  const pl = activePlan();
+  html(`<h2 class="sec">Exam order</h2>
+    <button class="grp row" id="pickPlan">
+      <div class="ic" style="--c:var(--indigo)">&#8645;</div>
+      <div class="tx"><b>${esc(pl.name)}</b><i>${esc(pl.desc)}</i></div>
+      <div class="chev">&#8250;</div></button>
+    <div class="note b" style="margin-top:12px"><b>There is no required order</b>
+      The CAA sets no sequence and no sittings limit for a PPL, so this is entirely your choice.
+      Pick whichever suits how you study.</div>`);
+  $('#pickPlan').onclick = () => go('plans');
+  planBlocks().forEach(b => {
     const done = b.subs.filter(c => sub(c).st === 'passed').length;
     html(`<div class="grp" style="margin-top:12px">
       <div class="row" style="background:var(--card2)">
-        <div class="ic" style="background:var(--${done === b.subs.length ? 'green' : 'blue'})">${b.no}</div>
+        <div class="ic" style="--c:var(--${done === b.subs.length ? 'green' : 'blue'})">${b.no}</div>
         <div class="tx"><b style="font-weight:600">${esc(b.title)}</b></div>
         <span class="bdg ${done === b.subs.length ? 'g' : ''}">${done}/${b.subs.length}</span></div>
       ${b.subs.map(c => {
         const s = byCode[c], st = sub(c), m = META[c];
         const lbl = STATUSES.find(x => x[0] === st.st)[1];
         return `<button class="row" data-ps="${c}">
-          <div class="ic" style="background:var(--${m.c})">${c}</div>
+          <div class="ic" style="--c:var(--${m.c})">${c}</div>
           <div class="tx"><b>${esc(s.name)}</b><i>${pctLO(s)}% studied · ${st.att} of 4 attempts · ${m.book}</i></div>
           <span class="bdg ${st.st === 'passed' ? 'g' : st.st === 'ready' ? 'o' : ''}">${lbl}</span>
           <div class="chev">&#8250;</div></button>`;
@@ -961,11 +1084,11 @@ VIEWS.plan = function () {
   bind('[data-ps]', e => go('subject', { code: e.currentTarget.dataset.ps, tab: 'ex' }));
 
   html(`<h2 class="sec">Reference</h2><div class="grp">
-    <button class="row" id="pr1"><div class="ic" style="background:var(--indigo)">&#167;</div>
+    <button class="row" id="pr1"><div class="ic" style="--c:var(--indigo)">&#167;</div>
       <div class="tx"><b>The rules that bind you</b></div><div class="chev">&#8250;</div></button>
-    <button class="row" id="pr2"><div class="ic" style="background:var(--brown)">&#128214;</div>
+    <button class="row" id="pr2"><div class="ic" style="--c:var(--brown)">&#128214;</div>
       <div class="tx"><b>Books</b></div><div class="chev">&#8250;</div></button>
-    <button class="row" id="pr3"><div class="ic" style="background:var(--tx3)">&#8599;</div>
+    <button class="row" id="pr3"><div class="ic" style="--c:var(--tx3)">&#8599;</div>
       <div class="tx"><b>Sources &amp; settings</b></div><div class="chev">&#8250;</div></button></div>`);
   $('#pr1').onclick = () => go('rules');
   $('#pr2').onclick = () => go('books');
@@ -1021,6 +1144,440 @@ function risks() {
   return out;
 }
 
+/* ============================ AIRFIELD LOOKUP ============================ */
+
+/* Club weather stations we know about, so the link is there without anyone configuring it.
+   Small GA fields rarely publish a METAR, so the club's own station is the real source. */
+const CLUB_WX = {
+  EGLM: { url: 'https://www.wlac.co.uk/weather/index.html', name: 'West London Aero Club' }
+};
+/** The best live-observation link for a field: the profile's own, else one we know. */
+function clubWx(code) {
+  if (S.wx) return { url: S.wx, name: 'Club weather station' };
+  const k = CLUB_WX[code];
+  return k ? { url: k.url, name: k.name } : null;
+}
+
+const AF = () => window.AIRFIELDS || [];
+const afByCode = c => AF().find(a => a[0] === c);
+
+/** Up to `n` airfields matching a code prefix, or a word in the name or town. */
+function afSearch(q, n) {
+  q = (q || '').trim().toUpperCase();
+  if (q.length < 2) return [];
+  const byCode = [], byName = [];
+  AF().forEach(a => {
+    if (a[0].indexOf(q) === 0) byCode.push(a);
+    else if ((a[1] + ' ' + a[2]).toUpperCase().indexOf(q) >= 0) byName.push(a);
+  });
+  return byCode.concat(byName).slice(0, n || 6);
+}
+
+/** Wire an ICAO input to a suggestion list and a resolved-name line. */
+function wireAirfield(inputSel, listSel, foundSel, onPick) {
+  const inp = $(inputSel), list = $(listSel), found = $(foundSel);
+  if (!inp || !list || !found) return;
+  let lastExact = '';
+  const paint = () => {
+    const v = inp.value.trim().toUpperCase();
+    const exact = v.length === 4 ? afByCode(v) : null;
+    // typing a code in full counts as picking it, so callers still get their callback
+    if (exact && exact[0] !== lastExact) { lastExact = exact[0]; if (onPick) onPick(exact); }
+    if (!exact) lastExact = '';
+    found.innerHTML = exact ? esc(exact[1]) + (exact[2] ? '<i>' + esc(exact[2]) + '</i>' : '') : '';
+    found.style.display = exact ? 'block' : 'none';
+    const hits = exact ? [] : afSearch(v, 6);
+    list.innerHTML = hits.map(a => '<button data-af="' + a[0] + '"><span class="cd">' + a[0] +
+      '</span><span class="nm">' + esc(a[1]) + (a[2] ? '<i>' + esc(a[2]) + '</i>' : '') +
+      '</span></button>').join('');
+    list.style.display = hits.length ? 'block' : 'none';
+    list.querySelectorAll('[data-af]').forEach(b => b.onclick = () => {
+      inp.value = b.dataset.af;
+      const row = afByCode(b.dataset.af);
+      if (onPick && row) onPick(row);
+      paint();
+    });
+  };
+  // Allow a longer string so places can be searched by name, not just by code.
+  inp.addEventListener('input', () => {
+    inp.value = inp.value.toUpperCase().replace(/[^A-Z0-9 '-]/g, '').slice(0, 28);
+    paint();
+  });
+  paint();
+}
+
+/* ============================ AIRFIELD WEATHER ============================ */
+/* Open-Meteo is a forecast MODEL, not an observation. It is the only no-key,
+   CORS-enabled source a static page can reach — aviationweather.gov and AVWX both
+   refuse a browser request from this origin. Everything derived from it is therefore
+   labelled as a model estimate, and the UI says plainly that it is not for flight
+   planning. The ceiling is estimated from the temperature/dew-point spread, the same
+   rule of thumb taught in the Meteorology articles. */
+
+const WX_TTL = 20 * 60 * 1000;
+let WX = { state: 'idle', data: null, code: '' };
+
+function wxCacheKey(c) { return 'ppl-wx:' + c; }
+
+function wxCategory(visM, ceilFt) {
+  // Standard flight categories, which are defined on ceiling and visibility.
+  if (ceilFt < 500 || visM < 1600) return ['LIFR', 'red'];
+  if (ceilFt < 1000 || visM < 5000) return ['IFR', 'red'];
+  if (ceilFt <= 3000 || visM <= 8000) return ['MVFR', 'orange'];
+  return ['VFR', 'green'];
+}
+
+function wxDerive(cur) {
+  const visM = cur.visibility == null ? 20000 : cur.visibility;
+  const spread = (cur.temperature_2m == null || cur.dew_point_2m == null)
+    ? null : cur.temperature_2m - cur.dew_point_2m;
+  const lowCloud = cur.cloud_cover_low == null ? cur.cloud_cover : cur.cloud_cover_low;
+  // Only call it a ceiling if there is enough low cloud to form one (BKN or more).
+  const ceilFt = (lowCloud >= 50 && spread != null) ? Math.max(100, Math.round(spread * 400)) : 99999;
+  const [cat, col] = wxCategory(visM, ceilFt);
+  return {
+    visM: visM, ceilFt: ceilFt, lowCloud: lowCloud, spread: spread,
+    wdir: Math.round(cur.wind_direction_10m), wspd: Math.round(cur.wind_speed_10m),
+    gust: cur.wind_gusts_10m == null ? null : Math.round(cur.wind_gusts_10m),
+    temp: Math.round(cur.temperature_2m), dew: Math.round(cur.dew_point_2m),
+    qnh: cur.pressure_msl == null ? null : Math.round(cur.pressure_msl),
+    cat: cat, col: col, time: cur.time
+  };
+}
+
+/* ---- render conditions the way a pilot reads them ---- */
+
+const pad = (v, n) => String(Math.abs(Math.round(v))).padStart(n, '0');
+/** METAR temperature group: negatives are prefixed M, e.g. M03. */
+const tGroup = t => (t < 0 ? 'M' : '') + pad(t, 2);
+
+/** Cloud amount code from a percentage cover, via oktas. */
+function cloudCode(pct) {
+  if (pct == null) return null;
+  const oktas = Math.round(pct / 12.5);
+  if (oktas <= 0) return 'NCD';
+  if (oktas <= 2) return 'FEW';
+  if (oktas <= 4) return 'SCT';
+  if (oktas <= 7) return 'BKN';
+  return 'OVC';
+}
+
+/** Visibility as a METAR group: 9999 for 10 km or more. */
+function visGroup(m) {
+  if (m >= 9999) return '9999';
+  if (m >= 5000) return String(Math.round(m / 500) * 500);
+  return pad(Math.round(m / 100) * 100, 4);
+}
+
+/** The whole thing in METAR form. For model data this is a rendering, not an observation. */
+function metarString(d, code) {
+  if (d.source === 'metar' && d.raw) return d.raw;
+  const bits = [code || ''];
+  // METARs report wind direction to the nearest 10 degrees
+  const dir10 = ((Math.round(d.wdir / 10) * 10) % 360) || (d.wspd ? 360 : 0);
+  bits.push(pad(dir10, 3) + pad(d.wspd, 2) + (d.gust ? 'G' + pad(d.gust, 2) : '') + 'KT');
+  bits.push(visGroup(d.visM));
+  const cc = cloudCode(d.lowCloud);
+  if (cc === 'NCD' || cc == null) bits.push('NCD');
+  else bits.push(cc + pad(Math.round(d.ceilFt / 100), 3));
+  if (d.temp != null && d.dew != null) bits.push(tGroup(d.temp) + '/' + tGroup(d.dew));
+  if (d.qnh) bits.push('Q' + pad(d.qnh, 4));
+  return bits.filter(Boolean).join(' ');
+}
+
+/** Plain-English decode, so the strip doubles as METAR practice. */
+function metarDecode(d) {
+  const out = [];
+  out.push(['Wind', d.wspd === 0 ? 'calm' :
+    'from ' + pad(Math.round(d.wdir / 10) * 10 % 360 || 360, 3) + '° true at ' + d.wspd + ' kt' +
+    (d.gust ? ', gusting ' + d.gust + ' kt' : '')]);
+  out.push(['Visibility', d.visM >= 9999 ? '10 km or more' : visLabel(d.visM)]);
+  const cc = cloudCode(d.lowCloud);
+  out.push(['Cloud', (cc === 'NCD' || cc == null) ? 'no significant cloud detected'
+    : ({ FEW: 'few (1–2 oktas)', SCT: 'scattered (3–4)', BKN: 'broken (5–7)', OVC: 'overcast (8)' }[cc]) +
+      ' at about ' + (Math.round(d.ceilFt / 100) * 100) + ' ft']);
+  if (d.temp != null) out.push(['Temperature / dew point', d.temp + '°C / ' + d.dew + '°C' +
+    (d.spread != null ? ' — spread ' + d.spread.toFixed(1) + '°C' : '')]);
+  if (d.qnh) out.push(['QNH', d.qnh + ' hPa']);
+  return out;
+}
+
+/** Parse a CheckWX decoded METAR into the same shape as the model estimate. */
+function wxFromMetar(m) {
+  const w = m.wind || {}, v = m.visibility || {}, c = (m.clouds || []);
+  const ceilLayer = c.find(x => x.code === 'BKN' || x.code === 'OVC');
+  const cat = (m.flight_category || '').toUpperCase();
+  const col = cat === 'VFR' ? 'green' : cat === 'MVFR' ? 'orange' : cat ? 'red' : 'blue';
+  return {
+    source: 'metar', raw: m.raw_text || '', observed: m.observed || '',
+    visM: v.meters_float != null ? Math.round(v.meters_float) : (v.meters ? parseInt(v.meters, 10) : 20000),
+    ceilFt: ceilLayer && ceilLayer.base_feet_agl != null ? ceilLayer.base_feet_agl : 99999,
+    lowCloud: c.length ? null : 0, spread: null,
+    wdir: w.degrees == null ? 0 : Math.round(w.degrees),
+    wspd: w.speed_kts == null ? 0 : Math.round(w.speed_kts),
+    gust: w.gust_kts == null ? null : Math.round(w.gust_kts),
+    temp: m.temperature && m.temperature.celsius != null ? Math.round(m.temperature.celsius) : null,
+    dew: m.dewpoint && m.dewpoint.celsius != null ? Math.round(m.dewpoint.celsius) : null,
+    clouds: c.map(x => (x.code || '') + (x.base_feet_agl != null ? ' ' + x.base_feet_agl + ' ft' : '')).join(', '),
+    cat: cat || 'METAR', col: col
+  };
+}
+
+function wxLoad(code, done) {
+  const af = afByCode(code);
+  if (!af) { WX = { state: 'none', code: code }; done && done(); return; }
+  const cached = readJSON(wxCacheKey(code), null);
+  if (cached && Date.now() - cached.at < WX_TTL) {
+    WX = { state: 'ok', data: cached.d, code: code, at: cached.at, cached: true };
+    done && done(); return;
+  }
+  WX = { state: 'loading', code: code };
+  done && done();
+
+  const settle = d => {
+    writeJSON(wxCacheKey(code), { at: Date.now(), d: d });
+    WX = { state: 'ok', data: d, code: code, at: Date.now() };
+    const v = stack[stack.length - 1].v;
+    if (v === 'home' || v === 'wx') render();
+  };
+  const fail = why => {
+    WX = { state: 'fail', code: code, why: why };
+    const v = stack[stack.length - 1].v;
+    if (v === 'home' || v === 'wx') render();
+  };
+
+  // Model fallback — no key needed, but a forecast rather than an observation.
+  const model = note => {
+    const u = 'https://api.open-meteo.com/v1/forecast?latitude=' + af[3] + '&longitude=' + af[4] +
+      '&current=temperature_2m,dew_point_2m,visibility,cloud_cover,cloud_cover_low,' +
+      'pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m&wind_speed_unit=kn';
+    fetch(u).then(r => r.json()).then(j => {
+      if (!j || !j.current) throw 0;
+      const d = wxDerive(j.current); d.source = 'model'; d.note = note || '';
+      settle(d);
+    }).catch(() => fail(note));
+  };
+
+  // Real observation first, if a CheckWX key has been added on this device.
+  if (P.cwKey) {
+    fetch('https://api.checkwx.com/metar/' + encodeURIComponent(code) + '/decoded',
+      { headers: { 'X-API-Key': P.cwKey } })
+      .then(r => r.json())
+      .then(j => {
+        if (j && j.data && j.data.length && typeof j.data[0] === 'object') settle(wxFromMetar(j.data[0]));
+        else model(code + ' does not publish a METAR, so this is model data.');
+      })
+      .catch(() => model('CheckWX could not be reached from the browser, so this is model data.'));
+    return;
+  }
+  model('');
+}
+
+const visLabel = m => m >= 20000 ? '20 km+' : m >= 10000 ? '10 km+' :
+  m >= 1000 ? (Math.round(m / 100) / 10) + ' km' : m + ' m';
+
+/** The thin Home strip. */
+function wxStrip() {
+  const code = S.field;
+  if (!code) return '';
+  if (WX.code !== code || WX.state === 'idle') wxLoad(code);
+  if (WX.state === 'loading') return `<button class="wxbar" id="wxb">
+    <span class="wxcode">${esc(code)}</span><span class="wxmid">Checking conditions…</span></button>`;
+  if (WX.state !== 'ok' || !WX.data) return `<button class="wxbar" id="wxb">
+    <span class="wxcode">${esc(code)}</span><span class="wxmid">Weather unavailable — tap for links</span>
+    <span class="chev">&#8250;</span></button>`;
+  const d = WX.data;
+  return `<button class="wxbar" id="wxb">
+    <span class="wxcode">${esc(code)}</span>
+    <span class="wxmid mono">${esc(metarString(d, '').trim())}</span>
+    <span class="wxsrc">${d.source === 'metar' ? 'METAR' : 'MODEL'}</span>
+    <span class="wxcat" style="--c:var(--${d.col})">${d.cat}</span></button>`;
+}
+
+VIEWS.wx = function () {
+  const code = S.field, af = afByCode(code);
+  navbar(af ? af[1] : (code || 'Weather'), '');
+  if (WX.code !== code) wxLoad(code, () => {});
+  const d = WX.state === 'ok' ? WX.data : null;
+
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">${esc(code || '')}</h1>
+    <div class="sub">${af ? esc(af[1]) + (af[2] ? ' · ' + esc(af[2]) : '') : 'Airfield not in the list'}</div></div>`);
+
+  if (!d) {
+    html(`<div class="note o" style="margin-top:14px"><b>${WX.state === 'loading' ? 'Loading…' : 'Could not load conditions'}</b>
+      ${WX.state === 'loading' ? 'Fetching the model data.' : 'You may be offline, or the service may be down. The links below always work.'}</div>`);
+  } else {
+    html(`<div class="card" style="margin-top:14px;text-align:center">
+      <div class="wxbig" style="--c:var(--${d.col})">${d.cat}</div>
+      <div class="tiny" style="margin-top:6px">${d.source === 'metar'
+        ? 'from the official METAR' : 'estimated from model visibility and cloud base'}</div>
+      <div class="mono" style="margin-top:12px;background:var(--card2);padding:11px 12px;
+        border-radius:9px;font-size:13px;text-align:left;word-break:break-word;line-height:1.5">${esc(metarString(d, code))}</div>
+      <div class="tiny" style="margin-top:7px">${d.source === 'metar'
+        ? 'The published METAR.' : 'The model figures written in METAR form — useful decoding practice, but not an observation.'}</div>
+    </div>
+    <h2 class="sec">Decoded</h2>
+    <div class="grp">${metarDecode(d).map(([k, v]) =>
+      `<div class="row"><div class="tx"><b>${k}</b></div><div class="val">${esc(v)}</div></div>`).join('')}</div>
+    <div class="note b" style="margin-top:12px"><b>How the cloud base is worked out</b>
+      Spread of ${d.spread == null ? '—' : d.spread.toFixed(1)}°C × 400 ft — the same rule of thumb
+      in the Meteorology articles — and only counted as a ceiling when low cloud is 50% or more.</div>`);
+  }
+
+  if (d && d.source === 'metar') {
+    html(`<div class="note o" style="margin-top:12px"><b>A real observation, but still check it yourself</b>
+      This is the published METAR for ${esc(code)} via CheckWX${d.observed ? ', observed ' + esc(String(d.observed).replace('T', ' ').slice(0, 16)) + 'Z' : ''}.
+      It can still be stale or unrepresentative of conditions on your route. Never treat one number
+      as a go/no-go decision.</div>`);
+  } else {
+    html(`<div class="note r" style="margin-top:12px"><b>Not for flight planning</b>
+      This is <b>Open-Meteo forecast model</b> output, not a METAR.${d && d.note ? ' ' + esc(d.note) : ''}
+      Add a free CheckWX key in Sources &amp; settings to get the real observation where the field
+      publishes one. Treat this as a rough look out of the window and use the links below before
+      you fly.</div>`);
+  }
+
+  const links = [];
+  const cw = clubWx(code);
+  if (cw) links.push(`<a class="row" href="${esc(cw.url)}" target="_blank" rel="noopener">
+    <div class="ic" style="--c:var(--teal)">&#9925;</div>
+    <div class="tx"><b>${esc(cw.name)}</b><i>Live observation at the field</i></div><div class="chev">&#8599;</div></a>`);
+  if (code) links.push(`<a class="row" href="https://metar-taf.com/${esc(code)}" target="_blank" rel="noopener">
+    <div class="ic" style="--c:var(--indigo)">&#9788;</div>
+    <div class="tx"><b>METAR &amp; TAF</b><i>Official observation, if ${esc(code)} reports one</i></div><div class="chev">&#8599;</div></a>`);
+  links.push(`<a class="row" href="https://www.metoffice.gov.uk/services/transport/aviation/general-aviation" target="_blank" rel="noopener">
+    <div class="ic" style="--c:var(--blue)">&#128506;</div>
+    <div class="tx"><b>Met Office GA</b><i>Form 214 and 215</i></div><div class="chev">&#8599;</div></a>`);
+  html(`<h2 class="sec">Real sources</h2><div class="grp">${links.join('')}</div>`);
+
+  if (WX.at) html(`<div class="foot">Model data fetched ${new Date(WX.at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}, cached for 20 minutes.</div>`);
+};
+
+/* ============================ MY TRAINING ============================ */
+
+VIEWS.training = function () {
+  navbar('My training', '');
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">My training</h1>
+    <div class="sub">Used to personalise the app and suggest an exam order. Nothing here is sent
+    anywhere.</div></div>`);
+
+  html('<h2 class="sec">Stage</h2><div class="grp">' + STAGES.map(([k, t, d]) => `
+    <button class="row" data-st2="${k}">
+      <div class="ic" style="--c:var(--${S.stage === k ? 'blue' : 'tx3'})">${S.stage === k ? '&#10003;' : '&#8226;'}</div>
+      <div class="tx"><b>${t}</b><i>${d}</i></div></button>`).join('') + '</div>');
+  bind('[data-st2]', e => { S.stage = e.currentTarget.dataset.st2; save(); render(); });
+
+  html(`<h2 class="sec">Home airfield</h2>
+    <div class="card">
+      <label class="f" for="tIcao">Airfield</label>
+      <input type="text" id="tIcao" maxlength="28" autocapitalize="characters" spellcheck="false"
+        placeholder="Code or name — EGLM, Waltham…" value="${esc(S.field || '')}" class="ti"
+        style="text-transform:uppercase;letter-spacing:.04em">
+      <div id="tFound" class="acfound" style="display:none"></div>
+      <div id="tList" class="aclist" style="display:none"></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <label class="f" for="tWx">Club weather page</label>
+      <input type="url" id="tWx" inputmode="url" autocapitalize="none" spellcheck="false"
+        placeholder="https://…" value="${esc(S.wx || '')}" class="ti" style="font-size:15px">
+      <div class="tiny" style="margin-top:9px">Most small GA fields issue no METAR, so a club page
+        is often the only live source. The METAR link on Home uses your ICAO code and will simply
+        show nothing if your field does not report.</div>
+    </div>
+    <button class="btn" style="margin-top:14px" id="tSave">Save</button>`);
+  wireAirfield('#tIcao', '#tList', '#tFound', row => {
+    const k = CLUB_WX[row[0]];
+    if (k && !$('#tWx').value) $('#tWx').value = k.url;
+  });
+  $('#tSave').onclick = () => {
+    const v = $('#tIcao').value.trim().toUpperCase();
+    if (v && !afByCode(v)) { alertish('Pick an airfield from the list, or clear the box.'); return; }
+    if (v !== (S.field || '')) { try { localStorage.removeItem(wxCacheKey(v)); } catch (e) {} WX = { state: 'idle' }; }
+    const wx = $('#tWx').value.trim();
+    S.field = v; S.wx = /^https?:\/\//i.test(wx) ? wx : '';
+    save(); back();
+  };
+};
+
+/** A non-blocking message, since alert() is unavailable in some embedded browsers. */
+function alertish(msg) {
+  const n = document.createElement('div');
+  n.className = 'toast'; n.textContent = msg;
+  document.body.appendChild(n);
+  setTimeout(() => n.classList.add('in'), 10);
+  setTimeout(() => { n.classList.remove('in'); setTimeout(() => n.remove(), 300); }, 3200);
+}
+
+/* ============================ EXAM ORDER ============================ */
+
+VIEWS.plans = function () {
+  navbar('Exam order', '');
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">How do you want to order them?</h1>
+    <div class="sub">The CAA sets no order and no sittings limit for a PPL. These are study
+    strategies, not rules — switch whenever you like, and your progress is unaffected.</div></div>`);
+
+  html('<div class="grp" style="margin-top:16px">' + PLANS.map(p => {
+    const on = p.id === (S.planId || 'blocks');
+    const codes = (p.id === 'custom' && S.customOrder) ? S.customOrder : p.order;
+    return `<button class="row" data-plan="${p.id}">
+      <div class="ic" style="--c:var(--${on ? 'blue' : 'tx3'})">${on ? '&#10003;' : '&#8226;'}</div>
+      <div class="tx"><b>${esc(p.name)}${p.tag ? ' <span class="bdg b" style="margin-left:6px">' + p.tag + '</span>' : ''}</b>
+        <i>${esc(p.desc)}</i>
+        <div style="display:flex;gap:4px;margin-top:8px;flex-wrap:wrap">${codes.map((c, i) =>
+          `<span class="chip" style="background:var(--${META[c].c})">${c}</span>`).join('')}</div></div>
+    </button>`;
+  }).join('') + '</div>');
+  bind('[data-plan]', e => {
+    const id = e.currentTarget.dataset.plan;
+    S.planId = id;
+    if (id === 'custom' && (!S.customOrder || S.customOrder.length !== 9)) S.customOrder = planById('blocks').order.slice();
+    save();
+    if (id === 'custom') { stack[stack.length - 1] = { v: 'reorder' }; render(); } else render();
+  });
+
+  if ((S.planId || 'blocks') === 'custom') {
+    html(`<button class="btn sec" style="margin-top:14px" id="editOrder">Edit my order</button>`);
+    $('#editOrder').onclick = () => go('reorder');
+  }
+
+  // preview of the chosen plan
+  html('<h2 class="sec">Your blocks</h2>');
+  planBlocks().forEach(b => {
+    html(`<div class="grp" style="margin-top:10px">
+      <div class="row" style="background:var(--card2)">
+        <div class="ic" style="--c:var(--blue)">${b.no}</div>
+        <div class="tx"><b style="font-weight:600">${esc(b.title || 'Block ' + b.no)}</b></div></div>
+      ${b.subs.map(c => `<div class="row"><div class="ic" style="--c:var(--${META[c].c})">${c}</div>
+        <div class="tx"><b>${esc(byCode[c].name)}</b><i>${allLO(byCode[c])} objectives · ${META[c].book}</i></div></div>`).join('')}
+      ${b.why ? `<div class="row plain"><div style="font-size:13.5px;color:var(--tx2);line-height:1.45">${b.why}</div></div>` : ''}
+    </div>`);
+  });
+};
+
+VIEWS.reorder = function () {
+  navbar('My order', '');
+  const order = planOrder();
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Your order</h1>
+    <div class="sub">Move subjects up and down. They are grouped in threes for the blocks on the
+    Plan tab.</div></div>`);
+  html('<div class="grp" style="margin-top:14px">' + order.map((c, i) => `
+    <div class="row">
+      <div class="ic" style="--c:var(--${META[c].c})">${c}</div>
+      <div class="tx"><b>${i + 1}. ${esc(byCode[c].name)}</b><i>${allLO(byCode[c])} objectives</i></div>
+      <button class="mv" data-up="${i}"${i === 0 ? ' disabled' : ''} aria-label="Move up">&#9650;</button>
+      <button class="mv" data-dn="${i}"${i === order.length - 1 ? ' disabled' : ''} aria-label="Move down">&#9660;</button>
+    </div>`).join('') + '</div>');
+  const swap = (a, b) => {
+    const o = planOrder();
+    const t = o[a]; o[a] = o[b]; o[b] = t;
+    S.planId = 'custom'; S.customOrder = o; save(); render();
+  };
+  bind('[data-up]', e => swap(+e.currentTarget.dataset.up, +e.currentTarget.dataset.up - 1));
+  bind('[data-dn]', e => swap(+e.currentTarget.dataset.dn, +e.currentTarget.dataset.dn + 1));
+  html(`<button class="btn grey" style="margin-top:14px" id="resetOrder">Reset to the recommended order</button>`);
+  $('#resetOrder').onclick = () => { S.customOrder = planById('blocks').order.slice(); save(); render(); };
+};
+
 /* ============================ REFERENCE ============================ */
 
 function ruleList(list) {
@@ -1049,7 +1606,7 @@ VIEWS.books = function () {
     The PPL(A) set is volumes 1–4, 6 and 7; volume 5 is not a PPL theory subject.</div></div>`);
   html('<div class="grp">' + SUBJECTS.map(s => {
     const [v, t, ed] = BOOKS[s.code];
-    return `<div class="row"><div class="ic" style="background:var(--${META[s.code].c})">${s.code}</div>
+    return `<div class="row"><div class="ic" style="--c:var(--${META[s.code].c})">${s.code}</div>
       <div class="tx"><b>${esc(s.name)}</b><i>${t}<br>${ed}</i></div>
       <span class="bdg b">${v}</span></div>`;
   }).join('') + '</div>');
@@ -1089,10 +1646,40 @@ VIEWS.sources = function () {
 
   html(`<h2 class="sec">Profiles</h2><div class="grp">
     <button class="row" id="goProf">
-      <div class="ic" style="background:var(--blue)">${esc(initials(activeName()))}</div>
+      <div class="ic" style="--c:var(--blue)">${esc(initials(activeName()))}</div>
       <div class="tx"><b>${esc(activeName())}</b><i>${P.list.length} profile${P.list.length === 1 ? '' : 's'} on this device</i></div>
       <div class="chev">&#8250;</div></button></div>`);
   $('#goProf').onclick = () => go('profiles');
+
+  html(`<h2 class="sec">Live weather</h2>
+    <div class="card">
+      <label class="f" for="cwKey">CheckWX API key (optional)</label>
+      <input type="text" id="cwKey" autocomplete="off" spellcheck="false" placeholder="Paste your own key"
+        value="${esc(P.cwKey || '')}" class="ti" style="font-size:14px;font-family:ui-monospace,Menlo,monospace">
+      <div class="tiny" style="margin-top:9px">Without a key the app shows an <b>Open-Meteo forecast
+        model</b> estimate. With one it shows the <b>real METAR</b> and its official flight category,
+        where the field publishes one.
+        <a href="https://www.checkwxapi.com" target="_blank" rel="noopener">Free keys at checkwxapi.com</a>.</div>
+      <div class="tiny" style="margin-top:8px;color:var(--orange)"><b>Your key stays on this device.</b>
+        It is saved in this browser only, never committed to the repository, and sent nowhere but
+        CheckWX. Anyone who can read a public repo can read a key committed into it — so keep it here.</div>
+      <div class="brow" style="margin-top:12px">
+        <button class="btn sec sm" id="cwSave">Save key</button>
+        <button class="btn grey sm" id="cwClear">Remove</button></div>
+    </div>`);
+  const clearWxCache = () => {
+    Object.keys(localStorage).filter(x => x.indexOf('ppl-wx:') === 0)
+      .forEach(x => { try { localStorage.removeItem(x); } catch (e) {} });
+    WX = { state: 'idle' };
+  };
+  $('#cwSave').onclick = () => {
+    P.cwKey = $('#cwKey').value.trim(); saveProfiles(); clearWxCache();
+    alertish(P.cwKey ? 'Key saved on this device. Real METARs will be used where published.' : 'Key removed.');
+  };
+  $('#cwClear').onclick = () => {
+    P.cwKey = ''; saveProfiles(); $('#cwKey').value = ''; clearWxCache();
+    alertish('Key removed. Falling back to the forecast model.');
+  };
 
   html(`<h2 class="sec">Where your progress lives</h2>
     <div class="note o"><b>Not on GitHub</b>
@@ -1183,62 +1770,161 @@ function pickImportFile() {
 
 /* ============================ FIRST RUN ============================ */
 
+const STAGES = [
+  ['none',  'Not started yet',        'Booking the first lesson'],
+  ['trial', 'Had a trial lesson',     'One or two flights in the logbook'],
+  ['early', 'Flying regularly',       'Circuits and general handling, pre-solo'],
+  ['solo',  'Gone solo',              'First solo done'],
+  ['nav',   'Navigation phase',       'Cross-country and the qualifying flight'],
+  ['test',  'Preparing for the test', 'Close to the skill test']
+];
+const stageLabel = k => (STAGES.find(x => x[0] === k) || ['', 'Not set'])[1];
+/** The plan that suits where someone is in their flying. */
+const suggestPlan = stage => (stage === 'solo' || stage === 'nav' || stage === 'test') ? 'training' : 'blocks';
+
+let SETUP = null;
+
+function startSetup(mode) {
+  SETUP = { step: 1, mode: mode || 'first', name: '', stage: '', field: '', wx: '' };
+  go('welcome');
+}
+
 VIEWS.welcome = function () {
-  const totLO = SUBJECTS.reduce((a, x) => a + allLO(x), 0);
-  const totArt = SUBJECTS.reduce((a, x) => a + arts(x.code).length, 0);
-  const totQ = SUBJECTS.reduce((a, x) => a + SC[x.code].quiz.length, 0);
-  const totC = SUBJECTS.reduce((a, x) => a + SC[x.code].cards.length, 0);
+  if (!SETUP) SETUP = { step: 1, mode: 'first', name: '', stage: '', field: '', wx: '' };
+  const step = SETUP.step, adding = SETUP.mode === 'add';
+  if (adding) { navbar(step === 1 ? 'Add someone' : 'New profile', ''); }
 
-  html(`<div class="hd" style="padding-top:34px">
-    <h1 style="font-size:38px;line-height:1.05">UK PPL(A)<br>Theory</h1>
-    <div class="sub" style="font-size:17px;margin-top:10px">Articles, mock exams and spaced-repetition
-      flashcards for the nine CAA theoretical knowledge exams.</div></div>`);
-
-  html(`<div class="grp" style="margin-top:20px">
-    <div class="row"><div class="ic" style="background:var(--blue)">${totArt}</div>
-      <div class="tx"><b>Articles</b><i>Across all nine subjects, with the exam traps flagged</i></div></div>
-    <div class="row"><div class="ic" style="background:var(--indigo)">${totQ}</div>
-      <div class="tx"><b>Questions</b><i>Mock exams marked against the real 75% pass mark</i></div></div>
-    <div class="row"><div class="ic" style="background:var(--green)">${totC}</div>
-      <div class="tx"><b>Flashcards</b><i>Scheduled so you review just before you would forget</i></div></div>
-    <div class="row"><div class="ic" style="background:var(--orange)">${totLO}</div>
-      <div class="tx"><b>Learning objectives</b><i>Verbatim from the CAA’s own CAP2090 documents</i></div></div>
-  </div>`);
-
-  if (LEGACY) {
-    const t = summarise(LEGACY);
-    html(`<div class="note b" style="margin-top:18px"><b>Existing progress found on this device</b>
-      ${t.pass}/9 exams, ${t.read} article${t.read === 1 ? '' : 's'} and ${t.lo} objective${t.lo === 1 ? '' : 's'}
-      from an earlier version. Put your name in and it will be saved under it.</div>`);
+  if (step === 1) {
+    if (!adding) {
+    const totLO = SUBJECTS.reduce((a, x) => a + allLO(x), 0);
+    const totArt = SUBJECTS.reduce((a, x) => a + arts(x.code).length, 0);
+    const totQ = SUBJECTS.reduce((a, x) => a + SC[x.code].quiz.length, 0);
+    const totC = SUBJECTS.reduce((a, x) => a + SC[x.code].cards.length, 0);
+    html(`<div class="hd" style="padding-top:30px">
+      <h1 style="font-size:38px;line-height:1.05">UK PPL(A)<br>Theory</h1>
+      <div class="sub" style="font-size:17px;margin-top:10px">Articles, mock exams and
+        spaced-repetition flashcards for the nine CAA theoretical knowledge exams.</div></div>`);
+    html(`<div class="grp" style="margin-top:20px">
+      <div class="row"><div class="ic" style="--c:var(--blue)">${totArt}</div>
+        <div class="tx"><b>Articles</b><i>With diagrams and the exam traps flagged</i></div></div>
+      <div class="row"><div class="ic" style="--c:var(--indigo)">${totQ}</div>
+        <div class="tx"><b>Questions</b><i>Marked against the real 75% pass mark</i></div></div>
+      <div class="row"><div class="ic" style="--c:var(--green)">${totC}</div>
+        <div class="tx"><b>Flashcards</b><i>Reviewed just before you would forget</i></div></div>
+      <div class="row"><div class="ic" style="--c:var(--orange)">${totLO}</div>
+        <div class="tx"><b>Learning objectives</b><i>Verbatim from the CAA CAP2090 documents</i></div></div>
+    </div>`);
+    } else {
+      html(`<div class="hd" style="padding-top:18px"><h1 style="font-size:30px">Add someone</h1>
+        <div class="sub">They get their own articles, objectives, exam record, quiz history and
+        flashcards — completely separate from ${esc(activeName())}'s.</div></div>`);
+    }
+    html(`<h2 class="sec">${adding ? 'Their name' : 'First, who are you?'}</h2>
+      <div class="card">
+        <label class="f" for="wName">Your name</label>
+        <input type="text" id="wName" maxlength="24" autocomplete="given-name" autocapitalize="words"
+          placeholder="e.g. Bailey" value="${esc(SETUP.name)}" class="ti">
+        <div id="wErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
+        <div class="tiny" style="margin-top:9px">${adding ? 'Anything already on this device is untouched.'
+          : 'You can add more people later — everyone gets their own progress, kept separately on this device.'}</div>
+      </div>
+      <button class="btn" style="margin-top:14px" id="wNext">Continue</button>
+      <button class="btn sec" style="margin-top:10px" id="wImp">${adding ? 'Import them from a file' : 'I already have a progress file'}</button>
+      ${adding ? '<button class="btn grey" style="margin-top:10px" id="wCancel">Cancel</button>' : ''}
+      <div class="foot">Nothing is uploaded anywhere. Progress is saved in this browser on this device.</div>`);
+    if ($('#wCancel')) $('#wCancel').onclick = () => { SETUP = null; back(); };
+    const inp = $('#wName');
+    setTimeout(() => { try { inp.focus(); } catch (e) {} }, 80);
+    const go1 = () => {
+      const n = inp.value.trim().slice(0, 24);
+      if (!n) { $('#wErr').textContent = 'Put a name in so we know whose progress this is.'; $('#wErr').style.display = 'block'; return; }
+      SETUP.name = n; SETUP.step = 2; render();
+    };
+    $('#wNext').onclick = go1;
+    $('#wImp').onclick = pickImportFile;
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go1(); } });
+    return;
   }
 
-  html(`<h2 class="sec">Who is this for?</h2>
-    <div class="card">
-      <label class="f" for="wName">Your name</label>
-      <input type="text" id="wName" maxlength="24" autocomplete="given-name" autocapitalize="words"
-        placeholder="e.g. Bailey"
-        style="width:100%;background:var(--fill);color:var(--tx);border:0;border-radius:10px;
-          padding:12px;font:inherit;font-size:17px">
-      <div id="wErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
-      <div class="tiny" style="margin-top:9px">You can add more people later — everyone gets their own
-        progress, kept separately on this device.</div>
-    </div>
-    <button class="btn" style="margin-top:14px" id="wGo">Start studying</button>
-    <button class="btn sec" style="margin-top:10px" id="wImp">I already have a progress file</button>
-    <div class="foot">Nothing is uploaded anywhere. Progress is saved in this browser on this device.<br>
-      A personal revision aid — not a CAA publication.</div>`);
+  if (step === 2) {
+    setupHead(2, adding ? 'Where are they up to?' : 'Where are you up to?',
+      'This only sets a sensible starting exam order — it can be changed any time.');
+    html('<div class="grp">' + STAGES.map(([k, t, d]) => `
+      <button class="row" data-stage="${k}">
+        <div class="ic" style="--c:var(--${SETUP.stage === k ? 'blue' : 'tx3'})">${SETUP.stage === k ? '&#10003;' : '&#8226;'}</div>
+        <div class="tx"><b>${t}</b><i>${d}</i></div></button>`).join('') + '</div>');
+    bind('[data-stage]', e => { SETUP.stage = e.currentTarget.dataset.stage; render(); });
+    if (SETUP.stage) {
+      const pid = suggestPlan(SETUP.stage);
+      html(`<div class="note b" style="margin-top:14px"><b>Suggested order: ${esc(planById(pid).name)}</b>
+        ${esc(planById(pid).desc)}</div>`);
+    }
+    html(`<button class="btn" style="margin-top:14px" id="s2next">${SETUP.stage ? 'Continue' : 'Skip this'}</button>
+      <button class="btn grey" style="margin-top:10px" id="s2back">Back</button>`);
+    $('#s2next').onclick = () => { SETUP.step = 3; render(); };
+    $('#s2back').onclick = () => { SETUP.step = 1; render(); };
+    return;
+  }
 
-  const inp = $('#wName'), err = $('#wErr');
-  setTimeout(() => { try { inp.focus(); } catch (e) {} }, 80);
-  const submit = () => {
-    const n = inp.value.trim().slice(0, 24);
-    if (!n) { err.textContent = 'Put a name in so we know whose progress this is.'; err.style.display = 'block'; return; }
-    addProfile(n, LEGACY);
+  // step 3 — home airfield
+  setupHead(3, adding ? 'Where do they fly from?' : 'Where do you fly from?',
+    'Optional. It personalises the app and gives a one-tap weather link.');
+  html(`<div class="card">
+    <label class="f" for="wIcao">Home airfield</label>
+    <input type="text" id="wIcao" maxlength="28" autocapitalize="characters" autocomplete="off"
+      spellcheck="false" placeholder="Code or name — EGLM, Waltham…" value="${esc(SETUP.field)}" class="ti"
+      style="text-transform:uppercase;letter-spacing:.04em">
+    <div id="wFound" class="acfound" style="display:none"></div>
+    <div id="wList" class="aclist" style="display:none"></div>
+    <div id="wIcaoErr" class="tiny" style="color:var(--red);margin-top:8px;display:none"></div>
+    <div class="tiny" style="margin-top:9px">${AF().length} UK aerodromes, searchable offline.</div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <label class="f" for="wWx">Club weather page (optional)</label>
+    <input type="url" id="wWx" inputmode="url" autocapitalize="none" autocomplete="off" spellcheck="false"
+      placeholder="https://…" value="${esc(SETUP.wx)}" class="ti" style="font-size:15px">
+    <div class="tiny" style="margin-top:9px">Most small GA fields do not issue a METAR, so a club
+      weather page is often the only live source. If your field does report, the app links to its
+      METAR and TAF automatically.</div>
+  </div>
+  <button class="btn" style="margin-top:14px" id="s3done">Start studying</button>
+  <button class="btn grey" style="margin-top:10px" id="s3back">Back</button>`);
+
+  const ic = $('#wIcao');
+  wireAirfield('#wIcao', '#wList', '#wFound', row => {
+    const k = CLUB_WX[row[0]];
+    if (k && !$('#wWx').value) $('#wWx').value = k.url;
+  });
+  $('#s3back').onclick = () => { SETUP.step = 2; render(); };
+  $('#s3done').onclick = () => {
+    if (P.list.some(x => x.name.toLowerCase() === SETUP.name.toLowerCase())) {
+      alertish('There is already a profile called ' + SETUP.name + '. It will be numbered.');
+    }
+    const v = ic.value.trim().toUpperCase();
+    if (v && !afByCode(v)) {
+      $('#wIcaoErr').textContent = 'Pick an airfield from the list, or clear the box to skip.';
+      $('#wIcaoErr').style.display = 'block'; return;
+    }
+    const wx = $('#wWx').value.trim();
+    const data = blank();
+    data.stage = SETUP.stage; data.field = v; data.wx = /^https?:\/\//i.test(wx) ? wx : '';
+    data.planId = suggestPlan(SETUP.stage);
+    if (LEGACY && !adding) Object.assign(data, migrate(LEGACY),
+      { stage: data.stage, field: data.field, wx: data.wx, planId: data.planId });
+    const n = SETUP.name; SETUP = null;
+    addProfile(n, data);
   };
-  $('#wGo').onclick = submit;
-  $('#wImp').onclick = pickImportFile;
-  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
 };
+
+function setupHead(n, title, sub) {
+  html(`<div class="hd" style="padding-top:26px">
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      ${[1, 2, 3].map(i => `<div style="flex:1;height:4px;border-radius:99px;background:var(--${i <= n ? 'blue' : 'fill'})"></div>`).join('')}
+    </div>
+    <div class="sub" style="margin-bottom:4px">Step ${n} of 3</div>
+    <h1 style="font-size:30px">${esc(title)}</h1>
+    <div class="sub" style="margin-top:8px">${esc(sub)}</div></div>`);
+}
 
 /** prompt() is blocked in some embedded browsers, so names are entered in-app. */
 VIEWS.nameentry = function (p) {
@@ -1298,7 +1984,7 @@ VIEWS.importfile = function () {
       <div class="sub">${list.length} profiles · ${esc(dateLine)}</div></div>`);
     html('<div class="grp">' + list.map(pr => {
       const t = summarise(pr.data || {});
-      return `<div class="row"><div class="ic" style="background:var(--blue)">${esc(initials(pr.name || '?'))}</div>
+      return `<div class="row"><div class="ic" style="--c:var(--blue)">${esc(initials(pr.name || '?'))}</div>
         <div class="tx"><b>${esc(pr.name || 'Unnamed')}</b><i>${t.pass}/9 exams · ${t.read} article${t.read === 1 ? '' : 's'} · ${t.lo} objective${t.lo === 1 ? '' : 's'}</i></div></div>`;
     }).join('') + '</div>');
     html(`<div class="note r" style="margin-top:16px"><b>This replaces everything</b>
@@ -1329,7 +2015,7 @@ VIEWS.importfile = function () {
   html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">${esc(IMPORTING.name)}</h1>
     <div class="sub">${esc(dateLine)}</div></div>`);
   html(`<div class="grp"><div class="row">
-      <div class="ic" style="background:var(--blue)">${esc(initials(IMPORTING.name))}</div>
+      <div class="ic" style="--c:var(--blue)">${esc(initials(IMPORTING.name))}</div>
       <div class="tx"><b>In this file</b><i>${t.pass}/9 exams passed · ${t.read} article${t.read === 1 ? '' : 's'} read ·
         ${t.lo} objective${t.lo === 1 ? '' : 's'} ticked · ${t.srs} card${t.srs === 1 ? '' : 's'} scheduled</i></div></div></div>`);
 
@@ -1370,7 +2056,7 @@ VIEWS.profiles = function () {
     const nPass = Object.values(d.subj || {}).filter(v => v.st === 'passed').length;
     const on = pr.id === P.active;
     return `<button class="row" data-pick="${pr.id}">
-      <div class="ic" style="background:var(--${on ? 'blue' : 'tx3'})">${esc(initials(pr.name))}</div>
+      <div class="ic" style="--c:var(--${on ? 'blue' : 'tx3'})">${esc(initials(pr.name))}</div>
       <div class="tx"><b>${esc(pr.name)}</b><i>${nPass}/9 exams · ${nRead} article${nRead === 1 ? '' : 's'} · ${nLO} objective${nLO === 1 ? '' : 's'}</i></div>
       ${on ? '<span class="bdg b">Active</span>' : ''}
       <div class="chev">&#8250;</div></button>`;
@@ -1383,7 +2069,8 @@ VIEWS.profiles = function () {
   html(`<button class="btn sec" style="margin-top:14px" id="addP">Add someone</button>
     <button class="btn sec" style="margin-top:10px" id="impP">Import someone from a file</button>`);
   $('#impP').onclick = pickImportFile;
-  $('#addP').onclick = () => go('nameentry', { mode: 'add' });
+  $('#addP').onclick = () => startSetup('add');
+
 
   html(`<div class="foot">Tap a profile to switch to it. Tap the active one to rename or remove it.<br>
     Switching profiles does not upload anything — it just points the app at a different set of

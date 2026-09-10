@@ -89,8 +89,12 @@ h2.sec:first-child{margin-top:14px}
 .row + .row::before{content:"";position:absolute;left:16px;right:0;top:0;height:.5px;
   background:var(--sep2)}
 .row:active{background:var(--fill)}
-.row .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;flex:none;
-  color:#fff;font-size:12px;font-weight:700;letter-spacing:0}
+.row .ic,.ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:none;
+  color:#fff;font-size:12px;font-weight:700;letter-spacing:0;
+  background:linear-gradient(145deg,
+    color-mix(in srgb, var(--c,var(--blue)) 100%, #fff 16%),
+    color-mix(in srgb, var(--c,var(--blue)) 82%, #000 18%));
+  box-shadow:0 1px 3px color-mix(in srgb, var(--c,var(--blue)) 40%, transparent)}
 .row .tx{flex:1;min-width:0}
 .row .tx b{display:block;font-weight:400;font-size:17px}
 .row .tx i{display:block;font-style:normal;font-size:13px;color:var(--tx2);margin-top:1px}
@@ -153,6 +157,113 @@ h2.sec:first-child{margin-top:14px}
 .note.r{background:rgba(255,59,48,.12)}
 .note.g{background:rgba(52,199,89,.13)}
 .note + .note{margin-top:10px}
+
+.chip{display:inline-block;min-width:30px;text-align:center;padding:2px 5px;border-radius:5px;
+  color:#fff;font:700 10px/1.5 ui-monospace,Menlo,monospace;letter-spacing:0}
+.mv{width:34px;height:34px;border-radius:9px;background:var(--fill);color:var(--tx2);
+  font-size:11px;flex:none;display:grid;place-items:center}
+.mv:disabled{opacity:.25}
+.mv:active{background:var(--fill2)}
+
+/* text inputs */
+.ti{width:100%;background:var(--fill);color:var(--tx);border:1.5px solid transparent;
+  border-radius:10px;padding:12px;font:inherit;font-size:17px;transition:.15s}
+.ti:focus{outline:none;border-color:var(--blue);background:var(--bg2)}
+
+/* weather strip */
+.wxbar{display:flex;align-items:center;gap:10px;width:100%;margin:16px 0 18px;padding:11px 12px;
+  border-radius:12px;background:var(--card);box-shadow:var(--sh);text-align:left}
+.wxbar:active{background:var(--fill)}
+.wxcode{font:700 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;
+  background:var(--fill);padding:5px 7px;border-radius:6px;flex:none}
+.wxmid{flex:1;min-width:0;font-size:12.5px;color:var(--tx);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em}
+.wxsrc{font:700 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;color:var(--tx3);
+  border:1px solid currentColor;border-radius:4px;padding:3px 4px;flex:none}
+.wxcat{font:800 11px/1 -apple-system,system-ui,sans-serif;letter-spacing:.04em;color:#fff;
+  padding:5px 8px;border-radius:6px;flex:none;background:var(--c)}
+.wxbig{font:800 46px/1 -apple-system,system-ui,sans-serif;letter-spacing:-.03em;color:var(--c)}
+
+/* airfield autocomplete */
+.ac{position:relative}
+.aclist{margin-top:8px;border-radius:10px;overflow:hidden;background:var(--bg2);
+  box-shadow:0 2px 10px rgba(0,0,0,.10);border:.5px solid var(--sep2)}
+.aclist button{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;
+  padding:11px 13px;position:relative}
+.aclist button + button::before{content:"";position:absolute;left:13px;right:0;top:0;height:.5px;
+  background:var(--sep2)}
+.aclist button:active{background:var(--fill)}
+.aclist .cd{font:700 12px/1 ui-monospace,Menlo,monospace;color:var(--blue);flex:none;width:38px}
+.aclist .nm{font-size:15px;line-height:1.3}
+.aclist .nm i{display:block;font-style:normal;font-size:12.5px;color:var(--tx2);margin-top:1px}
+.acfound{margin-top:9px;font-size:14px;color:var(--green);font-weight:600}
+.acfound i{display:block;font-style:normal;font-weight:400;color:var(--tx2);font-size:13px;margin-top:1px}
+
+/* toast */
+.toast{position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));
+  z-index:60;background:var(--tx);color:var(--bg);border-radius:12px;padding:13px 16px;
+  font-size:15px;font-weight:500;text-align:center;opacity:0;transform:translateY(12px);
+  transition:.28s cubic-bezier(.2,.8,.2,1);max-width:688px;margin:0 auto;pointer-events:none}
+.toast.in{opacity:1;transform:none}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-radius:18px;padding:18px;
+  background:var(--card);box-shadow:var(--sh)}
+.hero::before{content:"";position:absolute;inset:0;opacity:.10;pointer-events:none;
+  background:radial-gradient(120% 130% at 100% 0%, var(--blue) 0%, transparent 55%),
+             radial-gradient(90% 120% at 0% 100%, var(--indigo) 0%, transparent 55%)}
+.hero > *{position:relative}
+
+/* subject banner */
+.banner{position:relative;overflow:hidden;border-radius:18px;padding:20px 18px;margin-top:14px;
+  color:#fff;background:linear-gradient(140deg,
+    color-mix(in srgb, var(--c) 100%, #fff 14%),
+    color-mix(in srgb, var(--c) 76%, #000 24%))}
+.banner h1{font-size:27px;line-height:1.12}
+.banner .m{font-size:13.5px;opacity:.9;margin-top:6px}
+.banner .code{position:absolute;right:-6px;top:-16px;font:800 92px/1 ui-monospace,Menlo,monospace;
+  opacity:.16;letter-spacing:-.05em}
+.banner .pb{height:6px;background:rgba(255,255,255,.28);border-radius:99px;margin-top:14px;overflow:hidden}
+.banner .pb i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* section headers get a small coloured marker */
+h2.sec{display:flex;align-items:center;gap:7px}
+h2.sec::before{content:"";width:4px;height:12px;border-radius:2px;background:var(--blue);opacity:.85}
+
+/* entrance */
+/* no fill-mode: if the animation never runs, elements stay at their natural, visible state */
+#app > *{animation:fade .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#app > *{animation:none}}
+
+/* ---------- diagrams ---------- */
+figure{margin:22px 0;padding:0}
+figure .dgwrap{background:var(--card);border-radius:14px;padding:14px 12px 10px;
+  box-shadow:var(--sh);overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;position:relative}
+figure .swipe{font-size:11.5px;color:var(--tx3);margin:6px 0 0 4px;display:none}
+@media (max-width:560px){figure .swipe{display:block}}
+figcaption{font-size:13.5px;line-height:1.45;color:var(--tx2);margin-top:10px;padding:0 4px}
+figcaption b{color:var(--tx);font-weight:600}
+/* Diagrams keep a readable minimum size and scroll sideways on a narrow phone,
+   rather than shrinking their labels into illegibility. */
+.dg{width:100%;height:auto;display:block;color:var(--tx);min-width:520px}
+.dg text{font:600 13px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  fill:currentColor;letter-spacing:-.005em}
+.dg text.s{font-size:11.5px;font-weight:500;opacity:.66}
+.dg text.b{font-size:14px;font-weight:700}
+.dg text.sb{font-size:11.5px;font-weight:500;opacity:.66}
+.dg .ink{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dg .thin{fill:none;stroke:currentColor;stroke-width:1;opacity:.32}
+.dg .dash{stroke-dasharray:5 4}
+.dg .fill{fill:currentColor;stroke:none}
+.dg .tint{fill:currentColor;opacity:.06;stroke:none}
+.dg .blue{stroke:var(--blue)}   .dg .fblue{fill:var(--blue);stroke:none}
+.dg .red{stroke:var(--red)}     .dg .fred{fill:var(--red);stroke:none}
+.dg .green{stroke:var(--green)} .dg .fgreen{fill:var(--green);stroke:none}
+.dg .orange{stroke:var(--orange)}
+.dg text.blue-t{fill:var(--blue)}  .dg text.red-t{fill:var(--red)}
+.dg text.green-t{fill:var(--green)} .dg text.orange-t{fill:var(--orange)}
 
 /* ---------- article ---------- */
 .article{font-size:17px;line-height:1.58;padding:4px 0 20px}
@@ -271,10 +382,12 @@ label.f{display:block;font-size:12px;font-weight:600;text-transform:uppercase;
   <button role="tab" data-v="learn" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>Learn</button>
   <button role="tab" data-v="quiz" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7v.5"/><path d="M12 17.5h.01"/><circle cx="12" cy="12" r="9"/></svg>Quiz</button>
   <button role="tab" data-v="cards" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="14" height="12" rx="2"/><path d="M7 4h11a2 2 0 0 1 2 2v10"/></svg>Cards</button>
-  <button role="tab" data-v="plan" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></svg>Plan</button>
+  <button role="tab" data-v="plan" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></svg>Exams</button>
 </nav>
 
 <script src="data/syllabus.js"></script>
+<script src="data/diagrams.js"></script>
+<script src="data/airfields.js"></script>
 <script src="data/content/010.js"></script>
 <script src="data/content/020.js"></script>
 <script src="data/content/030.js"></script>

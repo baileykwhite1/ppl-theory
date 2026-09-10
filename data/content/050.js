@@ -23,6 +23,7 @@ first, because half of Met and most of Performance hang off them.</p>
 <p>Above the tropopause the ISA temperature is taken as constant at &minus;56.5 &deg;C. The
 lapse rate applies only up to it.</p>
 
+<figure data-d="isa"></figure>
 <h3>Structure</h3>
 <p><b>Troposphere</b> — where the weather lives; temperature falls with height; contains almost
 all the water vapour. Deepest at the equator (about 16 km) and shallowest at the poles (about
@@ -120,6 +121,7 @@ the way up, loses its moisture as rain, then warms at the dry rate on the way do
 warmer and drier than it started.</li>
 </ul>
 
+<figure data-d="seabreeze"></figure>
 <h3>Mountain waves and turbulence</h3>
 <p>Standing (lee) waves need a wind of about <b>20 kt or more roughly perpendicular</b> to a
 ridge, increasing with height, and a stable layer near the ridge top. Signs: <b>lenticular</b>
@@ -162,6 +164,7 @@ stable</b>. Air lifted sinks back. Layer cloud, drizzle, poor visibility, smooth
 unsaturated, unstable once saturated. The setup for a thunderstorm.</li>
 </ul>
 
+<figure data-d="stability"></figure>
 <h3>Humidity and dew point</h3>
 <p><b>Relative humidity</b> is how much water vapour the air holds as a percentage of what it
 could hold at that temperature. Warm air can hold far more. The <b>dew point</b> is the
@@ -262,6 +265,7 @@ in the warm sector, pressure steadies, rain becomes drizzle, cloud is low stratu
 visibility is poor. Hazards: continuous rain, low cloud, frontal fog, and freezing rain in
 winter.</p>
 
+<figure data-d="warmfront"></figure>
 <h3>The cold front</h3>
 <p>Cold air <b>undercutting</b> warm air, on a steeper slope of about 1 in 50, and moving
 faster. Short, sharp and violent: a line of towering cumulus and cumulonimbus, heavy showers or
@@ -269,6 +273,7 @@ thunderstorms, severe turbulence, a sharp <b>veer</b> in wind, a sharp rise in p
 drop in temperature. Then it clears quickly to bright, showery, gusty Pm air with excellent
 visibility.</p>
 
+<figure data-d="coldfront"></figure>
 <h3>Occlusions</h3>
 <p>The cold front travels faster and eventually catches the warm front, lifting the warm sector
 clear of the surface. If the air behind is colder than the air ahead you get a <b>cold

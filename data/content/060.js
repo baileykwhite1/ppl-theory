@@ -34,6 +34,7 @@ which differs from magnetic by <b>deviation</b> caused by the aircraft's own mag
 <b>agonic</b> line is where variation is zero. Deviation is found on the <b>compass deviation
 card</b> in the cockpit and varies with heading.</p>
 
+<figure data-d="varmag"></figure>
 <h3>Getting the sums the right way round</h3>
 <p>The mnemonic worth memorising: <b>Variation east, magnetic least; variation west, magnetic
 best.</b> So going from true to magnetic:</p>
@@ -142,6 +143,7 @@ fast.</li>
 know the required track (off the chart), TAS (from the POH) and the forecast wind, and you
 solve for <b>heading</b> and <b>groundspeed</b>.</p>
 
+<figure data-d="triangle"></figure>
 <h3>Drift and wind correction angle</h3>
 <p><b>Drift</b> is the angle between heading and track, and it is named for where the wind
 pushes you: a wind from the left gives <b>right</b> drift. The <b>wind correction angle</b> is
@@ -173,6 +175,7 @@ point, calculate a second closing angle the same way over the distance remaining
 the <b>double track error</b> method: if you are a third of the way along, doubling the track
 error will roughly put you back on track by half way.</p>
 
+<figure data-d="oneinsixty"></figure>
 <h3>The flight computer</h3>
 <p>The circular slide rule side handles anything proportional: time, speed and distance; fuel
 flow; conversions; TAS from RAS with altitude and temperature; density altitude. The wind side

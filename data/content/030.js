@@ -25,6 +25,7 @@ whatever the POH uses. Be consistent.</li>
 position</em>, which is why the calculation is a division at the end.</li>
 </ul>
 
+<figure data-d="massbalance"></figure>
 <h3>The method, every time</h3>
 <ol>
 <li>Tabulate every item: basic empty mass, pilot, passengers, baggage in each compartment, fuel,
@@ -95,6 +96,7 @@ on a 30 &deg;C day, when ISA there is about 13 &deg;C, has a density altitude ar
 1000 + (17 &times; 120) = about 3000 ft. The aeroplane will perform as though it were at
 3000 ft.</p>
 
+<figure data-d="runwaydist"></figure>
 <h3>The factors, as multipliers</h3>
 <p>The POH graphs are authoritative, but the CAA-style safety factors are what the exam and good
 practice use for a rough check on take-off and landing distance:</p>

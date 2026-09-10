@@ -49,12 +49,33 @@ Real cross-device sync would need a backend — this repo deliberately has none.
 | Tab | Contents |
 | --- | --- |
 | **Home** | Course progress, the next thing to read, cards due today, a quick quiz, and the exam blocks at a glance |
-| **Learn** | 9 subjects → **37 articles** plus all **551 CAA learning objectives** as tickable checklists, and a per-subject exam record |
+| **Learn** | 9 subjects → **37 articles** with **23 hand-drawn diagrams**, plus all **551 CAA learning objectives** as tickable checklists, and a per-subject exam record |
 | **Quiz** | **385 questions.** All-subject mock (45, balanced 5 per subject), mixed practice, quick ten, or a 20-question mock in any single subject. Exam mode withholds feedback; practice mode explains as you go. Scored against the real 75% pass mark, with per-subject breakdown and mistake review |
 | **Cards** | **327 flashcards** on an SM-2 style spaced-repetition schedule — Again / Hard / Good / Easy, 20 new cards a day, filterable by subject |
-| **Plan** | The 18-month and 24-month clocks, a risk watch that reacts to your attempts and dates, and the suggested order to sit the exams in |
+| **Exams** | The 18-month and 24-month clocks, a risk watch that reacts to your attempts and dates, and five selectable exam orderings (or your own) |
 | Profiles | Several people can share one device, each with completely separate progress |
 | Reference | Every rule quoted with its citation; what's decided but not yet in force; what the CAA doesn't publish; the Pooleys volume for each exam; and every source with a URL |
+
+## Setup, airfield and weather
+
+First launch asks three things: your name, where you are in your training (which picks a
+sensible starting exam order), and your home airfield. Adding a second person runs the same
+flow. **215 UK aerodromes** are bundled from [OurAirports](https://ourairports.com/) (public
+domain) and searchable offline by ICAO code, name or town.
+
+The Home screen carries a thin METAR-style strip — `EGLM 22010G20KT 9999 OVC016 17/13 Q1015` —
+with a flight-category chip, which doubles as decoding practice. Two honest caveats are built
+into the UI:
+
+- Without a **CheckWX API key** the figures come from the **Open-Meteo forecast model**, not an
+  observation, and are tagged `MODEL`. The official METAR feeds (aviationweather.gov, AVWX)
+  refuse browser requests from another origin, so a static site cannot reach them.
+- Add your own free CheckWX key in Sources & settings and the strip switches to the real METAR,
+  tagged `METAR`, with the official flight category. **The key is stored in your browser only** —
+  never committed, since anyone can read a key in a public repo.
+
+Either way the app links out to the real sources: the club weather station (White Waltham's is
+built in), metar-taf.com, and the Met Office GA page. Nothing here is for flight planning.
 
 ## The correction this repo exists to make
 
@@ -155,6 +176,8 @@ methods agreed exactly.
 index.html            shell, tab bar and all CSS
 app.js                profiles, router, views, quiz engine, SM-2 scheduler
 data/syllabus.js      551 CAA learning objectives (generated)
+data/diagrams.js      23 inline SVG diagrams, theme-aware
+data/airfields.js     215 UK aerodromes from OurAirports (generated)
 data/content/0NN.js   articles, quiz bank and flashcards, one file per subject
 tools/                syllabus generator
 ```
