@@ -224,6 +224,21 @@ h2.sec:first-child{margin-top:14px}
 .acfound{margin-top:9px;font-size:14px;color:var(--green);font-weight:600}
 .acfound i{display:block;font-style:normal;font-weight:400;color:var(--tx2);font-size:13px;margin-top:1px}
 
+/* confirmation sheet — window.confirm() is silently ignored in some embedded browsers */
+.sheetwrap{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;
+  justify-content:center;pointer-events:none}
+.sheetbg{position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;transition:.24s;
+  pointer-events:auto}
+.sheetwrap.in .sheetbg{opacity:1}
+.sheet{position:relative;width:100%;max-width:520px;margin:0 12px
+  calc(12px + env(safe-area-inset-bottom));background:var(--bg2);border-radius:18px;
+  padding:20px 18px 16px;box-shadow:0 8px 40px rgba(0,0,0,.28);
+  transform:translateY(20px);opacity:0;transition:.26s cubic-bezier(.2,.8,.2,1);
+  pointer-events:auto}
+.sheetwrap.in .sheet{transform:none;opacity:1}
+.sh-t{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.sh-b{font-size:15px;line-height:1.5;color:var(--tx2);margin:8px 0 18px}
+
 /* toast */
 .toast{position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));
   z-index:60;background:var(--tx);color:var(--bg);border-radius:12px;padding:13px 16px;

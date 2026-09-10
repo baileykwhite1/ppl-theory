@@ -255,10 +255,10 @@ function addProfile(name, data) {
   return id;
 }
 function deleteProfile(id) {
-  if (P.list.length < 2) return;
   P.list = P.list.filter(p => p.id !== id);
   try { localStorage.removeItem(dataKey(id)); } catch (e) {}
-  if (P.active === id) P.active = P.list[0].id;
+  // deleting the last profile is allowed: it drops you back to first-run setup
+  P.active = P.list.length ? (P.active === id ? P.list[0].id : P.active) : '';
   saveProfiles(); loadState();
 }
 
@@ -738,7 +738,9 @@ VIEWS.quizrun = function () {
   const chosen = Q.ans[Q.at];
   const reveal = Q.mode === 'practice' && chosen >= 0;
   navbar(Q.title, `<button id="qQuit" style="color:var(--blue)">End</button>`);
-  $('#qQuit').onclick = () => { if (confirm('End this quiz? Your answers so far will be scored.')) finishQuiz(); };
+  $('#qQuit').onclick = () => askConfirm({
+    title: 'End this quiz?', body: 'Your answers so far will be scored, and any you have not reached count as blank.',
+    yes: 'End and score' }, finishQuiz);
 
   html(`<div class="qwrap">
     <div class="qmeta"><span>Question ${Q.at + 1} of ${n}</span>
@@ -960,9 +962,12 @@ VIEWS.cards = function () {
 
   html(`<button class="btn grey sm" style="margin-top:14px" id="rst">Reset all card scheduling</button>`);
   $('#rst').onclick = () => {
-    if (confirm('Reset spaced repetition for every card? Your article and objective progress is not affected.')) {
+    askConfirm({ title: 'Reset all card scheduling?',
+      body: 'Every card goes back to new. Your articles, objectives and exam record are not affected.',
+      yes: 'Reset scheduling', danger: true }, () => {
       S.srs = {}; S.newToday = {}; save(); render();
-    }
+      alertish('Card scheduling reset.');
+    });
   };
   html(`<div class="foot">Again returns the card in ten minutes. Hard, Good and Easy space it out
     using an SM-2 style interval that grows each time you get it right.</div>`);
@@ -1828,6 +1833,27 @@ VIEWS.training = function () {
   };
 };
 
+/**
+ * In-app confirmation. Never use window.confirm(): in several embedded browsers it
+ * returns false without showing anything, which silently swallows the action.
+ */
+function askConfirm(o, onYes) {
+  const w = document.createElement('div');
+  w.className = 'sheetwrap';
+  w.innerHTML = `<div class="sheetbg"></div><div class="sheet">
+    <div class="sh-t">${esc(o.title)}</div>
+    <div class="sh-b">${esc(o.body || '')}</div>
+    <button class="btn ${o.danger ? 'dgr' : ''}" data-yes>${esc(o.yes || 'Confirm')}</button>
+    <button class="btn grey" style="margin-top:9px" data-no>Cancel</button>
+  </div>`;
+  document.body.appendChild(w);
+  requestAnimationFrame(() => w.classList.add('in'));
+  const close = () => { w.classList.remove('in'); setTimeout(() => w.remove(), 240); };
+  w.querySelector('[data-no]').onclick = close;
+  w.querySelector('.sheetbg').onclick = close;
+  w.querySelector('[data-yes]').onclick = () => { close(); onYes(); };
+}
+
 /** A non-blocking message, since alert() is unavailable in some embedded browsers. */
 function alertish(msg) {
   const n = document.createElement('div');
@@ -2035,11 +2061,19 @@ VIEWS.sources = function () {
   };
 
   $('#imp').onclick = pickImportFile;
-  $('#wipe').onclick = () => {
-    if (confirm('Erase all of ' + activeName() + '\u2019s progress? This cannot be undone.')) {
-      S = blank(); flush(); tab('home');
-    }
-  };
+  $('#wipe').onclick = () => askConfirm({
+    title: 'Erase ' + activeName() + '\u2019s progress?',
+    body: 'Articles, objectives, exam record, quiz history and flashcards are all cleared. '
+      + 'Your name, training stage, home airfield and exam order are kept.',
+    yes: 'Erase progress', danger: true
+  }, () => {
+    // keep who they are and how they fly — only the study record goes
+    const keep = { stage: S.stage, field: S.field, wx: S.wx, planId: S.planId,
+                   customOrder: S.customOrder, cardSubs: S.cardSubs };
+    S = Object.assign(blank(), keep);
+    flush(); tab('home');
+    alertish('Progress erased. Your airfield and settings are still here.');
+  });
 
   html(`<div class="foot">Personal revision aid — not a CAA publication and not instruction.<br>
     Articles, quiz questions and flashcards were written for this app; the learning objectives are
@@ -2321,7 +2355,11 @@ VIEWS.importfile = function () {
       <button class="btn dgr" style="margin-top:14px" id="doRestore">Replace all profiles</button>
       <button class="btn grey" style="margin-top:10px" id="cancelImp">Cancel</button>`);
     $('#doRestore').onclick = () => {
-      if (!confirm('Replace all profiles on this device? This cannot be undone.')) return;
+      askConfirm({ title: 'Replace every profile?',
+        body: 'All ' + P.list.length + ' profile' + (P.list.length === 1 ? '' : 's') +
+          ' on this device, and all their progress, will be deleted and replaced by the ' +
+          list.length + ' in this file. This cannot be undone.',
+        yes: 'Replace everything', danger: true }, () => {
       P.list.forEach(pr => { try { localStorage.removeItem(dataKey(pr.id)); } catch (e) {} });
       const fresh = [];
       list.forEach(pr => {
@@ -2329,10 +2367,12 @@ VIEWS.importfile = function () {
         fresh.push({ id: id, name: (pr.name || 'Imported').slice(0, 24) });
         writeJSON(dataKey(id), migrate(pr.data || {}));
       });
-      P = { list: fresh, active: fresh[0].id, theme: IMPORTING.payload.theme || P.theme };
-      saveProfiles(); loadState(); IMPORTING = null;
-      if (P.theme) document.documentElement.dataset.t = P.theme; else document.documentElement.removeAttribute('data-t');
-      tab('home');
+        P = { list: fresh, active: fresh[0].id, theme: IMPORTING.payload.theme || P.theme };
+        saveProfiles(); loadState(); IMPORTING = null;
+        if (P.theme) document.documentElement.dataset.t = P.theme; else document.documentElement.removeAttribute('data-t');
+        tab('home');
+        alertish('Restored ' + fresh.length + ' profile' + (fresh.length === 1 ? '' : 's') + '.');
+      });
     };
     $('#cancelImp').onclick = () => { IMPORTING = null; back(); };
     return;
@@ -2363,8 +2403,14 @@ VIEWS.importfile = function () {
 
   $('#asNew').onclick = () => { const d = IMPORTING.data, n = IMPORTING.name; IMPORTING = null; addProfile(n, d); };
   if ($('#asOver')) $('#asOver').onclick = () => {
-    if (!confirm('Overwrite ' + activeName() + '\u2019s progress with ' + IMPORTING.name + '? This cannot be undone.')) return;
-    S = migrate(IMPORTING.data); flush(); IMPORTING = null; tab('home');
+    const who = IMPORTING.name;
+    askConfirm({ title: 'Overwrite ' + activeName() + '?',
+      body: activeName() + '\u2019s articles, objectives, exam record, quiz history and flashcards ' +
+        'will be replaced by ' + who + '\u2019s. This cannot be undone.',
+      yes: 'Overwrite', danger: true }, () => {
+      S = migrate(IMPORTING.data); flush(); IMPORTING = null; tab('home');
+      alertish('Imported ' + who + '\u2019s progress.');
+    });
   };
   $('#cancelImp').onclick = () => { IMPORTING = null; back(); };
 };
@@ -2413,14 +2459,20 @@ VIEWS.profedit = function (p) {
     <div class="sub">Active profile</div></div>`);
   html(`<div class="grp">
     <button class="row" id="ren"><div class="tx"><b>Rename</b></div><div class="chev">&#8250;</div></button>
-    ${P.list.length > 1 ? `<button class="row" id="del"><div class="tx"><b style="color:var(--red)">Delete this profile</b>
-      <i>Erases its progress on this device</i></div></button>` : ''}
+    <button class="row" id="del"><div class="tx"><b style="color:var(--red)">Delete this profile</b>
+      <i>${P.list.length > 1 ? 'Erases its progress on this device'
+        : 'The only profile — you will be taken back to setup'}</i></div></button>
   </div>`);
   $('#ren').onclick = () => go('nameentry', { mode: 'rename', id: pr.id });
   if ($('#del')) $('#del').onclick = () => {
-    if (!confirm('Delete ' + pr.name + ' and all of their progress on this device? This cannot be undone.')) return;
-    deleteProfile(pr.id);
-    stack.pop(); render();
+    askConfirm({ title: 'Delete ' + pr.name + '?',
+      body: 'Their progress on this device is erased. This cannot be undone — export first if you '
+        + 'might want it back.' + (P.list.length < 2 ? ' This is the only profile, so you will be taken back to setup.' : ''),
+      yes: 'Delete profile', danger: true }, () => {
+      deleteProfile(pr.id);
+      if (needsSetup()) { SETUP = null; stack = [{ v: 'welcome' }]; render(); }
+      else { stack.pop(); render(); }
+    });
   };
   html(`<div class="foot">Export from Sources &amp; settings before deleting if you might want it back.</div>`);
 };
