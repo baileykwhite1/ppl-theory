@@ -1045,7 +1045,7 @@ VIEWS.plan = function () {
 
   const dl = deadline18(S.d1), vd = deadline24(S.d2);
   html(`<div class="tiles" style="margin-top:12px">
-    <div class="tile"><div class="k">Exams passed</div><div class="n">${p}<span style="font-size:18px;color:var(--tx2)">/9</span></div>
+    <div class="tile"><div class="k">Exams passed</div><div class="n">${p}<span class="of">/9</span></div>
       <div class="s">${p === 9 ? 'complete set' : (9 - p) + ' to go'}</div></div>
     ${dl ? tileFor('18-month deadline', dl, p >= 9, 'm18') : `<div class="tile">${infoBtn('m18')}
       <div class="k">18-month window</div>
@@ -1549,6 +1549,13 @@ VIEWS.clockinfo = function (p) {
         attempted an examination</b>.”</div>
         <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(b)(2)</div></div>`);
 
+    html(`<h2 class="sec">Before you can sit anything</h2>
+      <button class="grp row" id="toDto18">
+        <div class="ic" style="--c:var(--teal)">&#9993;</div>
+        <div class="tx"><b>Your school has to recommend you</b><i>What a DTO and an ATO are, and the 12-month rule</i></div>
+        <div class="chev">&#8250;</div></button>`);
+    $('#toDto18').onclick = () => go('dto');
+
     html(`<h2 class="sec">What this means in practice</h2>
       <div class="grp">
         <div class="row plain"><div style="font-size:14.5px;line-height:1.5">Do not sit one paper early
@@ -1613,25 +1620,17 @@ VIEWS.clockinfo = function (p) {
         says 24 months, and it needs a legislative change through the DfT plus funding to modify the
         e-Exam platform. Plan on 24 until the CAA says otherwise.</div>`);
 
-    html(`<h2 class="sec">It is a skill test, not a checkride</h2>
-      <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
-        <b>Checkride</b> is American — FAA terminology. Under UK Part-FCL the flight test for
-        licence issue is the <b>skill test</b> (FCL.030 and FCL.235), conducted by a
-        <b>Flight Examiner</b>. Older UK pilots and some clubs still call it the
-        <b>GFT</b> — General Flying Test — which is the pre-JAR name and no longer the legal term.
-        <br><br>Do not confuse it with a <b>proficiency check</b>: that is the later, recurring
-        test used to revalidate or renew a rating, such as an SEP, not to get the licence in the
-        first place.</div></div>`);
-
     html(`<h2 class="sec">Do not confuse it with</h2>
       <div class="grp">
         <div class="row"><div class="tx"><b>The 18-month window</b><i>Time to pass all nine, from your first attempt</i></div>
           <button class="btn sec sm" style="width:auto;padding:8px 12px" id="to18">Open</button></div>
         <div class="row"><div class="tx"><b>The 6-month rule</b><i>Apply within 6 months of the skill test — FCL.015(f)</i></div></div>
-        <div class="row"><div class="tx"><b>DTO/ATO recommendation</b><i>Valid 12 months — FCL.025(a)(3)</i></div></div>
+        <button class="row" id="toDto"><div class="tx"><b>DTO/ATO recommendation</b><i>Valid 12 months — FCL.025(a)(3)</i></div>
+          <div class="chev">&#8250;</div></button>
         <div class="row"><div class="tx"><b>Class 2 medical</b><i>60, 24 or 12 months depending on age</i></div></div>
       </div>`);
     if ($('#to18')) $('#to18').onclick = () => { stack[stack.length - 1] = { v: 'clockinfo', p: { id: 'm18' } }; render(); };
+    if ($('#toDto')) $('#toDto').onclick = () => go('dto');
   }
 
   html(`<div class="foot">Quoted from the CAA consolidated Part-FCL rulebook, page footers dated
@@ -1716,6 +1715,72 @@ function attemptsInfo() {
   html(`<div class="foot">Quoted from the CAA consolidated Part-FCL rulebook (July 2026) and
     Standards Document 11, Revision 15. See Sources.</div>`);
 }
+
+VIEWS.dto = function () {
+  navbar('DTO and ATO', '');
+  html(`<div class="hd" style="padding-top:14px">
+    <h1 style="font-size:30px">Who trains you, and the sign-off</h1>
+    <div class="sub">FCL.210 · FCL.025(a)(2) and (a)(3) · DTO.GEN.110</div></div>`);
+
+  html(`<div class="card" style="margin-top:14px"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+    Your PPL course has to be run by one of two kinds of organisation, and you cannot book a
+    theory exam until that organisation says you are ready. For a PPL it makes no practical
+    difference which kind you are at — most flying clubs are DTOs.</div></div>`);
+
+  html(`<h2 class="sec">The two kinds</h2>
+    <div class="grp">
+      <div class="row"><div class="ic" style="--c:var(--blue)">DTO</div>
+        <div class="tx"><b>Declared Training Organisation</b>
+          <i>A lighter regime built for general aviation: it <b>declares</b> itself to the CAA
+          rather than seeking approval. Most flying clubs. For aeroplanes a DTO may provide
+          theoretical knowledge and flight instruction for the LAPL(A) and PPL(A), class rating
+          training for SEP(land), SEP(sea) and TMG, and night, aerobatic, mountain and banner
+          towing ratings.</i></div></div>
+      <div class="row"><div class="ic" style="--c:var(--purple)">ATO</div>
+        <div class="tx"><b>Approved Training Organisation</b>
+          <i>Formally approved and overseen by the CAA, and able to train well beyond the PPL —
+          CPL, ATPL, instrument ratings, integrated courses. An ATO can do everything a DTO can,
+          and more.</i></div></div>
+    </div>
+    <div class="tiny" style="margin:9px 0 0 4px">DTO scope from DTO.GEN.110(a)(1).</div>`);
+
+  html(`<h2 class="sec">The recommendation</h2>
+    <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+      You may only sit a theory exam when the DTO or ATO responsible for your training
+      <b>recommends</b> you, once you have completed the relevant theoretical knowledge
+      instruction to a satisfactory standard. In practice this is your school signing you off in
+      the CAA e-Exams system so that the exam can be booked. No recommendation, no booking — so
+      ask early rather than the week you want to sit.</div>
+    <div style="margin-top:12px;padding:11px 13px;background:var(--card2);border-radius:10px;
+      font-size:14.5px;line-height:1.55">
+      “Applicants shall only take the theoretical knowledge examination when recommended by the
+      declared training organisation (DTO) or the approved training organisation (ATO) responsible
+      for their training, once they have completed the appropriate elements of the training course
+      of theoretical knowledge instruction to a satisfactory standard.”
+      <div class="mono" style="margin-top:8px;font-size:12px;color:var(--tx3)">FCL.025(a)(2)</div></div></div>`);
+
+  html(`<h2 class="sec">It lasts 12 months</h2>
+    <div class="note o"><b>Use it or lose it</b>
+      A recommendation is valid for <b>12 months</b>. If you have not attempted at least one paper
+      in that time, your DTO or ATO decides what further training you need before you can sit
+      anything — based on where you have got rusty, not a fixed syllabus.</div>
+    <div class="card" style="margin-top:12px"><div style="font-size:14.5px;line-height:1.55">
+      “The recommendation by a DTO or an ATO shall be valid for 12 months. If the applicant has
+      failed to attempt at least one theoretical knowledge examination paper within this period of
+      validity, the need for further training shall be determined by the DTO or the ATO, based on
+      the needs of the applicant.”
+      <div class="mono" style="margin-top:8px;font-size:12px;color:var(--tx3)">FCL.025(a)(3)</div></div></div>`);
+
+  html(`<h2 class="sec">If you change school</h2>
+    <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+      You are allowed to. Theoretical knowledge instruction and flight instruction may be completed
+      at a DTO or ATO <b>different from the one where you started</b> (FCL.210(c)). Ask the first
+      one for a copy of your training records before you go — the new organisation needs them
+      before it can recommend you.</div></div>`);
+
+  html(`<div class="foot">Quoted from the CAA consolidated Part-FCL rulebook, page footers dated
+    July 2026. See Sources for the document.</div>`);
+};
 
 /* ============================ MY TRAINING ============================ */
 
