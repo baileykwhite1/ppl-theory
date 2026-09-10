@@ -6,7 +6,7 @@
 
 const BLOCKS = [
   { no: 1, title: 'Ground school foundation', subjects: ['010', '090'],
-    unlocks: 'Air Law is what most schools require before first solo; Communications underpins the FRTOL and every solo departure.' },
+    unlocks: 'Schools commonly want Air Law passed before first solo — check what yours requires. Communications is the same paper (subject 090) that FRTOL examiners use, so a pass here counts both ways.' },
   { no: 2, title: 'The pilot and the sky', subjects: ['040', '050'],
     unlocks: 'Human Performance is short and self-contained. Meteorology is long — start it early and sit it once you can read a TAF, METAR and Form 214 cold.' },
   { no: 3, title: 'The aeroplane', subjects: ['081', '020'],
