@@ -3,8 +3,10 @@
    the cache in the background. Cross-origin calls (the weather APIs) are never
    touched — they must stay live, and must fail cleanly when there is no signal.
 
-   Bump CACHE_VERSION whenever the shell changes; the old cache is deleted on
-   activate and every open tab is told to reload. */
+   Bump CACHE_VERSION whenever the shell changes. The old cache is deleted on
+   activate, and the app shows "an update is ready" rather than reloading the page
+   out from under you — losing a half-finished quiz to a background update would be
+   worse than seeing yesterday's build for one more session. */
 
 const CACHE_VERSION = 'ppl-2026-09-11-b';
 
