@@ -1025,13 +1025,23 @@ VIEWS.plan = function () {
   const p = passed();
   html(`<div class="hd"><h1>Exams</h1><div class="sub">The clock, your attempts, and the order to sit them in</div></div>`);
 
+  const dateField = (id, label, val, hint) => `<div class="fld">
+    <div class="flabel"><label class="f" for="${id}">${label}</label>
+      ${val ? `<button class="clr" data-clr="${id}">Clear</button>` : ''}</div>
+    <input type="date" id="${id}" value="${val}">
+    <div class="tiny" style="margin-top:6px">${hint}</div></div>`;
   html(`<div class="card">
-    <div class="fld"><label class="f">Date of your first exam attempt</label>
-      <input type="date" id="d1" value="${S.d1}"></div>
-    <div class="fld"><label class="f">Date your ninth exam was passed</label>
-      <input type="date" id="d2" value="${S.d2}"></div></div>`);
+    ${dateField('d1', 'Date of your first exam attempt', S.d1,
+      'Starts the 18-month window. Any attempt counts, pass or fail.')}
+    ${dateField('d2', 'Date your ninth exam was passed', S.d2,
+      'Starts the 24 months you have to apply for the licence.')}
+  </div>`);
   $('#d1').onchange = e => { S.d1 = e.target.value; save(); render(); };
   $('#d2').onchange = e => { S.d2 = e.target.value; save(); render(); };
+  bind('[data-clr]', e => {
+    if (e.currentTarget.dataset.clr === 'd1') S.d1 = ''; else S.d2 = '';
+    save(); render();
+  });
 
   const dl = deadline18(S.d1), vd = deadline24(S.d2);
   html(`<div class="tiles" style="margin-top:12px">
@@ -1040,7 +1050,7 @@ VIEWS.plan = function () {
     ${dl ? tileFor('18-month deadline', dl, p >= 9, 'm18') : `<div class="tile">${infoBtn('m18')}
       <div class="k">18-month window</div>
       <div class="n" style="color:var(--tx3)">—</div><div class="s">Not started</div></div>`}
-    ${vd ? tileFor('Apply by', vd, false, 'm24') : `<div class="tile">${infoBtn('m24')}
+    ${vd ? tileFor('Theory expires', vd, false, 'm24') : `<div class="tile">${infoBtn('m24')}
       <div class="k">24-month validity</div>
       <div class="n" style="color:var(--tx3)">—</div><div class="s">Set once all nine pass</div></div>`}
     <div class="tile">${infoBtn('att')}<div class="k">Attempts at risk</div>
@@ -1495,7 +1505,7 @@ VIEWS.clockinfo = function (p) {
 
   html(`<div class="hd" style="padding-top:14px">
     <h1 style="font-size:30px">${is18 ? 'All nine within 18 months' : 'Valid for 24 months'}</h1>
-    <div class="sub">${is18 ? 'FCL.025(b)(2)' : 'FCL.025(c)(1)(i)'}</div></div>`);
+    <div class="sub">${is18 ? 'FCL.025(b)(2)' : 'FCL.025(c)(1)(i) · FCL.015(f)'}</div></div>`);
 
   // where this profile actually stands
   if (d) {
@@ -1505,7 +1515,8 @@ VIEWS.clockinfo = function (p) {
         color:var(--${n < 0 ? 'red' : n < 90 ? 'red' : n < 180 ? 'orange' : 'green'});
         font-variant-numeric:tabular-nums">${n < 0 ? 'Expired' : n + ' days'}</div>
       <div class="tiny" style="margin-top:7px">${is18
-        ? 'All nine must be passed by ' + fmt(d) : 'Licence application must be in by ' + fmt(d)}</div></div>`);
+        ? 'All nine must be passed by ' + fmt(d)
+        : 'Your PPL application must reach the CAA by ' + fmt(d)}</div></div>`);
   } else {
     html(`<div class="note b" style="margin-top:14px"><b>Not running yet</b>
       ${is18 ? 'The clock starts when you first sit any paper. Put that date on the Exams tab and this will track it.'
@@ -1552,11 +1563,30 @@ VIEWS.clockinfo = function (p) {
       </div>`);
 
   } else {
+    html(`<h2 class="sec">Apply for what, exactly</h2>
+      <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+        For <b>the licence itself</b> — submitting your PPL(A) application to the CAA with evidence
+        that you meet the requirements. Passing the exams and the flying does not hand you a
+        licence; you have to ask for one, and there is a deadline for asking.</div></div>`);
+
+    html(`<h2 class="sec">The order it happens in</h2>
+      <div class="grp">
+        <div class="row"><div class="ic" style="--c:var(--blue)">1</div>
+          <div class="tx"><b>Pass all nine exams</b><i>Within 18 months of your first attempt — FCL.025(b)(2)</i></div></div>
+        <div class="row"><div class="ic" style="--c:var(--purple)">2</div>
+          <div class="tx"><b>Pass the skill test</b><i>The theory must already be passed before you sit it — FCL.030(a)</i></div></div>
+        <div class="row"><div class="ic" style="--c:var(--green)">3</div>
+          <div class="tx"><b>Apply to the CAA for the licence</b><i>Within 6 months of the skill test — FCL.015(f)</i></div></div>
+      </div>
+      <div class="note b" style="margin-top:12px"><b>Two clocks, and the earlier one wins</b>
+        The 24 months runs from your <b>ninth exam pass</b>. A separate 6 months runs from your
+        <b>skill test pass</b>. Leave the test until month 23 and it is the 24-month clock that
+        stops you, not the 6-month one.</div>`);
+
     html(`<h2 class="sec">What the 24 months covers</h2>
       <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
-        Once you have passed all nine, the <b>completed set</b> stays valid for 24 months, counted
-        from the day you passed the last one. You must have <b>applied for the licence</b> inside
-        that window. It is not 24 months per exam — it is 24 months for the set.</div></div>`);
+        The <b>completed set</b>, not each exam individually — 24 months counted from the day you
+        passed the last one. It is not 24 months per paper.</div></div>`);
 
     html(`<h2 class="sec">If you miss it</h2>
       <div class="note r"><b>The theory expires</b>
@@ -1570,7 +1600,11 @@ VIEWS.clockinfo = function (p) {
         the issue of a light aircraft pilot licence or a private pilot licence, <b>for a period of
         24 months</b>… counted from the day when the pilot successfully completes the theoretical
         knowledge examination.”</div>
-        <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(c)(1)(i) and (iii)</div></div>`);
+        <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(c)(1)(i) and (iii)</div></div>
+    <div class="card" style="margin-top:12px"><div style="font-size:14.5px;line-height:1.55">
+      “For the issue of a licence, rating or certificate the applicant shall apply <b>not later than
+      6 months after having succeeded at the skill test</b> or assessment of competence.”</div>
+      <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.015(f)</div></div>`);
 
     html(`<h2 class="sec">A change is coming — but is not here</h2>
       <div class="note o"><b>36 months has been agreed, not implemented</b>
@@ -1579,10 +1613,21 @@ VIEWS.clockinfo = function (p) {
         says 24 months, and it needs a legislative change through the DfT plus funding to modify the
         e-Exam platform. Plan on 24 until the CAA says otherwise.</div>`);
 
+    html(`<h2 class="sec">It is a skill test, not a checkride</h2>
+      <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+        <b>Checkride</b> is American — FAA terminology. Under UK Part-FCL the flight test for
+        licence issue is the <b>skill test</b> (FCL.030 and FCL.235), conducted by a
+        <b>Flight Examiner</b>. Older UK pilots and some clubs still call it the
+        <b>GFT</b> — General Flying Test — which is the pre-JAR name and no longer the legal term.
+        <br><br>Do not confuse it with a <b>proficiency check</b>: that is the later, recurring
+        test used to revalidate or renew a rating, such as an SEP, not to get the licence in the
+        first place.</div></div>`);
+
     html(`<h2 class="sec">Do not confuse it with</h2>
       <div class="grp">
         <div class="row"><div class="tx"><b>The 18-month window</b><i>Time to pass all nine, from your first attempt</i></div>
           <button class="btn sec sm" style="width:auto;padding:8px 12px" id="to18">Open</button></div>
+        <div class="row"><div class="tx"><b>The 6-month rule</b><i>Apply within 6 months of the skill test — FCL.015(f)</i></div></div>
         <div class="row"><div class="tx"><b>DTO/ATO recommendation</b><i>Valid 12 months — FCL.025(a)(3)</i></div></div>
         <div class="row"><div class="tx"><b>Class 2 medical</b><i>60, 24 or 12 months depending on age</i></div></div>
       </div>`);
