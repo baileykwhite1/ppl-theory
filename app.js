@@ -409,8 +409,8 @@ VIEWS.home = function () {
     <div style="position:relative;flex:none">${ring(overall, 68, 'blue', 6)}
       <div style="position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:700">${overall}%</div></div>
     <div style="flex:1;min-width:0">
-      <div style="font-weight:600;font-size:17px">Course progress</div>
-      <div style="color:var(--tx2);font-size:14px;margin-top:3px">${dnLO} of ${totLO} learning objectives · ${dnArt} of ${totArt} articles</div>
+      <div class="ch" style="margin:0">Course progress</div>
+      <div class="p" style="font-size:13.5px;margin-top:3px">${dnLO} of ${totLO} learning objectives · ${dnArt} of ${totArt} articles</div>
       <div class="pbar" style="margin-top:9px"><i style="width:${overall}%"></i></div>
     </div></div>`);
 
@@ -618,7 +618,7 @@ VIEWS.subject = function (p) {
 
   } else {
     const best = S.best[s.code];
-    html(`<div class="card"><div style="font-size:15px;font-weight:600;margin-bottom:10px">Exam record</div>
+    html(`<div class="card"><div class="ch">Exam record</div>
       <div class="fld"><label class="f">Status</label>
         <select id="fSt">${STATUSES.map(([v, l]) => `<option value="${v}"${v === st.st ? ' selected' : ''}>${l}</option>`).join('')}</select></div>
       <div class="fld"><label class="f">Attempts used (max 4)</label>
@@ -637,7 +637,7 @@ VIEWS.subject = function (p) {
         school requires, and do not book until you are comfortably above 75% on practice papers.</div>`);
 
     html(`<div class="card" style="margin-top:12px">
-      <div style="font-size:15px;font-weight:600;margin-bottom:4px">Practice</div>
+      <div class="ch">Practice</div>
       <div style="color:var(--tx2);font-size:14px;margin-bottom:12px">
         ${SC[s.code].quiz.length} questions in the bank${best ? ' · best score ' + best + '%' : ''}</div>
       <div class="brow">
@@ -919,7 +919,7 @@ VIEWS.quizreview = function (p) {
     const q = Q.qs[i], a = Q.ans[i];
     html(`<div style="margin:20px 0 0">
       <div class="qmeta"><span>Question ${i + 1}</span><span class="mono">${q.code}</span></div>
-      <div class="qtext" style="font-size:18px;margin:6px 0 12px">${esc(q.q)}</div>
+      <div class="qtext" style="font-size:18.5px;margin:6px 0 12px">${esc(q.q)}</div>
       ${q.opts.map((o, j) => `<div class="opt${j === q.c ? ' ok' : (j === a ? ' no' : '')}">
         <span class="lt">${'ABCD'[j]}</span><span>${esc(o)}</span></div>`).join('')}
       <div class="why"><b>${a === q.c ? 'You were right.' : (a < 0 ? 'Left blank.' : 'You chose ' + 'ABCD'[a] + '.')}</b>
@@ -1100,7 +1100,7 @@ VIEWS.cardrun = function () {
 
 VIEWS.plan = function () {
   const p = passed();
-  html(`<div class="hd"><h1>Exams</h1><div class="sub">The clock, your attempts, and the order to sit them in</div></div>`);
+  html(`<div class="hd"><h1>Exams</h1><div class="sub">Your clocks, attempts and exam order</div></div>`);
 
   const dateField = (id, label, val, derived, hint) => `<div class="fld">
     <div class="flabel"><label class="f" for="${id}">${label}</label>
@@ -1130,7 +1130,7 @@ VIEWS.plan = function () {
   html(`<div class="tiles" style="margin-top:12px">
     <div class="tile"><div class="k">Exams passed</div><div class="n">${p}<span class="of">/9</span></div>
       <div class="s">${p === 9 ? 'complete set' : (9 - p) + ' to go'}</div></div>
-    ${dl ? tileFor('18-month deadline', dl, p >= 9, 'm18') : `<div class="tile">${infoBtn('m18')}
+    ${dl ? tileFor('18-month window', dl, p >= 9, 'm18') : `<div class="tile">${infoBtn('m18')}
       <div class="k">18-month window</div>
       <div class="n" style="color:var(--tx3)">—</div><div class="s">Not started</div></div>`}
     ${vd ? tileFor('Theory expires', vd, false, 'm24') : `<div class="tile">${infoBtn('m24')}
@@ -1175,7 +1175,7 @@ VIEWS.plan = function () {
           <span class="bdg ${st.st === 'passed' ? 'g' : st.st === 'ready' ? 'o' : ''}">${lbl}</span>
           <div class="chev">&#8250;</div></button>`;
       }).join('')}
-      <div class="row plain"><div style="font-size:13.5px;color:var(--tx2);line-height:1.45">${b.why}</div></div>
+      <div class="row plain"><div class="p" style="font-size:13.5px">${b.why}</div></div>
     </div>`);
   });
   bind('[data-ps]', e => go('subject', { code: e.currentTarget.dataset.ps, tab: 'ex' }));
@@ -1524,7 +1524,7 @@ VIEWS.wx = function () {
   if (WX.code !== code) wxLoad(code, () => {});
   const d = WX.state === 'ok' ? WX.data : null;
 
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">${esc(code || '')}</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">${esc(code || '')}</h1>
     <div class="sub">${af ? esc(af[1]) + (af[2] ? ' · ' + esc(af[2]) : '') : 'Airfield not in the list'}</div></div>`);
 
   if (!d) {
@@ -1703,7 +1703,7 @@ VIEWS.clockinfo = function (p) {
   const d = is18 ? dl : vd;
 
   html(`<div class="hd" style="padding-top:14px">
-    <h1 style="font-size:30px">${is18 ? 'All nine within 18 months' : 'Valid for 24 months'}</h1>
+    <h1 class="vt">${is18 ? 'All nine within 18 months' : 'Valid for 24 months'}</h1>
     <div class="sub">${is18 ? 'FCL.025(b)(2)' : 'FCL.025(c)(1)(i) · FCL.015(f)'}</div></div>`);
 
   // where this profile actually stands
@@ -1724,7 +1724,7 @@ VIEWS.clockinfo = function (p) {
 
   if (is18) {
     html(`<h2 class="sec">When the clock starts</h2>
-      <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+      <div class="card"><div class="p">
         Not on the day you sit exam one — at the <b>end of the calendar month</b> in which you first
         <b>attempt</b> any paper. Attempt, not pass: sitting one and failing it starts the clock just
         the same.</div>
@@ -1740,13 +1740,13 @@ VIEWS.clockinfo = function (p) {
         they determine.</div>`);
 
     html(`<h2 class="sec">The regulation</h2>
-      <div class="card"><div style="font-size:14.5px;line-height:1.55">
+      <div class="card"><div class="p" style="color:var(--tx)">
         “Unless otherwise determined in this Part, an applicant has successfully completed the
         required theoretical knowledge examination for the appropriate pilot licence or rating if he
         or she has passed all the required theoretical knowledge examination papers <b>within a
         period of 18 months counted from the end of the calendar month when the applicant first
         attempted an examination</b>.”</div>
-        <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(b)(2)</div></div>`);
+        <div class="cite">FCL.025(b)(2)</div></div>`);
 
     html(`<h2 class="sec">Before you can sit anything</h2>
       <button class="grp row" id="toDto18">
@@ -1757,20 +1757,20 @@ VIEWS.clockinfo = function (p) {
 
     html(`<h2 class="sec">What this means in practice</h2>
       <div class="grp">
-        <div class="row plain"><div style="font-size:14.5px;line-height:1.5">Do not sit one paper early
+        <div class="row plain"><div class="p pt">Do not sit one paper early
           just to feel started. That single attempt commits you to finishing the other eight inside
           18 months.</div></div>
-        <div class="row plain"><div style="font-size:14.5px;line-height:1.5">Leave room for a resit.
+        <div class="row plain"><div class="p pt">Leave room for a resit.
           A failed paper cannot be re-sat inside the same sitting window, so budget more than the
           bare minimum per exam.</div></div>
-        <div class="row plain"><div style="font-size:14.5px;line-height:1.5">There is <b>no limit on
+        <div class="row plain"><div class="p pt">There is <b>no limit on
           sittings</b> for a PPL, so the 18 months and the four attempts per paper are the only
           things rationing you.</div></div>
       </div>`);
 
   } else {
     html(`<h2 class="sec">Apply for what, exactly</h2>
-      <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+      <div class="card"><div class="p">
         For <b>the licence itself</b> — submitting your PPL(A) application to the CAA with evidence
         that you meet the requirements. Passing the exams and the flying does not hand you a
         licence; you have to ask for one, and there is a deadline for asking.</div></div>`);
@@ -1790,7 +1790,7 @@ VIEWS.clockinfo = function (p) {
         stops you, not the 6-month one.</div>`);
 
     html(`<h2 class="sec">What the 24 months covers</h2>
-      <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+      <div class="card"><div class="p">
         The <b>completed set</b>, not each exam individually — 24 months counted from the day you
         passed the last one. It is not 24 months per paper.</div></div>`);
 
@@ -1801,16 +1801,16 @@ VIEWS.clockinfo = function (p) {
         being ahead.</div>`);
 
     html(`<h2 class="sec">The regulation</h2>
-      <div class="card"><div style="font-size:14.5px;line-height:1.55">
+      <div class="card"><div class="p" style="color:var(--tx)">
         “The successful completion of the theoretical knowledge examinations will be valid: (i) for
         the issue of a light aircraft pilot licence or a private pilot licence, <b>for a period of
         24 months</b>… counted from the day when the pilot successfully completes the theoretical
         knowledge examination.”</div>
-        <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(c)(1)(i) and (iii)</div></div>
-    <div class="card" style="margin-top:12px"><div style="font-size:14.5px;line-height:1.55">
+        <div class="cite">FCL.025(c)(1)(i) and (iii)</div></div>
+    <div class="card" style="margin-top:12px"><div class="p" style="color:var(--tx)">
       “For the issue of a licence, rating or certificate the applicant shall apply <b>not later than
       6 months after having succeeded at the skill test</b> or assessment of competence.”</div>
-      <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.015(f)</div></div>`);
+      <div class="cite">FCL.015(f)</div></div>`);
 
     html(`<h2 class="sec">A change is coming — but is not here</h2>
       <div class="note o"><b>36 months has been agreed, not implemented</b>
@@ -1843,7 +1843,7 @@ function attemptsInfo() {
   const used = SUBJECTS.filter(x => sub(x.code).att > 0);
 
   html(`<div class="hd" style="padding-top:14px">
-    <h1 style="font-size:30px">Four attempts per paper</h1>
+    <h1 class="vt">Four attempts per paper</h1>
     <div class="sub">FCL.025(b)(4) · Standards Document 11 §11.1.22–36</div></div>`);
 
   html(`<div class="note ${risky.length ? 'r' : 'b'}" style="margin-top:14px">
@@ -1879,31 +1879,31 @@ function attemptsInfo() {
       Eight passes you already hold are cancelled along with the one you failed. You then need
       further theoretical knowledge training, a fresh recommendation from your school, and the CAA
       to release you from stand-down before you can start a new series.</div>
-    <div class="card" style="margin-top:12px"><div style="font-size:14.5px;line-height:1.55">
+    <div class="card" style="margin-top:12px"><div class="p" style="color:var(--tx)">
       “ALL previous examination passes, in ALL subjects currently being sat are rendered null and
       void by a fourth attempt failure.”</div>
-      <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">Standards Document 11 §11.1.33</div></div>`);
+      <div class="cite">Standards Document 11 §11.1.33</div></div>`);
 
   html(`<h2 class="sec">The regulation</h2>
-    <div class="card"><div style="font-size:14.5px;line-height:1.55">
+    <div class="card"><div class="p" style="color:var(--tx)">
       “If an applicant for the issue of a light aircraft pilot licence (LAPL) or a private pilot
       licence (PPL) has failed to pass one of the theoretical knowledge examination papers
       <b>within four attempts</b> or has failed to pass all papers within the period mentioned in
       point (b)(2), he or she shall retake the complete set of theoretical knowledge examination
       papers in order to obtain the licence.”</div>
-      <div class="mono" style="margin-top:9px;font-size:12px;color:var(--tx3)">FCL.025(b)(4)</div></div>`);
+      <div class="cite">FCL.025(b)(4)</div></div>`);
 
   html(`<h2 class="sec">Practical consequences</h2>
     <div class="grp">
-      <div class="row plain"><div style="font-size:14.5px;line-height:1.5">It is <b>per paper</b>, not
+      <div class="row plain"><div class="p pt">It is <b>per paper</b>, not
         across the set. Four attempts at Meteorology, four at Air Law, and so on.</div></div>
-      <div class="row plain"><div style="font-size:14.5px;line-height:1.5">You cannot re-sit the
+      <div class="row plain"><div class="p pt">You cannot re-sit the
         <b>same</b> paper twice inside one sitting — a sitting being up to ten consecutive days
         (GM1 FCL.025). Different subjects on the same day are fine.</div></div>
-      <div class="row plain"><div style="font-size:14.5px;line-height:1.5">Because sittings are not
+      <div class="row plain"><div class="p pt">Because sittings are not
         rationed for a PPL, there is no reason to sit a paper you are not confident on. Use the mock
         exams in this app until you are comfortably above 75%.</div></div>
-      <div class="row plain"><div style="font-size:14.5px;line-height:1.5">A confirmed case of
+      <div class="row plain"><div class="p pt">A confirmed case of
         cheating is separate and worse: a minimum twelve-month ban, and all previously attempted
         exams void (ARA.FCL.300).</div></div>
     </div>`);
@@ -1918,10 +1918,10 @@ function attemptsInfo() {
 VIEWS.dto = function () {
   navbar('DTO and ATO', '');
   html(`<div class="hd" style="padding-top:14px">
-    <h1 style="font-size:30px">Who trains you, and the sign-off</h1>
+    <h1 class="vt">Who trains you, and the sign-off</h1>
     <div class="sub">FCL.210 · FCL.025(a)(2) and (a)(3) · DTO.GEN.110</div></div>`);
 
-  html(`<div class="card" style="margin-top:14px"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+  html(`<div class="card" style="margin-top:14px"><div class="p">
     Your PPL course has to be run by one of two kinds of organisation, and you cannot book a
     theory exam until that organisation says you are ready. For a PPL it makes no practical
     difference which kind you are at — most flying clubs are DTOs.</div></div>`);
@@ -1944,34 +1944,33 @@ VIEWS.dto = function () {
     <div class="tiny" style="margin:9px 0 0 4px">DTO scope from DTO.GEN.110(a)(1).</div>`);
 
   html(`<h2 class="sec">The recommendation</h2>
-    <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+    <div class="card"><div class="p">
       You may only sit a theory exam when the DTO or ATO responsible for your training
       <b>recommends</b> you, once you have completed the relevant theoretical knowledge
       instruction to a satisfactory standard. In practice this is your school signing you off in
       the CAA e-Exams system so that the exam can be booked. No recommendation, no booking — so
       ask early rather than the week you want to sit.</div>
-    <div style="margin-top:12px;padding:11px 13px;background:var(--card2);border-radius:10px;
-      font-size:14.5px;line-height:1.55">
+    <div class="quote">
       “Applicants shall only take the theoretical knowledge examination when recommended by the
       declared training organisation (DTO) or the approved training organisation (ATO) responsible
       for their training, once they have completed the appropriate elements of the training course
       of theoretical knowledge instruction to a satisfactory standard.”
-      <div class="mono" style="margin-top:8px;font-size:12px;color:var(--tx3)">FCL.025(a)(2)</div></div></div>`);
+      <div class="cite">FCL.025(a)(2)</div></div></div>`);
 
   html(`<h2 class="sec">It lasts 12 months</h2>
     <div class="note o"><b>Use it or lose it</b>
       A recommendation is valid for <b>12 months</b>. If you have not attempted at least one paper
       in that time, your DTO or ATO decides what further training you need before you can sit
       anything — based on where you have got rusty, not a fixed syllabus.</div>
-    <div class="card" style="margin-top:12px"><div style="font-size:14.5px;line-height:1.55">
+    <div class="card" style="margin-top:12px"><div class="p" style="color:var(--tx)">
       “The recommendation by a DTO or an ATO shall be valid for 12 months. If the applicant has
       failed to attempt at least one theoretical knowledge examination paper within this period of
       validity, the need for further training shall be determined by the DTO or the ATO, based on
       the needs of the applicant.”
-      <div class="mono" style="margin-top:8px;font-size:12px;color:var(--tx3)">FCL.025(a)(3)</div></div></div>`);
+      <div class="cite">FCL.025(a)(3)</div></div></div>`);
 
   html(`<h2 class="sec">If you change school</h2>
-    <div class="card"><div style="font-size:15.5px;line-height:1.55;color:var(--tx2)">
+    <div class="card"><div class="p">
       You are allowed to. Theoretical knowledge instruction and flight instruction may be completed
       at a DTO or ATO <b>different from the one where you started</b> (FCL.210(c)). Ask the first
       one for a copy of your training records before you go — the new organisation needs them
@@ -1985,7 +1984,7 @@ VIEWS.dto = function () {
 
 VIEWS.training = function () {
   navbar('My training', '');
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">My training</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">My training</h1>
     <div class="sub">Used to personalise the app and suggest an exam order. Nothing here is sent
     anywhere.</div></div>`);
 
@@ -2061,7 +2060,7 @@ function alertish(msg) {
 
 VIEWS.plans = function () {
   navbar('Exam order', '');
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">How do you want to order them?</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">How do you want to order them?</h1>
     <div class="sub">The CAA sets no order and no sittings limit for a PPL. These are study
     strategies, not rules — switch whenever you like, and your progress is unaffected.</div></div>`);
 
@@ -2098,7 +2097,7 @@ VIEWS.plans = function () {
         <div class="tx"><b style="font-weight:600">${esc(b.title || 'Block ' + b.no)}</b></div></div>
       ${b.subs.map(c => `<div class="row"><div class="ic" style="--c:var(--${META[c].c})">${c}</div>
         <div class="tx"><b>${esc(byCode[c].name)}</b><i>${allLO(byCode[c])} objectives · ${META[c].book}</i></div></div>`).join('')}
-      ${b.why ? `<div class="row plain"><div style="font-size:13.5px;color:var(--tx2);line-height:1.45">${b.why}</div></div>` : ''}
+      ${b.why ? `<div class="row plain"><div class="p" style="font-size:13.5px">${b.why}</div></div>` : ''}
     </div>`);
   });
 };
@@ -2106,7 +2105,7 @@ VIEWS.plans = function () {
 VIEWS.reorder = function () {
   navbar('My order', '');
   const order = planOrder();
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Your order</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">Your order</h1>
     <div class="sub">Move subjects up and down. They are grouped in threes for the blocks on the
     Plan tab.</div></div>`);
   html('<div class="grp" style="margin-top:14px">' + order.map((c, i) => `
@@ -2131,16 +2130,15 @@ VIEWS.reorder = function () {
 
 function ruleList(list) {
   return list.map(r => `<div class="card">
-    <div style="font-size:17px;font-weight:600;margin-bottom:2px">${r.h}</div>
-    ${r.cite ? `<div class="mono" style="font-size:12px;color:var(--tx3);margin-bottom:8px">${esc(r.cite)}</div>` : ''}
-    <div style="font-size:15.5px;line-height:1.5;color:var(--tx2)">${r.b}</div>
-    ${r.q ? `<div style="margin-top:11px;padding:11px 13px;background:var(--card2);border-radius:10px;
-      font-size:14.5px;line-height:1.5">${r.q}</div>` : ''}</div>`).join('');
+    <div class="ch">${r.h}</div>
+    ${r.cite ? `<div class="cite" style="margin:0 0 8px">${esc(r.cite)}</div>` : ''}
+    <div class="p">${r.b}</div>
+    ${r.q ? `<div class="quote">${r.q}</div>` : ''}</div>`).join('');
 }
 
 VIEWS.rules = function () {
   navbar('Rules', '');
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">The rules that bind you</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">The rules that bind you</h1>
     <div class="sub">Quoted from the CAA’s consolidated Part-FCL rulebook, page footers dated July 2026,
     and Standards Document 11. Nothing here is from memory or a study site.</div></div>`);
   html('<h2 class="sec">In force</h2>' + ruleList(RULES));
@@ -2150,7 +2148,7 @@ VIEWS.rules = function () {
 
 VIEWS.books = function () {
   navbar('Books', '');
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Books</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">Books</h1>
     <div class="sub">Volumes and editions confirmed on Pooleys’ own product pages, September 2026.
     The PPL(A) set is volumes 1–4, 6 and 7; volume 5 is not a PPL theory subject.</div></div>`);
   html('<div class="grp">' + SUBJECTS.map(s => {
@@ -2166,7 +2164,7 @@ VIEWS.books = function () {
 
 VIEWS.sources = function () {
   navbar('Sources', '');
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Sources</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">Sources</h1>
     <div class="sub">Every regulatory statement in this app was read from these primary documents on
     10 September 2026 — not from memory and not from study sites.</div></div>`);
   html('<div class="grp">' + SOURCES.map(s => `<a class="row" href="${s.u}" target="_blank" rel="noopener">
@@ -2175,7 +2173,7 @@ VIEWS.sources = function () {
   const tot = SUBJECTS.reduce((a, s) => a + allLO(s), 0);
   const tick = SUBJECTS.reduce((a, s) => a + s.groups.reduce((b, g) => b + g.items.filter(i => i.a).length, 0), 0);
   html(`<h2 class="sec">How the syllabus data was made</h2>
-    <div class="card"><div style="font-size:15px;line-height:1.5;color:var(--tx2)">
+    <div class="card"><div class="p">
       The nine CAP2090 PDFs were downloaded from caa.co.uk and parsed as tables; each row’s
       PPL-Aeroplane tick was read straight from the table cell. That gives <b>${tot}</b> learning
       objectives, of which <b>${tick}</b> are ticked for PPL(A). The counts were cross-checked against
@@ -2359,7 +2357,7 @@ VIEWS.welcome = function () {
     const totC = SUBJECTS.reduce((a, x) => a + SC[x.code].cards.length, 0);
     html(`<div class="hd" style="padding-top:30px">
       <h1 style="font-size:38px;line-height:1.05">UK PPL(A)<br>Theory</h1>
-      <div class="sub" style="font-size:17px;margin-top:10px">Articles, mock exams and
+      <div class="sub" style="font-size:16px;margin-top:10px">Articles, mock exams and
         spaced-repetition flashcards for the nine CAA theoretical knowledge exams.</div></div>`);
     html(`<div class="grp" style="margin-top:20px">
       <div class="row"><div class="ic" style="--c:var(--blue)">${totArt}</div>
@@ -2372,7 +2370,7 @@ VIEWS.welcome = function () {
         <div class="tx"><b>Learning objectives</b><i>Verbatim from the CAA CAP2090 documents</i></div></div>
     </div>`);
     } else {
-      html(`<div class="hd" style="padding-top:18px"><h1 style="font-size:30px">Add someone</h1>
+      html(`<div class="hd" style="padding-top:18px"><h1 class="vt">Add someone</h1>
         <div class="sub">They get their own articles, objectives, exam record, quiz history and
         flashcards — completely separate from ${esc(activeName())}'s.</div></div>`);
     }
@@ -2478,7 +2476,7 @@ function setupHead(n, title, sub) {
       ${[1, 2, 3].map(i => `<div style="flex:1;height:4px;border-radius:99px;background:var(--${i <= n ? 'blue' : 'fill'})"></div>`).join('')}
     </div>
     <div class="sub" style="margin-bottom:4px">Step ${n} of 3</div>
-    <h1 style="font-size:30px">${esc(title)}</h1>
+    <h1 class="vt">${esc(title)}</h1>
     <div class="sub" style="margin-top:8px">${esc(sub)}</div></div>`);
 }
 
@@ -2489,7 +2487,7 @@ VIEWS.nameentry = function (p) {
   if (renaming && !pr) { back(); return; }
   navbar(renaming ? 'Rename' : 'Add someone', '');
   html(`<div class="hd" style="padding-top:14px">
-    <h1 style="font-size:30px">${renaming ? 'Rename profile' : 'Who else is studying?'}</h1>
+    <h1 class="vt">${renaming ? 'Rename profile' : 'Who else is studying?'}</h1>
     <div class="sub">${renaming ? 'Only the name changes — progress is untouched.'
       : 'They get their own articles, objectives, exam record, quiz history and flashcards.'}</div></div>`);
   html(`<div class="card">
@@ -2536,7 +2534,7 @@ VIEWS.importfile = function () {
 
   if (IMPORTING.kind === 'backup') {
     const list = IMPORTING.payload.profiles;
-    html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Whole-device backup</h1>
+    html(`<div class="hd" style="padding-top:14px"><h1 class="vt">Whole-device backup</h1>
       <div class="sub">${list.length} profiles · ${esc(dateLine)}</div></div>`);
     html('<div class="grp">' + list.map(pr => {
       const t = summarise(pr.data || {});
@@ -2574,7 +2572,7 @@ VIEWS.importfile = function () {
 
   const t = summarise(IMPORTING.data);
   const clash = P.list.some(p => p.name.toLowerCase() === IMPORTING.name.toLowerCase());
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">${esc(IMPORTING.name)}</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">${esc(IMPORTING.name)}</h1>
     <div class="sub">${esc(dateLine)}</div></div>`);
   html(`<div class="grp"><div class="row">
       <div class="ic" style="--c:var(--blue)">${esc(initials(IMPORTING.name))}</div>
@@ -2613,7 +2611,7 @@ VIEWS.importfile = function () {
 
 VIEWS.profiles = function () {
   navbar('Profiles', '');
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Who is studying?</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">Who is studying?</h1>
     <div class="sub">Each profile keeps its own articles, objectives, exam record, quiz history
     and flashcard schedule. Everything is stored in this browser on this device.</div></div>`);
 
@@ -2649,7 +2647,7 @@ VIEWS.profedit = function (p) {
   const pr = P.list.find(x => x.id === p.id);
   if (!pr) { back(); return; }
   navbar(pr.name, '');
-  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">${esc(pr.name)}</h1>
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">${esc(pr.name)}</h1>
     <div class="sub">Active profile</div></div>`);
   html(`<div class="grp">
     <button class="row" id="ren"><div class="tx"><b>Rename</b></div><div class="chev">&#8250;</div></button>

@@ -46,6 +46,19 @@ body{margin:0;background:var(--bg);color:var(--tx);
   font:17px/1.47 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
   letter-spacing:-.01em;overscroll-behavior-y:none}
 h1,h2,h3,h4{margin:0;line-height:1.2;letter-spacing:-.026em}
+
+/* ---------- type scale ----------
+   One ladder, used everywhere, instead of fifteen ad-hoc sizes. */
+.vt{font-size:28px;font-weight:700;letter-spacing:-.028em;line-height:1.14}  /* pushed view title */
+.ch{font-size:17px;font-weight:650;letter-spacing:-.015em;margin-bottom:6px} /* heading inside a card */
+.p{font-size:15px;line-height:1.55;color:var(--tx2)}                          /* explanatory body */
+.p b,.p strong{color:var(--tx);font-weight:600}
+.p.pt{color:var(--tx2)}
+.p.pt b{color:var(--tx)}
+.quote{margin-top:12px;padding:12px 13px;background:var(--card2);border-radius:10px;
+  font-size:14.5px;line-height:1.55}
+.cite{margin-top:9px;font:500 11.5px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;
+  color:var(--tx3);letter-spacing:.02em}
 /* numerals line up in columns, the way timetables and flight strips do */
 .tile .n,.val,.wxst .v,.score .big,.bdg,.chip,td.mono,.mono{font-variant-numeric:tabular-nums}
 p{margin:0 0 12px}p:last-child{margin-bottom:0}
@@ -57,7 +70,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;letter
 #app{max-width:720px;margin:0 auto;padding:0 16px calc(88px + env(safe-area-inset-bottom))}
 .hd{padding:8px 0 4px}
 .hd h1{font-size:34px;font-weight:700;letter-spacing:-.03em}
-.hd .sub{color:var(--tx2);font-size:15px;margin-top:2px}
+.hd .sub{color:var(--tx2);font-size:15px;line-height:1.4;margin-top:3px;max-width:34em}
 h2.sec{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
   color:var(--tx2);margin:26px 0 8px;padding:0 4px}
 h2.sec:first-child{margin-top:14px}
@@ -98,8 +111,8 @@ h2.sec:first-child{margin-top:14px}
     color-mix(in srgb, var(--c,var(--blue)) 82%, #000 18%));
   box-shadow:0 1px 3px color-mix(in srgb, var(--c,var(--blue)) 40%, transparent)}
 .row .tx{flex:1;min-width:0}
-.row .tx b{display:block;font-weight:400;font-size:17px}
-.row .tx i{display:block;font-style:normal;font-size:13px;color:var(--tx2);margin-top:1px}
+.row .tx b{display:block;font-weight:450;font-size:16.5px;letter-spacing:-.012em}
+.row .tx i{display:block;font-style:normal;font-size:13px;line-height:1.4;color:var(--tx2);margin-top:2px}
 .row .val{color:var(--tx2);font-size:15px;flex:none}
 .row .chev{color:var(--tx3);flex:none;font-size:17px;margin-left:-4px}
 .row.plain{display:block;padding:14px 16px}
@@ -107,7 +120,7 @@ h2.sec:first-child{margin-top:14px}
 /* ---------- cards & tiles ---------- */
 .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--sh)}
 .card + .card{margin-top:12px}
-.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
 .tile{background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--sh);
   display:flex;flex-direction:column;gap:2px;text-align:left;position:relative}
 .tile .k{padding-right:26px}
@@ -115,8 +128,8 @@ h2.sec:first-child{margin-top:14px}
   background:var(--fill);color:var(--tx2);font:700 12px/1 Georgia,"Times New Roman",serif;
   font-style:italic;display:grid;place-items:center;flex:none}
 .info:active{background:var(--fill2);color:var(--blue)}
-.tile .k{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;
-  color:var(--tx2)}
+.tile .k{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.055em;
+  color:var(--tx2);line-height:1.25;min-height:2.5em;display:flex;align-items:flex-start}
 .tile .n{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-top:4px;
   display:flex;align-items:baseline;gap:1px}
 .tile .n .of{font-size:.62em;font-weight:700;color:var(--tx3);letter-spacing:-.02em}
@@ -158,9 +171,10 @@ h2.sec:first-child{margin-top:14px}
 .bdg.b{background:rgba(0,122,255,.14);color:var(--blue)}
 
 /* notes */
-.note{border-radius:12px;padding:13px 15px;font-size:15px;line-height:1.45;
-  background:var(--card);box-shadow:var(--sh)}
-.note b:first-child{display:block;margin-bottom:3px;font-weight:600}
+.note{border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;
+  background:var(--card);box-shadow:var(--sh);color:var(--tx2)}
+.note b:first-child{display:block;margin-bottom:3px;font-weight:650;font-size:14.5px;color:var(--tx)}
+.note b{color:var(--tx);font-weight:600}
 .note.b{background:rgba(0,122,255,.10)}
 .note.o{background:rgba(255,149,0,.13)}
 .note.r{background:rgba(255,59,48,.12)}
