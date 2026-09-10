@@ -1376,22 +1376,46 @@ function wxLoad(code, done) {
 const visLabel = m => m >= 20000 ? '20 km+' : m >= 10000 ? '10 km+' :
   m >= 1000 ? (Math.round(m / 100) / 10) + ' km' : m + ' m';
 
-/** The thin Home strip. */
+/** Home weather card. Reads like a flight strip: code, coded line, then the figures. */
 function wxStrip() {
   const code = S.field;
   if (!code) return '';
   if (WX.code !== code || WX.state === 'idle') wxLoad(code);
-  if (WX.state === 'loading') return `<button class="wxbar" id="wxb">
-    <span class="wxcode">${esc(code)}</span><span class="wxmid">Checking conditions…</span></button>`;
-  if (WX.state !== 'ok' || !WX.data) return `<button class="wxbar" id="wxb">
-    <span class="wxcode">${esc(code)}</span><span class="wxmid">Weather unavailable — tap for links</span>
-    <span class="chev">&#8250;</span></button>`;
+  const af = afByCode(code);
+  const place = af ? af[1] : '';
+
+  if (WX.state === 'loading') return `<button class="wxcard" id="wxb">
+    <div class="wxtop"><span class="wxid">${esc(code)}</span>
+      <span class="wxplace">${esc(place)}</span></div>
+    <div class="wxload">Checking conditions…</div></button>`;
+
+  if (WX.state !== 'ok' || !WX.data) return `<button class="wxcard" id="wxb">
+    <div class="wxtop"><span class="wxid">${esc(code)}</span>
+      <span class="wxplace">${esc(place)}</span><span class="wxgo">&#8250;</span></div>
+    <div class="wxload">Conditions unavailable — tap for the real sources</div></button>`;
+
   const d = WX.data;
-  return `<button class="wxbar" id="wxb">
-    <span class="wxcode">${esc(code)}</span>
-    <span class="wxmid mono">${esc(metarString(d, '').trim())}</span>
-    <span class="wxsrc">${d.source === 'metar' ? 'METAR' : 'MODEL'}</span>
-    <span class="wxcat" style="--c:var(--${d.col})">${d.cat}</span></button>`;
+  const dir10 = pad(Math.round(d.wdir / 10) * 10 % 360 || (d.wspd ? 360 : 0), 3);
+  const cc = cloudCode(d.lowCloud);
+  const cloudTxt = (cc === 'NCD' || cc == null) ? 'NCD' : cc + pad(Math.round(d.ceilFt / 100), 3);
+  const stat = (k, v) => `<div class="wxst"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  return `<button class="wxcard" id="wxb">
+    <div class="wxtop">
+      <span class="wxid">${esc(code)}</span>
+      <span class="wxplace">${esc(place)}</span>
+      <span class="wxcat" style="--c:var(--${d.col})">${esc(d.cat)}</span>
+    </div>
+    <div class="wxraw">${esc(metarString(d, '').trim())}</div>
+    <div class="wxstats">
+      ${stat('Wind', dir10 + '/' + d.wspd + (d.gust ? 'G' + d.gust : ''))}
+      ${stat('Vis', d.visM >= 9999 ? '10km+' : visLabel(d.visM))}
+      ${stat('Cloud', cloudTxt)}
+      ${stat('QNH', d.qnh || '—')}
+    </div>
+    <div class="wxfoot"><span class="wxsrc">${d.source === 'metar' ? 'METAR' : 'MODEL'}</span>
+      <span>${d.source === 'metar' ? 'Official observation' : 'Forecast model — not an observation'}</span>
+      <span class="wxgo">&#8250;</span></div>
+  </button>`;
 }
 
 VIEWS.wx = function () {

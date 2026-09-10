@@ -45,7 +45,9 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--tx);
   font:17px/1.47 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
   letter-spacing:-.01em;overscroll-behavior-y:none}
-h1,h2,h3,h4{margin:0;line-height:1.2;letter-spacing:-.022em}
+h1,h2,h3,h4{margin:0;line-height:1.2;letter-spacing:-.026em}
+/* numerals line up in columns, the way timetables and flight strips do */
+.tile .n,.val,.wxst .v,.score .big,.bdg,.chip,td.mono,.mono{font-variant-numeric:tabular-nums}
 p{margin:0 0 12px}p:last-child{margin-bottom:0}
 a{color:var(--blue);text-decoration:none}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;letter-spacing:inherit}
@@ -170,18 +172,34 @@ h2.sec:first-child{margin-top:14px}
   border-radius:10px;padding:12px;font:inherit;font-size:17px;transition:.15s}
 .ti:focus{outline:none;border-color:var(--blue);background:var(--bg2)}
 
-/* weather strip */
-.wxbar{display:flex;align-items:center;gap:10px;width:100%;margin:16px 0 18px;padding:11px 12px;
-  border-radius:12px;background:var(--card);box-shadow:var(--sh);text-align:left}
-.wxbar:active{background:var(--fill)}
-.wxcode{font:700 12px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;
-  background:var(--fill);padding:5px 7px;border-radius:6px;flex:none}
-.wxmid{flex:1;min-width:0;font-size:12.5px;color:var(--tx);white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em}
-.wxsrc{font:700 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.06em;color:var(--tx3);
-  border:1px solid currentColor;border-radius:4px;padding:3px 4px;flex:none}
-.wxcat{font:800 11px/1 -apple-system,system-ui,sans-serif;letter-spacing:.04em;color:#fff;
-  padding:5px 8px;border-radius:6px;flex:none;background:var(--c)}
+/* weather card — flight-strip cues: big code, tabular figures, status pill */
+.wxcard{display:block;width:100%;text-align:left;margin:16px 0 18px;padding:14px 15px 12px;
+  border-radius:16px;background:var(--card);box-shadow:var(--sh);position:relative;overflow:hidden}
+.wxcard::before{content:"";position:absolute;inset:0;opacity:.07;pointer-events:none;
+  background:radial-gradient(90% 140% at 100% 0%, var(--c,var(--blue)) 0%, transparent 60%)}
+.wxcard > *{position:relative}
+.wxcard:active{background:var(--fill)}
+.wxtop{display:flex;align-items:baseline;gap:9px}
+.wxid{font:800 21px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em;flex:none}
+.wxplace{flex:1;min-width:0;font-size:13px;color:var(--tx2);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.wxcat{font:800 11px/1 -apple-system,system-ui,sans-serif;letter-spacing:.06em;color:#fff;
+  padding:6px 9px;border-radius:7px;flex:none;background:var(--c);
+  box-shadow:0 1px 4px color-mix(in srgb, var(--c) 45%, transparent)}
+.wxraw{font:600 13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.01em;
+  margin-top:11px;word-break:break-word;font-variant-numeric:tabular-nums}
+.wxstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;
+  padding-top:11px;border-top:.5px solid var(--sep2)}
+.wxst .k{font:600 9.5px/1 -apple-system,system-ui,sans-serif;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--tx3)}
+.wxst .v{font:700 14px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;margin-top:5px;
+  font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wxfoot{display:flex;align-items:center;gap:8px;margin-top:11px;font-size:11.5px;color:var(--tx3)}
+.wxfoot > span:nth-child(2){flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wxsrc{font:800 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:var(--tx2);
+  border:1px solid var(--sep);border-radius:4px;padding:4px 5px;flex:none}
+.wxgo{color:var(--tx3);font-size:17px;flex:none}
+.wxload{margin-top:10px;font-size:13.5px;color:var(--tx2)}
 .wxbig{font:800 46px/1 -apple-system,system-ui,sans-serif;letter-spacing:-.03em;color:var(--c)}
 
 /* airfield autocomplete */
