@@ -105,26 +105,83 @@ const NEW_CARDS_PER_DAY = 20;
 
 /* ============================ state ============================ */
 
-const KEY = 'ppl-v2';
-const blank = () => ({ lo: {}, subj: {}, read: {}, srs: {}, hist: [], d1: '', d2: '', theme: '', newToday: {}, best: {} });
-let S;
-try { S = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = blank(); }
-// one-time migration from the first version of this app
-try {
-  const old = JSON.parse(localStorage.getItem('ppl-theory-v1') || 'null');
-  if (old && !S.migrated) {
-    Object.assign(S.lo, old.lo || {});
-    Object.entries(old.subj || {}).forEach(([k, v]) => S.subj[k] = Object.assign(S.subj[k] || {}, v));
-    S.d1 = S.d1 || old.d1 || ''; S.d2 = S.d2 || old.d2 || '';
-    S.migrated = 1;
+/* Progress is per-profile and stored only in this browser. GitHub Pages serves the app;
+   it never receives anything back. Two people on the same device get separate profiles;
+   the same person on two devices gets two independent sets unless they export and import. */
+
+const PKEY = 'ppl-profiles';
+const dataKey = id => 'ppl-v2:' + id;
+const blank = () => ({ lo: {}, subj: {}, read: {}, srs: {}, hist: [], d1: '', d2: '', newToday: {}, best: {} });
+
+let P;   // { list: [{id, name}], active: id, theme }
+let S;   // the active profile's progress
+
+function readJSON(k, dflt) {
+  try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? dflt : v; }
+  catch (e) { return dflt; }
+}
+function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+const newId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+function loadProfiles() {
+  P = readJSON(PKEY, null);
+  if (!P || !P.list || !P.list.length) {
+    // First run, or upgrading from the single-user version: adopt whatever is already stored.
+    const legacy = readJSON('ppl-v2', null) || readJSON('ppl-theory-v1', null);
+    const id = newId();
+    P = { list: [{ id: id, name: 'Me' }], active: id, theme: (legacy && legacy.theme) || '' };
+    if (legacy) writeJSON(dataKey(id), migrate(legacy));
+    writeJSON(PKEY, P);
   }
-} catch (e) {}
+  if (!P.list.some(p => p.id === P.active)) P.active = P.list[0].id;
+}
+/** Accept either app version's shape. */
+function migrate(old) {
+  const s = blank();
+  Object.assign(s.lo, old.lo || {});
+  Object.entries(old.subj || {}).forEach(([k, v]) => s.subj[k] = Object.assign({}, v));
+  Object.assign(s.read, old.read || {}); Object.assign(s.srs, old.srs || {});
+  Object.assign(s.newToday, old.newToday || {}); Object.assign(s.best, old.best || {});
+  s.hist = old.hist || []; s.d1 = old.d1 || ''; s.d2 = old.d2 || '';
+  return s;
+}
+function loadState() { S = Object.assign(blank(), readJSON(dataKey(P.active), {})); }
+
+const activeName = () => (P.list.find(p => p.id === P.active) || { name: '?' }).name;
+const initials = n => n.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
 
 let saveTimer = null;
 function save() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }, 120);
+  saveTimer = setTimeout(flush, 120);
 }
+function flush() { clearTimeout(saveTimer); writeJSON(dataKey(P.active), S); }
+function saveProfiles() { writeJSON(PKEY, P); }
+
+function switchProfile(id) {
+  flush();
+  P.active = id; saveProfiles();
+  loadState();
+  tab('home');
+}
+function addProfile(name) {
+  const id = newId();
+  P.list.push({ id: id, name: name });
+  saveProfiles();
+  writeJSON(dataKey(id), blank());
+  switchProfile(id);
+}
+function deleteProfile(id) {
+  if (P.list.length < 2) return;
+  P.list = P.list.filter(p => p.id !== id);
+  try { localStorage.removeItem(dataKey(id)); } catch (e) {}
+  if (P.active === id) P.active = P.list[0].id;
+  saveProfiles(); loadState();
+}
+
+loadProfiles();
+loadState();
+
 const sub = c => (S.subj[c] = Object.assign({ st: 'none', att: 0, score: '', date: '' }, S.subj[c]));
 
 /* ============================ helpers ============================ */
@@ -216,8 +273,15 @@ VIEWS.home = function () {
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
-  html(`<div class="hd"><h1>${greet}</h1>
-    <div class="sub">${p === 9 ? 'All nine exams passed.' : (9 - p) + ' exam' + (p === 8 ? '' : 's') + ' to go · ' + dnArt + '/' + totArt + ' articles read'}</div></div>`);
+  html(`<div class="hd" style="display:flex;align-items:flex-start;gap:12px">
+    <div style="flex:1;min-width:0">
+      <h1>${greet}${P.list.length > 1 ? ', ' + esc(activeName().split(' ')[0]) : ''}</h1>
+      <div class="sub">${p === 9 ? 'All nine exams passed.' : (9 - p) + ' exam' + (p === 8 ? '' : 's') + ' to go · ' + dnArt + '/' + totArt + ' articles read'}</div>
+    </div>
+    <button id="avat" title="Switch profile" style="flex:none;width:40px;height:40px;border-radius:50%;
+      background:var(--blue);color:#fff;font-size:15px;font-weight:600;margin-top:4px">${esc(initials(activeName()))}</button>
+  </div>`);
+  $('#avat').onclick = () => go('profiles');
 
   // --- overall progress
   const overall = Math.round((dnLO / Math.max(1, totLO) * 0.6 + dnArt / Math.max(1, totArt) * 0.4) * 100);
@@ -994,27 +1058,40 @@ VIEWS.sources = function () {
       objective text was paraphrased.</div></div>`);
 
   html(`<h2 class="sec">Appearance</h2><div class="seg" id="thsel">
-    <button data-th="" aria-selected="${!S.theme}">System</button>
-    <button data-th="light" aria-selected="${S.theme === 'light'}">Light</button>
-    <button data-th="dark" aria-selected="${S.theme === 'dark'}">Dark</button></div>`);
+    <button data-th="" aria-selected="${!P.theme}">System</button>
+    <button data-th="light" aria-selected="${P.theme === 'light'}">Light</button>
+    <button data-th="dark" aria-selected="${P.theme === 'dark'}">Dark</button></div>`);
   bind('#thsel button', e => {
-    S.theme = e.currentTarget.dataset.th;
-    if (S.theme) document.documentElement.dataset.t = S.theme;
+    P.theme = e.currentTarget.dataset.th;
+    if (P.theme) document.documentElement.dataset.t = P.theme;
     else document.documentElement.removeAttribute('data-t');
-    save(); render();
+    saveProfiles(); render();
   });
 
-  html(`<h2 class="sec">Your data</h2>
-    <div class="note b">Progress is stored only in this browser, never uploaded, so each device tracks
-    separately. Export to move it.</div>
+  html(`<h2 class="sec">Profiles</h2><div class="grp">
+    <button class="row" id="goProf">
+      <div class="ic" style="background:var(--blue)">${esc(initials(activeName()))}</div>
+      <div class="tx"><b>${esc(activeName())}</b><i>${P.list.length} profile${P.list.length === 1 ? '' : 's'} on this device</i></div>
+      <div class="chev">&#8250;</div></button></div>`);
+  $('#goProf').onclick = () => go('profiles');
+
+  html(`<h2 class="sec">Where your progress lives</h2>
+    <div class="note o"><b>Not on GitHub</b>
+      GitHub Pages only serves the app — it never receives anything back. Progress is saved in
+      <b>this browser on this device</b>, separately for each profile. So a phone and a laptop
+      keep two independent sets of progress even for the same person. Use Export and Import below
+      to move a profile between devices.</div>
     <div class="brow" style="margin-top:12px">
-      <button class="btn sec" id="exp">Export</button>
+      <button class="btn sec" id="exp">Export ${esc(activeName())}</button>
       <button class="btn sec" id="imp">Import</button></div>
-    <button class="btn dgr sm" style="margin-top:12px" id="wipe">Erase all progress</button>`);
+    <button class="btn dgr sm" style="margin-top:12px" id="wipe">Erase this profile’s progress</button>`);
   $('#exp').onclick = () => {
+    flush();
+    const payload = { app: 'ppl-theory', name: activeName(), exported: new Date().toISOString(), data: S };
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], { type: 'application/json' }));
-    a.download = 'ppl-progress.json'; a.click();
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+    a.download = 'ppl-' + activeName().toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.json';
+    a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 3000);
   };
   $('#imp').onclick = () => {
@@ -1023,16 +1100,22 @@ VIEWS.sources = function () {
     f.onchange = () => {
       const r = new FileReader();
       r.onload = () => {
-        try { S = Object.assign(blank(), JSON.parse(r.result)); save(); tab('home'); }
-        catch (e) { alert('That file could not be read as progress data.'); }
+        try {
+          const j = JSON.parse(r.result);
+          const d = j && j.data ? j.data : j;          // accept wrapped or bare exports
+          if (!d || typeof d !== 'object' || (!d.lo && !d.subj && !d.srs)) throw 0;
+          const who = (j && j.name) || 'the file';
+          if (!confirm('Overwrite ' + activeName() + '\u2019s progress with ' + who + '?')) return;
+          S = migrate(d); flush(); tab('home');
+        } catch (e) { alert('That file could not be read as progress data.'); }
       };
       r.readAsText(f.files[0]);
     };
     f.click();
   };
   $('#wipe').onclick = () => {
-    if (confirm('Erase all progress on this device? This cannot be undone.')) {
-      S = blank(); save(); tab('home');
+    if (confirm('Erase all of ' + activeName() + '\u2019s progress? This cannot be undone.')) {
+      S = blank(); flush(); tab('home');
     }
   };
 
@@ -1041,8 +1124,70 @@ VIEWS.sources = function () {
     verbatim CAA. Confirm anything that matters with your ATO/DTO, Ground Examiner or the CAA.</div>`);
 };
 
+/* ============================ PROFILES ============================ */
+
+VIEWS.profiles = function () {
+  navbar('Profiles', '');
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Who is studying?</h1>
+    <div class="sub">Each profile keeps its own articles, objectives, exam record, quiz history
+    and flashcard schedule. Everything is stored in this browser on this device.</div></div>`);
+
+  html('<div class="grp">' + P.list.map(pr => {
+    const d = readJSON(dataKey(pr.id), {});
+    const nLO = Object.keys(d.lo || {}).length;
+    const nRead = Object.keys(d.read || {}).length;
+    const nPass = Object.values(d.subj || {}).filter(v => v.st === 'passed').length;
+    const on = pr.id === P.active;
+    return `<button class="row" data-pick="${pr.id}">
+      <div class="ic" style="background:var(--${on ? 'blue' : 'tx3'})">${esc(initials(pr.name))}</div>
+      <div class="tx"><b>${esc(pr.name)}</b><i>${nPass}/9 exams · ${nRead} article${nRead === 1 ? '' : 's'} · ${nLO} objective${nLO === 1 ? '' : 's'}</i></div>
+      ${on ? '<span class="bdg b">Active</span>' : ''}
+      <div class="chev">&#8250;</div></button>`;
+  }).join('') + '</div>');
+  bind('[data-pick]', e => {
+    const id = e.currentTarget.dataset.pick;
+    if (id === P.active) go('profedit', { id: id }); else switchProfile(id);
+  });
+
+  html(`<button class="btn sec" style="margin-top:14px" id="addP">Add someone</button>`);
+  $('#addP').onclick = () => {
+    const n = (prompt('Their name') || '').trim();
+    if (!n) return;
+    if (P.list.some(x => x.name.toLowerCase() === n.toLowerCase())) { alert('There is already a profile with that name.'); return; }
+    addProfile(n.slice(0, 24));
+  };
+
+  html(`<div class="foot">Tap a profile to switch to it. Tap the active one to rename or remove it.<br>
+    Switching profiles does not upload anything — it just points the app at a different set of
+    saved progress in this browser.</div>`);
+};
+
+VIEWS.profedit = function (p) {
+  const pr = P.list.find(x => x.id === p.id);
+  if (!pr) { back(); return; }
+  navbar(pr.name, '');
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">${esc(pr.name)}</h1>
+    <div class="sub">Active profile</div></div>`);
+  html(`<div class="grp">
+    <button class="row" id="ren"><div class="tx"><b>Rename</b></div><div class="chev">&#8250;</div></button>
+    ${P.list.length > 1 ? `<button class="row" id="del"><div class="tx"><b style="color:var(--red)">Delete this profile</b>
+      <i>Erases its progress on this device</i></div></button>` : ''}
+  </div>`);
+  $('#ren').onclick = () => {
+    const n = (prompt('New name', pr.name) || '').trim();
+    if (!n) return;
+    pr.name = n.slice(0, 24); saveProfiles(); render();
+  };
+  if ($('#del')) $('#del').onclick = () => {
+    if (!confirm('Delete ' + pr.name + ' and all of their progress on this device? This cannot be undone.')) return;
+    deleteProfile(pr.id);
+    stack.pop(); render();
+  };
+  html(`<div class="foot">Export from Sources &amp; settings before deleting if you might want it back.</div>`);
+};
+
 /* ============================ init ============================ */
 
-if (S.theme) document.documentElement.dataset.t = S.theme;
+if (P.theme) document.documentElement.dataset.t = P.theme;
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => tab(b.dataset.v));
 render();

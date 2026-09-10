@@ -4,8 +4,24 @@ A study app for the nine UK CAA PPL(A) theoretical knowledge exams: articles, mo
 Anki-style flashcards, the full CAA syllabus as checklists, and a planner for the deadlines
 that actually bind you.
 
-Static site — no build step, no dependencies, no backend. Progress lives in the browser's
-`localStorage`. Designed mobile-first; add it to your home screen and it runs standalone.
+Static site — no build step, no dependencies, no backend. Designed mobile-first; add it to your
+home screen and it runs standalone.
+
+## How saving works — read this first
+
+**GitHub does not store your progress.** GitHub Pages only serves the files; it never receives
+anything back. Progress is saved in `localStorage` in **the browser on the device you are using**.
+
+- **Multiple people, one device** — supported. The app has **profiles**: tap the avatar on Home
+  to switch, rename or add someone. Each profile keeps its own articles, objectives, exam record,
+  quiz history and flashcard schedule.
+- **One person, multiple devices** — *not* synced. Your phone and your laptop keep two
+  independent sets of progress. Use **Export** and **Import** (Sources & settings) to move a
+  profile between them.
+- Clearing site data, or using a private window, loses that browser's progress. Export
+  occasionally if it matters.
+
+Real cross-device sync would need a backend — this repo deliberately has none.
 
 **Live site:** enable GitHub Pages on this repo (Settings → Pages → Deploy from branch →
 `main` / root).
@@ -19,6 +35,7 @@ Static site — no build step, no dependencies, no backend. Progress lives in th
 | **Quiz** | **385 questions.** All-subject mock (45, balanced 5 per subject), mixed practice, quick ten, or a 20-question mock in any single subject. Exam mode withholds feedback; practice mode explains as you go. Scored against the real 75% pass mark, with per-subject breakdown and mistake review |
 | **Cards** | **327 flashcards** on an SM-2 style spaced-repetition schedule — Again / Hard / Good / Easy, 20 new cards a day, filterable by subject |
 | **Plan** | The 18-month and 24-month clocks, a risk watch that reacts to your attempts and dates, and the suggested order to sit the exams in |
+| Profiles | Several people can share one device, each with completely separate progress |
 | Reference | Every rule quoted with its citation; what's decided but not yet in force; what the CAA doesn't publish; the Pooleys volume for each exam; and every source with a URL |
 
 ## The correction this repo exists to make
@@ -118,7 +135,7 @@ methods agreed exactly.
 
 ```
 index.html            shell, tab bar and all CSS
-app.js                router, views, quiz engine, SM-2 scheduler
+app.js                profiles, router, views, quiz engine, SM-2 scheduler
 data/syllabus.js      551 CAA learning objectives (generated)
 data/content/0NN.js   articles, quiz bank and flashcards, one file per subject
 tools/                syllabus generator
