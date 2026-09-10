@@ -1,26 +1,39 @@
-/* UK PPL(A) theory revision dashboard.
-   All regulatory content is quoted from the sources listed in CONFIG.sources. */
+/* UK PPL(A) theory — study app.
+   Regulatory content is quoted from the primary sources listed in SOURCES.
+   Learning objectives in data/syllabus.js are parsed verbatim from the CAA CAP2090 PDFs. */
 'use strict';
 
-// ---------------------------------------------------------------- config
+/* ============================ configuration ============================ */
+
+const META = {
+  '010': { c: 'blue',   book: 'APM 2',     blk: 1 },
+  '090': { c: 'teal',   book: 'APM 7',     blk: 1 },
+  '040': { c: 'pink',   book: 'APM 6',     blk: 2 },
+  '050': { c: 'indigo', book: 'APM 2',     blk: 2 },
+  '081': { c: 'purple', book: 'APM 4',     blk: 3 },
+  '020': { c: 'brown',  book: 'APM 4',     blk: 3 },
+  '060': { c: 'green',  book: 'APM 3',     blk: 4 },
+  '030': { c: 'orange', book: 'APM 3 + 4', blk: 4 },
+  '070': { c: 'red',    book: 'APM 6',     blk: 4 }
+};
 
 const BLOCKS = [
-  { no: 1, title: 'Ground school foundation', subjects: ['010', '090'],
-    unlocks: 'Schools commonly want Air Law passed before first solo — check what yours requires. Communications is the same paper (subject 090) that FRTOL examiners use, so a pass here counts both ways.' },
-  { no: 2, title: 'The pilot and the sky', subjects: ['040', '050'],
-    unlocks: 'Human Performance is short and self-contained. Meteorology is long — start it early and sit it once you can read a TAF, METAR and Form 214 cold.' },
-  { no: 3, title: 'The aeroplane', subjects: ['081', '020'],
-    unlocks: 'Principles of Flight and Aircraft General Knowledge share a book and overlap heavily. Sitting them together is the cheapest pairing in the whole set.' },
-  { no: 4, title: 'Cross-country and consolidation', subjects: ['060', '030', '070'],
-    unlocks: 'Navigation and Flight Performance & Planning are what the qualifying cross-country actually tests. Operational Procedures draws on all eight others, so it goes last.' }
+  { no: 1, title: 'Ground school foundation', subs: ['010', '090'],
+    why: 'Schools commonly want Air Law passed before first solo — check what yours requires. Communications is the same paper (subject 090) that FRTOL examiners use, so a pass here counts both ways.' },
+  { no: 2, title: 'The pilot and the sky', subs: ['040', '050'],
+    why: 'Human Performance is short and self-contained. Meteorology is long — start it early, sit it once you can read a TAF, METAR and Form 214 cold.' },
+  { no: 3, title: 'The aeroplane', subs: ['081', '020'],
+    why: 'Principles of Flight and Aircraft General Knowledge share a book and overlap heavily. The cheapest pairing in the set.' },
+  { no: 4, title: 'Cross-country and consolidation', subs: ['060', '030', '070'],
+    why: 'Navigation and Flight Performance & Planning are what the qualifying cross-country actually tests. Operational Procedures draws on all eight others, so it goes last.' }
 ];
 
 const BOOKS = {
   '010': ['APM 2', 'Aviation Law &amp; Meteorology', '17th revised ed., Feb 2025'],
   '050': ['APM 2', 'Aviation Law &amp; Meteorology', '17th revised ed., Feb 2025'],
   '060': ['APM 3', 'Air Navigation', '9th ed., revised Jun 2025'],
-  '030': ['APM 3 + 4', 'Air Navigation (flight planning) and The Aeroplane Technical (mass &amp; balance, performance)', 'APM 3 9th ed. 2025; APM 4 reprint Jan 2025'],
-  '020': ['APM 4', 'The Aeroplane Technical — airframe, engines, systems, airworthiness', 'Reprint Jan 2025 (updated 2021 for e-Exams)'],
+  '030': ['APM 3 + 4', 'Air Navigation (flight planning); The Aeroplane Technical (mass &amp; balance, performance)', 'APM 3 9th ed. 2025; APM 4 reprint Jan 2025'],
+  '020': ['APM 4', 'The Aeroplane Technical — airframe, engines, systems, airworthiness', 'Reprint Jan 2025'],
   '081': ['APM 4', 'The Aeroplane Technical — Principles of Flight', 'Reprint Jan 2025'],
   '040': ['APM 6', 'Human Performance &amp; Operational Procedures', '6th ed., Nov 2022 (reprint 2024)'],
   '070': ['APM 6', 'Human Performance &amp; Operational Procedures', '6th ed., Nov 2022 (reprint 2024)'],
@@ -29,574 +42,1007 @@ const BOOKS = {
 
 const RULES = [
   { h: 'Nine subjects', cite: 'FCL.215',
-    b: 'Five common subjects — Air Law, Human Performance, Meteorology, Communications, Navigation — plus four specific to aeroplanes: Principles of Flight, Operational Procedures, Flight Performance and Planning, Aircraft General Knowledge.',
-    q: '“Applicants for a PPL shall demonstrate a level of theoretical knowledge appropriate to the privileges granted through examinations in the following subjects…”' },
+    b: 'Five common — Air Law, Human Performance, Meteorology, Communications, Navigation — plus four specific to aeroplanes: Principles of Flight, Operational Procedures, Flight Performance and Planning, Aircraft General Knowledge.' },
   { h: '75% to pass, no negative marking', cite: 'FCL.025(b)(1)',
-    b: 'Wrong answers cost you nothing beyond the mark. Never leave a question blank.',
+    b: 'Wrong answers cost nothing beyond the mark. Never leave a question blank.',
     q: '“A pass in a theoretical knowledge examination paper will be awarded to an applicant achieving at least 75 % of the marks allocated to that paper. No penalty marking shall be applied.”' },
-  { h: 'All nine within 18 months of your first attempt', cite: 'FCL.025(b)(2) · AMC1 FCL.215',
-    b: 'The clock starts at the <b>end of the calendar month</b> in which you first attempt any exam — not the date itself. Sit exam one on 20 March and you have until 30 September the following year. This is the deadline that catches people out, because it starts the moment you sit your first paper, however casually.',
+  { h: 'All nine within 18 months of your first attempt', cite: 'FCL.025(b)(2)',
+    b: 'The clock starts at the <b>end of the calendar month</b> in which you first attempt any exam. Sit exam one on 20 March and you have until 30 September the following year. This is the deadline that catches people out, because it starts the moment you sit your first paper, however casually.',
     q: '“…if he or she has passed all the required theoretical knowledge examination papers within a period of 18 months counted from the end of the calendar month when the applicant first attempted an examination.”' },
   { h: 'No limit on sittings for a PPL', cite: 'FCL.025(b)(3) and (b)(4)',
-    b: 'Point (b)(3) — the six-sittings rule — is written to apply to <b>ATPL theory, CPL and IR</b> applicants only. Point (b)(4) is the LAPL/PPL equivalent and mentions <b>attempts and the 18-month period, but no sittings</b>. The UK CAA also formally removed the sittings cap from its GA exam procedures in Standards Document 11 version 14, December 2020.',
-    q: '“(3) If an applicant for the ATPL theoretical knowledge examination, or for the issue of a commercial pilot licence (CPL), or an instrument rating (IR) has failed to pass one of the theoretical knowledge examination papers within four attempts, or has failed to pass all papers within either six sittings or within the period mentioned in point (b)(2)… <br><br>(4) If an applicant for the issue of a light aircraft pilot licence (LAPL) or a private pilot licence (PPL) has failed to pass one of the theoretical knowledge examination papers within four attempts or has failed to pass all papers within the period mentioned in point (b)(2), he or she shall retake the complete set…”' },
-  { h: 'Four attempts per paper — and a fourth failure wipes everything', cite: 'FCL.025(b)(4) · Standards Doc 11 §11.1.22–11.1.36',
-    b: 'This, not sittings, is the constraint worth planning around. Before a fourth attempt you must do further training as your school determines. Fail the fourth and the e-Exams system puts you in automatic stand-down, <b>every pass you hold in every subject is void</b>, and you need fresh training plus a CAA release before you can start a new series.',
-    q: '“ALL previous examination passes, in ALL subjects currently being sat are rendered null and void by a fourth attempt failure.” — Standards Document 11 §11.1.33' },
+    b: 'The six-sittings rule in (b)(3) is written to apply to <b>ATPL theory, CPL and IR</b> applicants only. Point (b)(4), the LAPL/PPL rule, mentions attempts and the 18-month period but <b>no sittings</b>. The CAA also removed the sittings cap from its GA exam procedures in Standards Document 11 version 14, December 2020.',
+    q: '“(4) If an applicant for the issue of a light aircraft pilot licence (LAPL) or a private pilot licence (PPL) has failed to pass one of the theoretical knowledge examination papers within four attempts or has failed to pass all papers within the period mentioned in point (b)(2), he or she shall retake the complete set…”' },
+  { h: 'Four attempts per paper — a fourth failure wipes everything', cite: 'FCL.025(b)(4) · Standards Doc 11 §11.1.22–36',
+    b: 'This, not sittings, is the constraint worth planning around. Before a fourth attempt you must do further training as your school determines. Fail the fourth and the e-Exams system puts you in automatic stand-down, <b>every pass in every subject is void</b>, and you need fresh training plus a CAA release before starting again.',
+    q: '“ALL previous examination passes, in ALL subjects currently being sat are rendered null and void by a fourth attempt failure.”' },
   { h: 'One attempt at a given paper per sitting', cite: 'GM1 FCL.025',
-    b: 'A sitting is a window of up to ten consecutive days, and you may attempt each paper only once inside it. So a resit of the <i>same</i> subject cannot be same-day; different subjects on the same day are fine. Confirm how your school’s bookings map onto sitting windows.',
+    b: 'A sitting is a window of up to ten consecutive days, and each paper may be attempted only once inside it. A resit of the <i>same</i> subject cannot be same-day; different subjects on the same day are fine.',
     q: '“‘Sitting’: a period of time established by the competent authority within which a candidate can take an examination. This period should not exceed 10 consecutive days. Only one attempt at each examination paper is allowed in one sitting.”' },
-  { h: 'A completed set is valid for 24 months', cite: 'FCL.025(c)(1)(i) · CAA PPL(A) guidance',
-    b: 'Counted from the day you complete the last exam. Apply for the licence inside that window or the theory expires. Finishing all nine long before you have the hours is therefore a real risk, not a head start.',
+  { h: 'A completed set is valid for 24 months', cite: 'FCL.025(c)(1)(i)',
+    b: 'Counted from the day you complete the last exam. Finishing all nine long before you have the hours is a real risk, not a head start.',
     q: '“The successful completion of the theoretical knowledge examinations will be valid: (i) for the issue of a light aircraft pilot licence or a private pilot licence, for a period of 24 months.”' },
   { h: 'Your school’s recommendation lasts 12 months', cite: 'FCL.025(a)(3)',
-    b: 'You may only sit an exam when recommended by your ATO or DTO. If you attempt no paper at all within 12 months of that recommendation, they decide what further training you need.',
-    q: '“The recommendation by a DTO or an ATO shall be valid for 12 months. If the applicant has failed to attempt at least one theoretical knowledge examination paper within this period of validity, the need for further training shall be determined by the DTO or the ATO…”' },
+    b: 'You may only sit an exam when recommended by your ATO or DTO. Attempt no paper within 12 months of that recommendation and they decide what further training you need.' },
   { h: 'About 120 questions across the whole set', cite: 'AMC1 FCL.215; FCL.235',
-    b: 'That is the total across all nine papers, so the individual papers are short — a rough average of thirteen questions each.',
+    b: 'That is the total across all nine papers, so the papers are short — an average of about thirteen questions each.',
     q: '“The examinations should comprise a total of 120 multiple-choice questions covering all the subjects.”' },
   { h: 'Cheating means a 12-month ban', cite: 'ARA.FCL.300 · Standards Doc 11 §12',
-    b: 'A confirmed case is a minimum twelve-month ban from all examinations, and all previously attempted exams are void.',
-    q: '“The CAA will then place the candidate in stand-down meaning no further GA e-Exams can be taken for the duration of the ban. All previously attempted exams will be null and void.”' }
+    b: 'A confirmed case is a minimum twelve-month ban from all examinations, and all previously attempted exams are void.' }
 ];
 
 const PENDING = [
-  { h: 'Exam validity 24 → 36 months', cite: 'CAP3212, January 2026 — Decision no. 3',
-    b: 'The CAA consulted on this and has decided to proceed. It is <b>not in force</b>: the July 2026 Part-FCL rulebook still states 24 months, and implementation needs both a legislative change via the DfT and funding to modify the e-Exam platform.',
-    q: '“We will progress with the single period of 36 months for exam validity for the PPL. The timescale is subject to appropriate funding.” … “Implementation will require funding to amend the online eExam platform, the timeline for which is yet to be confirmed.”' },
+  { h: 'Exam validity 24 → 36 months', cite: 'CAP3212, Jan 2026 — Decision no. 3',
+    b: 'The CAA has decided to proceed but it is <b>not in force</b>. The July 2026 Part-FCL rulebook still says 24 months, and implementation needs a legislative change via the DfT plus funding to modify the e-Exam platform.',
+    q: '“We will progress with the single period of 36 months for exam validity for the PPL. The timescale is subject to appropriate funding.”' },
   { h: 'A rolling 18-month window, and dropping the four-failures rule', cite: 'CAP3212 §2.1–2.2',
-    b: 'Both were floated in the 2024 consultation and attracted support, but the CAA judged a rolling window too complex to implement and replaced the package with the single 36-month validity above. Treat the fixed 18-month window and the four-attempt limit as fully live until the CAA says otherwise.' },
+    b: 'Both were floated in the 2024 consultation, but the CAA judged a rolling window too complex and replaced the package with the single 36-month validity. Treat the fixed 18-month window and the four-attempt limit as fully live.' },
   { h: 'Fewer exams — for the instrument rating, not the PPL', cite: 'CAP3212 §5.1–5.7',
-    b: 'The consultation talk of consolidating subjects into fewer papers concerns the Competency Based Instrument Rating. There is no CAA decision to reduce the PPL from nine subjects.' }
+    b: 'The consultation talk of consolidating subjects concerns the Competency Based Instrument Rating. There is no CAA decision to reduce the PPL from nine subjects.' }
 ];
 
 const UNKNOWNS = [
   { h: 'Per-subject question counts and time limits',
-    b: 'The CAA does not publish a table of these. Part-FCL gives only the ~120-question total for the whole set, and Standards Document 11 tells the Ground Examiner to confirm “the time limits and number of questions” to you verbally at the start of each exam. Figures circulating on study sites (commonly 8–24 questions and 15–40 minutes) are <b>not CAA-published</b> and are deliberately omitted here. Ask your Ground Examiner.' },
-  { h: 'How your school maps bookings onto 10-day sitting windows',
-    b: 'The regulation leaves the window to the competent authority, and with no sittings cap for a PPL it rarely bites — but it does govern how soon you may resit the <i>same</i> paper. Worth one question to your school before you plan a resit.' },
-  { h: 'CAP2090 learning objectives are dated January 2020',
-    b: 'All nine documents on the CAA e-Exams page are version 1, January 2020 (the Principles of Flight document carries no version line at all). They remain the current published learning objectives, but they are six years old, so where a document conflicts with current law — airspace, licensing, or UK-specific rules post-Brexit — trust the law.' }
+    b: 'The CAA does not publish these. Part-FCL gives only the ~120-question total, and Standards Document 11 tells the Ground Examiner to confirm “the time limits and number of questions” to you verbally before each paper. Figures circulating on study sites are <b>not CAA-published</b> and are deliberately omitted here. Ask your Ground Examiner.' },
+  { h: 'CAP2090 learning objectives date from January 2020',
+    b: 'All nine are version 1, January 2020 (Principles of Flight carries no version line). They remain the current published objectives but are six years old — where one conflicts with current law, the law wins.' },
+  { h: 'This app’s articles and questions are mine, not the CAA’s',
+    b: 'The learning objectives are verbatim CAA. The articles, quiz questions and flashcards were written for this app and are a study aid, not an official question bank. Regulatory figures in them were checked against the primary sources on the Reference tab.' }
 ];
 
 const SOURCES = [
-  { t: 'UK Regulation (EU) No. 1178/2011 Annex I Part-FCL — consolidated rulebook',
-    m: 'CAA Aviation Regulation Library · page footers dated July 2026 · FCL.025 pp. 80–82, FCL.215 p. 144, AMC1 FCL.210/215 pp. 145+, AMC1 FCL.215;FCL.235 p. 209',
-    u: 'https://regulatorylibrary.caa.co.uk/1178-2011-PDF/PDF.pdf',
-    n: 'The primary source for every rule on the Rules tab. Retrieved 10 Sep 2026.' },
-  { t: 'CAA Standards Document 11, Revision 15 (May 2022)',
-    m: 'Procedures & conduct for all GA Theoretical Knowledge Examinations',
-    u: 'https://www.caa.co.uk/publication/download/12697',
-    n: 'Source for the 75% briefing requirement, the four-attempt consequences, and the December 2020 removal of the sittings cap (amendment record, version 14). Retrieved 10 Sep 2026.' },
-  { t: 'Private pilot licence for aeroplanes — CAA guidance page',
-    m: 'Lists the nine subjects and states the 24-month validity',
-    u: 'https://www.caa.co.uk/general-aviation/pilot-licences/aeroplanes/private-pilot-licence-for-aeroplanes/',
-    n: 'Live page confirming 24 months is still current. Retrieved 10 Sep 2026.' },
-  { t: 'GA Theoretical Knowledge e-Exams — CAA',
-    m: 'Index of the nine CAP2090 learning-objective documents and the e-Exam administration',
-    u: 'https://www.caa.co.uk/general-aviation/pilot-training-organisations/ga-theoretical-knowledge-e-exams/',
-    n: 'Source of the CAP2090 document codes used throughout. Retrieved 10 Sep 2026.' },
-  { t: 'CAP2090A–J — PPL examination learning objectives (nine documents)',
-    m: 'All version 1, January 2020; 081 Principles of Flight carries no version line',
-    u: 'https://www.caa.co.uk/general-aviation/pilot-training-organisations/ga-theoretical-knowledge-e-exams/',
-    n: 'Every learning objective in the Subjects tab is parsed verbatim from these PDFs. Retrieved 10 Sep 2026.' },
-  { t: 'CAP3212 — GA Pilot Licensing Review “Wave 2” Consultation Response Document',
-    m: 'Published January 2026 · 560 responses · Decision no. 3 covers exam validity',
-    u: 'https://www.caa.co.uk/publication/download/26763',
-    n: 'Source for everything on the “decided but not yet in force” list. Retrieved 10 Sep 2026.' },
-  { t: 'CAP3132 — GA Pilot Licensing Review “Wave 2” proposals',
-    m: 'Version dated 07 Jul 2025; consultation closed 8 Aug 2025',
-    u: 'https://www.caa.co.uk/our-work/publications/documents/content/cap3132/',
-    n: 'The consultation that CAP3212 responds to. Retrieved 10 Sep 2026.' },
-  { t: 'Pooleys Air Pilot’s Manual product pages, volumes 1–7',
-    m: 'Volume/edition dates read from the publisher’s own pages',
-    u: 'https://www.pooleys.com/shop/pooleys-air-pilot-publishing/air-pilots-manual-volumes-1-4-6-7-for-ppl-a-books/',
-    n: 'Source for the Books tab, including that the PPL(A) set is volumes 1–4, 6 and 7. Retrieved 10 Sep 2026.' }
+  { t: 'UK Regulation (EU) No. 1178/2011 Annex I Part-FCL', m: 'CAA Aviation Regulation Library · page footers dated July 2026 · FCL.025 pp. 80–82, FCL.215 p. 144, FCL.205.A/FCL.210.A p. 218, FCL.740.A pp. 963–964, MED.A.045 p. 1581', u: 'https://regulatorylibrary.caa.co.uk/1178-2011-PDF/PDF.pdf' },
+  { t: 'UK Regulation (EU) No. 923/2012 — Rules of the Air (SERA)', m: 'CAA Aviation Regulation Library · page footers dated August 2024 · SERA.5001 Table S5-1, SERA.5005, SERA.13001, Appendices III and IV', u: 'https://regulatorylibrary.caa.co.uk/923-2012-PDF/PDF.pdf' },
+  { t: 'CAA Standards Document 11, Revision 15 (May 2022)', m: 'Procedures and conduct for all GA Theoretical Knowledge Examinations — source for the 75% briefing, the four-attempt consequences and the Dec 2020 removal of the sittings cap', u: 'https://www.caa.co.uk/publication/download/12697' },
+  { t: 'Private pilot licence for aeroplanes — CAA guidance', m: 'Lists the nine subjects and confirms the 24-month validity is still current', u: 'https://www.caa.co.uk/general-aviation/pilot-licences/aeroplanes/private-pilot-licence-for-aeroplanes/' },
+  { t: 'GA Theoretical Knowledge e-Exams — CAA', m: 'Index of the nine CAP2090 learning-objective documents', u: 'https://www.caa.co.uk/general-aviation/pilot-training-organisations/ga-theoretical-knowledge-e-exams/' },
+  { t: 'CAP3212 — GA Pilot Licensing Review “Wave 2” Consultation Response', m: 'Published January 2026 · 560 responses · Decision no. 3 covers exam validity', u: 'https://www.caa.co.uk/publication/download/26763' },
+  { t: 'Pooleys Air Pilot’s Manual product pages', m: 'Volume and edition dates read from the publisher’s own pages, September 2026', u: 'https://www.pooleys.com/shop/pooleys-air-pilot-publishing/air-pilots-manual-volumes-1-4-6-7-for-ppl-a-books/' }
 ];
 
-const SUBJ_BLOCK = {};
-BLOCKS.forEach(b => b.subjects.forEach(c => SUBJ_BLOCK[c] = b.no));
+const STATUSES = [['none', 'Not started'], ['studying', 'Studying'], ['ready', 'Ready to sit'], ['passed', 'Passed']];
+const PASS_MARK = 75;
+const NEW_CARDS_PER_DAY = 20;
 
-const STATUSES = [
-  ['none', 'Not started'], ['studying', 'Studying'],
-  ['ready', 'Ready to sit'], ['passed', 'Passed']
-];
+/* ============================ state ============================ */
 
-// ---------------------------------------------------------------- state
-
-const KEY = 'ppl-theory-v1';
-const blank = () => ({ lo: {}, subj: {}, d1: '', d2: '', theme: '' });
+const KEY = 'ppl-v2';
+const blank = () => ({ lo: {}, subj: {}, read: {}, srs: {}, hist: [], d1: '', d2: '', theme: '', newToday: {}, best: {} });
 let S;
-try { S = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || '{}')); }
-catch (e) { S = blank(); }
+try { S = Object.assign(blank(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = blank(); }
+// one-time migration from the first version of this app
+try {
+  const old = JSON.parse(localStorage.getItem('ppl-theory-v1') || 'null');
+  if (old && !S.migrated) {
+    Object.assign(S.lo, old.lo || {});
+    Object.entries(old.subj || {}).forEach(([k, v]) => S.subj[k] = Object.assign(S.subj[k] || {}, v));
+    S.d1 = S.d1 || old.d1 || ''; S.d2 = S.d2 || old.d2 || '';
+    S.migrated = 1;
+  }
+} catch (e) {}
 
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
-const sub = c => (S.subj[c] = S.subj[c] || { st: 'none', att: 0, score: '', date: '' });
+let saveTimer = null;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }, 120);
+}
+const sub = c => (S.subj[c] = Object.assign({ st: 'none', att: 0, score: '', date: '' }, S.subj[c]));
 
-// ---------------------------------------------------------------- helpers
+/* ============================ helpers ============================ */
 
 const $ = s => document.querySelector(s);
-const el = (t, cls, html) => {
-  const n = document.createElement(t);
-  if (cls) n.className = cls;
-  if (html != null) n.innerHTML = html;
-  return n;
-};
-const SUBJECTS = window.SYLLABUS;
-const byCode = {};
-SUBJECTS.forEach(s => byCode[s.code] = s);
-const allLOs = s => s.groups.reduce((a, g) => a + g.items.length, 0);
-const doneLOs = s => s.groups.reduce((a, g) =>
-  a + g.items.filter(i => S.lo[i.c]).length, 0);
+const APP = $('#app');
+const SUBJECTS = window.SYLLABUS.slice().sort((a, b) => a.code.localeCompare(b.code));
+const SC = window.SC;
+const byCode = {}; SUBJECTS.forEach(s => byCode[s.code] = s);
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const allLO = s => s.groups.reduce((a, g) => a + g.items.length, 0);
+const doneLO = s => s.groups.reduce((a, g) => a + g.items.filter(i => S.lo[i.c]).length, 0);
+const pctLO = s => Math.round(doneLO(s) / Math.max(1, allLO(s)) * 100);
+const arts = c => (SC[c] && SC[c].articles) || [];
+const readCount = c => arts(c).filter(a => S.read[a.id]).length;
+const passed = () => SUBJECTS.filter(s => sub(s.code).st === 'passed').length;
 
 const DAY = 864e5;
+const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); };
 const fmt = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-const daysTo = d => Math.ceil((d - new Date().setHours(0, 0, 0, 0)) / DAY);
+const daysTo = d => Math.ceil((d - today()) / DAY);
+const todayKey = () => new Date().toISOString().slice(0, 10);
 
 /** 18 months counted from the END of the calendar month of the first attempt. */
-function eighteenMonthDeadline(iso) {
+function deadline18(iso) {
   if (!iso) return null;
   const d = new Date(iso + 'T00:00:00');
-  if (isNaN(d)) return null;
-  return new Date(d.getFullYear(), d.getMonth() + 19, 0); // day 0 = last day of prev month
+  return isNaN(d) ? null : new Date(d.getFullYear(), d.getMonth() + 19, 0);
 }
 /** 24 months from the day the last exam was passed. */
-function validityDeadline(iso) {
+function deadline24(iso) {
   if (!iso) return null;
   const d = new Date(iso + 'T00:00:00');
-  if (isNaN(d)) return null;
-  return new Date(d.getFullYear(), d.getMonth() + 24, d.getDate());
+  return isNaN(d) ? null : new Date(d.getFullYear(), d.getMonth() + 24, d.getDate());
 }
 
-// ---------------------------------------------------------------- render: plan
+function ring(pct, size, col, w) {
+  const r = (size - (w || 5)) / 2, c = 2 * Math.PI * r;
+  return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" stroke="var(--fill)" stroke-width="${w || 5}"/>
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" stroke="var(--${col || 'blue'})"
+      stroke-width="${w || 5}" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - pct / 100)}"/>
+  </svg>`;
+}
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; };
 
-function renderCountdown() {
-  const box = $('#cd');
-  box.textContent = '';
-  const passed = SUBJECTS.filter(s => sub(s.code).st === 'passed').length;
+/* ============================ router ============================ */
 
-  const tile = (k, n, s, cls) => {
-    const d = el('div');
-    d.appendChild(el('div', 'k', k));
-    d.appendChild(el('div', 'n' + (cls ? ' ' + cls : ''), n));
-    d.appendChild(el('div', 's', s));
-    if (cls === 'bad') d.style.color = 'var(--bad)';
-    if (cls === 'warn') d.style.color = 'var(--warn)';
-    box.appendChild(d);
-  };
+const TABS = ['home', 'learn', 'quiz', 'cards', 'plan'];
+let stack = [{ v: 'home' }];
+const VIEWS = {};
 
-  tile('Exams passed', passed + '/9',
-    passed === 9 ? 'Complete set' : (9 - passed) + ' to go');
+function go(v, p) { stack.push({ v: v, p: p }); render(); }
+function back() { if (stack.length > 1) { stack.pop(); render(); } }
+function tab(v) { stack = [{ v: v }]; render(); }
 
-  const dl = eighteenMonthDeadline(S.d1);
-  if (!dl) {
-    tile('18-month window', '—', 'Not started');
-  } else {
-    const n = daysTo(dl);
-    tile('18-month deadline', n < 0 ? 'EXPIRED' : n + 'd',
-      fmt(dl), n < 0 ? 'bad' : n < 120 ? 'warn' : '');
-  }
-
-  const vd = validityDeadline(S.d2);
-  if (!vd) {
-    tile('24-month validity', '—', 'Set once all nine are passed');
-  } else {
-    const n = daysTo(vd);
-    tile('Apply for licence by', n < 0 ? 'EXPIRED' : n + 'd',
-      fmt(vd), n < 0 ? 'bad' : n < 120 ? 'warn' : '');
-  }
+function render() {
+  const top = stack[stack.length - 1];
+  APP.scrollTop = 0;
+  APP.innerHTML = '';
+  VIEWS[top.v](top.p || {});
+  const root = TABS.indexOf(stack[0].v) >= 0 ? stack[0].v : 'home';
+  document.querySelectorAll('#tabs button').forEach(b =>
+    b.setAttribute('aria-selected', b.dataset.v === root));
+  window.scrollTo(0, 0);
 }
 
-function renderRisks() {
-  const box = $('#risks');
-  box.textContent = '';
+function html(s) { APP.insertAdjacentHTML('beforeend', s); }
+function navbar(title, rightHtml) {
+  html(`<div class="nav"><button class="back" id="nbBack">&#8249;&nbsp;Back</button>
+    <div class="ttl">${esc(title)}</div><div class="rt">${rightHtml || ''}</div></div>`);
+  $('#nbBack').onclick = back;
+}
+function bind(sel, fn, ev) {
+  document.querySelectorAll(sel).forEach(n => n.addEventListener(ev || 'click', fn));
+}
+
+/* ============================ HOME ============================ */
+
+VIEWS.home = function () {
+  const totLO = SUBJECTS.reduce((a, s) => a + allLO(s), 0);
+  const dnLO = SUBJECTS.reduce((a, s) => a + doneLO(s), 0);
+  const totArt = SUBJECTS.reduce((a, s) => a + arts(s.code).length, 0);
+  const dnArt = SUBJECTS.reduce((a, s) => a + readCount(s.code), 0);
+  const p = passed();
+  const due = dueCards().length;
+  const newAvail = Math.max(0, NEW_CARDS_PER_DAY - (S.newToday[todayKey()] || 0));
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
+  html(`<div class="hd"><h1>${greet}</h1>
+    <div class="sub">${p === 9 ? 'All nine exams passed.' : (9 - p) + ' exam' + (p === 8 ? '' : 's') + ' to go · ' + dnArt + '/' + totArt + ' articles read'}</div></div>`);
+
+  // --- overall progress
+  const overall = Math.round((dnLO / Math.max(1, totLO) * 0.6 + dnArt / Math.max(1, totArt) * 0.4) * 100);
+  html(`<div class="card" style="display:flex;align-items:center;gap:16px">
+    <div style="position:relative;flex:none">${ring(overall, 68, 'blue', 6)}
+      <div style="position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:700">${overall}%</div></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600;font-size:17px">Course progress</div>
+      <div style="color:var(--tx2);font-size:14px;margin-top:3px">${dnLO} of ${totLO} learning objectives · ${dnArt} of ${totArt} articles</div>
+      <div class="pbar" style="margin-top:9px"><i style="width:${overall}%"></i></div>
+    </div></div>`);
+
+  // --- next up
+  const next = nextUp();
+  if (next) {
+    const m = META[next.code];
+    html(`<h2 class="sec">Pick up where you left off</h2>
+      <button class="grp row" id="nextUp">
+        <div class="ic" style="background:var(--${m.c})">${next.code}</div>
+        <div class="tx"><b>${esc(next.label)}</b><i>${esc(byCode[next.code].name)}</i></div>
+        <div class="chev">&#8250;</div></button>`);
+    $('#nextUp').onclick = () => next.go();
+  }
+
+  // --- daily actions
+  html(`<h2 class="sec">Today</h2><div class="tiles">
+    <button class="tile" id="tCards">
+      <div class="k">Flashcards</div>
+      <div class="n" style="color:var(--${due ? 'orange' : newAvail ? 'blue' : 'green'})">${due || Math.min(newAvail, newCards().length)}</div>
+      <div class="s">${due ? 'due for review'
+        : Math.min(newAvail, newCards().length) ? 'new cards to learn'
+        : 'caught up for today'}</div>
+    </button>
+    <button class="tile" id="tQuiz">
+      <div class="k">Quick quiz</div>
+      <div class="n" style="color:var(--blue)">10</div>
+      <div class="s">mixed questions</div>
+    </button></div>`);
+  $('#tCards').onclick = () => tab('cards');
+  $('#tQuiz').onclick = () => startQuiz({ codes: SUBJECTS.map(s => s.code), n: 10, mode: 'practice', title: 'Quick quiz' });
+
+  // --- deadline strip, only once relevant
+  const dl = deadline18(S.d1), vd = deadline24(S.d2);
+  if (dl || vd) {
+    const rows = [];
+    if (dl && p < 9) {
+      const n = daysTo(dl);
+      rows.push(`<button class="row" data-goplan="1"><div class="ic" style="background:var(--${n < 90 ? 'red' : n < 180 ? 'orange' : 'green'})">18</div>
+        <div class="tx"><b>${n < 0 ? 'Window expired' : n + ' days left'}</b><i>All nine by ${fmt(dl)}</i></div><div class="chev">&#8250;</div></button>`);
+    }
+    if (vd) {
+      const n = daysTo(vd);
+      rows.push(`<button class="row" data-goplan="1"><div class="ic" style="background:var(--${n < 90 ? 'red' : n < 180 ? 'orange' : 'green'})">24</div>
+        <div class="tx"><b>${n < 0 ? 'Theory expired' : n + ' days left'}</b><i>Apply for the licence by ${fmt(vd)}</i></div><div class="chev">&#8250;</div></button>`);
+    }
+    if (rows.length) { html(`<h2 class="sec">Clock</h2><div class="grp">${rows.join('')}</div>`); }
+    bind('[data-goplan]', () => tab('plan'));
+  }
+
+  // --- exam blocks at a glance
+  html('<h2 class="sec">Exam blocks</h2><div class="grp">' + BLOCKS.map(b => {
+    const done = b.subs.filter(c => sub(c).st === 'passed').length;
+    const pc = Math.round(b.subs.reduce((a, c) => a + pctLO(byCode[c]), 0) / b.subs.length);
+    return `<button class="row" data-blk="${b.no}">
+      <div class="ic" style="background:var(--${done === b.subs.length ? 'green' : 'blue'})">${b.no}</div>
+      <div class="tx"><b>${esc(b.title)}</b><i>${b.subs.map(c => byCode[c].name).join(' · ')}</i>
+        <div class="pbar" style="margin-top:7px"><i style="width:${pc}%"></i></div></div>
+      <div class="val">${done}/${b.subs.length}</div></button>`;
+  }).join('') + '</div>');
+  bind('[data-blk]', e => tab('plan'));
+
+  html(`<h2 class="sec">Reference</h2><div class="grp">
+    <button class="row" id="rRules"><div class="ic" style="background:var(--indigo)">&#167;</div>
+      <div class="tx"><b>The rules that bind you</b><i>Quoted from Part-FCL, July 2026</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="rBooks"><div class="ic" style="background:var(--brown)">&#128214;</div>
+      <div class="tx"><b>Books</b><i>Pooleys volume for each exam</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="rSrc"><div class="ic" style="background:var(--tx3)">&#8599;</div>
+      <div class="tx"><b>Sources &amp; settings</b><i>Every source, plus export</i></div><div class="chev">&#8250;</div></button>
+    </div>`);
+  $('#rRules').onclick = () => go('rules');
+  $('#rBooks').onclick = () => go('books');
+  $('#rSrc').onclick = () => go('sources');
+
+  html(`<div class="foot">Personal revision aid — not a CAA publication.<br>
+    Confirm anything that matters with your ATO/DTO, Ground Examiner or the CAA.</div>`);
+};
+
+/** The single most useful next action: an unread article, else an unstudied subject. */
+function nextUp() {
+  const order = SUBJECTS.slice().sort((a, b) => META[a.code].blk - META[b.code].blk || a.code.localeCompare(b.code));
+  for (const s of order) {
+    if (sub(s.code).st === 'passed') continue;
+    const a = arts(s.code).find(x => !S.read[x.id]);
+    if (a) return { code: s.code, label: 'Read: ' + a.title, go: () => go('article', { code: s.code, id: a.id }) };
+  }
+  for (const s of order) {
+    if (sub(s.code).st === 'passed') continue;
+    if (pctLO(s) < 100) return { code: s.code, label: 'Objectives: ' + s.name, go: () => go('subject', { code: s.code, tab: 'obj' }) };
+  }
+  return null;
+}
+
+/* ============================ LEARN ============================ */
+
+VIEWS.learn = function () {
+  html(`<div class="hd"><h1>Learn</h1><div class="sub">37 articles and 551 learning objectives across nine subjects</div></div>`);
+  const order = (S.learnSort === 'block')
+    ? SUBJECTS.slice().sort((a, b) => META[a.code].blk - META[b.code].blk || a.code.localeCompare(b.code))
+    : SUBJECTS;
+  html(`<div class="seg" id="lsort">
+    <button data-s="code" aria-selected="${S.learnSort !== 'block'}">By subject number</button>
+    <button data-s="block" aria-selected="${S.learnSort === 'block'}">By exam block</button></div>`);
+  bind('#lsort button', e => { S.learnSort = e.currentTarget.dataset.s; save(); render(); });
+
+  html('<div class="grp">' + order.map(s => {
+    const m = META[s.code], st = sub(s.code), pc = pctLO(s);
+    const ra = readCount(s.code), ta = arts(s.code).length;
+    return `<button class="row" data-sub="${s.code}">
+      <div class="ic" style="background:var(--${m.c})">${s.code}</div>
+      <div class="tx"><b>${esc(s.name)}</b>
+        <i>${ra}/${ta} articles · ${doneLO(s)}/${allLO(s)} objectives · ${m.book}</i>
+        <div class="pbar" style="margin-top:7px"><i style="width:${pc}%;background:var(--${m.c})"></i></div></div>
+      ${st.st === 'passed' ? '<span class="bdg g">Passed</span>' : `<div class="val">${pc}%</div>`}
+      <div class="chev">&#8250;</div></button>`;
+  }).join('') + '</div>');
+  bind('[data-sub]', e => go('subject', { code: e.currentTarget.dataset.sub }));
+};
+
+VIEWS.subject = function (p) {
+  const s = byCode[p.code], m = META[p.code], st = sub(p.code);
+  const which = p.tab || 'art';
+  navbar(s.name, '');
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:28px">${esc(s.name)}</h1>
+    <div class="sub">Subject ${s.code} · Block ${m.blk} · ${m.book} · CAA ${s.cap} (${esc(s.version)})</div></div>`);
+
+  html(`<div class="seg" id="stab">
+    <button data-x="art" aria-selected="${which === 'art'}">Articles</button>
+    <button data-x="obj" aria-selected="${which === 'obj'}">Objectives</button>
+    <button data-x="ex" aria-selected="${which === 'ex'}">Exam</button></div>`);
+  bind('#stab button', e => { stack[stack.length - 1].p = { code: p.code, tab: e.currentTarget.dataset.x }; render(); });
+
+  if (which === 'art') {
+    html(`<button class="btn" id="qz" style="margin-bottom:16px">Test me on ${esc(s.name)}</button>`);
+    $('#qz').onclick = () => startQuiz({ codes: [s.code], n: 20, mode: 'exam', title: s.name });
+    html('<div class="grp">' + arts(s.code).map(a => `
+      <button class="row" data-art="${a.id}">
+        <div class="ic" style="background:var(--${S.read[a.id] ? 'green' : m.c})">${S.read[a.id] ? '&#10003;' : '&#9679;'}</div>
+        <div class="tx"><b>${esc(a.title)}</b><i>${a.mins} min read</i></div>
+        <div class="chev">&#8250;</div></button>`).join('') + '</div>');
+    bind('[data-art]', e => go('article', { code: s.code, id: e.currentTarget.dataset.art }));
+
+  } else if (which === 'obj') {
+    const done = doneLO(s), tot = allLO(s);
+    html(`<div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600">
+      <span>${done} of ${tot} studied</span><span>${pctLO(s)}%</span></div>
+      <div class="pbar" style="margin-top:9px"><i style="width:${pctLO(s)}%;background:var(--${m.c})"></i></div>
+      <div class="brow" style="margin-top:12px">
+        <button class="btn sec sm" id="allOn">Mark all</button>
+        <button class="btn grey sm" id="allOff">Clear all</button></div></div>`);
+    $('#allOn').onclick = () => { s.groups.forEach(g => g.items.forEach(i => S.lo[i.c] = 1)); save(); render(); };
+    $('#allOff').onclick = () => { s.groups.forEach(g => g.items.forEach(i => delete S.lo[i.c])); save(); render(); };
+
+    s.groups.forEach(g => {
+      html(`<div class="gtitle"><span>${g.code}</span><div>${esc(g.title)}</div></div><div class="grp">` +
+        g.items.map(i => `<button class="lo${S.lo[i.c] ? ' on' : ''}" data-lo="${i.c}">
+          <span class="bx"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span class="t">${i.t}${i.a ? '' : '<span class="ctx" title="printed in CAP2090 but not ticked in the PPL Aeroplane column">CTX</span>'}<em>${i.c}</em></span>
+        </button>`).join('') + '</div>');
+    });
+    bind('[data-lo]', e => {
+      const k = e.currentTarget.dataset.lo;
+      if (S.lo[k]) delete S.lo[k]; else S.lo[k] = 1;
+      e.currentTarget.classList.toggle('on', !!S.lo[k]);
+      save();
+    });
+    html(`<div class="foot">Learning objectives verbatim from CAA ${s.cap}.
+      <span class="ctx" style="position:static">CTX</span> marks one printed in the document but not
+      ticked in its PPL Aeroplane column.</div>`);
+
+  } else {
+    const best = S.best[s.code];
+    html(`<div class="card"><div style="font-size:15px;font-weight:600;margin-bottom:10px">Exam record</div>
+      <div class="fld"><label class="f">Status</label>
+        <select id="fSt">${STATUSES.map(([v, l]) => `<option value="${v}"${v === st.st ? ' selected' : ''}>${l}</option>`).join('')}</select></div>
+      <div class="fld"><label class="f">Attempts used (max 4)</label>
+        <select id="fAt">${[0, 1, 2, 3, 4].map(v => `<option value="${v}"${v === st.att ? ' selected' : ''}>${v} of 4</option>`).join('')}</select></div>
+      <div class="fld"><label class="f">Score achieved</label><input type="number" id="fSc" min="0" max="100" placeholder="%" value="${st.score}"></div>
+      <div class="fld"><label class="f">Date passed</label><input type="date" id="fDt" value="${st.date}"></div>
+    </div>`);
+    $('#fSt').onchange = e => { st.st = e.target.value; save(); };
+    $('#fAt').onchange = e => { st.att = +e.target.value; save(); render(); };
+    $('#fSc').oninput = e => { st.score = e.target.value; save(); };
+    $('#fDt').onchange = e => { st.date = e.target.value; save(); };
+
+    if (st.att >= 3 && st.st !== 'passed')
+      html(`<div class="note r" style="margin-top:12px"><b>Three attempts used</b>
+        A fourth failure voids every pass you hold, in every subject. Do the further training your
+        school requires, and do not book until you are comfortably above 75% on practice papers.</div>`);
+
+    html(`<div class="card" style="margin-top:12px">
+      <div style="font-size:15px;font-weight:600;margin-bottom:4px">Practice</div>
+      <div style="color:var(--tx2);font-size:14px;margin-bottom:12px">
+        ${SC[s.code].quiz.length} questions in the bank${best ? ' · best score ' + best + '%' : ''}</div>
+      <div class="brow">
+        <button class="btn sm" id="mock">Mock (20)</button>
+        <button class="btn sec sm" id="prac">Practice</button></div></div>`);
+    $('#mock').onclick = () => startQuiz({ codes: [s.code], n: 20, mode: 'exam', title: s.name });
+    $('#prac').onclick = () => startQuiz({ codes: [s.code], n: 15, mode: 'practice', title: s.name });
+  }
+};
+
+VIEWS.article = function (p) {
+  const s = byCode[p.code];
+  const a = arts(p.code).find(x => x.id === p.id);
+  const list = arts(p.code), idx = list.indexOf(a);
+  navbar(s.name, '');
+  html(`<div class="hd" style="padding-top:16px">
+    <div class="sub" style="margin-bottom:4px">${s.code} ${esc(s.name)} · ${a.mins} min read</div>
+    <h1 style="font-size:30px">${esc(a.title)}</h1></div>`);
+  html(`<div class="article">${a.body}</div>`);
+
+  const done = !!S.read[a.id];
+  html(`<button class="btn ${done ? 'grey' : 'grn'}" id="mk">${done ? '&#10003; Read' : 'Mark as read'}</button>`);
+  $('#mk').onclick = () => { if (S.read[a.id]) delete S.read[a.id]; else S.read[a.id] = 1; save(); render(); };
+
+  const nav = [];
+  if (idx > 0) nav.push(`<button class="btn sec" data-nav="${list[idx - 1].id}">&#8249; Previous</button>`);
+  if (idx < list.length - 1) nav.push(`<button class="btn sec" data-nav="${list[idx + 1].id}">Next &#8250;</button>`);
+  if (nav.length) html(`<div class="brow" style="margin-top:10px">${nav.join('')}</div>`);
+  bind('[data-nav]', e => { stack[stack.length - 1].p = { code: p.code, id: e.currentTarget.dataset.nav }; render(); });
+
+  html(`<button class="btn sec" style="margin-top:10px" id="tq">Test me on ${esc(s.name)}</button>`);
+  $('#tq').onclick = () => startQuiz({ codes: [s.code], n: 15, mode: 'practice', title: s.name });
+};
+
+/* ============================ QUIZ ============================ */
+
+let Q = null;
+
+function bank(codes) {
   const out = [];
+  codes.forEach(c => (SC[c] ? SC[c].quiz : []).forEach((q, i) => out.push(Object.assign({ code: c, i: i }, q))));
+  return out;
+}
 
+function startQuiz(opt) {
+  const pool = shuffle(bank(opt.codes));
+  const qs = pool.slice(0, Math.min(opt.n, pool.length)).map(q => {
+    // shuffle the options, tracking where the correct one lands
+    const pairs = q.a.map((t, i) => ({ t: t, ok: i === q.c }));
+    shuffle(pairs);
+    return { code: q.code, q: q.q, opts: pairs.map(x => x.t), c: pairs.findIndex(x => x.ok), why: q.why, ref: q.ref };
+  });
+  Q = { qs: qs, at: 0, ans: new Array(qs.length).fill(-1), mode: opt.mode, title: opt.title, t0: Date.now(), codes: opt.codes };
+  go('quizrun');
+}
+
+VIEWS.quiz = function () {
+  html(`<div class="hd"><h1>Quiz</h1><div class="sub">385 questions across the nine subjects</div></div>`);
+
+  html(`<h2 class="sec">Full mock</h2><div class="grp">
+    <button class="row" id="m45"><div class="ic" style="background:var(--blue)">45</div>
+      <div class="tx"><b>All-subject mock</b><i>45 questions, 5 per subject, exam mode</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="m30"><div class="ic" style="background:var(--indigo)">30</div>
+      <div class="tx"><b>Mixed practice</b><i>30 questions with instant explanations</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="m10"><div class="ic" style="background:var(--teal)">10</div>
+      <div class="tx"><b>Quick ten</b><i>A short mixed set</i></div><div class="chev">&#8250;</div></button>
+  </div>`);
+  $('#m45').onclick = () => startBalanced(5, 'exam', 'All-subject mock');
+  $('#m30').onclick = () => startQuiz({ codes: SUBJECTS.map(s => s.code), n: 30, mode: 'practice', title: 'Mixed practice' });
+  $('#m10').onclick = () => startQuiz({ codes: SUBJECTS.map(s => s.code), n: 10, mode: 'practice', title: 'Quick ten' });
+
+  html('<h2 class="sec">Single-subject mock</h2><div class="grp">' + SUBJECTS.map(s => {
+    const m = META[s.code], b = S.best[s.code];
+    return `<button class="row" data-mk="${s.code}">
+      <div class="ic" style="background:var(--${m.c})">${s.code}</div>
+      <div class="tx"><b>${esc(s.name)}</b><i>${SC[s.code].quiz.length} questions available</i></div>
+      ${b != null ? `<span class="bdg ${b >= PASS_MARK ? 'g' : 'o'}">${b}%</span>` : '<span class="bdg">—</span>'}
+      <div class="chev">&#8250;</div></button>`;
+  }).join('') + '</div>');
+  bind('[data-mk]', e => {
+    const c = e.currentTarget.dataset.mk;
+    startQuiz({ codes: [c], n: 20, mode: 'exam', title: byCode[c].name });
+  });
+
+  if (S.hist.length) {
+    html('<h2 class="sec">Recent attempts</h2><div class="grp">' + S.hist.slice(0, 10).map(h =>
+      `<div class="row"><div class="ic" style="background:var(--${h.p >= PASS_MARK ? 'green' : 'red'})">${h.p}</div>
+        <div class="tx"><b>${esc(h.t)}</b><i>${h.c}/${h.n} correct · ${new Date(h.d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</i></div>
+        <span class="bdg ${h.p >= PASS_MARK ? 'g' : 'r'}">${h.p >= PASS_MARK ? 'Pass' : 'Fail'}</span></div>`).join('') + '</div>');
+    html(`<button class="btn grey sm" style="margin-top:12px" id="clrH">Clear history</button>`);
+    $('#clrH').onclick = () => { S.hist = []; save(); render(); };
+  }
+
+  html(`<div class="foot">Pass mark 75%, no negative marking — so never leave a question blank.<br>
+    These questions were written for this app; they are not the CAA question bank.</div>`);
+};
+
+/** A mock that draws an equal number from every subject. */
+function startBalanced(per, mode, title) {
+  let qs = [];
+  SUBJECTS.forEach(s => { qs = qs.concat(shuffle(bank([s.code])).slice(0, per)); });
+  shuffle(qs);
+  Q = {
+    qs: qs.map(q => {
+      const pairs = q.a.map((t, i) => ({ t: t, ok: i === q.c }));
+      shuffle(pairs);
+      return { code: q.code, q: q.q, opts: pairs.map(x => x.t), c: pairs.findIndex(x => x.ok), why: q.why, ref: q.ref };
+    }),
+    at: 0, ans: new Array(qs.length).fill(-1), mode: mode, title: title, t0: Date.now(),
+    codes: SUBJECTS.map(s => s.code)
+  };
+  go('quizrun');
+}
+
+VIEWS.quizrun = function () {
+  const q = Q.qs[Q.at], n = Q.qs.length;
+  const chosen = Q.ans[Q.at];
+  const reveal = Q.mode === 'practice' && chosen >= 0;
+  navbar(Q.title, `<button id="qQuit" style="color:var(--blue)">End</button>`);
+  $('#qQuit').onclick = () => { if (confirm('End this quiz? Your answers so far will be scored.')) finishQuiz(); };
+
+  html(`<div class="qwrap">
+    <div class="qmeta"><span>Question ${Q.at + 1} of ${n}</span>
+      <span style="color:var(--${META[q.code].c})">${esc(byCode[q.code].name)}</span></div>
+    <div class="pbar"><i style="width:${(Q.at + 1) / n * 100}%"></i></div>
+    <div class="qtext">${esc(q.q)}</div>
+    <div id="opts">${q.opts.map((o, i) => {
+      let cls = '';
+      if (reveal) cls = i === q.c ? ' ok' : (i === chosen ? ' no' : '');
+      else if (i === chosen) cls = ' sel';
+      return `<button class="opt${cls}" data-o="${i}"${reveal ? ' disabled' : ''}>
+        <span class="lt">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`;
+    }).join('')}</div>
+    ${reveal ? `<div class="why"><b>${chosen === q.c ? 'Correct.' : 'Not quite.'}</b> ${q.why}
+      ${q.ref ? `<span class="ref">${esc(q.ref)}</span>` : ''}</div>` : ''}
+  </div>`);
+
+  bind('[data-o]', e => {
+    Q.ans[Q.at] = +e.currentTarget.dataset.o;
+    if (Q.mode === 'practice') render();
+    else { if (Q.at < n - 1) { Q.at++; render(); } else render(); }
+  });
+
+  const answeredAll = Q.ans.every(a => a >= 0);
+  const btns = [];
+  if (Q.at > 0) btns.push('<button class="btn grey" id="qPrev">&#8249; Back</button>');
+  if (Q.at < n - 1) btns.push(`<button class="btn${chosen < 0 ? ' sec' : ''}" id="qNext">Next &#8250;</button>`);
+  else btns.push(`<button class="btn grn" id="qDone">Finish${answeredAll ? '' : ' (' + Q.ans.filter(a => a < 0).length + ' blank)'}</button>`);
+  html(`<div class="qfoot"><div class="brow">${btns.join('')}</div></div>`);
+  if ($('#qPrev')) $('#qPrev').onclick = () => { Q.at--; render(); };
+  if ($('#qNext')) $('#qNext').onclick = () => { Q.at++; render(); };
+  if ($('#qDone')) $('#qDone').onclick = finishQuiz;
+};
+
+function finishQuiz() {
+  const correct = Q.qs.reduce((a, q, i) => a + (Q.ans[i] === q.c ? 1 : 0), 0);
+  Q.correct = correct;
+  Q.pct = Math.round(correct / Q.qs.length * 100);
+  Q.secs = Math.round((Date.now() - Q.t0) / 1000);
+  S.hist.unshift({ t: Q.title, n: Q.qs.length, c: correct, p: Q.pct, d: Date.now() });
+  S.hist = S.hist.slice(0, 40);
+  if (Q.codes.length === 1) {
+    const c = Q.codes[0];
+    if (S.best[c] == null || Q.pct > S.best[c]) S.best[c] = Q.pct;
+  }
+  save();
+  stack.pop();            // drop quizrun so Back from results lands sensibly
+  go('quizres');
+}
+
+VIEWS.quizres = function () {
+  const pass = Q.pct >= PASS_MARK;
+  navbar('Result', '');
+  html(`<div class="score">
+    <div style="position:relative">${ring(Q.pct, 150, pass ? 'green' : 'red', 11)}
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div class="big" style="color:var(--${pass ? 'green' : 'red'})">${Q.pct}<span style="font-size:26px">%</span></div>
+      </div></div>
+    <div class="lbl" style="color:var(--${pass ? 'green' : 'red'})">${pass ? 'Pass' : 'Below the pass mark'}</div>
+    <div class="sub">${Q.correct} of ${Q.qs.length} correct · pass mark ${PASS_MARK}% ·
+      ${Math.floor(Q.secs / 60)}m ${Q.secs % 60}s</div></div>`);
+
+  // per-subject breakdown when the quiz spanned more than one
+  if (Q.codes.length > 1) {
+    const by = {};
+    Q.qs.forEach((q, i) => {
+      by[q.code] = by[q.code] || { n: 0, c: 0 };
+      by[q.code].n++; if (Q.ans[i] === q.c) by[q.code].c++;
+    });
+    html('<h2 class="sec">By subject</h2><div class="grp">' + Object.keys(by).sort().map(c => {
+      const b = by[c], p = Math.round(b.c / b.n * 100);
+      return `<div class="row"><div class="ic" style="background:var(--${META[c].c})">${c}</div>
+        <div class="tx"><b>${esc(byCode[c].name)}</b><i>${b.c} of ${b.n} correct</i>
+        <div class="pbar" style="margin-top:7px"><i style="width:${p}%;background:var(--${p >= PASS_MARK ? 'green' : 'orange'})"></i></div></div>
+        <div class="val">${p}%</div></div>`;
+    }).join('') + '</div>');
+  }
+
+  const wrong = Q.qs.map((q, i) => i).filter(i => Q.ans[i] !== Q.qs[i].c);
+  html(`<div class="brow" style="margin-top:18px">
+    <button class="btn" id="rv">Review ${wrong.length ? 'mistakes' : 'answers'}</button>
+    <button class="btn sec" id="ag">Try again</button></div>`);
+  $('#rv').onclick = () => go('quizreview', { only: wrong.length ? 'wrong' : 'all' });
+  $('#ag').onclick = () => {
+    stack.pop();
+    startQuiz({ codes: Q.codes, n: Q.qs.length, mode: Q.mode, title: Q.title });
+  };
+  html(`<button class="btn grey" style="margin-top:10px" id="dn">Done</button>`);
+  $('#dn').onclick = () => tab('quiz');
+};
+
+VIEWS.quizreview = function (p) {
+  const only = p.only;
+  navbar('Review', '');
+  const idxs = Q.qs.map((q, i) => i).filter(i => only !== 'wrong' || Q.ans[i] !== Q.qs[i].c);
+  html(`<div class="seg" id="rvseg">
+    <button data-x="wrong" aria-selected="${only === 'wrong'}">Mistakes (${Q.qs.length - Q.correct})</button>
+    <button data-x="all" aria-selected="${only === 'all'}">All (${Q.qs.length})</button></div>`);
+  bind('#rvseg button', e => { stack[stack.length - 1].p = { only: e.currentTarget.dataset.x }; render(); });
+
+  if (!idxs.length) { html(`<div class="empty"><div class="em">&#127881;</div><h3>Nothing wrong</h3><p>Every question correct.</p></div>`); return; }
+
+  idxs.forEach(i => {
+    const q = Q.qs[i], a = Q.ans[i];
+    html(`<div style="margin:20px 0 0">
+      <div class="qmeta"><span>Question ${i + 1}</span><span class="mono">${q.code}</span></div>
+      <div class="qtext" style="font-size:18px;margin:6px 0 12px">${esc(q.q)}</div>
+      ${q.opts.map((o, j) => `<div class="opt${j === q.c ? ' ok' : (j === a ? ' no' : '')}">
+        <span class="lt">${'ABCD'[j]}</span><span>${esc(o)}</span></div>`).join('')}
+      <div class="why"><b>${a === q.c ? 'You were right.' : (a < 0 ? 'Left blank.' : 'You chose ' + 'ABCD'[a] + '.')}</b>
+        ${q.why}${q.ref ? `<span class="ref">${esc(q.ref)}</span>` : ''}</div></div>`);
+  });
+  html(`<button class="btn grey" style="margin-top:22px" id="dn2">Done</button>`);
+  $('#dn2').onclick = () => tab('quiz');
+};
+
+/* ============================ FLASHCARDS (SM-2 style) ============================ */
+
+function allCards() {
+  const out = [];
+  SUBJECTS.forEach(s => (SC[s.code].cards || []).forEach((c, i) =>
+    out.push({ key: s.code + ':' + i, code: s.code, f: c.f, b: c.b, ref: c.ref })));
+  return out;
+}
+function dueCards(codes) {
+  const now = Date.now();
+  return allCards().filter(c => {
+    if (codes && codes.indexOf(c.code) < 0) return false;
+    const r = S.srs[c.key];
+    return r && r.due <= now;
+  });
+}
+function newCards(codes) {
+  return allCards().filter(c => !S.srs[c.key] && (!codes || codes.indexOf(c.code) >= 0));
+}
+
+/** Grade 1 Again, 2 Hard, 3 Good, 4 Easy. Intervals in days. */
+function grade(key, g) {
+  const r = S.srs[key] || { ease: 2.5, iv: 0, reps: 0 };
+  if (g === 1) { r.ease = Math.max(1.3, r.ease - 0.2); r.iv = 0; r.reps = 0; }
+  else if (g === 2) { r.ease = Math.max(1.3, r.ease - 0.15); r.iv = r.iv ? Math.max(1, r.iv * 1.2) : 1; r.reps++; }
+  else if (g === 3) { r.iv = r.iv ? r.iv * r.ease : 1; r.reps++; }
+  else { r.ease = Math.min(3.0, r.ease + 0.15); r.iv = r.iv ? r.iv * r.ease * 1.3 : 4; r.reps++; }
+  r.iv = Math.min(r.iv, 365);
+  // "Again" comes back in ten minutes rather than tomorrow, so the session teaches it
+  r.due = g === 1 ? Date.now() + 6e5 : Date.now() + r.iv * DAY;
+  r.last = Date.now();
+  S.srs[key] = r;
+  save();
+  return r;
+}
+function ivLabel(key, g) {
+  const r = S.srs[key] || { ease: 2.5, iv: 0 };
+  let iv;
+  if (g === 1) return '10m';
+  if (g === 2) iv = r.iv ? Math.max(1, r.iv * 1.2) : 1;
+  else if (g === 3) iv = r.iv ? r.iv * r.ease : 1;
+  else iv = r.iv ? r.iv * r.ease * 1.3 : 4;
+  iv = Math.min(iv, 365);
+  if (iv < 1) return '1d';
+  if (iv < 10) return (Math.round(iv * 10) / 10) + 'd';
+  if (iv < 60) return Math.round(iv) + 'd';
+  return Math.round(iv / 30) + 'mo';
+}
+
+let CARD = null;
+
+VIEWS.cards = function () {
+  const codes = S.cardSubs && S.cardSubs.length ? S.cardSubs : null;
+  const due = dueCards(codes), fresh = newCards(codes);
+  const usedToday = S.newToday[todayKey()] || 0;
+  const newAvail = Math.max(0, NEW_CARDS_PER_DAY - usedToday);
+  const learned = allCards().filter(c => S.srs[c.key]).length;
+  const total = allCards().length;
+
+  html(`<div class="hd"><h1>Flashcards</h1>
+    <div class="sub">Spaced repetition across ${total} cards</div></div>`);
+
+  html(`<div class="tiles">
+    <div class="tile"><div class="k">Due now</div>
+      <div class="n" style="color:var(--${due.length ? 'orange' : 'green'})">${due.length}</div>
+      <div class="s">${due.length ? 'ready to review' : 'all caught up'}</div></div>
+    <div class="tile"><div class="k">New today</div>
+      <div class="n" style="color:var(--blue)">${Math.min(newAvail, fresh.length)}</div>
+      <div class="s">${fresh.length} never seen</div></div></div>`);
+
+  html(`<div class="card" style="margin-top:12px">
+    <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--tx2);margin-bottom:8px">
+      <span>${learned} of ${total} cards started</span><span>${Math.round(learned / total * 100)}%</span></div>
+    <div class="pbar"><i style="width:${learned / total * 100}%;background:var(--green)"></i></div></div>`);
+
+  const n = due.length + Math.min(newAvail, fresh.length);
+  html(`<button class="btn ${n ? '' : 'grey'}" style="margin-top:16px" id="startS"${n ? '' : ' disabled'}>
+    ${n ? 'Start session · ' + n + ' card' + (n === 1 ? '' : 's') : 'Nothing due right now'}</button>`);
+  if (n) $('#startS').onclick = () => startCards(codes);
+
+  if (!n && fresh.length) html(`<div class="note b" style="margin-top:12px"><b>Daily new-card limit reached</b>
+    You have introduced ${usedToday} new cards today. That cap keeps tomorrow's review pile manageable —
+    come back tomorrow, or lift it below.</div>
+    <button class="btn sec" style="margin-top:10px" id="more">Add 10 more today</button>`);
+  if ($('#more')) $('#more').onclick = () => { S.newToday[todayKey()] = Math.max(0, usedToday - 10); save(); render(); };
+
+  html('<h2 class="sec">Filter by subject</h2><div class="grp">' + SUBJECTS.map(s => {
+    const on = !codes || codes.indexOf(s.code) >= 0;
+    const d = dueCards([s.code]).length, tot = SC[s.code].cards.length;
+    return `<button class="row" data-cs="${s.code}">
+      <div class="ic" style="background:var(--${on ? META[s.code].c : 'tx3'})">${s.code}</div>
+      <div class="tx"><b>${esc(s.name)}</b><i>${tot} cards${d ? ' · ' + d + ' due' : ''}</i></div>
+      <div class="val" style="color:var(--${on ? 'blue' : 'tx3'})">${on ? '&#10003;' : ''}</div></button>`;
+  }).join('') + '</div>');
+  bind('[data-cs]', e => {
+    const c = e.currentTarget.dataset.cs;
+    let cur = S.cardSubs && S.cardSubs.length ? S.cardSubs.slice() : SUBJECTS.map(s => s.code);
+    cur = cur.indexOf(c) >= 0 ? cur.filter(x => x !== c) : cur.concat([c]);
+    if (!cur.length) cur = SUBJECTS.map(s => s.code);
+    S.cardSubs = cur.length === SUBJECTS.length ? null : cur;
+    save(); render();
+  });
+
+  html(`<button class="btn grey sm" style="margin-top:14px" id="rst">Reset all card scheduling</button>`);
+  $('#rst').onclick = () => {
+    if (confirm('Reset spaced repetition for every card? Your article and objective progress is not affected.')) {
+      S.srs = {}; S.newToday = {}; save(); render();
+    }
+  };
+  html(`<div class="foot">Again returns the card in ten minutes. Hard, Good and Easy space it out
+    using an SM-2 style interval that grows each time you get it right.</div>`);
+};
+
+function startCards(codes) {
+  const usedToday = S.newToday[todayKey()] || 0;
+  const newAvail = Math.max(0, NEW_CARDS_PER_DAY - usedToday);
+  const q = shuffle(dueCards(codes)).concat(shuffle(newCards(codes)).slice(0, newAvail));
+  CARD = { q: q, done: 0, total: q.length, show: false, again: 0 };
+  go('cardrun');
+}
+
+VIEWS.cardrun = function () {
+  if (!CARD || !CARD.q.length) {
+    navbar('Flashcards', '');
+    html(`<div class="empty"><div class="em">&#9989;</div><h3>Session complete</h3>
+      <p>${CARD ? CARD.done : 0} cards reviewed.${CARD && CARD.again ? ' ' + CARD.again + ' marked Again will come back in ten minutes.' : ''}</p></div>`);
+    html(`<button class="btn" id="cd">Done</button>`);
+    $('#cd').onclick = () => tab('cards');
+    return;
+  }
+  const c = CARD.q[0];
+  navbar('Flashcards', `<span style="color:var(--tx2);font-size:15px">${CARD.done}/${CARD.total}</span>`);
+  html(`<div class="pbar" style="margin-top:12px"><i style="width:${CARD.done / CARD.total * 100}%"></i></div>
+    <div style="margin-top:10px"><span class="bdg" style="background:var(--${META[c.code].c});color:#fff">${c.code} ${esc(byCode[c.code].name)}</span>
+    ${S.srs[c.key] ? '' : '<span class="bdg b" style="margin-left:6px">New</span>'}</div>`);
+
+  html(`<div class="fc">
+    <div class="q">${esc(c.f)}</div>
+    ${CARD.show ? `<div class="hr"></div><div class="a">${esc(c.b)}</div>
+      ${c.ref ? `<div class="rf">${esc(c.ref)}</div>` : ''}` : ''}
+  </div>`);
+
+  if (!CARD.show) {
+    html(`<button class="btn" style="margin-top:14px" id="rev">Show answer</button>`);
+    $('#rev').onclick = () => { CARD.show = true; render(); };
+  } else {
+    html(`<div class="grades">
+      <button class="g1" data-g="1">Again<small>${ivLabel(c.key, 1)}</small></button>
+      <button class="g2" data-g="2">Hard<small>${ivLabel(c.key, 2)}</small></button>
+      <button class="g3" data-g="3">Good<small>${ivLabel(c.key, 3)}</small></button>
+      <button class="g4" data-g="4">Easy<small>${ivLabel(c.key, 4)}</small></button></div>`);
+    bind('[data-g]', e => {
+      const g = +e.currentTarget.dataset.g;
+      const isNew = !S.srs[c.key];
+      grade(c.key, g);
+      if (isNew) { const k = todayKey(); S.newToday[k] = (S.newToday[k] || 0) + 1; }
+      CARD.q.shift();
+      if (g === 1) { CARD.q.push(c); CARD.again++; CARD.total++; }
+      CARD.done++; CARD.show = false;
+      save(); render();
+    });
+  }
+};
+
+/* ============================ PLAN ============================ */
+
+VIEWS.plan = function () {
+  const p = passed();
+  html(`<div class="hd"><h1>Plan</h1><div class="sub">The clock, the attempts, and the order to sit them in</div></div>`);
+
+  html(`<div class="card">
+    <div class="fld"><label class="f">Date of your first exam attempt</label>
+      <input type="date" id="d1" value="${S.d1}"></div>
+    <div class="fld"><label class="f">Date your ninth exam was passed</label>
+      <input type="date" id="d2" value="${S.d2}"></div></div>`);
+  $('#d1').onchange = e => { S.d1 = e.target.value; save(); render(); };
+  $('#d2').onchange = e => { S.d2 = e.target.value; save(); render(); };
+
+  const dl = deadline18(S.d1), vd = deadline24(S.d2);
+  html(`<div class="tiles" style="margin-top:12px">
+    <div class="tile"><div class="k">Exams passed</div><div class="n">${p}<span style="font-size:18px;color:var(--tx2)">/9</span></div>
+      <div class="s">${p === 9 ? 'complete set' : (9 - p) + ' to go'}</div></div>
+    ${dl ? tileFor('18-month deadline', dl, p >= 9) : `<div class="tile"><div class="k">18-month window</div>
+      <div class="n" style="color:var(--tx3)">—</div><div class="s">Not started</div></div>`}
+    ${vd ? tileFor('Apply by', vd, false) : `<div class="tile"><div class="k">24-month validity</div>
+      <div class="n" style="color:var(--tx3)">—</div><div class="s">Set once all nine pass</div></div>`}
+    <div class="tile"><div class="k">Attempts at risk</div>
+      <div class="n" style="color:var(--${SUBJECTS.some(s => sub(s.code).att >= 3 && sub(s.code).st !== 'passed') ? 'red' : 'green'})">
+        ${SUBJECTS.filter(s => sub(s.code).att >= 3 && sub(s.code).st !== 'passed').length}</div>
+      <div class="s">subjects on 3 of 4</div></div>
+  </div>`);
+
+  // --- risk watch
+  html('<h2 class="sec">Risk watch</h2>');
+  risks().forEach(r => html(`<div class="note ${r[0]}"><b>${esc(r[1])}</b>${r[2]}</div>`));
+
+  // --- blocks
+  html(`<h2 class="sec">Suggested order</h2>
+    <div class="note b"><b>Sittings are not rationed for a PPL</b>
+      These blocks group subjects for study efficiency and flight-training order, not to conserve
+      sittings. See the Reference tab for the regulation.</div>`);
+  BLOCKS.forEach(b => {
+    const done = b.subs.filter(c => sub(c).st === 'passed').length;
+    html(`<div class="grp" style="margin-top:12px">
+      <div class="row" style="background:var(--card2)">
+        <div class="ic" style="background:var(--${done === b.subs.length ? 'green' : 'blue'})">${b.no}</div>
+        <div class="tx"><b style="font-weight:600">${esc(b.title)}</b></div>
+        <span class="bdg ${done === b.subs.length ? 'g' : ''}">${done}/${b.subs.length}</span></div>
+      ${b.subs.map(c => {
+        const s = byCode[c], st = sub(c), m = META[c];
+        const lbl = STATUSES.find(x => x[0] === st.st)[1];
+        return `<button class="row" data-ps="${c}">
+          <div class="ic" style="background:var(--${m.c})">${c}</div>
+          <div class="tx"><b>${esc(s.name)}</b><i>${pctLO(s)}% studied · ${st.att} of 4 attempts · ${m.book}</i></div>
+          <span class="bdg ${st.st === 'passed' ? 'g' : st.st === 'ready' ? 'o' : ''}">${lbl}</span>
+          <div class="chev">&#8250;</div></button>`;
+      }).join('')}
+      <div class="row plain"><div style="font-size:13.5px;color:var(--tx2);line-height:1.45">${b.why}</div></div>
+    </div>`);
+  });
+  bind('[data-ps]', e => go('subject', { code: e.currentTarget.dataset.ps, tab: 'ex' }));
+
+  html(`<h2 class="sec">Reference</h2><div class="grp">
+    <button class="row" id="pr1"><div class="ic" style="background:var(--indigo)">&#167;</div>
+      <div class="tx"><b>The rules that bind you</b></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="pr2"><div class="ic" style="background:var(--brown)">&#128214;</div>
+      <div class="tx"><b>Books</b></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="pr3"><div class="ic" style="background:var(--tx3)">&#8599;</div>
+      <div class="tx"><b>Sources &amp; settings</b></div><div class="chev">&#8250;</div></button></div>`);
+  $('#pr1').onclick = () => go('rules');
+  $('#pr2').onclick = () => go('books');
+  $('#pr3').onclick = () => go('sources');
+};
+
+function tileFor(k, d, muted) {
+  const n = daysTo(d);
+  const col = muted ? 'tx3' : n < 0 ? 'red' : n < 90 ? 'red' : n < 180 ? 'orange' : 'green';
+  return `<div class="tile"><div class="k">${k}</div>
+    <div class="n" style="color:var(--${col})">${n < 0 ? 'over' : n}</div>
+    <div class="s">${n < 0 ? 'expired ' + fmt(d) : 'days · ' + fmt(d)}</div></div>`;
+}
+
+function risks() {
+  const out = [], p = passed();
   const three = SUBJECTS.filter(s => sub(s.code).att >= 3 && sub(s.code).st !== 'passed');
-  if (three.length) out.push(['bad', 'Fourth attempt territory',
-    three.map(s => s.name).join(', ') + ' — you have used three attempts. A fourth failure voids '
-    + 'every pass you hold, in every subject. Do the further training your school requires and '
-    + 'do not book until you are comfortably over 75% on practice papers.']);
+  if (three.length) out.push(['r', 'Fourth attempt territory',
+    three.map(s => s.name).join(', ') + ' — three attempts used. A fourth failure voids every pass ' +
+    'you hold, in every subject. Do the further training your school requires, and do not book ' +
+    'until you are comfortably above 75% on practice papers.']);
 
   const two = SUBJECTS.filter(s => sub(s.code).att === 2 && sub(s.code).st !== 'passed');
-  if (two.length) out.push(['warn', 'Two attempts used',
-    two.map(s => s.name).join(', ') + ' — one more failure puts you into the further-training '
-    + 'requirement before a fourth and final attempt.']);
+  if (two.length) out.push(['o', 'Two attempts used',
+    two.map(s => s.name).join(', ') + ' — one more failure and you are into the further-training ' +
+    'requirement before a fourth and final attempt.']);
 
-  const dl = eighteenMonthDeadline(S.d1);
-  const passed = SUBJECTS.filter(s => sub(s.code).st === 'passed').length;
-  if (dl && passed < 9) {
-    const n = daysTo(dl);
-    const left = 9 - passed;
-    const per = Math.floor(n / left);            // days available per remaining exam
-    const s = left > 1 ? 's' : '';
-    if (n < 0) {
-      out.push(['bad', '18-month window has expired',
-        'Under FCL.025(b)(4) the complete set must be retaken. Speak to your school and the CAA '
-        + 'before booking anything else.']);
-    } else if (per < 21) {
-      out.push(['bad', left + ' exam' + s + ' left, ' + n + ' days, ' + per + ' days each',
-        'That is tighter than a single resit cycle allows — a failed paper cannot be re-sat inside '
-        + 'the same sitting window. Miss ' + fmt(dl) + ' and all nine papers must be retaken. '
-        + 'Talk to your school this week about a booking plan.']);
-    } else if (per < 45) {
-      out.push(['warn', left + ' exam' + s + ' left, ' + n + ' days, ' + per + ' days each',
-        'Workable but with little slack. Sit the subjects you are strongest in first so that any '
-        + 'resit has room before ' + fmt(dl) + '.']);
-    } else if (n < 180) {
-      out.push(['warn', 'Deadline inside six months',
-        left + ' exam' + s + ' to pass by ' + fmt(dl) + ' — about ' + per
-        + ' days per exam, which leaves room for one resit each.']);
-    }
+  const dl = deadline18(S.d1);
+  if (dl && p < 9) {
+    const n = daysTo(dl), left = 9 - p, per = Math.floor(n / left), s = left > 1 ? 's' : '';
+    if (n < 0) out.push(['r', '18-month window has expired',
+      'Under FCL.025(b)(4) the complete set must be retaken. Speak to your school and the CAA before booking anything.']);
+    else if (per < 21) out.push(['r', left + ' exam' + s + ' left, ' + n + ' days, ' + per + ' days each',
+      'Tighter than a single resit cycle allows — a failed paper cannot be re-sat inside the same sitting window. ' +
+      'Miss ' + fmt(dl) + ' and all nine must be retaken.']);
+    else if (per < 45) out.push(['o', left + ' exam' + s + ' left, ' + n + ' days, ' + per + ' days each',
+      'Workable but with little slack. Sit your strongest subjects first so a resit has room before ' + fmt(dl) + '.']);
+    else if (n < 180) out.push(['o', 'Deadline inside six months',
+      left + ' exam' + s + ' by ' + fmt(dl) + ' — about ' + per + ' days each, room for one resit apiece.']);
   }
-  if (!S.d1 && passed === 0) out.push(['', 'Nothing at risk yet',
-    'Your 18-month clock has not started. It starts at the end of the calendar month in which '
-    + 'you first sit any paper — so sit exam one only when you are genuinely into ground school, '
-    + 'not as a way of feeling started.']);
+  if (!S.d1 && p === 0) out.push(['b', 'Nothing at risk yet',
+    'Your 18-month clock has not started. It starts at the end of the calendar month in which you ' +
+    'first sit any paper — so sit exam one when you are genuinely into ground school, not as a way ' +
+    'of feeling started.']);
 
-  const vd = validityDeadline(S.d2);
-  if (vd && daysTo(vd) < 180 && daysTo(vd) >= 0)
-    out.push(['warn', 'Theory validity running down',
-      'Your completed set expires ' + fmt(vd) + '. The licence application must be in by then.']);
+  const vd = deadline24(S.d2);
+  if (vd && daysTo(vd) >= 0 && daysTo(vd) < 180) out.push(['o', 'Theory validity running down',
+    'Your completed set expires ' + fmt(vd) + '. The licence application must be in by then.']);
+  if (p === 9 && !S.d2) out.push(['o', 'Add your final pass date',
+    'All nine are marked passed but the completion date is blank, so the 24-month clock is not being tracked.']);
 
-  if (passed === 9 && !S.d2) out.push(['warn', 'Add your final pass date',
-    'All nine are marked passed but the completion date is blank, so the 24-month clock is not '
-    + 'being tracked.']);
-
-  if (!out.length) out.push(['ok', 'Nothing flagged', 'No attempt or deadline risks detected.']);
-  out.forEach(([cls, h, b]) => box.appendChild(
-    el('div', 'note' + (cls ? ' ' + cls : ''), '<b>' + h + '</b>' + b)));
+  if (!out.length) out.push(['g', 'Nothing flagged', 'No attempt or deadline risks detected.']);
+  return out;
 }
 
-function renderBlocks() {
-  const box = $('#blocks');
-  box.textContent = '';
-  BLOCKS.forEach(b => {
-    const subs = b.subjects.map(c => byCode[c]);
-    const passed = subs.filter(s => sub(s.code).st === 'passed').length;
-    const pct = Math.round(subs.reduce((a, s) =>
-      a + doneLOs(s) / Math.max(1, allLOs(s)), 0) / subs.length * 100);
+/* ============================ REFERENCE ============================ */
 
-    const blk = el('div', 'blk');
-    const h = el('div', 'h');
-    h.appendChild(el('div', 'no', b.no));
-    h.appendChild(el('div', 't', b.title));
-    h.appendChild(el('span', 'pill' + (passed === subs.length ? ' ok' : ''),
-      passed + '/' + subs.length + ' passed'));
-    blk.appendChild(h);
-
-    const body = el('div', 'b');
-    subs.forEach(s => {
-      const st = sub(s.code);
-      const r = el('div', 'srow');
-      r.appendChild(el('div', 'code', s.code));
-      r.appendChild(el('div', 'nm', s.name +
-        '<i>' + doneLOs(s) + ' of ' + allLOs(s) + ' objectives studied · ' +
-        BOOKS[s.code][0] + '</i>'));
-      const lbl = STATUSES.find(x => x[0] === st.st)[1];
-      r.appendChild(el('span', 'pill' + (st.st === 'passed' ? ' ok' :
-        st.st === 'ready' ? ' warn' : ''), lbl));
-      body.appendChild(r);
-    });
-    const bar = el('div', 'bar');
-    bar.style.margin = '10px 0 8px';
-    bar.appendChild(el('i')).style.width = pct + '%';
-    body.appendChild(bar);
-    body.appendChild(el('p', 'tiny', b.unlocks));
-    blk.appendChild(body);
-    box.appendChild(blk);
-  });
+function ruleList(list) {
+  return list.map(r => `<div class="card">
+    <div style="font-size:17px;font-weight:600;margin-bottom:2px">${r.h}</div>
+    ${r.cite ? `<div class="mono" style="font-size:12px;color:var(--tx3);margin-bottom:8px">${esc(r.cite)}</div>` : ''}
+    <div style="font-size:15.5px;line-height:1.5;color:var(--tx2)">${r.b}</div>
+    ${r.q ? `<div style="margin-top:11px;padding:11px 13px;background:var(--card2);border-radius:10px;
+      font-size:14.5px;line-height:1.5">${r.q}</div>` : ''}</div>`).join('');
 }
 
-function renderStatusTable() {
-  const t = $('#statusTable');
-  t.innerHTML = '<thead><tr><th>#</th><th>Subject</th><th>Status</th>' +
-    '<th>Attempts</th><th>Score</th><th>Passed</th></tr></thead>';
-  const tb = el('tbody');
-  SUBJECTS.slice().sort((a, b) => SUBJ_BLOCK[a.code] - SUBJ_BLOCK[b.code] ||
-    a.code.localeCompare(b.code)).forEach(s => {
-    const st = sub(s.code);
-    const tr = el('tr');
-    tr.appendChild(el('td', 'mono', s.code));
-    tr.appendChild(el('td', null, s.name));
-    const lbl = STATUSES.find(x => x[0] === st.st)[1];
-    tr.appendChild(el('td', null, '<span class="pill' + (st.st === 'passed' ? ' ok' :
-      st.st === 'ready' ? ' warn' : '') + '">' + lbl + '</span>'));
-    tr.appendChild(el('td', 'mono', st.att >= 3 && st.st !== 'passed'
-      ? '<span class="pill bad">' + st.att + ' of 4</span>'
-      : st.att + ' of 4'));
-    tr.appendChild(el('td', 'mono', st.score ? st.score + '%' : '—'));
-    tr.appendChild(el('td', 'mono', st.date ? fmt(new Date(st.date + 'T00:00:00')) : '—'));
-    tb.appendChild(tr);
-  });
-  t.appendChild(tb);
-}
-
-// ---------------------------------------------------------------- render: subjects
-
-function sortedSubjects() {
-  const m = $('#sortSel').value;
-  const a = SUBJECTS.slice();
-  if (m === 'block') a.sort((x, y) => SUBJ_BLOCK[x.code] - SUBJ_BLOCK[y.code] ||
-    x.code.localeCompare(y.code));
-  else if (m === 'progress') a.sort((x, y) =>
-    doneLOs(x) / allLOs(x) - doneLOs(y) / allLOs(y));
-  else a.sort((x, y) => x.code.localeCompare(y.code));
-  return a;
-}
-
-function renderSubjects() {
-  const box = $('#subjects');
-  const open = new Set([...box.querySelectorAll('details.subj[open]')]
-    .map(d => d.dataset.code));
-  box.textContent = '';
-  const filter = $('#filter').value;
-
-  sortedSubjects().forEach(s => {
-    const st = sub(s.code), tot = allLOs(s), done = doneLOs(s);
-    const pct = Math.round(done / tot * 100);
-
-    const d = el('details', 'subj');
-    d.dataset.code = s.code;
-    if (open.has(s.code)) d.open = true;
-
-    const sum = el('summary');
-    sum.appendChild(el('span', 'code', s.code));
-    sum.appendChild(el('span', 'nm', s.name +
-      '<i>Block ' + SUBJ_BLOCK[s.code] + ' · ' + BOOKS[s.code][0] + ' · ' +
-      s.cap + ' (' + s.version + ')</i>'));
-    if (st.st === 'passed') sum.appendChild(el('span', 'pill ok', 'passed'));
-    sum.appendChild(el('span', 'pc', pct + '%'));
-    d.appendChild(sum);
-
-    const body = el('div', 'body');
-    const bar = el('div', 'bar');
-    bar.style.margin = '12px 0 0';
-    bar.appendChild(el('i')).style.width = pct + '%';
-    body.appendChild(bar);
-    body.appendChild(el('p', 'tiny', done + ' of ' + tot +
-      ' learning objectives studied'));
-
-    // ---- per-subject controls
-    const ctl = el('div', 'ctl');
-    const mk = (lab, node) => {
-      const w = el('div');
-      w.appendChild(el('label', 'f', lab));
-      w.appendChild(node);
-      return w;
-    };
-    const sel = el('select');
-    STATUSES.forEach(([v, l]) => {
-      const o = el('option', null, l);
-      o.value = v;
-      if (v === st.st) o.selected = true;
-      sel.appendChild(o);
-    });
-    sel.onchange = () => { st.st = sel.value; save(); renderAll(); };
-    ctl.appendChild(mk('Status', sel));
-
-    const att = el('select');
-    [0, 1, 2, 3, 4].forEach(v => {
-      const o = el('option', null, v + ' of 4');
-      o.value = v;
-      if (v === st.att) o.selected = true;
-      att.appendChild(o);
-    });
-    att.onchange = () => { st.att = +att.value; save(); renderAll(); };
-    ctl.appendChild(mk('Attempts used', att));
-
-    const sc = el('input');
-    sc.type = 'number'; sc.min = 0; sc.max = 100; sc.placeholder = '%';
-    sc.value = st.score;
-    sc.oninput = () => { st.score = sc.value; save(); renderStatusTable(); };
-    ctl.appendChild(mk('Score', sc));
-
-    const dt = el('input');
-    dt.type = 'date'; dt.value = st.date;
-    dt.onchange = () => { st.date = dt.value; save(); renderStatusTable(); };
-    ctl.appendChild(mk('Date passed', dt));
-    body.appendChild(ctl);
-
-    // ---- learning objectives
-    let shown = 0;
-    s.groups.forEach(g => {
-      const items = g.items.filter(i =>
-        filter === 'all' || (filter === 'done') === !!S.lo[i.c]);
-      if (!items.length) return;
-      shown += items.length;
-      const gt = el('div', 'gtitle');
-      gt.appendChild(el('span', null, g.code));
-      gt.appendChild(el('div', null, g.title));
-      body.appendChild(gt);
-      items.forEach(i => {
-        const lab = el('label', 'lo' + (S.lo[i.c] ? ' done' : ''));
-        const cb = el('input');
-        cb.type = 'checkbox';
-        cb.checked = !!S.lo[i.c];
-        cb.onchange = () => {
-          if (cb.checked) S.lo[i.c] = 1; else delete S.lo[i.c];
-          save();
-          lab.classList.toggle('done', cb.checked);
-          if (filter !== 'all') renderSubjects();
-          else { refreshSubjHead(s, d); renderRing(); }
-        };
-        lab.appendChild(cb);
-        lab.appendChild(el('span', null, i.t +
-          (i.a ? '' : '<span class="ctx" title="printed in CAP2090 but not ticked in the PPL Aeroplane column">CTX</span>') +
-          '<em>' + i.c + '</em>'));
-        body.appendChild(lab);
-      });
-    });
-    if (!shown) body.appendChild(el('p', 'tiny', 'Nothing matches the current filter.'));
-    d.appendChild(body);
-    box.appendChild(d);
-  });
-}
-
-function refreshSubjHead(s, d) {
-  const pct = Math.round(doneLOs(s) / allLOs(s) * 100);
-  d.querySelector('summary .pc').textContent = pct + '%';
-  d.querySelector('.body .bar i').style.width = pct + '%';
-  d.querySelector('.body p.tiny').textContent =
-    doneLOs(s) + ' of ' + allLOs(s) + ' learning objectives studied';
-}
-
-// ---------------------------------------------------------------- render: static tabs
-
-function renderRuleList(id, list) {
-  const box = $(id);
-  box.textContent = '';
-  list.forEach(r => {
-    const d = el('div', 'rule');
-    d.appendChild(el('h3', null, r.h +
-      (r.cite ? ' <span class="cite">' + r.cite + '</span>' : '')));
-    d.appendChild(el('div', 'muted', r.b));
-    if (r.q) d.appendChild(el('blockquote', null, r.q));
-    box.appendChild(d);
-  });
-}
-
-function renderBooks() {
-  const t = $('#booksTable');
-  t.innerHTML = '<thead><tr><th>#</th><th>Exam subject</th><th>Volume</th>' +
-    '<th>Title / coverage</th><th>Edition</th></tr></thead>';
-  const tb = el('tbody');
-  SUBJECTS.slice().sort((a, b) => a.code.localeCompare(b.code)).forEach(s => {
-    const [v, title, ed] = BOOKS[s.code];
-    const tr = el('tr');
-    tr.appendChild(el('td', 'mono', s.code));
-    tr.appendChild(el('td', null, s.name));
-    tr.appendChild(el('td', 'mono', v));
-    tr.appendChild(el('td', null, title));
-    tr.appendChild(el('td', null, ed));
-    tb.appendChild(tr);
-  });
-  t.appendChild(tb);
-}
-
-function renderSources() {
-  const box = $('#sources');
-  box.textContent = '';
-  SOURCES.forEach(s => {
-    const d = el('div', 'src');
-    d.appendChild(el('div', 't', s.t));
-    d.appendChild(el('div', 'm', s.m));
-    const a = el('a', null, s.u);
-    a.href = s.u; a.target = '_blank'; a.rel = 'noopener';
-    const p = el('div', 'm');
-    p.appendChild(a);
-    d.appendChild(p);
-    d.appendChild(el('div', 'tiny', s.n));
-    box.appendChild(d);
-  });
-  const tot = SUBJECTS.reduce((a, s) => a + allLOs(s), 0);
-  const tick = SUBJECTS.reduce((a, s) => a + s.groups.reduce((b, g) =>
-    b + g.items.filter(i => i.a).length, 0), 0);
-  $('#loCount').textContent = tot;
-  $('#loTicked').textContent = tick;
-}
-
-// ---------------------------------------------------------------- chrome
-
-function renderRing() {
-  const tot = SUBJECTS.reduce((a, s) => a + allLOs(s), 0);
-  const done = SUBJECTS.reduce((a, s) => a + doneLOs(s), 0);
-  const pct = Math.round(done / tot * 100);
-  const C = 2 * Math.PI * 18;
-  $('#ringArc').setAttribute('stroke-dashoffset', C * (1 - pct / 100));
-  $('#ringTxt').textContent = pct + '%';
-  const passed = SUBJECTS.filter(s => sub(s.code).st === 'passed').length;
-  $('#hdSub').textContent = passed + ' of 9 exams passed · ' + done + '/' + tot +
-    ' objectives';
-}
-
-function renderAll() {
-  renderRing(); renderCountdown(); renderRisks(); renderBlocks(); renderStatusTable();
-}
-
-function show(v) {
-  ['plan', 'subjects', 'rules', 'books', 'sources'].forEach(k =>
-    $('#v-' + k).hidden = k !== v);
-  document.querySelectorAll('nav button').forEach(b =>
-    b.setAttribute('aria-selected', b.dataset.v === v));
-  window.scrollTo(0, 0);
-  if (v === 'subjects' && !$('#subjects').children.length) renderSubjects();
-}
-
-// ---------------------------------------------------------------- init
-
-document.querySelectorAll('nav button').forEach(b =>
-  b.onclick = () => show(b.dataset.v));
-document.querySelectorAll('[data-go]').forEach(b =>
-  b.onclick = () => show(b.dataset.go));
-
-$('#d1').value = S.d1;
-$('#d2').value = S.d2;
-$('#d1').onchange = e => { S.d1 = e.target.value; save(); renderAll(); };
-$('#d2').onchange = e => { S.d2 = e.target.value; save(); renderAll(); };
-$('#filter').onchange = renderSubjects;
-$('#sortSel').onchange = renderSubjects;
-
-if (S.theme) document.documentElement.dataset.theme = S.theme;
-$('#themeBtn').onclick = () => {
-  const cur = document.documentElement.dataset.theme;
-  const dark = cur ? cur === 'dark'
-    : matchMedia('(prefers-color-scheme: dark)').matches;
-  S.theme = dark ? 'light' : 'dark';
-  document.documentElement.dataset.theme = S.theme;
-  save();
+VIEWS.rules = function () {
+  navbar('Rules', '');
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">The rules that bind you</h1>
+    <div class="sub">Quoted from the CAA’s consolidated Part-FCL rulebook, page footers dated July 2026,
+    and Standards Document 11. Nothing here is from memory or a study site.</div></div>`);
+  html('<h2 class="sec">In force</h2>' + ruleList(RULES));
+  html('<h2 class="sec">Decided, not yet in force</h2>' + ruleList(PENDING));
+  html('<h2 class="sec">Not published by the CAA</h2>' + ruleList(UNKNOWNS));
 };
 
-$('#expBtn').onclick = () => {
-  const blob = new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' });
-  const a = el('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'ppl-theory-progress.json';
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+VIEWS.books = function () {
+  navbar('Books', '');
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Books</h1>
+    <div class="sub">Volumes and editions confirmed on Pooleys’ own product pages, September 2026.
+    The PPL(A) set is volumes 1–4, 6 and 7; volume 5 is not a PPL theory subject.</div></div>`);
+  html('<div class="grp">' + SUBJECTS.map(s => {
+    const [v, t, ed] = BOOKS[s.code];
+    return `<div class="row"><div class="ic" style="background:var(--${META[s.code].c})">${s.code}</div>
+      <div class="tx"><b>${esc(s.name)}</b><i>${t}<br>${ed}</i></div>
+      <span class="bdg b">${v}</span></div>`;
+  }).join('') + '</div>');
+  html(`<div class="note b" style="margin-top:16px"><b>Worth having</b>
+    Pooleys publish a free <i>PPL e-Exam Learning Objectives Guide</i> that cross-references each CAA
+    learning objective to the chapter covering it, linked from the Air Pilot’s Manual product pages.</div>`);
 };
-$('#impBtn').onclick = () => {
-  const f = el('input');
-  f.type = 'file'; f.accept = '.json,application/json';
-  f.onchange = () => {
-    const r = new FileReader();
-    r.onload = () => {
-      try {
-        S = Object.assign(blank(), JSON.parse(r.result));
-        save();
-        $('#d1').value = S.d1; $('#d2').value = S.d2;
-        renderAll(); renderSubjects();
-      } catch (e) { alert('That file could not be read as progress data.'); }
-    };
-    r.readAsText(f.files[0]);
+
+VIEWS.sources = function () {
+  navbar('Sources', '');
+  html(`<div class="hd" style="padding-top:14px"><h1 style="font-size:30px">Sources</h1>
+    <div class="sub">Every regulatory statement in this app was read from these primary documents on
+    10 September 2026 — not from memory and not from study sites.</div></div>`);
+  html('<div class="grp">' + SOURCES.map(s => `<a class="row" href="${s.u}" target="_blank" rel="noopener">
+    <div class="tx"><b>${s.t}</b><i>${s.m}</i></div><div class="chev">&#8599;</div></a>`).join('') + '</div>');
+
+  const tot = SUBJECTS.reduce((a, s) => a + allLO(s), 0);
+  const tick = SUBJECTS.reduce((a, s) => a + s.groups.reduce((b, g) => b + g.items.filter(i => i.a).length, 0), 0);
+  html(`<h2 class="sec">How the syllabus data was made</h2>
+    <div class="card"><div style="font-size:15px;line-height:1.5;color:var(--tx2)">
+      The nine CAP2090 PDFs were downloaded from caa.co.uk and parsed as tables; each row’s
+      PPL-Aeroplane tick was read straight from the table cell. That gives <b>${tot}</b> learning
+      objectives, of which <b>${tick}</b> are ticked for PPL(A). The counts were cross-checked against
+      an independent pass that classified tick marks by x-coordinate; both agreed exactly. No
+      objective text was paraphrased.</div></div>`);
+
+  html(`<h2 class="sec">Appearance</h2><div class="seg" id="thsel">
+    <button data-th="" aria-selected="${!S.theme}">System</button>
+    <button data-th="light" aria-selected="${S.theme === 'light'}">Light</button>
+    <button data-th="dark" aria-selected="${S.theme === 'dark'}">Dark</button></div>`);
+  bind('#thsel button', e => {
+    S.theme = e.currentTarget.dataset.th;
+    if (S.theme) document.documentElement.dataset.t = S.theme;
+    else document.documentElement.removeAttribute('data-t');
+    save(); render();
+  });
+
+  html(`<h2 class="sec">Your data</h2>
+    <div class="note b">Progress is stored only in this browser, never uploaded, so each device tracks
+    separately. Export to move it.</div>
+    <div class="brow" style="margin-top:12px">
+      <button class="btn sec" id="exp">Export</button>
+      <button class="btn sec" id="imp">Import</button></div>
+    <button class="btn dgr sm" style="margin-top:12px" id="wipe">Erase all progress</button>`);
+  $('#exp').onclick = () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(S)], { type: 'application/json' }));
+    a.download = 'ppl-progress.json'; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
   };
-  f.click();
+  $('#imp').onclick = () => {
+    const f = document.createElement('input');
+    f.type = 'file'; f.accept = 'application/json,.json';
+    f.onchange = () => {
+      const r = new FileReader();
+      r.onload = () => {
+        try { S = Object.assign(blank(), JSON.parse(r.result)); save(); tab('home'); }
+        catch (e) { alert('That file could not be read as progress data.'); }
+      };
+      r.readAsText(f.files[0]);
+    };
+    f.click();
+  };
+  $('#wipe').onclick = () => {
+    if (confirm('Erase all progress on this device? This cannot be undone.')) {
+      S = blank(); save(); tab('home');
+    }
+  };
+
+  html(`<div class="foot">Personal revision aid — not a CAA publication and not instruction.<br>
+    Articles, quiz questions and flashcards were written for this app; the learning objectives are
+    verbatim CAA. Confirm anything that matters with your ATO/DTO, Ground Examiner or the CAA.</div>`);
 };
 
-renderRuleList('#rules', RULES);
-renderRuleList('#pending', PENDING);
-renderRuleList('#unknowns', UNKNOWNS);
-renderBooks();
-renderSources();
-renderAll();
-renderSubjects();
+/* ============================ init ============================ */
+
+if (S.theme) document.documentElement.dataset.t = S.theme;
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => tab(b.dataset.v));
+render();
