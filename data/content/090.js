@@ -152,6 +152,44 @@ to the lips.</li>
 <li>If you are unsure of an instruction, say so. "Say again" costs three seconds.</li>
 </ul>
 
+<h3>ATIS and aerodrome weather on the radio</h3>
+<p>An ATIS is a continuous recorded broadcast of routine aerodrome information, on a discrete
+frequency or on a suitable VOR, so the unit need not read the same paragraph to every aircraft.
+Aerodromes with one, and their ATIS frequency, are listed in the <b>UK AIP</b>.</p>
+<p>The elements come in a fixed order (SERA.9010; CAP 413 4.213):</p>
+<ol>
+<li>Aerodrome name, arrival or departure, and the <b>identifying letter</b>.</li>
+<li>Time of the observation, approach to expect, and the <b>runway in use</b>.</li>
+<li>Runway surface condition, holding delay, transition level, operational information.</li>
+<li>The weather — <b>surface wind</b>, visibility and RVR, present weather, cloud, temperature,
+dew point, <b>altimeter setting(s)</b>.</li>
+<li>Trend, then any specific ATIS instructions.</li>
+</ol>
+<p>Each new broadcast takes the next letter of the alphabet. Inbound, you are normally required
+to quote the letter on first contact so the unit knows what you already hold; outbound you
+acknowledge it only if the broadcast asks you to. Two things are still passed by RT whatever
+letter you quote: the <b>current pressure setting</b>, and <b>anything that has changed</b> since
+your broadcast.</p>
+<p>Where there is no ATIS, ask — "request departure information" before start, or simply
+"request join" on the way in. You get the runway in use, a pressure setting and the surface
+wind, with visibility, RVR, weather, cloud, temperature and dew point as relevant. <b>Read back
+the runway and the pressure setting.</b></p>
+<ul>
+<li><b>Wind</b> passed by an ATS unit or an ATIS is <b>degrees magnetic</b> and knots. The wind in
+a METAR is degrees <b>true</b>, and averaged over ten minutes.</li>
+<li><b>RVR</b> is spoken as the three letters "R V R", not phonetically, in metres.</li>
+<li><b>Cloud</b> is amount and base in feet — <b>scattered is 3 to 4 oktas, broken 5 to 7,
+overcast 8</b>. <b>CAVOK is used on RT</b>, pronounced "CAV-O-KAY".</li>
+<li><b>QFE</b> is given as well as QNH where a unit works on height. The word "hectopascals" is
+added below 1000, or wherever confusion could result. A <b>Regional Pressure Setting</b> is
+passed as region name and pressure only, with no "QNH" spoken — "Wessex 1008", or "Wessex 988
+hectopascals" — and is the lowest forecast QNH in that Altimeter Setting Region for the hour.</li>
+</ul>
+<p><b>VOLMET</b> is a continuous voice broadcast of aerodrome reports for a whole group of
+aerodromes — what you tune for a diversion decision. Each report runs aerodrome, wind,
+visibility, RVR, weather, cloud, temperature, dew point, QNH, trend — with the labels left
+unspoken. Callsigns, frequencies and aerodrome lists are in the UK AIP.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>"Information" is AFIS and "Radio" is air-ground — neither can clear you to land.</li>
@@ -226,6 +264,38 @@ lost is entirely proper and is what the service is for.</li>
 serious before asking, when the same call twenty minutes earlier would have been routine. There
 is no penalty for asking, and no prize for silence.</p>
 
+<h3>Message categories and their priority</h3>
+<p>Everything passed on an aeronautical frequency belongs to a category, and the categories are
+ranked. The ranking decides who gets the frequency when two stations want it at once. It is
+examined as an ordered list, so learn it in order — it descends from "someone may die" to
+"someone may be late".</p>
+<table>
+<thead><tr><th>Order</th><th>Category</th><th>Signal</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><b>Distress</b></td><td><b>MAYDAY</b></td><td>Engine failure, forced landing</td></tr>
+<tr><td>2</td><td><b>Urgency</b></td><td><b>PAN PAN</b>, or <b>PAN PAN MEDICAL</b></td><td>A passenger taken ill; a pilot unsure of position</td></tr>
+<tr><td>3</td><td><b>Direction finding</b></td><td>None</td><td>A request for a QDM or a VDF bearing</td></tr>
+<tr><td>4</td><td><b>Flight safety</b></td><td>None</td><td>A clearance, a position report, a flight plan message</td></tr>
+<tr><td>5</td><td><b>Meteorological</b></td><td>None</td><td>The ATIS, a VOLMET, an aerodrome report passed on request</td></tr>
+<tr><td>6</td><td><b>Flight regularity</b></td><td>None</td><td>A company message — a schedule change, an engineer wanted on arrival</td></tr>
+</tbody></table>
+<p>Only the top two have a spoken signal. <b>PAN PAN MEDICAL</b> is not a medical emergency on
+board; it identifies a protected medical transport as defined in the 1949 Geneva Conventions and
+their Additional Protocols (CAP 413 8.14), and it carries urgency priority (SERA.14005
+Table S14-1).</p>
+<p>The boundary between 4 and 5 is the one that catches people. Meteorological advice of
+<b>immediate concern to an aircraft in flight or about to depart</b> is a <b>flight safety</b>
+message; routine weather is merely meteorological. Below flight regularity, CAP 413 lists four
+lower categories still — United Nations Charter messages, government messages, service
+communications and other aeronautical communications — but the six above are what is examined.</p>
+<p>The top two outrank everything, and that puts a duty on you as a listening station. On hearing
+a distress call, <b>stay off that frequency</b>. You may transmit only if the distress is
+cancelled or the distress traffic ended, the traffic has moved to another frequency, the station
+controlling the communications gives you permission, or you are yourself rendering assistance. If
+you cannot help, <b>keep listening</b> until it is evident that assistance is being provided — you
+may be the only aircraft high enough to hear both sides and relay. For urgency traffic the duty is
+lighter but real: take care not to interfere (SERA.14095, CAP 413 8.25).</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>MAYDAY and PAN PAN are each spoken <b>three times</b>.</li>
@@ -275,7 +345,15 @@ quiz: [
 { q: 'When quoting the ATIS on first contact you should include:', a: ['The full weather', 'The information letter', 'The time you heard it', 'The runway only'], c: 1, why: 'Quoting the letter tells the controller you have current information and saves a transmission.', ref: 'CAP413' },
 { q: 'Where standard phraseology does not cover a situation you should:', a: ['Invent an abbreviation', 'Use plain, concise English', 'Say nothing', 'Use the nearest standard phrase regardless of meaning'], c: 1, why: 'Plain, concise English.', ref: 'CAP413' },
 { q: 'Approximate VHF range in NM is roughly:', a: ['1.25 times the square root of height in feet', 'The square root of height in feet', 'Height in feet divided by 100', '9 times the square root of height'], c: 0, why: 'About 1.25 times the square root of the height in feet: roughly 40 NM at 1000 ft, 125 NM at 10,000 ft.', ref: 'RTF theory' },
-{ q: '"Unable" means:', a: ['Say again', 'I cannot comply with your request or instruction', 'Stand by', 'Message received'], c: 1, why: 'I cannot comply. Use it rather than silently failing to comply.', ref: 'CAP413' }
+{ q: '"Unable" means:', a: ['Say again', 'I cannot comply with your request or instruction', 'Stand by', 'Message received'], c: 1, why: 'I cannot comply. Use it rather than silently failing to comply.', ref: 'CAP413' },
+{ q: 'Which category of message ranks immediately below communications relating to direction finding?', a: ['Meteorological messages', 'Flight safety messages', 'Flight regularity messages', 'Urgency messages'], c: 1, why: 'The order is distress, urgency, direction finding, flight safety, meteorological, flight regularity. Direction finding sits above routine ATC traffic because a pilot asking for a bearing is usually a pilot who needs help finding somewhere to go.', ref: 'SERA.14005 Table S14-1' },
+{ q: 'A controller passes meteorological advice of immediate concern to an aircraft about to depart. That transmission is:', a: ['A meteorological message', 'A flight regularity message', 'A flight safety message', 'An urgency message, because it concerns safety'], c: 2, why: 'Met information splits across two categories. Advice of immediate concern to an aircraft in flight or about to depart counts as flight safety (priority 4); everything else — ATIS, VOLMET, a report passed on request — is meteorological (priority 5).', ref: 'CAP 413 9.23' },
+{ q: 'You hear a MAYDAY on the frequency you are using and you are in no position to help. You must:', a: ['Maintain silence on that frequency and keep listening until it is evident that assistance is being provided', 'Acknowledge the MAYDAY so the aircraft in distress knows it was heard', 'Change immediately to 121.500 MHz and report what you heard', 'Carry on normally — the station in distress will impose silence if it needs to'], c: 0, why: 'Distress traffic has absolute priority, so every station that hears it stays off the frequency unless the distress is cancelled or ended, the traffic has moved frequency, the controlling station gives permission, or it is itself rendering assistance. You keep listening because you may be the only station able to relay.', ref: 'SERA.14095, CAP 413 8.25' },
+{ q: 'A company asks for a message to be passed requesting an engineer meet the aircraft on arrival. That is:', a: ['A flight safety message', 'A meteorological message', 'A message that may never be passed on an ATS frequency', 'A flight regularity message'], c: 3, why: 'Flight regularity covers the servicing of aircraft, schedule changes, parts urgently required and similar operating traffic. It is the lowest of the six categories, so an ATS unit handles it only when doing so does not interfere with its primary role.', ref: 'CAP 413 9.21-9.22' },
+{ q: 'A UK ATIS gives the surface wind as "two seven zero degrees, one five knots". That direction is referenced to:', a: ['Magnetic north', 'True north, as in the METAR', 'True north, then corrected by the pilot for runway alignment', 'Magnetic north only where variation exceeds five degrees'], c: 0, why: 'Wind passed for take-off and landing by an ATS unit, and the wind in an ATIS, is referenced to magnetic north. The wind in a METAR is referenced to true north and averaged over ten minutes, so an ATIS wind and a METAR wind for the same aerodrome need not agree — different reference, different averaging.', ref: 'UK AIP GEN 3.5 3.1.1, 3.1.1.2' },
+{ q: 'You report "information Golf" on first contact with the approach unit. The controller must still pass you:', a: ['Nothing further — acknowledging the letter covers everything', 'Only the runway in use', 'The full weather again, as a cross-check', 'The altimeter setting, and anything that has changed since information Golf'], c: 3, why: 'Acknowledging the ATIS lets the unit leave out the routine items, but the altimeter setting is always passed, and any element that has changed since your broadcast is passed without delay. That is why you still read back a QNH even after quoting the letter.', ref: 'SERA.9010; CAP 413 4.211, 4.214 Note 3' },
+{ q: 'A VOLMET broadcast provides:', a: ['Routine arrival and departure information for one aerodrome', 'Aerodrome meteorological reports for a group of aerodromes, broadcast continuously', 'Warnings of en-route icing and turbulence for a flight information region', 'The Regional Pressure Setting for each Altimeter Setting Region'], c: 1, why: 'VOLMET is the en-route weather broadcast — a rolling list of aerodrome reports for a published group of aerodromes, which is what you tune when deciding on a diversion. The single-aerodrome equivalent is the ATIS. Each VOLMET report runs aerodrome, wind, visibility, RVR, weather, cloud, temperature, dew point, QNH and trend.', ref: 'CAP 413 4.197-4.198' },
+{ q: 'On RT, the word "hectopascals" is appended to a pressure setting:', a: ['Always, for both QNH and QFE', 'Never — the unit is understood', 'When the setting is below 1000, or wherever confusion could result', 'Only when the setting is a QFE'], c: 2, why: 'A three-figure setting such as 997 can be mistaken for part of another number, so "QFE nine nine seven hectopascals" removes the doubt. Four-figure settings of 1000 and above do not normally carry the unit — though it is still added anywhere confusion or ambiguity could result.', ref: 'CAP 413 3.4; Chapter 4 Table 1' }
 ],
 
 cards: [
@@ -304,6 +382,16 @@ cards: [
 { f: 'Suspected receiver failure — what do you do?', b: 'Transmit blind at intervals, saying that you are, with callsign, position and intentions.', ref: 'CAP413' },
 { f: 'QDM', b: 'The magnetic heading to steer to the station in nil wind.', ref: 'CAP413' },
 { f: 'What does Unable mean?', b: 'I cannot comply with your request or instruction.', ref: 'CAP413' },
-{ f: 'When phraseology does not cover the situation', b: 'Use plain, concise English.', ref: 'CAP413' }
+{ f: 'When phraseology does not cover the situation', b: 'Use plain, concise English.', ref: 'CAP413' },
+{ f: 'The six categories of message, in order of priority', b: 'Distress, urgency, direction finding, flight safety, meteorological, flight regularity.', ref: 'SERA.14005 Table S14-1' },
+{ f: 'Which message categories have a spoken RTF signal?', b: 'Only the top two: MAYDAY for distress, PAN PAN (or PAN PAN MEDICAL) for urgency. The other four have none.', ref: 'SERA.14005 Table S14-1' },
+{ f: 'PAN PAN MEDICAL — what does it mean?', b: 'The message concerns a protected medical transport as defined in the 1949 Geneva Conventions and their Additional Protocols. It carries urgency priority.', ref: 'CAP 413 8.14; SERA.14005 Table S14-1' },
+{ f: 'Weather on the radio — flight safety or meteorological category?', b: 'Of immediate concern to an aircraft in flight or about to depart: flight safety. Anything else (ATIS, VOLMET, a report on request): meteorological.', ref: 'CAP 413 9.23' },
+{ f: 'You hear a MAYDAY and cannot assist. What is your obligation?', b: 'Stay off that frequency, and keep listening until it is evident that assistance is being provided.', ref: 'SERA.14095, CAP 413 8.25' },
+{ f: 'ATIS and RT surface wind — true or magnetic?', b: 'Magnetic, in knots. The METAR wind is true, and averaged over ten minutes.', ref: 'UK AIP GEN 3.5 3.1.1, 3.1.1.2' },
+{ f: 'You quoted the ATIS letter on first contact. What must ATC still give you?', b: 'The altimeter setting, plus any element that has changed since that broadcast.', ref: 'SERA.9010; CAP 413 4.211, 4.214' },
+{ f: 'No ATIS — what do you ask for, and what do you read back?', b: '"Request departure information" before start; "request join" inbound. Read back the runway in use and the pressure setting.', ref: 'CAP 413 4.8, 4.42; readback list 2.69' },
+{ f: 'Is CAVOK used on the radio, and how is it said?', b: 'Yes — pronounced "CAV-O-KAY". Visibility 10 km or more, no cloud below 5000 ft or the highest minimum sector altitude whichever is greater, no CB or towering cumulus, no significant weather.', ref: 'CAP 413 Ch 4 Table 1; UK AIP GEN 3.5' },
+{ f: 'VOLMET — what is it and what order does each report follow?', b: 'A continuous voice broadcast of aerodrome reports for a group of aerodromes. Aerodrome, wind, visibility, RVR, weather, cloud, temperature, dew point, QNH, trend. Frequencies and aerodrome lists in the UK AIP.', ref: 'CAP 413 4.197-4.198' }
 ]
 };

@@ -342,6 +342,24 @@ transponder which replies with a coded signal: <b>Mode A</b> gives the four-digi
 your level correctly regardless of your subscale setting), and <b>Mode S</b> adds aircraft
 identity and data. Select ALT to make Mode C work.</p>
 
+<h3>The codes that matter</h3>
+<p>A Mode A code is four digits, each <b>0 to 7</b> — 4096 of them. Eight are worth knowing cold, and <b>Mode C goes on with all of them</b>:</p>
+<table>
+<thead><tr><th>Code</th><th>Meaning, and when you set it</th></tr></thead>
+<tbody>
+<tr><td><b>7700</b></td><td>Emergency — as soon as practicable after declaring, once the aeroplane is under control</td></tr>
+<tr><td><b>7600</b></td><td>Radio failure</td></tr>
+<tr><td><b>7500</b></td><td>Unlawful interference, unless the circumstances warrant 7700 instead</td></tr>
+<tr><td><b>7000</b></td><td>VFR conspicuity: UK airspace, VFR, no specific transponder instruction from ATS</td></tr>
+<tr><td><b>2000</b></td><td>IFR conspicuity; also on entering UK airspace from an adjacent region where transponders were not required</td></tr>
+<tr><td><b>7004</b></td><td>Aerobatics and display, from five minutes before you start until you stop</td></tr>
+<tr><td><b>7010</b></td><td>Operating in an aerodrome traffic pattern — only when an ATS unit or a local procedure directs it</td></tr>
+<tr><td><b>0033</b></td><td>The aircraft dropping parachutists, from five minutes before the drop until they are on the ground</td></tr>
+</tbody></table>
+<p>Mode C sends a pressure altitude and nothing else, in <b>100 ft steps</b>. That is why a controller may ask you to confirm your level to the nearest 100 ft: if the readout is more than <b>200 ft</b> out you will be told to stop squawking Mode C, or to select <b>0000</b> if your box cannot switch it independently (ENR 1.6, para 2.1.4).</p>
+<p>Conspicuity is the fallback, not an override. Once a unit has assigned you a discrete code, <b>keep it</b> — including after you leave that unit's area — and reselect a code, or switch the transponder off in flight, <b>only when an ATS unit tells you to</b>. Read the new code back. You return to 7000 when you hear "squawk conspicuity", not before.</p>
+<p>Two things catch people out. On declaring an emergency, a discrete code already assigned to you may be kept, at the pilot's or the controller's discretion — but <b>7000 and 2000 are explicitly excluded</b>, so from a conspicuity code you select 7700 (CAP 413, para 8.9). And the 70xx conspicuity codes sit next door to 7500, 7600 and 7700, so wind the digits through with care. "Squawk ident" operates the special position identification feature, which flags your return on the controller's display — press it when asked, and not otherwise.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>VOR bearings are radials <b>from</b> the station and are <b>magnetic</b>. VOR indication does
@@ -350,6 +368,103 @@ not depend on heading; ADF does.</li>
 <li>DME gives slant range.</li>
 <li>GNSS: 3 satellites for 2D, 4 for 3D.</li>
 <li>QDM is <b>to</b> the station.</li>
+</ul></div>`
+},
+{
+  id: '060-time', title: 'Time: UTC, local mean time and the date line', mins: 6, tags: ['061.01'],
+  body: `
+<p>Everything you file, read and write down is in <b>UTC</b>. Everything about daylight depends
+on where you are on the Earth. One number links them: the Earth turns <b>15&deg; of longitude
+every hour</b>.</p>
+
+<h3>Turning arc into time</h3>
+<p>The Earth rotates 360&deg; in 24 hours, and every conversion here falls out of that:</p>
+<table>
+<thead><tr><th>Arc</th><th>Time</th></tr></thead>
+<tbody>
+<tr><td>360&deg;</td><td>24 hours</td></tr>
+<tr><td><b>15&deg;</b></td><td><b>1 hour</b></td></tr>
+<tr><td><b>1&deg;</b></td><td><b>4 minutes</b></td></tr>
+<tr><td><b>15'</b></td><td><b>1 minute</b></td></tr>
+<tr><td>1'</td><td>4 seconds</td></tr>
+</tbody></table>
+<p>The sun appears to move <b>westwards</b>, so a place to the <b>east</b> reaches noon sooner
+and its clock is <b>ahead</b> of yours.</p>
+
+<h3>Local mean time</h3>
+<p>The real sun is a poor clock: the orbit is elliptical and the axis tilted, so apparent solar
+days differ in length. Navigation uses an imaginary <b>mean sun</b> moving at a constant rate,
+and <b>local mean time (LMT)</b> is what it keeps on <em>your own</em> meridian &mdash; LMT 1200
+is mean local noon. The gap between apparent and mean time is the <b>equation of time</b>, up to
+about 16 minutes. LMT at Greenwich is UTC; elsewhere, convert your longitude to time and apply
+it:</p>
+<p class="mono">LMT = UTC + arc-to-time (longitude EAST)</p>
+<p class="mono">LMT = UTC &minus; arc-to-time (longitude WEST)</p>
+<p><b>Longitude east, UTC least; longitude west, UTC best.</b></p>
+<p>UTC to LMT: a point at <b>037&deg;30'W</b> at 1200 UTC. 37 &times; 4 = 148 minutes =
+2 h 28 min; 30' = 2 min; total 2 h 30 min. West, so subtract &mdash; <b>LMT 0930</b>.</p>
+<p>LMT to UTC: LMT 1800 at <b>075&deg;15'E</b>. 75 &times; 4 = 300 minutes = 5 h;
+15' = 1 min; total 5 h 01 min. East, so subtract to get UTC &mdash; <b>1259 UTC</b>.</p>
+<p>The difference in LMT between two places is their <b>difference of longitude</b> as time. Two
+aerodromes at 002&deg;30'W and 001&deg;00'E are 3&deg;30' apart, which is <b>14 minutes</b>: at
+the same latitude, the eastern one sees sunrise 14 minutes earlier.</p>
+
+<h3>Standard time</h3>
+<p>Nobody runs clocks on LMT &mdash; the next town east would already be a minute ahead, because
+a minute of time is only <b>15' of longitude</b>, about ten miles at UK latitudes.
+Each state adopts a <b>standard time</b>, or zone time: a <b>fixed offset from UTC applied across
+the whole territory</b>, or across each of several zones in a state too wide for one. In theory
+that is 24 zones of 15&deg;, each centred on a meridian that is a multiple of 15&deg; and running
+<b>7&deg;30' either side</b>. Real boundaries follow national borders, and not every offset is a
+whole hour: India UTC+5:30, Nepal UTC+5:45, the Chatham Islands UTC+12:45.</p>
+<p>Many states add an hour in summer. The UK's standard time is <b>Greenwich Mean Time</b>, which
+for flight planning is <b>UTC</b>, and <b>British Summer Time is UTC+1</b>, from 0100 GMT on the
+last Sunday in March to 0100 GMT on the last Sunday in October (Summer Time Act 1972, as amended
+by the Summer Time Order 2002). Standard time and LMT agree only on the zone's central meridian:
+at 004&deg;W the clock says noon while mean local noon is not until <b>1216 UTC</b>.</p>
+
+<h3>UTC, and what the rules require</h3>
+<p><b>Coordinated Universal Time</b> is kept by atomic clocks, held within a second of mean solar
+time at Greenwich by leap seconds. In aviation it is a four-figure group suffixed <b>Z</b>, spoken Zulu. <b>SERA.3401</b> requires UTC, expressed in hours and minutes &mdash; seconds where
+needed &mdash; of the <b>24-hour day beginning at midnight</b>. A <b>time check</b> must be
+obtained before operating a controlled flight, and time checks are given <b>at least to the
+nearest minute</b>.</p>
+
+<h3>The international date line</h3>
+<p>Fly east around the world adding time and you gain a day; fly west and you lose one. The
+<b>international date line</b> hands it back, running roughly along the <b>180&deg; meridian</b>
+but deviating so whole countries keep one date.</p>
+<ul>
+<li>Crossing <b>westbound</b>: <b>advance the date by one day</b>. Monday becomes Tuesday.</li>
+<li>Crossing <b>eastbound</b>: <b>put the date back one day</b>. You live the same date
+twice.</li>
+</ul>
+<p>Only the date changes; the clock and UTC are untouched.</p>
+
+<h3>Sunrise, sunset and twilight</h3>
+<p><b>Sunrise</b> and <b>sunset</b> are the moments when the <b>upper limb</b> of the sun is on
+the horizon; allowing for refraction and the sun's semi-diameter, its <em>centre</em> is then
+about <b>50'</b> below the true horizon. <b>Civil twilight</b> is the period while that centre
+lies between the horizon and <b>6&deg; below</b> it: morning civil twilight begins, and evening
+civil twilight ends, at the 6&deg; point. It lengthens with latitude and season: about
+twenty-four minutes at the equator, over an hour in northern Scotland in summer.</p>
+<p>For UK flying, <b>night</b> is defined in the <b>Air Navigation Order 2016, Schedule 1</b> as
+the time from <b>half an hour after sunset until half an hour before sunrise</b>, both times
+inclusive, sunset and sunrise being determined at <b>surface level</b>. ICAO and SERA define
+night by <b>civil twilight</b> instead; in the UK, plan to the half-hour rule. <b>UK AIP
+GEN 2.7</b> does not tabulate the times itself &mdash; it directs you to HM Nautical Almanac
+Office and the US Naval Observatory.</p>
+
+<div class="trap"><b>Exam traps</b>
+<ul>
+<li>15&deg; = 1 hour, 1&deg; = 4 minutes, <b>15' of arc = 1 minute of time</b>. One minute of arc
+is 4 <em>seconds</em>.</li>
+<li>Longitude <b>east</b>, UTC <b>least</b> &mdash; east of Greenwich, LMT is ahead of UTC.</li>
+<li>LMT changes with every meridian; standard time is one offset for a whole country.</li>
+<li>Date line <b>westbound: advance</b> the date. <b>Eastbound: put it back.</b></li>
+<li>UK night is sunset <b>+30</b> to sunrise <b>&minus;30</b> (ANO 2016), not civil twilight.</li>
+<li>Civil twilight is the sun's <b>centre 6&deg;</b> below the horizon; sunrise and sunset are
+the <b>upper limb</b> on the horizon.</li>
 </ul></div>`
 }
 ],
@@ -397,7 +512,18 @@ quiz: [
 { q: 'The minimum number of satellites for a three-dimensional GNSS fix is:', a: ['2', '3', '4', '6'], c: 2, why: 'Three for a 2D fix, four for 3D including altitude.', ref: 'Radio nav' },
 { q: 'A QDM is:', a: ['The magnetic bearing to the station', 'The magnetic bearing from the station', 'The true bearing from the station', 'The relative bearing'], c: 0, why: 'QDM is the magnetic bearing to the station, so it is the heading to steer in nil wind. QDR is from; QTE is the true bearing from.', ref: 'Radio nav' },
 { q: 'Transponder Mode C provides:', a: ['Aircraft identity only', 'Pressure altitude referenced to 1013 hPa', 'Groundspeed', 'Aircraft type'], c: 1, why: 'Mode A gives the code, Mode C adds pressure altitude referenced to 1013 hPa, Mode S adds identity and data.', ref: 'Radio nav' },
-{ q: 'Good map reading technique is to work:', a: ['Ground to map', 'Map to ground', 'By GPS only', 'From memory'], c: 1, why: 'Read the map, predict what you should see, then look for it. Ground-to-map invites you to make features fit.', ref: 'Nav practice' }
+{ q: 'Good map reading technique is to work:', a: ['Ground to map', 'Map to ground', 'By GPS only', 'From memory'], c: 1, why: 'Read the map, predict what you should see, then look for it. Ground-to-map invites you to make features fit.', ref: 'Nav practice' },
+{ q: 'Converting arc to time, 15 minutes of arc of longitude is equivalent to:', a: ['15 seconds of time', '1 minute of time', '4 minutes of time', '1 hour of time'], c: 1, why: 'The Earth turns 360 degrees in 24 hours, so 15 degrees is 1 hour and 1 degree is 4 minutes. Divide by 60 again and 15 minutes of arc becomes 1 minute of time, while 1 minute of arc is 4 seconds. The whole topic is that one ladder.', ref: 'Arc to time conversion' },
+{ q: 'An aerodrome lies at 037°30\'W. At 1200 UTC, its local mean time is:', a: ['1430', '0902', '1000', '0930'], c: 3, why: '37 x 4 = 148 minutes = 2 h 28 min, and 30 minutes of arc = 2 minutes of time, giving 2 h 30 min. Longitude west, UTC best, so subtract from UTC: 0930. Adding instead gives 1430, and treating the 30 minutes of arc as 30 minutes of time gives 0902.', ref: 'LMT and longitude' },
+{ q: 'The difference between local mean time and the standard time in use at a place is that:', a: ['Standard time uses the true sun and local mean time uses the mean sun', 'Local mean time applies to a whole country while standard time changes with each meridian', 'Standard time is a fixed offset from UTC applied across a territory, while local mean time changes with every meridian', 'They are identical except during the summer time period'], c: 2, why: 'Both are mean-sun times, so the true-sun answer is wrong; that difference is the equation of time, between apparent and mean time. Standard time is adopted for administrative convenience and holds across a whole state, so it matches LMT only on the zone\'s central meridian.', ref: 'Standard (zone) time' },
+{ q: 'You cross the international date line flying eastbound. You should:', a: ['Advance the date by one day', 'Put the date back by one day', 'Advance the clock by one hour', 'Make no change to date or time'], c: 1, why: 'Flying east you have been adding an hour for every 15 degrees, so by the 180th meridian you are a whole day ahead of where the calendar should be. Crossing eastbound gives that day back, and you repeat the same date. Westbound does the opposite. Only the date changes, not the clock, and UTC is unaffected.', ref: 'International date line' },
+{ q: 'For a flight in the UK, night begins:', a: ['At sunset', 'At the end of evening civil twilight', 'Half an hour after sunset, sunset being determined at surface level', 'When the centre of the sun\'s disc is 6 degrees below the horizon'], c: 2, why: 'The Air Navigation Order 2016, Schedule 1 defines night as half an hour after sunset until half an hour before sunrise, both times inclusive, at surface level. ICAO and SERA use the civil twilight definition instead, which is why the two lookalike answers are both offered; for UK planning it is the half-hour rule.', ref: 'ANO 2016, Schedule 1' },
+{ q: 'Evening civil twilight ends when the centre of the sun\'s disc is:', a: ['On the horizon', '6 degrees below the horizon', '12 degrees below the horizon', '18 degrees below the horizon'], c: 1, why: 'Civil twilight uses 6 degrees; 12 degrees is nautical twilight and 18 degrees astronomical twilight. Note the difference from sunset itself, which is when the upper limb is on the horizon, putting the centre about 50 minutes of arc below it once refraction and semi-diameter are allowed for.', ref: 'Civil twilight definition' },
+{ q: 'Two aerodromes at the same latitude lie at 001°00\'E and 002°30\'W. Compared with the western aerodrome, the eastern one sees sunrise:', a: ['14 minutes earlier', '14 minutes later', '3.5 minutes earlier', '1 hour earlier'], c: 0, why: 'The difference of longitude is 3 degrees 30 minutes, which at 4 minutes per degree is 14 minutes of time. The sun tracks westwards, so the eastern aerodrome meets it first. The 3.5 minute answer is the giveaway that someone has read the degrees straight off as minutes.', ref: 'Difference of longitude as time' },
+{ q: 'An aircraft is about to drop parachutists and has not been assigned a discrete code. The pilot should select:', a: ['7004, together with Mode C, five minutes before the drop', '0033, together with Mode C, five minutes before the drop until the parachutists are estimated to be on the ground', '0033, from the moment the first parachutist leaves the aircraft until the last is on the ground', '7010, together with Mode C, for the climb and the drop'], c: 1, why: '0033 is the UK paradropping code, and the five minutes of warning is the whole point of it: it tells ATC and other traffic what is about to happen while the aeroplane is still climbing, not once canopies are already in the air. 7004 uses the same five-minute lead-in but is for aerobatics and display.', ref: 'UK AIP ENR 1.6, SSR conspicuity codes' },
+{ q: 'A LARS unit assigned you squawk 4571. You leave its area of coverage and the service is terminated with no further transponder instruction. You should:', a: ['Retain 4571 until an ATS unit instructs otherwise', 'Select 7000, as you are VFR and no longer receiving a service', 'Select 2000, having left the area in which the code was assigned', 'Select standby until you next call a unit'], c: 0, why: 'The AIP is explicit: when proceeding from an area where a specific Mode A code has been assigned, maintain that setting unless otherwise instructed, and reselect codes or switch off in flight only when an ATS unit instructs it. 7000 and 2000 are for when you have had no specific instruction — they do not cancel one. In practice a controller will normally say \'squawk conspicuity\' as they terminate; the point is that you wait to be told.', ref: 'UK AIP ENR 1.6, para 2.1.4' },
+{ q: 'You are squawking 7000 under a Basic Service when you declare an emergency. Regarding the transponder:', a: ['Retain 7000, because you are already in contact with a controller', 'Select 7600 first, then 7700 if the radio subsequently fails', 'Select 7700, because 7000 is a conspicuity code and not a code assigned to you', 'Select 7700 only if the controller instructs you to'], c: 2, why: 'A discrete code previously assigned by ATC already identifies you on the display, so it may be retained at the discretion of either pilot or controller. Conspicuity codes 7000 and 2000 identify nobody and are specifically excluded from that allowance, so you go to 7700. Note the order of priority: the code is selected as soon as is practicable after declaring, once controlling the aircraft and containing the emergency has been dealt with.', ref: 'CAP 413 para 8.9; UK AIP ENR 1.6 para 2.2.1' },
+{ q: 'You intend to practise general aerobatics outside controlled airspace and have not been assigned a discrete code. You should select:', a: ['7010 as you begin the first manoeuvre', '7004 five minutes before you begin, with Mode C, until you stop and resume normal flight', '7004, but only if an ATS unit instructs you to', '7000 with Mode C, and advise an ATS unit by radio'], c: 1, why: '7004 covers aerobatics, displays, display practice and general aerobatic training, and may be selected at the pilot\'s discretion — which is exactly what distinguishes it from 7010, the aerodrome traffic pattern code, which shall only be selected on the direction of an ATS unit or under local aerodrome procedures. Controllers treat 7004 as unvalidated and its Mode C as unverified, so telling a unit your lateral, vertical and time limits is still encouraged.', ref: 'UK AIP ENR 1.6, SSR conspicuity codes' }
 ],
 
 cards: [
@@ -437,6 +563,19 @@ cards: [
 { f: 'GNSS satellites needed', b: '3 for a 2D fix, 4 for 3D.', ref: 'Radio nav' },
 { f: 'QDM, QDR, QTE', b: 'QDM: magnetic bearing TO the station. QDR: magnetic FROM. QTE: true FROM.', ref: 'Radio nav' },
 { f: 'Transponder Modes A, C, S', b: 'A: identity code. C: pressure altitude on 1013. S: identity and data.', ref: 'Radio nav' },
-{ f: 'Map reading direction', b: 'Map to ground. Predict, then look.', ref: 'Nav' }
+{ f: 'Map reading direction', b: 'Map to ground. Predict, then look.', ref: 'Nav' },
+{ f: '15 degrees of longitude equals how much time?', b: '1 hour. Then 1° = 4 minutes, 15\' = 1 minute, 1\' = 4 seconds.', ref: 'Arc to time' },
+{ f: 'What is local mean time (LMT)?', b: 'The time kept by the mean sun on your own meridian. LMT 1200 is mean local noon; LMT at Greenwich is UTC.', ref: 'LMT' },
+{ f: 'Converting UTC to LMT — which way for east and west longitude?', b: 'East: add. West: subtract. Longitude east, UTC least; longitude west, UTC best.', ref: 'LMT conversion' },
+{ f: 'What is standard (zone) time?', b: 'A fixed offset from UTC applied across a whole territory or zone, regardless of your meridian. Not always a whole hour — India UTC+5:30, Nepal UTC+5:45.', ref: 'Standard time' },
+{ f: 'British Summer Time — offset and dates?', b: 'UTC+1, from 0100 GMT on the last Sunday in March to 0100 GMT on the last Sunday in October.', ref: 'Summer Time Act 1972, as amended' },
+{ f: 'Crossing the international date line — which way changes the date how?', b: 'Westbound: advance one day. Eastbound: put it back one day. Clock time and UTC unchanged.', ref: 'Date line' },
+{ f: 'UK definition of night?', b: 'Half an hour after sunset until half an hour before sunrise, both times inclusive, determined at surface level.', ref: 'ANO 2016, Sch 1' },
+{ f: 'Sunrise, sunset and civil twilight — the defining positions of the sun?', b: 'Sunrise/sunset: upper limb on the horizon (centre about 50\' below). Civil twilight: centre between the horizon and 6° below it.', ref: 'SERA definitions / Astronomical Almanac' },
+{ f: '7700, 7600, 7500 — which is which?', b: 'Emergency; radio failure; unlawful interference. Use 7500 unless the circumstances warrant 7700 instead.', ref: 'UK AIP ENR 1.6 para 2.2.1' },
+{ f: 'UK general conspicuity codes, and when do you use them?', b: '7000 VFR, 2000 IFR — only when ATS has given you no specific transponder instruction. 2000 also on entering UK airspace from an adjacent region where transponders were not required.', ref: 'UK AIP ENR 1.6' },
+{ f: 'Squawk for an aircraft dropping parachutists?', b: '0033 with Mode C, from five minutes before the drop until the parachutists are estimated to be on the ground — unless a discrete code has already been assigned.', ref: 'UK AIP ENR 1.6' },
+{ f: 'What does Mode C actually transmit?', b: 'Pressure altitude only, in 100 ft steps, always referenced to 1013 hPa. Not your QNH setting and not your selected level.', ref: 'UK AIP ENR 1.6; ICAO Annex 10 Vol IV' },
+{ f: '"Squawk ident" — what are you being asked to do?', b: 'Operate the special position identification feature, which flags your return on the controller\'s display. Only when asked.', ref: 'CAP 413 Chapter 5, Table 2' }
 ]
 };

@@ -70,6 +70,18 @@ people and the bags, and the remainder is the fuel you may carry — then conver
 check it is enough for the flight plus reserves. If it is not, the answer is fewer passengers or
 less baggage, not less reserve.</p>
 
+<h3>The mass terms, defined</h3>
+<p>The POH and the exam use a fixed vocabulary, and the CAA publishes its own definitions in CAP 696. Learn them as a chain: each term is the one before it, plus something.</p>
+<p><b>Basic empty mass</b> (BEM) is the aeroplane plus its standard items — unusable fuel and other unusable fluids, lubricating oil in engine and auxiliary units, fire extinguishers, pyrotechnics, emergency oxygen equipment, supplementary electronic equipment. It comes from an actual weighing and is recorded in the weighing schedule. <b>Unusable fuel</b>, the fuel that cannot be safely used in flight, is already inside BEM; <b>usable fuel</b> is the fuel available for propulsion, and is loaded on top.</p>
+<p><b>Dry operating mass</b> (DOM) is the aeroplane ready for a specific type of operation, excluding usable fuel and traffic load. It includes the crew and their baggage. In a club single the pilot <em>is</em> the crew, so DOM is BEM plus the pilot and whatever kit lives in the aircraft — which is why most light aeroplane load sheets simply start at BEM and treat everybody as load.</p>
+<p><b>Traffic load</b> is the total mass of passengers, baggage and cargo, <em>including</em> any non-revenue load. Those last four words are part of the CAA's definition and are worth keeping: traffic load is everything you carry, not just what earns money, so a private flight with an empty-handed friend in the right-hand seat still has a traffic load. <b>Payload</b> is the everyday word for the same figure — CAP 696 does not use it. <b>Useful load</b> is the traffic load plus the usable fuel.</p>
+<p class="mono">DOM + traffic load = zero fuel mass (ZFM)</p>
+<p class="mono">ZFM + usable fuel = ramp (taxi) mass</p>
+<p class="mono">ramp mass &minus; taxi fuel = take-off mass (TOM)</p>
+<p class="mono">TOM &minus; trip fuel = landing mass</p>
+<p class="mono">useful load = TOM &minus; DOM</p>
+<p>Limits come in two kinds. <b>Maximum structural</b> masses — taxi, take-off, landing and zero fuel — are properties of the airframe and are printed in the POH; they never change. <b>Performance-limited</b> masses are worked out for today: the most you may weigh given runway length, slope, surface, wind, temperature, elevation and obstacles. The mass you may actually use is the <b>lower</b> of the two — the regulated take-off or landing mass. A maximum zero fuel mass exists because fuel carried in the wings relieves wing bending; not every light single quotes one, but where the POH gives it, it binds.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>You must check <b>both</b> take-off and landing CG.</li>
@@ -226,6 +238,49 @@ personal minima as well as the legal ones, the fuel is adequate with reserves in
 paperwork is valid, and you are fit to fly. Set personal minima on the ground, in writing, when
 nobody is waiting for you — and then treat them as limits rather than as targets.</p>
 
+<h3>The ICAO flight plan, item by item</h3>
+<p>One ICAO form serves everywhere. In the UK it is <b>CA48</b>, filed through AFPEx, through your
+departure ATSU, or through an app feeding the same network. The box numbers are ICAO's and they
+skip. All clock times are <b>UTC, four figures</b>.</p>
+<table>
+<thead><tr><th>Item</th><th>What you put</th></tr></thead>
+<tbody>
+<tr><td><b>7</b> Aircraft identification</td><td>Registration, no hyphen, 7 characters maximum:
+<b>GABCD</b>, not G-ABCD.</td></tr>
+<tr><td><b>8</b> Flight rules and type</td><td><b>V</b> for VFR throughout (Z if VFR then IFR),
+then <b>G</b> for general aviation.</td></tr>
+<tr><td><b>9</b> Number, type, wake</td><td>Number only if a formation; ICAO type designator
+(C172, P28A); <b>L</b> for an MTOM of <b>7,000 kg or less</b>.</td></tr>
+<tr><td><b>10</b> Equipment and surveillance</td><td>Before the stroke <b>S</b>, standard for VHF
+RTF, VOR and ILS, plus G for GNSS, Y for 8.33 kHz. After it the transponder: <b>C</b> for Mode A
+and C, <b>S</b> for Mode S with identity and pressure altitude.</td></tr>
+<tr><td><b>13</b> Departure aerodrome and time</td><td>Four-letter indicator and the <b>estimated
+off-block time</b>. Not the airborne time.</td></tr>
+<tr><td><b>15</b> Speed, level, route</td><td><b>N0100</b> is 100 kt TAS; <b>A045</b> is 4,500 ft
+altitude, or the letters <b>VFR</b> if no set level; then the route points, DCT between
+them.</td></tr>
+<tr><td><b>16</b> Destination, EET, alternates</td><td>Total EET is <b>take-off to overhead the
+destination</b>, not off-blocks to on-blocks. Up to two alternates.</td></tr>
+<tr><td><b>18</b> Other information</td><td><b>0</b> if none. Otherwise <b>DOF/</b>YYMMDD, required
+for tomorrow or later, and RMK/ for the rest, such as your responsible person's
+number.</td></tr>
+<tr><td><b>19</b> Supplementary</td><td><b>E/</b> endurance in hours and minutes, <b>P/</b> persons
+on board, emergency and survival equipment, aircraft colour, <b>C/</b> the commander's name.</td></tr>
+</tbody></table>
+<p>Item 19 is <b>not transmitted</b>. It is held where you filed it and produced only if you go
+missing &mdash; so endurance and number on board must be true.</p>
+<p>File at least <b>60 minutes</b> before you ask for start-up or taxi, never less than 30. The rule
+behind it is <b>SERA.4001(d)</b>, which puts the 60 minutes before departure; the start-up-or-taxi
+wording is the UK AIP's. SERA.4001(c) is the neighbouring rule and says only where the plan goes.
+IFPS will not take a plan more than <b>120 hours</b> ahead. A plan is also compulsory for any
+<b>night</b> flight leaving the vicinity of an aerodrome, and for any portion given an ATC
+service.</p>
+<p>Closing it means an <b>arrival report</b> at the earliest possible moment after landing
+(SERA.4020). No report is needed where ATS is provided and radio or visual signals show the landing
+was observed. Where there is no ATSU you telephone it in, having left your ETA with a
+<b>responsible person</b> beforehand. Hear nothing, and overdue action starts <b>30 minutes</b>
+after the calculated ETA.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>Fuel first, then mass and balance, then performance.</li>
@@ -276,7 +331,15 @@ quiz: [
 { q: 'The most reliable way to establish the fuel on board is to:', a: ['Read the fuel gauges', 'Dip the tanks', 'Ask the previous pilot', 'Use the tech log hours'], c: 1, why: 'Dip the tanks. Gauges are notoriously optimistic.', ref: 'Planning' },
 { q: 'For obstacle clearance shortly after take-off you should climb at:', a: ['Vy', 'Vx', 'Cruise climb speed', 'VNO'], c: 1, why: 'Vx gives the best angle, i.e. the most height per unit of distance.', ref: 'Performance' },
 { q: 'An aerodrome is at 2000 ft elevation with an OAT of 25 C. ISA temperature there is about 11 C. The approximate density altitude is:', a: ['2000 ft', '2700 ft', '3700 ft', '5000 ft'], c: 2, why: '25 - 11 = 14 C above ISA. 14 x 120 = 1680 ft. 2000 + 1680 = about 3700 ft.', ref: 'Performance' },
-{ q: 'Landing on wet grass compared with a paved runway requires approximately:', a: ['The same distance', '15% more', '35% more', '50% less'], c: 2, why: 'About 1.35 on landing distance, because braking is badly degraded.', ref: 'Performance factors' }
+{ q: 'Landing on wet grass compared with a paved runway requires approximately:', a: ['The same distance', '15% more', '35% more', '50% less'], c: 2, why: 'About 1.35 on landing distance, because braking is badly degraded.', ref: 'Performance factors' },
+{ q: 'Zero fuel mass is:', a: ['Dry operating mass plus traffic load', 'Dry operating mass plus usable fuel', 'Take-off mass minus trip fuel', 'Basic empty mass plus unusable fuel'], c: 0, why: 'Zero fuel mass is the aeroplane with no usable fuel aboard, so it is everything you are carrying except the fuel you intend to burn. DOM plus usable fuel is the operating mass; take-off mass minus trip fuel is the landing mass; and unusable fuel is already counted inside the basic empty mass, so adding it again double-counts.', ref: 'CAP 696 Section 1, mass definitions' },
+{ q: 'The useful load of a light aeroplane is:', a: ['The traffic load only', 'The traffic load plus the usable fuel', 'The maximum take-off mass minus the zero fuel mass', 'The basic empty mass plus the crew'], c: 1, why: 'Useful load is passengers, baggage and cargo together with the usable fuel — equivalently, take-off mass minus dry operating mass. Traffic load alone leaves the fuel out, and MTOM minus ZFM is just the fuel you have room for. BEM plus crew is roughly the dry operating mass.', ref: 'CAP 696, useful load' },
+{ q: 'An aeroplane leaves the parking area at 1150 kg and burns 8 kg taxiing out. Its take-off mass is:', a: ['1150 kg — taxi fuel counts towards take-off mass', '1158 kg', '1142 kg', 'Indeterminate without the trip fuel figure'], c: 2, why: 'Take-off mass is measured at the start of the take-off run, by which point the taxi fuel has gone: ramp (taxi) mass minus taxi fuel. Trip fuel is the next subtraction, and it gives the landing mass, not the take-off mass. Ignoring taxi fuel is the usual way of overstating the mass you plan to lift.', ref: 'CAP 696, taxi mass and take-off mass' },
+{ q: 'On a short, wet grass strip on a hot day, the mass at which you may take off is:', a: ['The maximum structural take-off mass, since that is the certificated limit', 'The performance limited take-off mass, since structural limits apply only to landing', 'The maximum zero fuel mass plus the usable fuel on board', 'The lower of the maximum structural and the performance limited take-off mass'], c: 3, why: 'The regulated take-off mass is whichever of the two is lower. The structural limit is a fixed property of the airframe; the performance limited mass is recalculated for the day\'s runway, surface, slope, wind, temperature, elevation and obstacles, and on a bad day it is the one that bites first. Structural limits apply to taxi, take-off, landing and zero fuel alike.', ref: 'CAP 696, regulated take-off mass' },
+{ q: 'The time entered in Item 13 of an ICAO flight plan filed before departure is:', a: ['The estimated time of take-off', 'The time the flight plan was filed', 'The estimated off-block time', 'The estimated time overhead the first en-route waypoint'], c: 2, why: 'Item 13 takes the EOBT — the time you expect to start moving — because ATC planning and any flow slot are built around off-blocks, not wheels-up. The last option is what Item 13 holds only for a plan filed from the air, where the departure aerodrome box reads AFIL.', ref: 'ICAO FPL Item 13' },
+{ q: 'A PA-28 with a maximum take-off mass of 1,055 kg. What goes in the wake turbulence category box of Item 9?', a: ['L', 'M', 'H', 'It is left blank for aircraft below 2,000 kg'], c: 0, why: 'L (Light) covers an MTOM of 7,000 kg or less; M (Medium) is more than 7,000 kg but less than 136,000 kg; H (Heavy) is 136,000 kg or more. The box is never left blank — it is how ATC works out the wake separation to apply.', ref: 'ICAO FPL Item 9' },
+{ q: 'A VFR flight plan should normally be submitted:', a: ['At least 30 minutes before departure', 'At least 60 minutes before you request start-up or taxi', 'At least 2 hours before departure', 'At any time up to the moment of departure'], c: 1, why: 'SERA.4001(d) sets the 60 minutes — SERA.4001(c) is only the rule about where you file it — and the UK AIP ties those 60 minutes to the request for start-up or taxi, so the plan is in the system before you need a clearance. Where 60 minutes is genuinely impossible give as much notice as you can, but never less than 30 — and IFPS will not take a plan more than 120 hours ahead.', ref: 'SERA.4001(d); UK AIP ENR 1.10' },
+{ q: 'A full flight plan has been filed and activated by a departure message. If the aircraft neither arrives nor makes contact, the destination ATSU begins overdue action:', a: ['At the calculated ETA', '15 minutes after the calculated ETA', '30 minutes after the calculated ETA', '60 minutes after the calculated ETA'], c: 2, why: 'The destination works out your ETA from the flight plan and the departure time, then waits 30 minutes. The same 30 minutes governs the responsible person at an aerodrome with no ATSU, and the deadline for telling your original destination if you have landed somewhere else.', ref: 'UK AIP ENR 1.10' }
 ],
 
 cards: [
@@ -311,6 +374,16 @@ cards: [
 { f: 'Six fuel components', b: 'Taxi, trip, contingency, alternate, final reserve, extra.', ref: 'Planning' },
 { f: 'Contingency fuel is a percentage of', b: 'Trip fuel.', ref: 'Planning' },
 { f: 'What happens if you do not close a flight plan?', b: 'Alerting action, potentially search and rescue.', ref: 'Planning' },
-{ f: 'Best way to check fuel quantity', b: 'Dip the tanks. Do not trust the gauges.', ref: 'Planning' }
+{ f: 'Best way to check fuel quantity', b: 'Dip the tanks. Do not trust the gauges.', ref: 'Planning' },
+{ f: 'Zero fuel mass =', b: 'Dry operating mass + traffic load. The aeroplane with no usable fuel on board.', ref: 'CAP 696' },
+{ f: 'Where does unusable fuel sit in the mass chain?', b: 'Inside the basic empty mass. Only usable fuel is added on top.', ref: 'CAP 696, basic empty mass' },
+{ f: 'Ramp mass to landing mass — the two subtractions?', b: 'Ramp (taxi) mass − taxi fuel = take-off mass; take-off mass − trip fuel = landing mass.', ref: 'CAP 696' },
+{ f: 'Useful load — what is in it?', b: 'Traffic load plus usable fuel. Equals take-off mass − dry operating mass.', ref: 'CAP 696, useful load' },
+{ f: 'Regulated take-off mass?', b: 'The lower of the maximum structural take-off mass and the performance limited take-off mass.', ref: 'CAP 696' },
+{ f: 'ICAO flight plan Item 13 — which time?', b: 'The estimated off-block time. UTC, four figures. Not the airborne time.', ref: 'ICAO FPL Item 13' },
+{ f: 'Item 9 — wake turbulence category for a light aeroplane?', b: 'L. MTOM 7,000 kg or less. M is above that, H is 136,000 kg or more.', ref: 'ICAO FPL Item 9' },
+{ f: 'Item 16 — what does total EET mean on a VFR flight plan?', b: 'Time from take-off to arriving overhead the destination aerodrome. Up to two alternates follow it.', ref: 'ICAO FPL Item 16' },
+{ f: 'What is in Item 19, and who receives it?', b: 'Endurance, persons on board, emergency and survival equipment, aircraft colour, commander\'s name. Not transmitted — held where you filed it, for search and rescue.', ref: 'ICAO FPL Item 19' },
+{ f: 'Flight plan activated, aircraft does not arrive — when does overdue action start?', b: '30 minutes after the calculated ETA.', ref: 'UK AIP ENR 1.10' }
 ]
 };

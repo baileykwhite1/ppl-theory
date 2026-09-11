@@ -66,6 +66,17 @@ short final, hence the wake turbulence separation minima.</p>
 <b>high</b> aspect ratio wing has weaker tip effects and therefore <b>less induced drag</b> —
 which is why gliders have long thin wings.</p>
 
+<h3>The boundary layer</h3>
+<p>Air has <b>viscosity</b>, so it sticks to a surface. At the skin itself the air is stationary relative to the wing — the <b>no-slip condition</b> — and the speed rises through a very thin layer until it matches the free stream. That layer is the <b>boundary layer</b>: millimetres thick near the leading edge, thickening towards the trailing edge. All of the skin friction, and all of the stall, happen inside it.</p>
+<p>It comes in two forms:</p>
+<ul>
+<li><b>Laminar</b> — smooth sheets sliding over one another, starting at the leading edge. Thin, with a gentle velocity gradient at the skin, so it gives <b>low skin friction drag</b>. But it carries little energy close to the surface.</li>
+<li><b>Turbulent</b> — chaotic mixing. Thicker, with a steeper velocity gradient at the skin, so <b>more skin friction drag</b> — but the mixing drags fast-moving air down towards the surface, so it has <b>more energy</b> where it matters and clings on far better.</li>
+</ul>
+<p>The changeover is the <b>transition point</b>. It moves <b>forward</b> with surface roughness, damage, contamination and increasing angle of attack.</p>
+<p>Aft of the point of minimum pressure — near the highest point of the upper surface — static pressure rises again towards the trailing edge. From there the boundary layer is running uphill against an <b>adverse pressure gradient</b>. Slowed by friction and pushed back by the rising pressure, the flow closest to the skin eventually stops and reverses, and the airflow leaves the surface. That is the <b>separation point</b>.</p>
+<p>Increase the angle of attack and the suction peak sharpens, the adverse gradient steepens, and the separation point <b>moves forward from the trailing edge</b>. While the separated area is small the wing keeps working. Past the critical angle it has marched far enough forward to destroy the upper-surface suction, and that is the stall. Because a turbulent layer withstands the adverse gradient better, keeping it attached is worth a small drag penalty: <b>vortex generators</b> — the small vanes standing proud of the wing, or set ahead of a control surface — stir high-energy free-stream air down into the boundary layer, holding the flow on to a higher angle.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>Angle of attack is measured to the <b>relative airflow</b>.</li>
@@ -296,6 +307,40 @@ a greater effective angle of attack and produces more thrust.</li>
 </ul>
 <p>Which is why you need right rudder on take-off in most training aeroplanes.</p>
 
+<h3>Tabs and aerodynamic balance</h3>
+<p>A control surface hinged at its leading edge is heavy to move at speed, because every bit of
+its area lies behind the hinge. <b>Aerodynamic balance</b> is any means of reducing that
+<b>hinge moment</b>, and so the stick force, without taking away the control's authority.</p>
+<p>You already know one tab. The <b>trim tab</b> is set by the pilot and deflects <b>opposite</b>
+to the control surface, holding it in place so the stick force falls to zero. The <b>balance</b>
+and <b>anti-balance</b> tabs are not set by the pilot at all; the linkage works them as the
+surface moves. The <b>servo tab</b> is the odd one out — it is the only surface the pilot's
+controls reach.</p>
+<table>
+<thead><tr><th>Tab</th><th>How it moves</th><th>Stick force</th></tr></thead>
+<tbody>
+<tr><td>Trim tab</td><td>Set by the pilot, opposite to the surface</td><td>Zero, for one chosen attitude</td></tr>
+<tr><td>Balance tab</td><td>Automatically, <b>opposite</b> to the surface</td><td><b>Reduced</b></td></tr>
+<tr><td>Anti-balance tab</td><td>Automatically, the <b>same way</b> as the surface</td><td><b>Increased</b></td></tr>
+<tr><td>Servo tab</td><td>Moved by the pilot, opposite to the way the surface is to go</td><td>Very light</td></tr>
+</tbody></table>
+<p>With a <b>servo tab</b> the controls are connected to the tab alone; the surface itself is
+free to float. Deflect the tab and the load on it swings the control surface round — the airflow
+does the work, not your arm. It makes very large surfaces manageable, but it needs dynamic
+pressure, so it is weak at very low speed.</p>
+<p>An <b>all-moving tailplane (stabilator)</b> pivots close to its own aerodynamic centre, so
+almost no force is needed to move it. Pitch would be dangerously light and over-sensitive, and
+easy to overstress. The <b>anti-balance tab</b> puts the feel back: because it deflects the same
+way as the surface, the stick force rises with deflection and with speed. On many stabilator
+aeroplanes the same tab also serves as the trim tab.</p>
+<p>Two ways of reducing hinge moment without a tab: a <b>horn balance</b>, where part of the
+surface near the tip projects forward of the hinge line, and an <b>inset (set-back) hinge</b>,
+where the hinge line itself is moved aft so a strip of surface lies ahead of it. In both, the
+airflow on the part ahead of the hinge helps the deflection. Neither can be taken far — too much
+area ahead of the hinge and the control <b>overbalances</b>, running away from you instead of
+centring. Do not confuse any of this with <b>mass balance</b>, a weight fitted ahead of the hinge
+line to prevent <b>flutter</b>; that has nothing to do with stick force.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>Pitch is about the <b>lateral</b> axis but its stability is <b>longitudinal</b>.</li>
@@ -381,6 +426,39 @@ groundspeed.</p>
 by the stall on the left (a curve, because the stall limits the g available at low speed), the
 structural limit above, and V<sub>NE</sub> on the right.</p>
 
+<h3>Flutter</h3>
+<p>Flutter is a vibration driven by the airflow, not by the pilot. A wing that bends upwards also
+<b>twists</b>, because its stiffness axis coincides with neither its centre of lift nor its centre
+of mass. The twist alters the angle of attack, which alters the lift, which drives the next bend
+&mdash; and because the twisting lags the bending, the airflow does net work on the structure every
+cycle. Flutter is that <b>coupling of bending and torsion</b>; either alone simply damps out.</p>
+<p>It is a threshold, not a gradual onset. Aerodynamic forces rise with the <b>square of
+speed</b>; stiffness and damping do not. Below the critical speed a disturbance dies away; above
+it, the airstream feeds in more energy than the structure can absorb, and there is no warning
+band. These modes oscillate several times a second, so once divergent the amplitude reaches
+destructive levels in a second or two &mdash; seconds, not minutes. The only action is to slow
+down at once.</p>
+<p>A control surface free to rotate on its hinge is the usual culprit. Its mass lies behind the
+hinge line, so when the wing flexes the surface's own inertia holds it back and it deflects:
+exactly the input flutter needs. <b>Mass balance</b> &mdash; weight ahead of the hinge &mdash;
+puts the surface's centre of gravity on or ahead of the hinge line, so inertia no longer drives
+it. That balance is easily spoilt: extra coats of paint, a filler or fabric repair, trapped
+water, ice, or a balance weight that has worked loose. CAP 747 GR No. 10 lists <b>loss of
+correct mass balance moments on flight control surfaces</b> among the hazards of uncontrolled
+painting &mdash; repainting a control surface is a maintenance task, not decoration.</p>
+<p>This is what V<sub>NE</sub> protects. CS 23.1505 sets it at no more than the lesser of <b>0.9
+V<sub>D</sub></b> and 0.9 times the maximum speed demonstrated under CS 23.251. CS 23.629 then
+requires the flight flutter tests to make proper attempts to induce flutter <b>up to
+V<sub>D</sub></b>, with a proper margin of damping still present there, and any rational flutter
+analysis to cover all speeds <b>up to 1.2 V<sub>D</sub></b>. So the red line sits at least ten
+per cent below the fastest speed ever flown &mdash; on a new, correctly balanced, correctly rigged
+airframe. Paint, filler, ice, a tired hinge: each one eats into a margin you cannot feel shrinking.
+It is a limit, not a target.</p>
+<p>On the walk-round, hold each control surface near its trailing edge and feel for <b>free
+play</b> at the hinges and in the linkage: slack lets the surface move independently of the
+stick and lowers the flutter speed. Check the hinge bolts and their locking, and that every
+balance weight and arm is present, secure and undamaged.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>In a climb, lift is <b>less</b> than weight.</li>
@@ -390,6 +468,103 @@ the best <b>rate</b>.</li>
 <li>For a given bank, faster means <b>lower rate</b> and <b>bigger radius</b>.</li>
 <li>V<sub>A</sub> <b>decreases</b> with decreasing weight.</li>
 <li>The yellow arc is smooth air only.</li>
+</ul></div>`
+},
+{
+  id: '081-propellers', title: 'The propeller, and what it does to your glide', mins: 6, tags: ['081.24', '081.25'],
+  body: `
+<h3>The blade is a rotating wing</h3>
+<p>Each propeller blade is a small, twisted, rotating wing. It meets the air at an angle of
+attack and produces a total reaction: <b>thrust</b> along the flight path, and a force in the
+plane of rotation that the engine's torque must overcome. Too much blade angle of attack and it
+stalls, like any wing.</p>
+
+<h3>Geometric pitch, effective pitch and slip</h3>
+<p><b>Geometric pitch</b> is the distance the propeller would advance in one revolution if it
+were a screw turning in a solid nut &mdash; a property of the blade's geometry. <b>Effective
+pitch</b> is how far the aeroplane actually advances in one revolution. The difference is
+<b>slip</b>, usually quoted as a percentage of geometric pitch.</p>
+<p class="mono">slip = geometric pitch &minus; effective pitch</p>
+<p>Slip is not a fault. The blade only makes thrust by meeting the air at a positive angle of
+attack, which means the aeroplane must advance less than the geometric pitch.</p>
+
+<h3>Blade angle is not angle of attack</h3>
+<ul>
+<li><b>Blade angle</b> (pitch angle) &mdash; between the blade's chord line and the <b>plane of
+rotation</b>. On a fixed pitch propeller it is built in and never changes.</li>
+<li><b>Helix angle</b>, or angle of advance &mdash; between the <b>relative airflow at the
+blade</b> and the plane of rotation. That airflow is the resultant of the blade's rotational
+speed and the aeroplane's forward TAS, so it depends on both RPM and airspeed.</li>
+</ul>
+<p class="mono">blade angle of attack = blade angle &minus; helix angle</p>
+<p>At the holding point at full power the forward speed is nil, so the helix angle is nil and
+the blade's angle of attack is the whole blade angle, near its stalling angle. Accelerate at
+constant RPM and the helix angle grows, blade angle of attack falls, and so does thrust. A fixed
+pitch propeller is only right at one combination of speed and RPM.</p>
+
+<h3>Why the blade is twisted</h3>
+<p>Rotational speed rises in proportion to radius, while forward speed is the same all along the
+blade. The helix angle is therefore <b>large at the root and small at the tip</b>. To hold a
+roughly constant angle of attack along the blade, the blade angle must fall to match:
+<b>coarse at the root, fine at the tip</b>. Without that twist the inboard sections would be
+stalled while the tips did almost nothing.</p>
+
+<h3>Fixed pitch and constant speed</h3>
+<p>A <b>fixed pitch</b> propeller is one compromise chosen at the factory: a finer <em>climb</em>
+propeller favours take-off and climb, a coarser <em>cruise</em> propeller favours cruising speed.
+A <b>constant speed</b> propeller breaks the compromise &mdash; you select the RPM and a governor
+varies the blade angle to hold it, keeping a near-optimum angle of attack across the speed
+range.</p>
+<table>
+<thead><tr><th>Setting</th><th>Blade angle</th><th>RPM</th><th>Used for</th></tr></thead>
+<tbody>
+<tr><td><b>Fine</b></td><td>Small</td><td>High</td><td>Take-off, landing, go-around &mdash; full power available</td></tr>
+<tr><td><b>Coarse</b></td><td>Large</td><td>Low</td><td>Cruise &mdash; a bigger bite of air per revolution</td></tr>
+<tr><td><b>Feather</b></td><td>About 90&deg;, edge-on</td><td>Zero</td><td>A failed engine. Minimum drag</td></tr>
+</tbody></table>
+
+<h3>Ice on the propeller</h3>
+<p>Ice ruins a blade's aerofoil section as surely as it ruins a wing's: thrust falls and the
+power absorbed for a given RPM rises. The propeller then adds a problem of its own. Ice builds
+and sheds <b>unevenly</b> &mdash; centrifugal force and the higher outboard speeds throw it off
+the tips while it clings near the roots &mdash; so the disc goes out of balance and the
+<b>vibration can be severe</b>. If you suspect propeller icing on a constant speed unit, cycling
+the RPM up and down may shed some of it (Safety Sense Leaflet 03).</p>
+
+<h3>Windmilling drag, and your glide</h3>
+<p>Stop the engine but leave the propeller free and the airflow drives it round instead. The
+helix angle now exceeds the blade angle, so the blade's angle of attack is <b>negative</b>: the
+total reaction tilts so that one component keeps the propeller turning and the other acts
+<b>backwards along the flight path</b>. The propeller has become a windmill, taking power from
+the airstream to turn a dead engine &mdash; and that power comes out of your height and
+speed.</p>
+<ul>
+<li>A <b>windmilling</b> propeller drags far more than a <b>stopped</b> one. A stopped propeller
+takes no power out of the airflow; a windmilling one does, continuously.</li>
+<li>Windmilling in <b>fine</b> pitch is worse than windmilling in <b>coarse</b>.</li>
+<li><b>Feathered</b> is least of all, and the propeller stops.</li>
+</ul>
+<p>More drag means a lower lift/drag ratio: a <b>steeper glide angle and less distance</b> from
+the height you have. POH glide figures normally assume the propeller <b>windmilling</b>, flaps
+up, zero wind &mdash; the published number is already the pessimistic case.</p>
+<p>Feathering exists because of that drag. On a twin it is survival: the dead engine's
+windmilling propeller adds drag and a large yawing moment, enough to take the single-engine climb
+rate below zero. A typical PPL trainer cannot feather &mdash; a fixed pitch propeller cannot
+change blade angle at all, and single-engine constant speed installations stop at a coarse limit
+well short of feather.</p>
+
+<div class="trap"><b>Exam traps</b>
+<ul>
+<li><b>Geometric</b> pitch is a property of the blade, <b>effective</b> pitch is what the
+aeroplane achieves. Slip is the difference.</li>
+<li>Blade angle is measured to the <b>plane of rotation</b>, angle of attack to the <b>relative
+airflow</b>. Angle of attack = blade angle &minus; helix angle.</li>
+<li>Blade angle <b>decreases</b> from root to tip, because helix angle <b>decreases</b> with
+radius &mdash; rotational speed rises with radius while forward speed does not.</li>
+<li>Fixed pitch at constant RPM: more airspeed means <b>less</b> blade angle of attack.</li>
+<li>A <b>windmilling</b> propeller drags far more than a <b>stopped</b> one, and steepens the
+glide.</li>
+<li>Fine = small blade angle = high RPM. Coarse = large blade angle = low RPM.</li>
 </ul></div>`
 }
 ],
@@ -442,7 +617,26 @@ quiz: [
 { q: 'Full control deflection above VA risks:', a: ['A stall', 'Structural damage', 'Engine overspeed', 'Flap damage'], c: 1, why: 'Below VA the wing stalls before the structural limit is reached. Above it, full deflection can overstress the airframe.', ref: 'PoF' },
 { q: 'TAS compared with IAS at 10,000 ft is approximately:', a: ['The same', '10% higher', '20% higher', '20% lower'], c: 2, why: 'Roughly 2% per 1000 ft, so about 20% higher at 10,000 ft.', ref: 'PoF' },
 { q: 'Typical normal category limit load factors are:', a: ['+3.8 g and -1.52 g', '+4.4 g and -1.76 g', '+6.0 g and -3.0 g', '+2.5 g and -1.0 g'], c: 0, why: '+3.8/-1.52 normal, +4.4 utility, +6.0 aerobatic.', ref: 'PoF' },
-{ q: 'Asymmetric blade effect (P-factor) is most pronounced:', a: ['At high speed and low angle of attack', 'At high power and high angle of attack', 'In the descent', 'At cruise power'], c: 1, why: 'At high angle of attack the descending blade has a greater effective angle of attack. Combined with slipstream, torque and gyroscopic effects, this is why right rudder is needed on take-off.', ref: 'PoF' }
+{ q: 'Asymmetric blade effect (P-factor) is most pronounced:', a: ['At high speed and low angle of attack', 'At high power and high angle of attack', 'In the descent', 'At cruise power'], c: 1, why: 'At high angle of attack the descending blade has a greater effective angle of attack. Combined with slipstream, torque and gyroscopic effects, this is why right rudder is needed on take-off.', ref: 'PoF' },
+{ q: 'The distance an aeroplane actually advances in one revolution of the propeller is the effective pitch. The difference between that and the geometric pitch is called:', a: ['Blade twist', 'The helix angle', 'Slip', 'Washout'], c: 2, why: 'Geometric pitch is fixed by the blade\'s geometry — the advance per revolution if the propeller were a screw turning in a solid nut. Slip is the shortfall, and it is necessary rather than wasteful: the blade only produces thrust because it meets the air at a positive angle of attack.', ref: 'Propeller pitch and slip' },
+{ q: 'Propeller blade angle is the angle between the blade chord line and:', a: ['The plane of rotation', 'The relative airflow at the blade', 'The longitudinal axis of the aeroplane', 'The aeroplane\'s flight path'], c: 0, why: 'Blade angle is purely geometric and is measured to the plane of rotation; on a fixed pitch propeller it never changes. The angle between the chord and the relative airflow at the blade is the blade angle of attack, which equals blade angle minus helix angle.', ref: 'Blade angle and helix angle' },
+{ q: 'A propeller blade is twisted from root to tip because:', a: ['A twisted blade is stronger and better resists centrifugal bending', 'Local speed increases with radius, so the blade angle must decrease towards the tip to keep the angle of attack roughly constant', 'The blade angle must increase towards the tip to compensate for the lower dynamic pressure there', 'Twist prevents a tip vortex forming on the blade'], c: 1, why: 'Rotational speed is proportional to radius while forward speed is the same everywhere along the blade, so the helix angle falls towards the tip. Blade angle is reduced to match — coarse at the root, fine at the tip — which keeps the angle of attack and the thrust reasonably even along the blade.', ref: 'Blade twist' },
+{ q: 'On a fixed pitch propeller at constant RPM, an increase in forward airspeed will:', a: ['Increase the blade angle', 'Increase the blade angle of attack and increase thrust', 'Decrease the blade angle of attack and decrease thrust', 'Leave the blade angle of attack unchanged'], c: 2, why: 'Forward speed increases the helix angle while the blade angle is fixed, and blade angle of attack is blade angle minus helix angle. The reverse applies at the start of the take-off roll, where nil forward speed leaves the blade working at almost its full blade angle.', ref: 'Fixed pitch propeller' },
+{ q: 'After an engine failure in a single-engine aeroplane, a windmilling propeller compared with one that has stopped will give:', a: ['Less drag, because it is turning with the airflow', 'More drag, but the same glide angle', 'The same drag, since the frontal area is unchanged', 'More drag, and a steeper glide angle'], c: 3, why: 'A windmilling propeller extracts power from the airstream to turn the engine, and the only source of that power is the aeroplane\'s height and speed. The extra drag lowers the lift/drag ratio, so the glide angle steepens and the distance achieved falls. A stopped propeller takes no power out of the airflow.', ref: 'Windmilling drag' },
+{ q: 'A propeller is feathered when the blades are set:', a: ['At the fine pitch stop, so that the engine can be restarted', 'At the coarse pitch stop normally used in the cruise', 'At roughly 90 degrees to the plane of rotation, nearly edge-on to the airflow', 'At a negative blade angle, to give reverse thrust'], c: 2, why: 'Feathering turns the blades almost edge-on so that the propeller stops and its drag is minimised. It matters most on a twin, where a windmilling propeller on the dead engine adds both drag and yaw. A typical PPL trainer cannot feather: a fixed pitch propeller cannot change blade angle at all, and single-engine constant speed units stop well short of feather.', ref: 'Feathering' },
+{ q: 'Ice accreting on the propeller blades in flight will:', a: ['Reduce thrust, and can cause severe vibration as the ice sheds unevenly', 'Have no real effect, because centrifugal force removes it as fast as it forms', 'Increase thrust, because the iced blade section is more cambered', 'Affect engine cooling only, not propeller performance'], c: 0, why: 'Ice spoils the blade\'s aerofoil section, so thrust falls and the power absorbed for a given RPM rises. It also builds and sheds unevenly, putting the disc out of balance, and the resulting vibration can be severe. CAA Safety Sense Leaflet 03 suggests cycling the RPM on a constant speed unit to shed some of it.', ref: 'Safety Sense Leaflet 03' },
+{ q: 'Compared with a laminar boundary layer, a turbulent boundary layer:', a: ['Gives less skin friction drag and separates more readily', 'Gives more skin friction drag but resists separation better', 'Gives less skin friction drag and resists separation better', 'Gives more skin friction drag and separates more readily'], c: 1, why: 'Mixing inside a turbulent layer drags fast-moving air down towards the skin. That steepens the velocity gradient at the surface, so friction drag rises — but the extra energy near the surface lets the flow keep running against a rising pressure, so separation is delayed. Designers pay the drag to keep the flow attached.', ref: 'Boundary layer — laminar and turbulent' },
+{ q: 'As the angle of attack of a wing is increased towards the stall, the separation point on the upper surface:', a: ['Moves progressively forward from the trailing edge', 'Moves rearwards towards the trailing edge', 'Stays fixed at the transition point', 'Jumps to the leading edge only once the critical angle is passed'], c: 0, why: 'Separation starts near the trailing edge at low angles and creeps forward as the adverse pressure gradient steepens. It is already moving well before the critical angle; the stall is simply the point at which it has moved far enough forward to destroy the upper-surface suction.', ref: 'Flow separation at increasing angles of attack' },
+{ q: 'A boundary layer forms over a wing because:', a: ['Air is compressible', 'The upper surface is cambered', 'Static pressure falls where the air accelerates', 'Air is viscous and will not slip at the surface'], c: 3, why: 'Viscosity plus the no-slip condition: the air touching the skin is stationary relative to it, and the speed rises across a thin layer to the free stream value. Camber and Bernoulli explain the pressure distribution, not the existence of the layer — a flat plate has a boundary layer too.', ref: 'The boundary layer' },
+{ q: 'Vortex generators delay flow separation because they:', a: ['Reduce the skin friction drag of the wing', 'Increase the camber of the aerofoil', 'Mix high-energy free-stream air into the boundary layer', 'Weaken the wingtip vortices'], c: 2, why: 'They deliberately make the layer turbulent and energised, mixing faster air from above down towards the surface so it can run further against the adverse pressure gradient. They cost a little drag rather than saving it; changing camber is what flaps do, and weakening tip vortices is what winglets do.', ref: 'Boundary layer control' },
+{ q: 'On the walk-round you find noticeable free play at an aileron hinge. It matters because it:', a: ['Lowers the speed at which flutter can begin', 'Increases the stick force required in the cruise', 'Is the usual cause of adverse yaw', 'Reduces the authority of the trim tab'], c: 0, why: 'Play lets the surface rotate independently of the control run, so it can be driven by its own inertia and by the airflow instead of being held by the pilot. That extra degree of freedom is exactly what flutter needs, and every bit of slack lowers the critical speed. Report it; do not fly it.', ref: 'Pre-flight control surface and hinge check' },
+{ q: 'Flutter is best described as:', a: ['Buffet caused by separated airflow striking the tailplane', 'A coupled bending and torsional oscillation that draws its energy from the airflow', 'Airframe vibration caused by an out-of-balance propeller', 'The pre-stall buffet felt through the airframe and controls'], c: 1, why: 'Flutter needs two motions coupled together, typically bending and torsion. Because the twist lags the bend, the airflow does net work on the structure each cycle and the amplitude grows. Buffet and propeller vibration are forced vibrations with an external driver; they do not diverge.', ref: 'CS 23.629, Flutter' },
+{ q: 'A mass balance weight fitted ahead of the hinge line of a control surface:', a: ['Reduces the stick force needed to deflect the surface', 'Prevents control reversal at high angles of attack', 'Moves the surface\'s centre of gravity on to or ahead of the hinge line, so inertia no longer deflects it', 'Offsets the download carried by the tailplane in the cruise'], c: 2, why: 'Mass balance is about where the weight is, not where the area is. Putting part of the surface ahead of the hinge, or fitting a horn balance, is aerodynamic balance and reduces stick force; it is not a flutter cure. Anything that shifts the surface\'s centre of gravity aft again — paint, filler, trapped water, ice — lowers the flutter speed.', ref: 'Mass balance versus aerodynamic balance' },
+{ q: 'Why should Vₙₑ be treated as a limit rather than a speed to explore?', a: ['Above it the wing will stall at a load factor of 1', 'Above it the ASI over-reads, so the true airspeed is unknown', 'Above it full control deflection will overstress the airframe', 'Flutter testing is flown only up to the design dive speed Vᴅ, and Vₙₑ is set no higher than 0.9 Vᴅ — so the margin is small, and it shrinks if mass balance or stiffness has changed'], c: 3, why: 'Flutter has no warning band: below the critical speed a disturbance damps out, above it the amplitude diverges within seconds. CS 23.629 requires proper attempts to induce flutter up to Vᴅ, a proper margin of damping at Vᴅ, and any rational analysis to cover speeds up to 1.2 Vᴅ — all on a new, correctly balanced and rigged airframe. Paint, repairs, ice or worn hinges eat into that margin. Option three describes Vᴀ, not Vₙₑ.', ref: 'CS 23.1505 and CS 23.629' },
+{ q: 'A balance tab moves:', a: ['In the same direction as the control surface, increasing the stick force', 'In the opposite direction to the control surface, reducing the stick force', 'Only when selected by the pilot, to hold a chosen attitude', 'In the opposite direction to the control surface, increasing the stick force'], c: 1, why: 'The linkage deflects the tab the other way when you deflect the surface. The load on the tab acts about the hinge in the direction you are already moving the surface, so the hinge moment and the stick force both fall. A tab that moves the same way as the surface is an anti-balance tab; a tab you set yourself is a trim tab.', ref: 'Aerodynamic balance - balance tab' },
+{ q: 'An anti-balance tab is fitted to an all-moving tailplane (stabilator) because:', a: ['The stabilator has no other means of trim', 'It increases the lift the stabilator produces at low speed', 'It prevents flutter of the stabilator at high speed', 'The stabilator pivots near its own aerodynamic centre, so pitch control would otherwise be far too light'], c: 3, why: 'A stabilator hinged close to its aerodynamic centre has almost no hinge moment, so the control is over-sensitive and easy to over-control or overstress. The anti-balance tab deflects the same way as the surface, so stick force builds with deflection and with speed. Flutter is prevented by mass balance, not by a tab.', ref: 'Stabilator - anti-balance tab' },
+{ q: 'In a servo tab system, the pilot controls are connected directly to:', a: ['The tab only - aerodynamic load on the tab then moves the control surface', 'The control surface only', 'Both the tab and the control surface together', 'Neither; the control surface is moved hydraulically'], c: 0, why: 'You move the tab, which deflects opposite to the way you want the surface to go; the load on the tab then drives the surface round. It makes very large surfaces movable by hand, but it depends on dynamic pressure, so it is weak at very low airspeed.', ref: 'Aerodynamic balance - servo tab' },
+{ q: 'Moving a control surface hinge line too far aft would:', a: ['Increase the stick force at all speeds', 'Have no effect until high speed is reached', 'Overbalance the control, so that it tends to keep deflecting rather than centring', 'Reduce the maximum deflection available'], c: 2, why: 'An inset (set-back) hinge leaves part of the surface ahead of the hinge, and the airflow on that part helps the deflection. Taken too far, the helping moment exceeds the opposing one and the surface runs away from the pilot - overbalance. A horn balance does the same job by the same means and has the same limit.', ref: 'Aerodynamic balance - inset hinge and horn balance' }
 ],
 
 cards: [
@@ -484,6 +678,29 @@ cards: [
 { f: 'What does VA protect against, and how does weight affect it?', b: 'Structural overload from full control deflection. VA DECREASES as weight decreases.', ref: 'PoF' },
 { f: 'IAS to TAS rule of thumb', b: 'Add about 2% per 1000 ft.', ref: 'PoF' },
 { f: 'Limit load factors: normal, utility, aerobatic', b: '+3.8/-1.52, +4.4, +6.0.', ref: 'PoF' },
-{ f: 'Four propeller effects yawing you left', b: 'Slipstream, torque reaction, gyroscopic effect, asymmetric blade effect (P-factor).', ref: 'PoF' }
+{ f: 'Four propeller effects yawing you left', b: 'Slipstream, torque reaction, gyroscopic effect, asymmetric blade effect (P-factor).', ref: 'PoF' },
+{ f: 'Geometric pitch and effective pitch?', b: 'Geometric = the advance per revolution if the propeller were a screw in a solid nut. Effective = the advance the aeroplane actually achieves. The difference is slip.', ref: 'Propeller pitch' },
+{ f: 'Blade angle of attack — made up of what?', b: 'Blade angle (chord to the plane of rotation) minus helix angle (relative airflow at the blade to the plane of rotation).', ref: 'Blade angle and AoA' },
+{ f: 'Why is a propeller blade twisted?', b: 'Local speed rises with radius, so the helix angle falls towards the tip. Blade angle decreases from root to tip to hold a roughly constant angle of attack.', ref: 'Blade twist' },
+{ f: 'Fixed pitch propeller at constant RPM, airspeed increases — blade angle of attack?', b: 'It decreases, and thrust falls with it. The helix angle has grown while the blade angle is fixed.', ref: 'Fixed pitch propeller' },
+{ f: 'Fine and coarse pitch — blade angle, RPM, when?', b: 'Fine = small blade angle, high RPM, take-off and landing. Coarse = large blade angle, low RPM, cruise.', ref: 'Constant speed propeller' },
+{ f: 'Windmilling or stopped propeller — which drags more?', b: 'Windmilling, by a long way. It takes power out of the airstream to turn the engine, so the glide angle steepens and you go less far.', ref: 'Windmilling drag' },
+{ f: 'Feathered propeller?', b: 'Blades turned to roughly 90 degrees to the plane of rotation, edge-on to the airflow. Minimum drag, and the propeller stops. Not available on a typical PPL trainer.', ref: 'Feathering' },
+{ f: 'Ice on the propeller — two effects?', b: 'Thrust falls as the blade section is spoiled, and uneven shedding unbalances the disc, causing vibration that can be severe.', ref: 'Propeller icing' },
+{ f: 'Why is there a boundary layer at all?', b: 'Air is viscous and will not slip at the surface: speed is zero at the skin and rises across a thin layer to the free stream.', ref: 'The boundary layer' },
+{ f: 'Laminar boundary layer — friction and separation?', b: 'Low skin friction drag, but little energy near the surface, so it separates readily.', ref: 'Boundary layer types' },
+{ f: 'Turbulent boundary layer — friction and separation?', b: 'More skin friction drag, but more energy near the surface, so it resists separation.', ref: 'Boundary layer types' },
+{ f: 'Adverse pressure gradient — where is it, and what does it do?', b: 'Aft of the point of minimum pressure, static pressure rises towards the trailing edge. The boundary layer runs uphill against it, slows, reverses and separates.', ref: 'Separation point' },
+{ f: 'Which way does the separation point move as angle of attack increases?', b: 'Forward, from the trailing edge. When it has moved far enough forward the wing stalls.', ref: 'Flow separation and angle of attack' },
+{ f: 'Flutter — which two motions couple?', b: 'Bending and torsion. The twist lags the bend, so the airflow does net work on the structure every cycle and the amplitude grows.', ref: 'Flutter' },
+{ f: 'Why is flutter speed-dependent?', b: 'Aerodynamic forces rise with the square of speed; stiffness and damping do not. Below the critical speed a disturbance damps out, above it the oscillation diverges. There is no warning band.', ref: 'Flutter' },
+{ f: 'Mass balance — where is the weight and what does it achieve?', b: 'Ahead of the hinge line. It puts the surface\'s centre of gravity on or ahead of the hinge, so inertia can no longer deflect the surface when the structure flexes. That raises the flutter speed.', ref: 'Mass balance' },
+{ f: 'Four things that can spoil a control surface\'s mass balance', b: 'Extra coats of paint, a filler or fabric repair, water trapped inside the surface or ice on it, and a loose or missing balance weight. CAP 747 GR No. 10 lists loss of correct mass balance moments among the hazards of uncontrolled painting.', ref: 'CAP 747 GR No. 10, Painting of Aircraft' },
+{ f: 'How much margin is there above Vₙₑ?', b: 'At least ten per cent up to Vᴅ: CS 23.1505 sets Vₙₑ at no more than 0.9 Vᴅ. CS 23.629 requires flight flutter tests to attempt to induce flutter up to Vᴅ with a proper margin of damping there, and any rational analysis to cover all speeds up to 1.2 Vᴅ — on a new, correctly balanced airframe. Paint, repairs, ice or free play eat into it.', ref: 'CS 23.1505 / CS 23.629' },
+{ f: 'Balance tab - which way does it move, and what does it do to stick force?', b: 'Opposite to the control surface. It reduces the stick force.', ref: 'Aerodynamic balance' },
+{ f: 'Anti-balance tab - which way does it move, and what does it do to stick force?', b: 'The same way as the control surface. It increases the stick force, restoring feel.', ref: 'Aerodynamic balance' },
+{ f: 'Why does an all-moving tailplane (stabilator) need an anti-balance tab?', b: 'It pivots near its own aerodynamic centre, so pitch would be far too light and over-sensitive. The tab puts the stick force back, rising with deflection and speed.', ref: 'Stabilator' },
+{ f: 'Servo tab - what does the pilot actually move?', b: 'Only the tab. Aerodynamic load on the tab then drives the control surface. Weak at very low airspeed.', ref: 'Aerodynamic balance' },
+{ f: 'Two aerodynamic balance methods that are not tabs', b: 'Horn balance and inset (set-back) hinge - both put surface area ahead of the hinge line. Too much area gives overbalance.', ref: 'Aerodynamic balance' }
 ]
 };

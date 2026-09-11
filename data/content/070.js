@@ -95,6 +95,37 @@ least manoeuvrable has priority. Also, an aircraft <b>towing</b> another or in <
 has priority, and power-driven aircraft give way to those towing.</li>
 </ul>
 
+<h3>Marshalling signals</h3>
+<p>A marshaller guides you into or out of a parking position on the apron. The signals are
+prescribed in <b>SERA Appendix 1, section 4</b> and may be used for nothing else. For an aeroplane
+the marshaller stands on the <b>left</b>, where you can best see them, in a fluorescent vest, with
+bats, wands or gloves by day and <b>illuminated wands</b> at night or in poor visibility
+(SERA.3301). Directions are given <b>from your point of view</b>, not theirs.</p>
+<table>
+<thead><tr><th>Signal from the marshaller</th><th>Meaning and your action</th></tr></thead>
+<tbody>
+<tr><td>Both arms up, then swung out to point</td><td><b>Proceed to the next marshaller</b>, or as directed — taxi on that way</td></tr>
+<tr><td>Arms bent at the elbows, beckoning chest to head</td><td><b>Straight ahead</b>, move forward</td></tr>
+<tr><td>One arm held out at 90&deg;, the other beckoning</td><td><b>Turn left</b> or <b>turn right</b>: turn towards the still arm, at the rate the other beckons</td></tr>
+<tr><td>Arms down, patting gesture from waist to knees</td><td><b>Slow down</b></td></tr>
+<tr><td>Arms raised slowly until the wands cross overhead</td><td><b>Normal stop</b>. Done <b>abruptly</b>, it is an <b>emergency stop</b> — stop at once</td></tr>
+<tr><td>Raised open palm closed into a fist, or a fist opened</td><td><b>Set brakes</b> or <b>release brakes</b>; acknowledge with a thumbs up</td></tr>
+<tr><td>Wands overhead, jabbed inwards or outwards</td><td><b>Chocks inserted</b> or <b>chocks removed</b></td></tr>
+<tr><td>One hand circling at head level, other arm pointing</td><td><b>Start</b> the engine indicated</td></tr>
+<tr><td>Wand drawn across the throat</td><td><b>Cut engines</b></td></tr>
+<tr><td>Thumb up, or one arm raised with the wand up</td><td><b>Affirmative, all clear</b>. A standard <b>salute</b> is dispatch: taxi</td></tr>
+</tbody></table>
+<p>Five signals go the other way, made in the cockpit with hands plainly visible (SERA
+Appendix 1, 4.2): <b>brakes engaged</b> — fingers extended in front of your face, then a clenched
+fist, the moment the fist closes being the moment the brakes go on; <b>brakes released</b> — fist,
+then fingers extended; <b>insert chocks</b> — palms outward, hands drawn in to cross in front of
+the face; <b>remove chocks</b> — crossed hands moved outwards; and <b>ready to start</b> — raise
+the number of fingers of the engine to be started.</p>
+<p>Before signalling, the marshaller must check that the area you are being guided into is
+<b>clear of objects you might strike</b> (SERA Appendix 1, 4.1.2). That does not hand over the
+aeroplane: under <b>SERA.2010(a)</b> the pilot-in-command stays responsible for its operation, so
+stop if a signal would take you somewhere you are unhappy with.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>Steady green to an aircraft in flight means <b>cleared to land</b>; on the ground it means
@@ -185,6 +216,38 @@ continuing is unwise (weather, fuel, doubt about position, a sick passenger). It
 a failure, and made early it is easy.</li>
 </ul>
 
+<h3>Passengers, evacuation and afterwards</h3>
+<p>The legal brief is given "before or, where appropriate, <b>during</b> the flight"
+(NCO.OP.130; ANO 2016 article 73 for non-Part-21 aircraft), so the brief on the way down is part
+of the requirement, not an extra. Say what is happening in one sentence, then give the
+instructions in the order they will be used:</p>
+<ul>
+<li><b>Harnesses tight</b> — pull the slack out of an inertia reel and lock it. Seat backs
+upright, seats locked in their rails.</li>
+<li><b>Loose articles secured.</b> Bags, bottles and cameras become missiles at impact.</li>
+<li><b>Headsets off</b> before touchdown.</li>
+<li><b>Doors unlatched</b> on short final — unlatched, not swung open.</li>
+<li><b>Brace on your call</b> of "brace, brace, brace". With a shoulder harness: head forward,
+chin on the chest, palms under the thighs or arms crossed in front, feet flat on the floor, body
+<b>relaxed</b> — a rigid body is more easily injured. With a lap belt only: head down towards the
+knees, hands one over the other on top of the head, fingers not interlocked.</li>
+<li><b>Who opens what, and where to go</b> — name the person on each door, say who helps anyone
+who cannot get out alone, and give a meeting point <b>upwind</b> and well clear.</li>
+</ul>
+<p>Shut down as you commit to the field: <b>fuel selector off, mixture idle cut-off, magnetos
+off</b> and, once the flap you want is selected and the Mayday made, <b>master off</b>. After
+touchdown get everyone out, <b>count them</b>, and move upwind with the first aid kit, a beacon
+and something warm.</p>
+<p>The order afterwards is <b>casualties, shelter, being found</b>. Dial <b>999</b> if you have a
+signal. Switch the ELT or PLB on <b>without delay</b> — COSPAS-SARSAT detects 406 MHz throughout
+the UK search and rescue region, so there is nothing to gain by waiting. Stay with the aeroplane;
+it is far easier to spot than people are. Ground-to-air symbols should be at least <b>2.5 m
+(8 ft)</b> long: <b>V</b> require assistance, <b>X</b> require medical assistance.</p>
+<p>Do not move the aircraft. Pending the investigators' arrival <b>nobody may modify the site or
+move the wreckage</b>, except for safety reasons, to help the injured, or with the express
+permission of the authorities in control of the site (Regulation 996/2010, Article 13(2)). Notify
+the <b>AAIB without delay</b> — and an accident to the <b>police</b> as well.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>Engine failure after take-off at low level: <b>land ahead</b>. Do not turn back.</li>
@@ -260,6 +323,41 @@ selector positions, the unusable quantity, and set a hard time to land.</li>
 technical defects affecting airworthiness, bird strikes, laser attacks and anything that
 endangered or could have endangered the aircraft.</p>
 
+<h3>The microburst</h3>
+<p>A shaft of cold, dense air falling out of a convective cloud, hitting the ground and spreading
+outwards in all directions. Fujita defined it by the size of that outflow: <b>0.4 to 4 km</b>
+across. Short-lived, it generally reaches <b>maximum intensity within ten minutes</b>, and needs no
+mature thunderstorm: any convective cloud will do, and a <b>dry</b> microburst falls from a shower
+whose rain evaporates before it lands. Downdraughts of 1000 ft/min are typical; peaks above
+<b>5000 ft/min</b> have been measured, several times what a light aeroplane can out-climb. At its
+leading edge the outflow curls into a <b>horizontal vortex ring</b> around the base of the shaft, so
+the edges shear hardest.</p>
+<p>Fly through one on approach and three things happen, possibly inside <b>30 seconds</b>:</p>
+<ol>
+<li><b>Increasing headwind.</b> Airspeed rises, the nose pitches up, you drift above the slope on
+less power. It feels like a good approach going slightly high. That is the trap: the <b>performance
+increase is the warning</b>, and taking power off to correct it spends energy you are about to
+need.</li>
+<li><b>The downdraught.</b> Headwind becomes vertical flow, angle of attack falls with no change of
+attitude, and you sink back through the slope.</li>
+<li><b>Increasing tailwind.</b> Airspeed decays and the sink worsens, leaving you low and slow.</li>
+</ol>
+<p>Clues beforehand: <b>virga</b> under a high-based convective cloud, a <b>ring of dust</b> raised
+beneath it, a rain shaft splaying outwards at the ground, windsocks disagreeing, a small intense
+cell on rainfall radar over the approach. <b>No UK aerodrome has ground-based windshear
+detection</b>; Heathrow and London City broadcast forecaster-issued ATIS warnings &mdash;
+<b>WSF</b>, <b>WSFR</b>, <b>WSR</b> &mdash; UK METARs carry no windshear group, and everywhere else
+the detector is you. On the instruments, treat <b>&plusmn;15 kt</b>, <b>&plusmn;500 ft/min</b>,
+<b>&plusmn;5&deg;</b> of pitch or a dot of glidepath with an odd throttle position as
+unacceptable.</p>
+<p>The escape: <b>maximum available power</b>, pitch smoothly to the go-around attitude and <b>hold
+it</b>, using the stall warner as the upper limit. <b>Do not chase the airspeed back</b> &mdash;
+lowering the nose to regain it is what puts you in the trees. <b>Leave the flap alone</b> until the
+climb away is assured. On take-off it is worse, because full power is already set and there is
+nothing left to add. The escape is a bad hand played well; the decision that saves you is the
+earlier one &mdash; hold off or divert rather than fly an approach into a convective cell at
+all.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>Wake vortices <b>sink</b> and <b>drift downwind</b>; land beyond a landing aircraft's
@@ -267,6 +365,107 @@ touchdown point and before a departing aircraft's rotation point.</li>
 <li>Wind shear on approach: the answer is a <b>prompt go-around</b>.</li>
 <li>All frost and ice must be removed before flight, not just most of it.</li>
 <li>Birds generally dive, so <b>climb</b>.</li>
+</ul></div>`
+},
+{
+  id: '070-fire', title: 'Fire: classes, extinguishers and what you actually do', mins: 6, tags: ['070.04'],
+  body: `
+<h3>The classes, and why they matter</h3>
+<p>Fire needs fuel, heat and oxygen together, and every drill removes one of them. Classification
+exists because <em>which</em> one you can safely remove depends on what is burning: water on burning
+avgas floats the fire across the floor, and on live wiring it puts you in the circuit. UK fires are
+classified by <b>BS EN 2</b> — five classes, and electrical is not one of them.</p>
+<table>
+<thead><tr><th>Class</th><th>Fuel</th><th>In an aeroplane</th></tr></thead>
+<tbody>
+<tr><td><b>A</b></td><td>Solids forming glowing embers</td><td>Upholstery, trim, baggage</td></tr>
+<tr><td><b>B</b></td><td>Flammable liquids</td><td>Avgas, oil, hydraulic fluid</td></tr>
+<tr><td><b>C</b></td><td>Flammable <b>gases</b></td><td>A passenger's camping gas</td></tr>
+<tr><td><b>D</b></td><td>Burning <b>metals</b></td><td>Magnesium castings, lithium-metal cells</td></tr>
+<tr><td><b>F</b></td><td>Cooking oils and fats</td><td>Galleys</td></tr>
+</tbody></table>
+<p><b>There is no Class E.</b> Electricity is a source of ignition, not a fuel — what burns behind
+the panel is insulation and plastic, a Class A or B fire with the added hazard that the equipment is
+live. Extinguishers cleared for live equipment carry a dielectric marking, not a class letter. Watch
+the lookalike: the American <b>UL</b> rating on an aircraft bottle does use <b>C for electrical</b>,
+so <b>2B:C</b> covers flammable liquid and live electrics, not gases.</p>
+
+<h3>Which agent suits which fire</h3>
+<table>
+<thead><tr><th>Agent</th><th>Works by</th><th>Use on</th><th>Never on</th></tr></thead>
+<tbody>
+<tr><td>Water (red)</td><td>Cooling</td><td>A</td><td>B, D, live electrics</td></tr>
+<tr><td>Foam (cream)</td><td>Smothering</td><td>A, B</td><td>D, live electrics</td></tr>
+<tr><td>Dry powder (blue)</td><td>Inhibiting</td><td>A, B, C, live electrics</td><td>Confined spaces</td></tr>
+<tr><td>CO<sub>2</sub> (black)</td><td>Displacing oxygen</td><td>B, live electrics</td><td>Confined spaces, D</td></tr>
+<tr><td>Halocarbon clean agent</td><td>Inhibiting</td><td>A, B, live electrics</td><td>D</td></tr>
+<tr><td>Special powder</td><td>Smothering</td><td>D only</td><td>Anything else</td></tr>
+</tbody></table>
+
+<h3>What a light aeroplane carries now</h3>
+<p>For decades the answer was <b>BCF</b> — bromochlorodifluoromethane, halon 1211: clean, effective
+on solids, liquids and live electrics, almost weightless. It is also an ozone-depleting substance,
+and aviation's "critical use" exemption had an end date. Under the Ozone-Depleting Substances
+Regulations 2015, <b>halon 1211 and halon 2402 hand extinguishers had to be out of UK aircraft
+cabins and crew compartments by 31 December 2025</b> — Defra's deadline, which the CAA cannot
+waive.</p>
+<p>The replacements accepted in <b>UK-CM-CS-013</b> are halocarbon clean agents: HFC-227ea,
+HFC-236fa, HCFC Blend B and <b>2-BTP</b>. For an unpressurised cabin up to <b>5.66 cubic metres</b>
+with nine passengers or fewer, it accepts a <b>UL 2B:C</b> bottle. <b>NCO.IDE.A.160</b> requires one
+in the flight crew compartment but <b>exempts ELA1 aeroplanes</b> — 1200 kg MTOM or less, not
+complex — so most of the training fleet. Carry one anyway.</p>
+
+<h3>Using one in a cockpit</h3>
+<p>Pull the pin, aim at the <b>base</b> of the flames, squeeze, sweep — it empties in seconds, so
+aim before you squeeze. Then the three problems you just created:</p>
+<ul>
+<li><b>Toxicity.</b> Clean agents are mild as gases but decompose over a hot fire into hydrogen
+fluoride, hydrogen bromide and similar — which is why NCO.IDE.A.160 requires an agent that
+"minimise[s] the hazard of toxic gas concentration".</li>
+<li><b>Obscuration.</b> Dry powder in a cockpit the size of a phone box gives a blinding, choking
+cloud and corrosive residue over the instruments. Fine on the apron, wrong inside.</li>
+<li><b>Oxygen.</b> CO<sub>2</sub> displaces oxygen, and in a few cubic metres it displaces yours.
+Not a cockpit agent either.</li>
+</ul>
+
+<h3>Engine fire</h3>
+<p>On start it is usually an <b>induction fire</b>: over-priming leaves fuel in the intake, which
+lights. CAP 1535 has you keep <b>cranking</b> with mixture at idle cut-off, fuel off and throttle
+fully open, so the engine draws the fire back in. If it is not out shortly after cutting the
+mixture, get out and move <b>upwind</b>. Do not open the cowling — you would feed it air; attack
+through the gills or intake.</p>
+<p>Airborne you cannot reach an engine-bay fire, so the extinguisher is irrelevant and only
+starvation works: fuel off, mixture idle cut-off, magnetos off, vents and cabin heat <b>closed</b>.
+Then get down — CAP 1535 notes gear, flap and a sideslip steepen the descent, and a sideslip also
+drags flames from the cabin side.</p>
+
+<h3>Cabin and electrical fire</h3>
+<p>A hot-plastic smell is electrical until proved otherwise. Isolate it: pull the breaker for the
+suspect service. <b>Never reset a breaker more than once</b>, and never reset one that tripped
+alongside a burning smell. If it worsens, <b>master off</b> — accepting the loss of radio, flaps and
+everything else electrical — extinguish, and land as soon as possible.</p>
+<p>Ventilation is the step most often got backwards:</p>
+<ul>
+<li><b>Engine fire in flight</b> — vents and cabin heat <b>closed</b>, keeping flame, smoke and
+carbon monoxide out.</li>
+<li><b>Fire inside the cabin</b> — extinguish <b>first</b>, ventilate <b>after</b>. Fresh air onto
+live flame feeds it.</li>
+<li><b>After discharging an extinguisher</b> — ventilate and descend to clear the agent.
+UK-CM-CS-013 accepts opening a window.</li>
+<li><b>Fumes with no fire</b>, such as carbon monoxide from a cracked exhaust reaching the cabin
+heat — <b>heater off, fresh air on, land</b>. Ventilate: there is nothing to fan.</li>
+</ul>
+
+<div class="trap"><b>Exam traps</b>
+<ul>
+<li>Under BS EN 2, <b>Class C is gases</b> and electrical is no class at all. On the American UL
+rating stamped on the bottle, C <em>does</em> mean live electrical.</li>
+<li>Halon 1211 (BCF) extinguishers had to be out of UK aircraft by <b>31 December 2025</b>.</li>
+<li>Engine fire in flight: vents and cabin heat <b>closed</b>. Cabin fire: extinguish, <b>then</b>
+ventilate.</li>
+<li>Water spreads Class B and conducts on live electrics. Only special powder does Class D.</li>
+<li>Never reset a tripped breaker more than once, and never after a burning smell.</li>
+<li>Fire on start: keep cranking, fuel and mixture <b>off</b>, throttle <b>open</b>.</li>
 </ul></div>`
 }
 ],
@@ -311,7 +510,26 @@ quiz: [
 { q: 'A precautionary landing is:', a: ['A landing following engine failure', 'A deliberate landing with power at a chosen site because continuing is unwise', 'A go-around', 'A landing at an unlicensed aerodrome without permission'], c: 1, why: 'A planned landing with power available, made because continuing would be unwise. Made early it is straightforward.', ref: 'Ops' },
 { q: 'Crossing a mountain ridge in strong winds, the recommended technique is to:', a: ['Cross at 90 degrees at low level', 'Cross at about 45 degrees so you can turn away, with plenty of clearance', 'Fly along the lee side', 'Descend on the upwind side'], c: 1, why: 'A 45 degree crossing angle preserves an escape turn, and expect strong downdraughts on the lee side.', ref: 'Ops' },
 { q: 'Volcanic ash should be:', a: ['Flown through at reduced power', 'Avoided entirely', 'Flown above at 500 ft clearance', 'Treated like light rain'], c: 1, why: 'Avoid entirely. Ash abrades and melts in engines.', ref: 'Ops' },
-{ q: 'The purpose of mandatory occurrence reporting is:', a: ['To apportion blame', 'To allow the industry to learn and improve safety, within a just culture', 'To record pilot hours', 'To calculate insurance premiums'], c: 1, why: 'Learning, not punishment. Report honestly and promptly.', ref: 'Ops' }
+{ q: 'The purpose of mandatory occurrence reporting is:', a: ['To apportion blame', 'To allow the industry to learn and improve safety, within a just culture', 'To record pilot hours', 'To calculate insurance premiums'], c: 1, why: 'Learning, not punishment. Report honestly and promptly.', ref: 'Ops' },
+{ q: 'Under BS EN 2, a Class C fire involves:', a: ['Flammable gases', 'Electrical equipment', 'Flammable liquids', 'Burning metals'], c: 0, why: 'BS EN 2 classifies by the fuel: A solids, B flammable liquids, C gases, D metals, F cooking oils. Electricity is an ignition source, not a fuel, so it gets no class of its own — an extinguisher safe on live equipment carries a dielectric marking instead. Only in the American UL scheme does C mean electrical.', ref: 'BS EN 2' },
+{ q: 'Halon 1211 (BCF) hand fire extinguishers in UK aircraft cabins and crew compartments:', a: ['May be carried indefinitely under aviation\'s critical-use exemption', 'Had to be decommissioned by 31 December 2025', 'Were banned outright in 2000, with no aviation exemption', 'May be carried where the CAA has granted an exemption'], c: 1, why: 'Aviation did hold a \'critical use\' exemption from the halon ban, but it carried an end date. Under the Ozone-Depleting Substances Regulations 2015 the bottles had to be out by the end of 2025. Defra sets that deadline and the Environment Agency enforces it — this is environmental law, not airworthiness law, so the CAA has no power to exempt an owner from it.', ref: 'Ozone-Depleting Substances Regulations 2015' },
+{ q: 'During an engine fire in flight, the cabin heat and fresh-air vents should be:', a: ['Opened fully, to clear smoke from the cabin', 'Left as set, since they have no effect on the fire', 'Opened only once the fire is out', 'Closed, to keep smoke and fumes out of the cabin'], c: 3, why: 'The fire is in the engine bay, upstream of the heater muff and the fresh-air intakes, so opening them invites flame, smoke and carbon monoxide into the cabin. Note the contrast with a fire inside the cabin, where you extinguish first and ventilate afterwards — the rule is not \'always shut\' or \'always open\', it depends on which side of the firewall the fire is.', ref: 'Engine fire drill' },
+{ q: 'Why is dry powder the wrong agent to discharge inside a light aircraft cockpit?', a: ['It is ineffective against burning insulation and plastic', 'It conducts electricity and is unsafe on live equipment', 'It produces a blinding, choking cloud and a corrosive residue', 'It is rated only for Class D fires'], c: 2, why: 'Dry powder is effective — it handles A, B, C and live electrics — so effectiveness is not the objection. The problem is what it does to a cockpit the size of a phone box: you lose sight of the instruments at the moment you most need them, and the residue corrodes what it settles on. UK certification guidance names only halocarbon clean agents for cabins and crew compartments — UK-CM-CS-013 lists 2-BTP, HFC-227ea, HFC-236fa and HCFC Blend B, and anything else has to be agreed with the CAA.', ref: 'UK-CM-CS-013' },
+{ q: 'A circuit breaker trips and you notice a smell of hot insulation. You should:', a: ['Reset it once and monitor the service', 'Reset it as often as needed to keep the service', 'Turn the master switch off immediately and land', 'Leave it out, isolating that service, and monitor'], c: 3, why: 'CAP 1535 warns against resetting a tripped breaker and says never reset more than once — a breaker that trips alongside a burning smell has done its job, and resetting it re-energises the fault. Isolating the service and watching is the first step; master off and land as soon as possible is what you escalate to if the situation worsens, not your opening move.', ref: 'CAP 1535, Fire' },
+{ q: 'A fire in the induction system during engine start. With the fuel and mixture cut off, the throttle should be:', a: ['Fully open, while you keep cranking, so the engine draws the fire in', 'Closed, to reduce the airflow through the carburettor', 'Set to 1200 rpm as soon as the engine catches', 'Left untouched while you fetch the extinguisher'], c: 0, why: 'The aim is to make the engine swallow its own fire: cranking with the throttle wide open pulls the burning mixture back through the induction system and out through the exhaust. CAP 1535 also sets the limit — if it is not out shortly after cutting the mixture, stop, get everyone out and move upwind rather than persisting.', ref: 'CAP 1535, Fire on the ground' },
+{ q: 'Part-NCO requires a hand fire extinguisher in an aeroplane\'s flight crew compartment, except in:', a: ['Aeroplanes flown single-pilot', 'ELA1 aeroplanes', 'Aeroplanes with fewer than four seats', 'Aeroplanes flown VFR by day'], c: 1, why: 'NCO.IDE.A.160 exempts ELA1 aeroplanes — 1200 kg MTOM or less and not classified as complex — which takes in most of the UK training fleet. Treat that as a legal minimum rather than advice: an unfought cabin fire becomes a forced landing you did not need to make.', ref: 'NCO.IDE.A.160' },
+{ q: 'You are on a stabilised approach when a microburst begins to affect you. The first indication is most likely to be:', a: ['Airspeed falling and the aircraft sinking below the glidepath', 'Airspeed rising and the aircraft going above the glidepath', 'An increased rate of descent with no change in airspeed', 'A sudden yaw towards the convective cell'], c: 1, why: 'You meet the outflow as an increasing headwind first, so airspeed rises, the nose pitches up and you go high on less power. The performance increase is the warning, not the reward: the downdraught and then the tailwind follow within seconds. Reducing power to regain the slope throws away the energy you are about to need.', ref: 'ICAO Doc 9817, 4.2.10' },
+{ q: 'Escaping a microburst on approach in a light aeroplane, the flap should be:', a: ['Retracted fully to reduce drag', 'Retracted in stages as in a normal go-around', 'Left where it is until the climb away is assured', 'Extended one further stage to increase lift'], c: 2, why: 'Retracting flap as you would in a normal go-around removes lift and reduces the margin to the stall warner at the moment you have least to spare, and a mishandled selection is worse still. Configuration changes wait until terrain clearance is assured.', ref: 'ICAO Doc 9817, 4.3.52 and 4.3.71' },
+{ q: 'A microburst is distinguished from a larger downburst by the horizontal extent of its surface outflow, which is:', a: ['0.4 to 4 km', '4 to 10 km', '10 to 25 km', 'Less than 200 m'], c: 0, why: 'Fujita\'s definition is a downdraught producing damaging horizontal surface winds over a horizontal extent between 0.4 and 4 km. That small scale is the whole problem: it fits entirely inside a final approach, and it reaches maximum intensity within about ten minutes, so a forecast warning may never catch it.', ref: 'ICAO Doc 9817, 3.5.15 and 3.5.18' },
+{ q: 'At UK aerodromes, automated ground-based remote-sensing equipment for detecting windshear is:', a: ['Fitted at every aerodrome with an instrument approach', 'Fitted at Heathrow and Gatwick only', 'Fitted wherever thunderstorms are climatologically common', 'Not installed at any UK aerodrome'], c: 3, why: 'There is none in the UK. Warnings are produced by a forecaster and broadcast on ATIS at a very small number of aerodromes as WSF, WSFR or WSR, and UK METARs deliberately carry no windshear group because it is passed by RTF instead. So your own eyes and instruments are the detector, and your report to ATC is what warns the aircraft behind you.', ref: 'UK AIP GEN 3.5.2' },
+{ q: 'A passenger has only a lap belt. The brace position you brief is:', a: ['Head forward with the chin on the chest and the palms under the thighs', 'Head down towards the knees, hands one over the other on top of the head', 'Head back against the seat with the arms folded across the chest', 'Leaning forward against the panel with the arms braced straight ahead'], c: 1, why: 'A shoulder harness restrains the upper body, so the head-forward position works with it. A lap belt alone leaves the upper body free, so the airline-style position is used instead: head down towards the knees, hands one over the other with the fingers not interlocked on top of the head. In either case stay relaxed — a rigid body is more easily injured — and take the headset off before impact.', ref: 'CAA Safety Sense 02, Care of Passengers' },
+{ q: 'After a forced landing in a field, you may move the aircraft before the investigators arrive:', a: ['Never, under any circumstances', 'Only to clear a public road or right of way', 'For safety reasons, to help the injured, or with the express permission of the authorities in control of the site', 'Whenever the landowner asks you to'], c: 2, why: 'Article 13(2) forbids modifying the state of the site, taking samples, or moving or removing the aircraft and its wreckage pending the arrival of safety investigators — with exactly those exceptions. The site is the evidence, and the investigation exists to prevent the next accident, not to apportion blame. Tidying the field up is the instinct to resist.', ref: 'Regulation 996/2010, Article 13(2)' },
+{ q: 'You have an accident in the UK. Who must be notified?', a: ['The CAA only', 'The AAIB only', 'The CAA and the police', 'The AAIB and the police'], c: 3, why: 'An accident or serious incident must be notified without delay to the Chief Inspector of Air Accidents — the AAIB — and, for an accident, also to a police officer for the area where it happened. Occurrence reporting to the CAA is a separate system with its own list of reportable events; it does not discharge the accident-notification duty.', ref: 'SI 2018/321, regulation 20' },
+{ q: 'You have evacuated after a forced landing in a remote area. You should switch the ELT or PLB on:', a: ['Only once you can hear a search aircraft', 'Without delay', 'After 30 minutes, to conserve the battery', 'Only if you cannot get a mobile signal'], c: 1, why: 'COSPAS-SARSAT detects 406 MHz beacons across the entire globe, and much of the UK search and rescue region is busy civil and military airspace where the distress frequencies are routinely monitored, so the UK AIP tells survivors to switch an ELT on without delay. Only 406 MHz reaches the satellites — 121.5 MHz is monitored by aircraft and ATC, not by COSPAS-SARSAT. A beacon with a GNSS chip is fixed almost at once, but a plain 406 MHz beacon needs at least two polar-orbiting passes for a Doppler fix, which usually takes up to 90 minutes. That is time you spend waiting rather than saving.', ref: 'UK AIP GEN 3.6' },
+{ q: 'A marshaller holds one arm extended horizontally and beckons with the other. The direction of turn indicated is:', a: ['From the marshaller\'s point of view, so you reverse it', 'From your own point of view as the pilot', 'Towards the beckoning arm, at the rate of the still arm', 'Whichever side the marshaller is standing on'], c: 1, why: 'Signals 5a and 5b in SERA Appendix 1 are both labelled \'from pilot\'s point of view\'. The arm held still marks the side you turn towards as you see it, and the rate at which the other arm beckons tells you how fast to turn.', ref: 'SERA Appendix 1, 4.1' },
+{ q: 'You are taxiing under the direction of a marshaller. Before giving the signals, responsibility for ensuring the area you are guided into is clear of objects you might strike rests with:', a: ['The aerodrome operator', 'ATC ground movement control', 'The marshaller', 'Whoever issued your taxi clearance'], c: 2, why: 'SERA Appendix 1, 4.1.2 requires the signalman/marshaller to ascertain that the area is clear before using the signals. It does not transfer the aeroplane to them: SERA.2010(a) keeps the pilot-in-command responsible for the operation of the aircraft, so stop if a signal looks wrong.', ref: 'SERA Appendix 1, 4.1.2' },
+{ q: 'Which of these is a signal made by the pilot to the marshaller rather than the other way round?', a: ['A wand drawn across the throat in a slicing motion', 'Arms raised slowly until the wands cross above the head', 'A standard salute with the right hand', 'Fingers extended in front of the face, then a clenched fist'], c: 3, why: 'Brakes engaged is one of the five pilot-to-marshaller signals listed at SERA Appendix 1, 4.2, and the moment the fist closes is the moment the brakes go on. The throat slice (cut engines), crossed wands overhead (stop) and the salute (dispatch aircraft) all come from the marshaller.', ref: 'SERA Appendix 1, 4.2' },
+{ q: 'A marshaller abruptly extends both arms and wands to the top of the head, crossing the wands. This means:', a: ['Chocks inserted', 'Normal stop', 'Emergency stop', 'Hold position and stand by'], c: 2, why: 'Crossed wands above the head is the stop signal; the speed of the movement carries the urgency. Raised slowly it is a normal stop, done abruptly it is an emergency stop. Chocks inserted is a jabbing motion inwards with the arms already overhead, and hold position is both arms held down at 45 degrees.', ref: 'SERA Appendix 1, 4.1 (signals 6a, 6b)' }
 ],
 
 cards: [
@@ -348,6 +566,29 @@ cards: [
 { f: 'Bird strike imminent — climb or descend?', b: 'Climb. Birds normally dive to avoid.', ref: 'Ops' },
 { f: 'Precautionary landing', b: 'A deliberate landing with power at a chosen site because continuing is unwise. A decision, not a failure.', ref: 'Ops' },
 { f: 'Mountain ridge crossing technique', b: 'Cross at about 45 degrees with plenty of height, expecting lee-side downdraughts.', ref: 'Ops' },
-{ f: 'Purpose of occurrence reporting', b: 'Learning and safety improvement within a just culture — not blame.', ref: 'Ops' }
+{ f: 'Purpose of occurrence reporting', b: 'Learning and safety improvement within a just culture — not blame.', ref: 'Ops' },
+{ f: 'BS EN 2 fire classes?', b: 'A solids, B flammable liquids, C gases, D metals, F cooking oils and fats.', ref: 'BS EN 2' },
+{ f: 'Why is there no Class E for electrical fires?', b: 'Electricity is a source of ignition, not a fuel. Extinguishers safe on live equipment carry a dielectric marking instead.', ref: 'BS EN 2' },
+{ f: 'UL \'2B:C\' on an aircraft extinguisher — what does the C mean?', b: 'Live electrical equipment. That is the American scheme; under BS EN 2, C is gases.', ref: 'UK-CM-CS-013' },
+{ f: 'Halon 1211 (BCF) hand extinguishers in UK aircraft — deadline?', b: 'Out of cabins and crew compartments by 31 December 2025. Replaced by clean agents: 2-BTP, HFC-227ea, HFC-236fa, HCFC Blend B.', ref: 'ODS Regulations 2015 / UK-CM-CS-013' },
+{ f: 'Two reasons dry powder is wrong inside a cockpit?', b: 'A blinding, choking cloud, and corrosive residue over the instruments.', ref: 'Cockpit extinguishing agents' },
+{ f: 'Engine fire in flight — vents and cabin heat?', b: 'Closed. Fuel off, mixture idle cut-off, magnetos off, then descend. No restart attempt.', ref: 'Engine fire drill' },
+{ f: 'Cabin fire — extinguish or ventilate first?', b: 'Extinguish first, ventilate after. Ventilate early and you feed the fire.', ref: 'Cabin fire drill' },
+{ f: 'Fire on start — what do you do with the starter and throttle?', b: 'Keep cranking with the throttle fully open, fuel and mixture off, to draw the fire into the engine. Not out soon after cutting the mixture: get out, move upwind.', ref: 'CAP 1535, Fire' },
+{ f: 'Microburst on approach — the three events, in order?', b: 'Increasing headwind (airspeed up, high on the slope), then the downdraught (sink), then increasing tailwind (airspeed loss). Possibly all inside 30 seconds.', ref: 'ICAO Doc 9817, 4.2.10' },
+{ f: 'Microburst — horizontal extent and lifetime?', b: 'Surface outflow 0.4 to 4 km across; maximum intensity generally reached within ten minutes.', ref: 'ICAO Doc 9817, 3.5.15 and 3.5.18' },
+{ f: 'Why is the first indication of a microburst misleading?', b: 'It is a performance increase — airspeed up, high on the slope, power coming off. The gain is the warning; the loss is seconds away.', ref: 'ICAO Doc 9817, 4.2.10' },
+{ f: 'Microburst escape — what do you do about the low airspeed?', b: 'Nothing. Maximum available power, hold the go-around attitude to the stall warner, accept the speed. Do not lower the nose to regain it, and do not touch the flap.', ref: 'ICAO Doc 9817, 4.3.50 to 4.3.52 and 4.3.71' },
+{ f: 'Visual clues that a microburst may be waiting on the approach?', b: 'Virga under a high-based convective cloud, a ring of dust raised beneath it, a rain shaft splaying out at the ground, sheared smoke plumes, windsocks disagreeing.', ref: 'ICAO Doc 9817, 4.3.3' },
+{ f: 'Forced landing — what you brief the passengers', b: 'Harnesses tight, loose articles secured, headsets off, doors unlatched on short final, brace on the call "brace, brace, brace". Then who opens which door, who helps whom, and a meeting point upwind and well clear.', ref: 'NCO.OP.130' },
+{ f: 'Brace position — shoulder harness against lap belt only', b: 'Harness: head forward, chin on the chest, palms under the thighs or arms crossed in front, feet flat, body relaxed. Lap belt only: head down towards the knees, hands one over the other on top of the head, fingers not interlocked.', ref: 'Safety Sense 02' },
+{ f: 'Shutdown before an off-airfield touchdown', b: 'Fuel selector off, mixture idle cut-off, magnetos off. Master off last — after the flap you want is selected and the Mayday is made.', ref: 'CAP 1535' },
+{ f: 'May you move the aircraft after a forced landing?', b: 'Not until the investigators arrive — except for safety reasons, to help the injured, or with the express permission of the authorities in control of the site.', ref: 'Regulation 996/2010, Art 13(2)' },
+{ f: 'Accident in the UK — who do you notify, and how fast?', b: 'The AAIB (the Chief Inspector of Air Accidents) without delay, and the police as well for an accident. AAIB 24-hour line: 01252 512299.', ref: 'SI 2018/321 reg 20; CAP 1535' },
+{ f: 'Marshaller turn signals — whose left and right?', b: 'Yours. Turn towards the arm held still; the beckoning arm sets the rate of turn.', ref: 'SERA App 1, 4.1' },
+{ f: 'Marshaller: wands crossed above the head — slowly vs abruptly?', b: 'Slowly = normal stop. Abruptly = emergency stop.', ref: 'SERA App 1, 4.1' },
+{ f: 'Marshaller: wand drawn across the throat?', b: 'Cut engines.', ref: 'SERA App 1, 4.1' },
+{ f: 'Being marshalled — who must check the area is clear of objects?', b: 'The marshaller, before signalling. But the pilot-in-command stays responsible for the aircraft.', ref: 'SERA App 1, 4.1.2; SERA.2010(a)' },
+{ f: 'The five pilot-to-marshaller signals?', b: 'Brakes engaged, brakes released, insert chocks, remove chocks, ready to start engine(s).', ref: 'SERA App 1, 4.2' }
 ]
 };

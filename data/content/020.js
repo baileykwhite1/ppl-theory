@@ -287,6 +287,35 @@ leaning, peaking as you approach stoichiometric.</li>
 of the above on a screen — with the same underlying sensors and the same failure modes.</li>
 </ul>
 
+<h3>Pitot heat and ice protection</h3>
+<p>Pitot heat is an electrical element inside the pitot head and its drain hole. It keeps ice and
+water out of the pressure sensing so that the <b>ASI</b> keeps working. That is the whole of its
+job. It protects no part of the airframe, and fitting it does not turn the aeroplane into an
+icing aeroplane: you may only commence a flight or intentionally fly into <b>expected or actual
+icing conditions</b> if the aircraft is <b>certified and equipped</b> for them, and if you meet
+icing in one that is not, you must leave the conditions <b>without delay</b> by a change of level
+and/or course (<b>NCO.OP.170</b>).</p>
+<p>What it does <em>not</em> protect on many light types is the <b>static</b> system. Cessna-style
+static ports in the fuselage side are usually plain unheated holes; the Piper combined
+pitot-static mast puts the static holes on the same heated head, so one element covers both.
+The POH tells you which you have. Where the static side is unheated, your only defence in flight
+is the <b>alternate static source</b>, with the cabin-pressure errors that brings.</p>
+<p>Select it <b>before</b> entering visible moisture, not after. It is an anti-icing system, meant
+to stop ice forming; an element working on a tube already packed with ice may take minutes to
+clear it, or never clear it — and the ASI is unusable meanwhile. So switch on before cloud or
+precipitation in air near or below freezing, and early rather than late.</p>
+<p>It is a resistance heater and one of the largest continuous loads on a light single, typically
+a <b>5 to 10 A</b> circuit depending on type. Selecting it should give a clear swing on the
+<b>ammeter</b> or loadmeter, and that swing is how you confirm current is actually flowing. Keep
+any ground check <b>brief</b>: with no cooling airflow on the ramp the element runs hot enough to
+damage itself, and the tube gets hot enough to burn your hand.</p>
+<p><b>Windscreens</b>: light aeroplanes demist with hot air ducted from the cabin heat exchanger,
+which deals with internal misting and light frost and does nothing about airframe ice. Larger
+types use a laminated screen with a transparent conductive film, thermostatically controlled,
+which also keeps the interlayer warm and so less brittle in a bird strike. <b>Carburettor heat</b>
+is a separate engine system using hot air rather than electricity, and is covered in the piston
+engine article.</p>
+
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>Pitot feeds the ASI only; static feeds all three.</li>
@@ -406,7 +435,11 @@ quiz: [
 { q: 'An Airworthiness Review Certificate is normally valid for:', a: ['6 months', '12 months', '24 months', '36 months'], c: 1, why: '12 months.', ref: 'AGK' },
 { q: 'Airworthiness Directives are:', a: ['Advisory', 'Mandatory', 'Manufacturer recommendations only', 'Applicable to commercial operators only'], c: 1, why: 'ADs are mandatory. Service Bulletins are advisory unless made mandatory by an AD.', ref: 'AGK' },
 { q: 'Dry operating mass differs from basic empty mass in that it includes:', a: ['Usable fuel', 'Crew, their baggage and removable equipment', 'Payload', 'Unusable fuel'], c: 1, why: 'Dry operating mass = basic empty mass + crew and their equipment. It excludes usable fuel and payload.', ref: 'AGK' },
-{ q: 'Maximum zero fuel mass exists because:', a: ['Fuel is heavy', 'Fuel in the wings relieves wing bending loads', 'Fuel affects the CG', 'Fuel is consumed in flight'], c: 1, why: 'Beyond that mass, further load must be carried as wing fuel to provide bending relief.', ref: 'AGK' }
+{ q: 'Maximum zero fuel mass exists because:', a: ['Fuel is heavy', 'Fuel in the wings relieves wing bending loads', 'Fuel affects the CG', 'Fuel is consumed in flight'], c: 1, why: 'Beyond that mass, further load must be carried as wing fuel to provide bending relief.', ref: 'AGK' },
+{ q: 'In a typical light single with fuselage-side static ports, selecting pitot heat protects:', a: ['The pitot head and its drain hole only', 'The pitot head and the static ports', 'The static ports only', 'The pitot head, the static ports and the carburettor intake'], c: 0, why: 'Pitot heat is an element in the pitot head. On many light types the static ports are plain unheated holes, so an iced static system has to be dealt with by the alternate static source. A few types use a combined pitot-static mast where the same element covers both, which is why you check the POH rather than assume.', ref: 'Pitot-static anti-icing' },
+{ q: 'Pitot heat should be selected:', a: ['Continuously from engine start until shutdown', 'Before entering visible moisture in air near or below freezing', 'As soon as the ASI reading starts to fall away', 'Only once ice has been seen forming on the airframe'], c: 1, why: 'It is an anti-icing system, not a de-icing one. Once the tube is packed with ice the element may take minutes to clear it or fail to clear it at all, and you have no ASI in the meantime. Leaving it on continuously is also wrong: on the ground there is no cooling airflow and the element can burn out.', ref: 'Pitot heat — operation' },
+{ q: 'Having selected pitot heat, the normal way to confirm the element is drawing current in flight is:', a: ['A momentary drop in RPM', 'The low-voltage warning light extinguishing', 'A noticeable increase in load on the ammeter or loadmeter', 'A small rise in the indicated airspeed'], c: 2, why: 'The heater is a resistance load of several amps — typically a 5 to 10 A circuit — so it is large enough to move the ammeter or loadmeter visibly. It is electrically independent of the engine, so RPM is unaffected, and it changes nothing about the pressure the ASI senses.', ref: 'Pitot heat — electrical load' },
+{ q: 'An aeroplane fitted with pitot heat and a hot-air windscreen demist, but not certified for icing:', a: ['Is by that equipment certified for flight in known icing', 'May enter forecast icing provided pitot heat is selected first', 'May enter icing so long as the demist keeps the screen clear', 'May not intentionally enter expected or actual icing, and must leave it without delay if encountered'], c: 3, why: 'NCO.OP.170 ties the permission to the aircraft\'s certification and equipment, not to having a heated probe. Pitot heat protects the ASI and the demist clears internal misting; neither keeps ice off the wings, tail or propeller. On encountering icing, change level and/or course without delay.', ref: 'NCO.OP.170' }
 ],
 
 cards: [
@@ -445,6 +478,11 @@ cards: [
 { f: 'C of A versus ARC', b: 'C of A does not expire while maintained. The ARC is the annual document that does.', ref: 'AGK' },
 { f: 'ADs versus Service Bulletins', b: 'ADs mandatory. SBs advisory unless mandated by an AD.', ref: 'AGK' },
 { f: 'Basic empty mass versus dry operating mass', b: 'Dry operating mass adds crew, their baggage and removable equipment.', ref: 'AGK' },
-{ f: 'Why does maximum zero fuel mass exist?', b: 'Wing fuel relieves wing bending loads, so extra mass beyond MZFM must be fuel in the wings.', ref: 'AGK' }
+{ f: 'Why does maximum zero fuel mass exist?', b: 'Wing fuel relieves wing bending loads, so extra mass beyond MZFM must be fuel in the wings.', ref: 'AGK' },
+{ f: 'Pitot heat — what does it actually protect?', b: 'The pitot head and its drain hole, so the ASI keeps working. Nothing else. On many light types the static ports are unheated.', ref: 'Pitot-static anti-icing' },
+{ f: 'When do you select pitot heat?', b: 'Before entering visible moisture in air near or below freezing. It prevents ice; it does not reliably clear it once formed.', ref: 'Pitot heat — operation' },
+{ f: 'Pitot heat — electrical load and how you confirm it is working?', b: 'A resistance heater, typically a 5 to 10 A circuit; selecting it gives a visible swing on the ammeter or loadmeter.', ref: 'Pitot heat — electrical load' },
+{ f: 'Why keep the pitot heat ground check brief?', b: 'No cooling airflow on the ramp, so the element overheats and can burn out — and the tube gets hot enough to burn your hand.', ref: 'Pitot heat — ground check' },
+{ f: 'Windscreen ice protection — light aeroplane versus larger type?', b: 'Light: hot air from the cabin heat exchanger, for misting and light frost only. Larger: an electrically heated laminated screen with a conductive film, thermostatically controlled.', ref: 'Windscreen anti-icing' }
 ]
 };
