@@ -29,6 +29,8 @@
 }
 :root:not([data-t="light"]) .mpin span{
   color:#f2f2f7;background:rgba(20,20,22,.82)}
+:root:not([data-t="light"]) .wpin svg{stroke:#78c0ff;filter:drop-shadow(0 0 2px rgba(0,0,0,.9))}
+:root:not([data-t="light"]) .wpin span{color:#e8f2ff;background:rgba(18,22,28,.8)}
 figure .dgwrap{background:var(--card);border-radius:14px;padding:14px 12px 10px;
   box-shadow:var(--sh);overflow-x:auto;-webkit-overflow-scrolling:touch;
   scrollbar-width:thin;position:relative}

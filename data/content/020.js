@@ -151,7 +151,7 @@ which is precisely the climb — so keep the climb speed up and the mixture rich
 </ul></div>`
 },
 {
-  id: '020-prop-systems', title: 'Propellers, fuel and electrics', mins: 6, tags: ['021.05', '021.07', '021.08'],
+  id: '020-prop-systems', title: 'Propellers, fuel and electrics', mins: 6, tags: ['021.07', '021.08'],
   body: `
 <h3>Propellers</h3>
 <p>A propeller is a rotating aerofoil producing thrust. Because the tip travels much further per

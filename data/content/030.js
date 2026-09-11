@@ -79,7 +79,7 @@ less baggage, not less reserve.</p>
 </ul></div>`
 },
 {
-  id: '030-performance', title: 'Take-off, landing and climb performance', mins: 7, tags: ['032.01', '032.02'],
+  id: '030-performance', title: 'Take-off, landing and climb performance', mins: 7, tags: ['032.01', '034.01'],
   body: `
 <h3>The four things that ruin performance</h3>
 <p>Everything on the take-off run comes down to <b>air density</b> and <b>mass</b>. Density falls

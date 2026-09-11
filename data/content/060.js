@@ -272,7 +272,7 @@ beats a precise one worked out while the weather closes in.</p>
 </ul></div>`
 },
 {
-  id: '060-radionav', title: 'Radio navigation for the PPL', mins: 6, tags: ['062.01', '062.02'],
+  id: '060-radionav', title: 'Radio navigation for the PPL', mins: 6, tags: ['061.07', '061.08', '061.10'],
   body: `
 <h3>VOR</h3>
 <p>VHF Omnidirectional Range. A ground beacon transmits in the <b>108 to 117.95 MHz</b> band,
