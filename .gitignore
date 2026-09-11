@@ -1,3 +1,5 @@
-tools/.cache/
-.venv/
 .DS_Store
+.claude/scratch/
+.venv/
+_dgtest.html
+tools/.cache/

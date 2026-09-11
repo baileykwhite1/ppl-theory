@@ -380,8 +380,56 @@ function render() {
   const root = TABS.indexOf(stack[0].v) >= 0 ? stack[0].v : 'home';
   document.querySelectorAll('#tabs button').forEach(b =>
     b.setAttribute('aria-selected', b.dataset.v === root));
+  layoutBlocks(top.v);
   mountMaps();
   window.scrollTo(0, 0);
+}
+
+/* Views that must stay a single column however wide the window: long prose, and
+   anything where you are meant to be looking at exactly one thing. */
+const ONE_COL = ['article', 'quizrun', 'quizres', 'quizreview', 'cardrun', 'welcome',
+                 'nameentry', 'importfile', 'search', 'logedit', 'reorder'];
+
+/**
+ * Views emit a flat stream of headings and blocks, which is right on a phone and
+ * wrong on a desktop — one 1100px-wide list row with its chevron a foot from its
+ * label is worse than the narrow column, not better. So group each `h2.sec` with
+ * the blocks it introduces, and let those groups flow into two columns on a wide
+ * screen. Grouping first is what stops a heading being orphaned at the foot of one
+ * column with its list at the head of the next.
+ */
+function layoutBlocks(view) {
+  APP.classList.toggle('wide', ONE_COL.indexOf(view) < 0);
+  const kids = [].slice.call(APP.children);
+  let i = 0;
+  while (i < kids.length && (kids[i].classList.contains('nav') || kids[i].classList.contains('hd'))) i++;
+  if (i >= kids.length) return;
+
+  const cols = document.createElement('div');
+  cols.className = 'cols';
+  APP.insertBefore(cols, kids[i]);
+
+  let blk = null;
+  for (let j = i; j < kids.length; j++) {
+    const el = kids[j];
+    const isSec = el.tagName === 'H2' && el.classList.contains('sec');
+    if (isSec || !blk) {
+      blk = document.createElement('section');
+      blk.className = 'blk' + (isSec && j === 0 ? ' lead' : '');
+      cols.appendChild(blk);
+    }
+    blk.appendChild(el);
+    if (!isSec && !blk.querySelector('h2.sec')) blk = null;   // loose block, stands alone
+  }
+
+  /* A long list is one tall rounded card that cannot be broken across a column, so
+     left alone it fills one column and strands the other. Those span the full width
+     instead and split their own rows in two — which lands each row back at roughly
+     the width it has on a phone, rather than stretching it. */
+  [].forEach.call(cols.children, b => {
+    const g = b.querySelector(':scope > .grp');
+    if (g && g.querySelectorAll(':scope > .row').length >= 7) b.classList.add('span');
+  });
 }
 
 function html(s) { APP.insertAdjacentHTML('beforeend', s); }
@@ -424,7 +472,15 @@ VIEWS.home = function () {
   $('#avat').onclick = () => go('profiles');
 
   const strip = wxStrip();
-  if (strip) { html(strip); $('#wxb').onclick = () => go('wx'); }
+  if (strip) {
+    html(strip);
+    $('#wxb').onclick = () => go('wx');
+    // the card is one big button, so the triangle has to claim the tap for itself
+    bind('[data-warn]', e => { e.stopPropagation(); e.preventDefault(); go('wxsub'); });
+    bind('[data-warn]', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); go('wxsub'); }
+    }, 'keydown');
+  }
 
   // --- overall progress
   const overall = Math.round((dnLO / Math.max(1, totLO) * 0.6 + dnArt / Math.max(1, totArt) * 0.4) * 100);
@@ -1274,6 +1330,10 @@ VIEWS.plan = function () {
 };
 
 const infoBtn = id => `<button class="info" data-info="${id}" aria-label="More about this">i</button>`;
+/** A warning triangle that opens the explanation, for things you must not misread. */
+const warnBtn = id => `<span class="warn" data-warn="${id}" role="button" tabindex="0"
+  aria-label="Why this is a different aerodrome"><svg viewBox="0 0 24 24"><path
+  d="M12 4.2 22 20.4H2z"/><path d="M12 10.4v4.2" class="m"/><path d="M12 17.3h.01" class="m"/></svg></span>`;
 
 function tileFor(k, d, muted, info) {
   const n = daysTo(d);
@@ -1352,6 +1412,7 @@ const AF = () => window.AIRFIELDS || [];
 const codesOf = v => (v || '').toUpperCase().split(/[,\s]+/).map(x => x.trim())
   .filter(x => x.length === 4 && afByCode(x));
 const afByCode = c => AF().find(a => a[0] === c);
+const af2name = c => { const a = afByCode(c); return a ? a[1] : ''; };
 
 /** Up to `n` airfields matching a code prefix, or a word in the name or town. */
 function afSearch(q, n) {
@@ -1640,8 +1701,9 @@ function wxStrip() {
     <div class="wxtop">
       <span class="wxid">${esc(shown)}</span>
       <span class="wxplace">${d.nearest
-        ? esc(d.nearestNM != null ? d.nearestNM + ' NM from ' + code : 'nearest to ' + code)
-        : esc(place)}</span>
+        ? `<span class="t">${esc(d.nearestNM != null ? d.nearestNM + ' NM from ' + code
+            : 'nearest to ' + code)}</span>` + warnBtn('sub')
+        : `<span class="t">${esc(place)}</span>`}</span>
       <span class="wxcat" style="--c:var(--${d.col})">${esc(d.cat)}</span>
     </div>
     <div class="wxraw">${esc(metarString(d, '').trim())}</div>
@@ -1651,23 +1713,260 @@ function wxStrip() {
       ${stat('Cloud', cloudTxt)}
       ${stat('QNH', d.qnh || '—')}
     </div>
-    <div class="wxfoot"><span class="wxsrc">${d.source === 'metar' ? (d.nearest ? 'NEAREST' : 'METAR') : 'MODEL'}</span>
+    <div class="wxfoot"><span class="wxsrc">${d.source === 'metar' ? (d.nearest ? 'SUBSTITUTE' : 'METAR') : 'MODEL'}</span>
       <span>${d.source === 'metar'
-        ? (d.nearest ? esc(d.nearestName || d.nearest) + ' — ' + esc(code) + ' issues none'
-                     : 'Official observation')
+        ? (d.nearest ? 'Nearest reporting station' : 'Official observation')
         : 'Forecast model — not an observation'}</span>
       <span class="wxgo">&#8250;</span></div>
   </button>`;
 }
 
+/* ---------------- area weather map ----------------
+   Open-Meteo serves numbers, not tiles, so the map is drawn here: one request for a
+   grid of points around the field, rendered over the same OpenFreeMap basemap the
+   flight log uses. It is model output — the same caveat as the rest of the weather
+   in this app — so it is labelled as such and never presented as an observation. */
+
+const WXMAP_SPAN = 1.15;      // degrees of latitude covered, about 70 NM each way
+const WXMAP_N = 7;            // points per side; 49 in one request
+let WXGRID = { key: '', state: 'idle', pts: null };
+
+function wxGridPoints(lat, lon) {
+  const kx = 1 / Math.max(.2, Math.cos(lat * Math.PI / 180));
+  const half = WXMAP_SPAN / 2, step = WXMAP_SPAN / (WXMAP_N - 1);
+  const pts = [];
+  for (let r = 0; r < WXMAP_N; r++) for (let c = 0; c < WXMAP_N; c++) {
+    pts.push([+(lat + half - r * step).toFixed(4),
+              +(lon - half * kx + c * step * kx).toFixed(4)]);
+  }
+  return pts;
+}
+
+function wxGridLoad(lat, lon, code, done) {
+  const key = code + ':' + lat.toFixed(2) + ',' + lon.toFixed(2);
+  if (WXGRID.key === key && WXGRID.state !== 'idle') return done();
+  const pts = wxGridPoints(lat, lon);
+  WXGRID = { key: key, state: 'loading', pts: null };
+  const u = 'https://api.open-meteo.com/v1/forecast'
+    + '?latitude=' + pts.map(p => p[0]).join(',')
+    + '&longitude=' + pts.map(p => p[1]).join(',')
+    + '&current=cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,visibility'
+    + '&wind_speed_unit=kn&timezone=UTC';
+  fetch(u).then(r => r.ok ? r.json() : Promise.reject(r.status)).then(j => {
+    const arr = Array.isArray(j) ? j : [j];
+    WXGRID = { key: key, state: 'ok', at: arr[0] && arr[0].current && arr[0].current.time,
+      pts: arr.map((o, i) => ({
+        lat: o.latitude, lon: o.longitude,
+        cloud: o.current.cloud_cover, wdir: o.current.wind_direction_10m,
+        wspd: Math.round(o.current.wind_speed_10m),
+        gust: Math.round(o.current.wind_gusts_10m || 0),
+        rain: o.current.precipitation, vis: o.current.visibility
+      })) };
+    done();
+  }).catch(() => { WXGRID = { key: key, state: 'fail', pts: null }; done(); });
+}
+
+const WXLAYERS = [
+  ['wind',  'Wind',  'Arrows fly with the wind — the way it is going'],
+  ['cloud', 'Cloud', 'Total cover; the darker the patch, the more of it'],
+  ['rain',  'Rain',  'Model precipitation in the last hour'],
+  ['vis',   'Vis',   'Model surface visibility']
+];
+
+/** Colour ramps, chosen so the worst conditions read as the loudest. */
+function wxShade(kind, p) {
+  if (kind === 'cloud') {
+    const f = Math.min(1, (p.cloud || 0) / 100);
+    return { c: '#5b6570', o: .06 + f * .42, r: 26 };
+  }
+  if (kind === 'rain') {
+    const f = Math.min(1, (p.rain || 0) / 3);
+    return { c: f > .5 ? '#0a6fd8' : '#4da3ff', o: p.rain > 0 ? .12 + f * .5 : 0, r: 26 };
+  }
+  if (kind === 'vis') {
+    const v = p.vis == null ? 99999 : p.vis;
+    const c = v < 1500 ? '#ff3b30' : v < 5000 ? '#ff9500' : v < 8000 ? '#ffcc00' : '#34c759';
+    return { c: c, o: .30, r: 24 };
+  }
+  return { c: '#4da3ff', o: 0, r: 0 };
+}
+
+/** A wind arrow as an HTML marker — no glyph fonts, and it rotates cleanly. */
+function windPin(p) {
+  const n = document.createElement('div');
+  n.className = 'wpin';
+  const strong = p.wspd >= 20 || (p.gust && p.gust >= 25);
+  // meteorological direction is where it blows FROM, so the arrow points from+180
+  n.innerHTML = '<svg viewBox="0 0 24 24" style="transform:rotate(' + ((p.wdir + 180) % 360) + 'deg)">'
+    + '<path d="M12 3 L12 21 M12 3 L7.6 8.4 M12 3 L16.4 8.4"/></svg>'
+    + '<span' + (strong ? ' class="hi"' : '') + '>' + p.wspd + '</span>';
+  n.title = 'From ' + pad(Math.round(p.wdir / 10) * 10, 3) + '° at ' + p.wspd + ' kt'
+    + (p.gust && p.gust > p.wspd + 2 ? ', gusting ' + p.gust : '');
+  return n;
+}
+
+let WXMAPOBJ = null;
+function drawWxMap(el, ml, lat, lon, code, kind) {
+  if (WXMAPOBJ) { try { WXMAPOBJ.remove(); } catch (e) {} WXMAPOBJ = null; }
+  const map = new ml.Map({
+    container: el, style: OFM_STYLE(isDark()),
+    center: [lon, lat], zoom: 7.1,
+    dragRotate: false, pitchWithRotate: false,
+    attributionControl: { compact: true }
+  });
+  WXMAPOBJ = map;
+  map.touchZoomRotate.disableRotation();
+  map.addControl(new ml.NavigationControl({ showCompass: false }), 'top-left');
+  map.on('load', () => {
+    const a = el.querySelector('.maplibregl-ctrl-attrib');
+    if (a) a.classList.remove('maplibregl-compact-show');
+
+    const pts = (WXGRID.pts || []);
+    if (kind !== 'wind') {
+      map.addSource('wxg', { type: 'geojson', data: { type: 'FeatureCollection',
+        features: pts.map(p => {
+          const sh = wxShade(kind, p);
+          return { type: 'Feature', properties: { c: sh.c, o: sh.o, r: sh.r },
+                   geometry: { type: 'Point', coordinates: [p.lon, p.lat] } };
+        }) } });
+      map.addLayer({ id: 'wxg', type: 'circle', source: 'wxg',
+        paint: { 'circle-color': ['get', 'c'], 'circle-opacity': ['get', 'o'],
+                 'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 26, 9, 90],
+                 'circle-blur': .85 } });
+    }
+
+    // the field itself, so you can see where you are in the pattern
+    const home = document.createElement('div');
+    home.className = 'mpin home';
+    home.innerHTML = '<i></i><span>' + esc(code || '') + '</span>';
+    new ml.Marker({ element: home, anchor: 'center' }).setLngLat([lon, lat]).addTo(map);
+  });
+
+  if (kind === 'wind') {
+    (WXGRID.pts || []).forEach(p => {
+      new ml.Marker({ element: windPin(p), anchor: 'center' })
+        .setLngLat([p.lon, p.lat]).addTo(map);
+    });
+  }
+}
+
+/** The map block on the weather page, with its own loading and failure states. */
+function wxMapBlock(code) {
+  const af = afByCode(code);
+  if (!af) return;
+  const kind = P.wxLayer && WXLAYERS.some(l => l[0] === P.wxLayer) ? P.wxLayer : 'wind';
+  const meta = WXLAYERS.find(l => l[0] === kind);
+
+  html(`<h2 class="sec">Around the field</h2>
+    <div class="seg" id="wxlay">${WXLAYERS.map(([k, t]) =>
+      `<button data-wl="${k}" aria-selected="${k === kind}">${t}</button>`).join('')}</div>
+    <div class="mapwrap" id="wxmap"><div class="wxmapbox" id="wxmapbox"></div></div>
+    <div class="tiny" style="margin-top:8px;margin-left:2px">${esc(meta[2])}. Open-Meteo model
+      output on a ${WXMAP_N}&times;${WXMAP_N} grid roughly ${Math.round(WXMAP_SPAN * 60)}&nbsp;NM
+      across${WXGRID.at ? ', for ' + esc(String(WXGRID.at).replace('T', ' ')) + 'Z' : ''} —
+      <b>not an observation and not for flight planning</b>. Use the Met Office F214/F215 and
+      the TAFs below.</div>`);
+
+  bind('#wxlay button', e => {
+    // render() scrolls to the top, which is right for a new view and wrong for
+    // flipping an overlay you are already looking at
+    const y = window.scrollY;
+    P.wxLayer = e.currentTarget.dataset.wl; saveProfiles();
+    render();
+    window.scrollTo(0, y);
+  });
+
+  const box = $('#wxmapbox');
+  const fail = msg => { box.innerHTML = '<div class="wxmapmsg">' + esc(msg) + '</div>'; };
+  if (!navigator.onLine) return fail('No connection — the area map needs one.');
+
+  box.innerHTML = '<div class="wxmapmsg">Loading the model grid…</div>';
+  wxGridLoad(af[3], af[4], code, () => {
+    const live = $('#wxmapbox');
+    if (!live) return;                       // navigated away while it loaded
+    if (WXGRID.state !== 'ok' || !WXGRID.pts) return fail('Could not load the model grid.');
+    loadMapLibre().then(ml => {
+      const el = $('#wxmapbox');
+      if (!el || el.dataset.drawn) return;    // a re-render already owns this box
+      el.dataset.drawn = '1';
+      el.innerHTML = '';
+      drawWxMap(el, ml, af[3], af[4], code, kind);
+    }).catch(() => fail('Map could not load — showing numbers only.'));
+  });
+}
+
+/** Why the METAR on the home card is not your field's. Reached from the warning
+    triangle, because quietly reading a neighbour's ceiling as your own is the one
+    mistake this card could invite. */
+VIEWS.wxsub = function () {
+  const code = S.field;
+  const d = WX.state === 'ok' ? WX.data : null;
+  const sub = d && d.nearest ? d.nearest : '';
+  navbar('Different aerodrome', '');
+
+  html(`<div class="hd" style="padding-top:14px">
+    <h1 class="vt">This is ${esc(sub || 'another field')}, not ${esc(code || 'your field')}</h1>
+    <div class="sub">${esc(af2name(code) || code || 'Your airfield')} publishes no METAR.</div></div>`);
+
+  html(`<div class="note o" style="margin-top:14px"><b>What you are looking at</b>
+    Most small GA aerodromes issue no METAR at all — there is no observer and no
+    automatic station filing one. Rather than show nothing, the app falls back to the
+    nearest aerodrome that does report${
+      d && d.nearestNM != null ? ', which here is ' + esc(d.nearestName || sub)
+        + ', about ' + d.nearestNM + ' NM away' : ''}.</div>`);
+
+  html(`<h2 class="sec">Why it matters</h2><div class="grp">
+    <div class="row"><div class="ic" style="--c:var(--orange)">&#9788;</div>
+      <div class="tx"><b>Visibility and cloud base are local</b><i>A large aerodrome in a river
+        valley and a grass strip on higher ground can differ by a whole category on the same
+        morning. Ceiling is the figure that moves most.</i></div></div>
+    <div class="row"><div class="ic" style="--c:var(--orange)">&#8599;</div>
+      <div class="tx"><b>Surface wind is local too</b><i>Terrain and buildings bend it. The
+        runway in use at your field does not follow from a neighbour's wind.</i></div></div>
+    <div class="row"><div class="ic" style="--c:var(--blue)">&#9201;</div>
+      <div class="tx"><b>QNH travels better</b><i>Pressure varies smoothly, so a nearby QNH is
+        usually a fair guide — but set the field's own when it is passed to you.</i></div></div>
+  </div>`);
+
+  html(`<div class="note r" style="margin-top:14px"><b>Not a flight-planning source</b>
+    Use it for the general picture only. Before you fly, take the Met Office F214/F215, the
+    TAFs for aerodromes near your route, and whatever your club or the A/G operator can tell
+    you about the actual conditions on the field.</div>`);
+
+  const links = [];
+  if (sub) links.push(`<a class="row" href="https://metar-taf.com/${esc(sub)}" target="_blank" rel="noopener">
+    <div class="ic" style="--c:var(--indigo)">&#9788;</div>
+    <div class="tx"><b>${esc(sub)} METAR &amp; TAF</b><i>The station actually being shown</i></div>
+    <div class="chev">&#8599;</div></a>`);
+  if (code) links.push(`<a class="row" href="https://metar-taf.com/${esc(code)}" target="_blank" rel="noopener">
+    <div class="ic" style="--c:var(--tx3)">&#9788;</div>
+    <div class="tx"><b>${esc(code)}</b><i>Check for yourself whether it reports one</i></div>
+    <div class="chev">&#8599;</div></a>`);
+  links.push(`<a class="row" href="https://www.metoffice.gov.uk/services/transport/aviation/general-aviation" target="_blank" rel="noopener">
+    <div class="ic" style="--c:var(--blue)">&#128506;</div>
+    <div class="tx"><b>Met Office GA</b><i>Form 214 and 215</i></div><div class="chev">&#8599;</div></a>`);
+  html(`<h2 class="sec">Go to the source</h2><div class="grp">${links.join('')}</div>`);
+};
+
 VIEWS.wx = function () {
   const code = S.field, af = afByCode(code);
-  navbar(af ? af[1] : (code || 'Weather'), '');
   if (WX.code !== code) wxLoad(code, () => {});
   const d = WX.state === 'ok' ? WX.data : null;
 
-  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">${esc(code || '')}</h1>
-    <div class="sub">${af ? esc(af[1]) + (af[2] ? ' · ' + esc(af[2]) : '') : 'Airfield not in the list'}</div></div>`);
+  // Everything below is the substitute station's data, so the page is titled after
+  // it. Heading this page with your own field's code while showing someone else's
+  // observation is the misreading the whole substitution warning exists to prevent.
+  const sub = d && d.nearest ? d.nearest : '';
+  const shown = sub || code;
+  const shownAf = sub ? afByCode(sub) : af;
+
+  navbar(shownAf ? shownAf[1] : (shown || 'Weather'), '');
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">${esc(shown || '')}</h1>
+    <div class="sub">${sub
+      ? esc((shownAf ? shownAf[1] : sub)) + ' — standing in for ' + esc(code)
+        + (d.nearestNM != null ? ', ' + d.nearestNM + ' NM away' : '') + ' ' + warnBtn('sub')
+      : (af ? esc(af[1]) + (af[2] ? ' · ' + esc(af[2]) : '') : 'Airfield not in the list')}</div></div>`);
+  bind('[data-warn]', e => { e.stopPropagation(); e.preventDefault(); go('wxsub'); });
 
   if (!d) {
     html(`<div class="note o" style="margin-top:14px"><b>${WX.state === 'loading' ? 'Loading…' : 'Could not load conditions'}</b>
@@ -1706,6 +2005,8 @@ VIEWS.wx = function () {
       This is <b>Open-Meteo forecast model</b> output, not a METAR.${d && d.note ? ' ' + esc(d.note) : ''}
       Treat it as a rough look out of the window and use the links below before you fly.</div>`);
   }
+
+  wxMapBlock(code);
 
   const links = [];
   if (code) links.push(`<a class="row" href="https://metar-taf.com/${esc(code)}" target="_blank" rel="noopener">

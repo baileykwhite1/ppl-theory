@@ -1,0 +1,61 @@
+:root{
+  --bg:#f2f2f7; --bg2:#ffffff; --card:#ffffff; --card2:#f2f2f7;
+  --sep:rgba(60,60,67,.20); --sep2:rgba(60,60,67,.12);
+  --tx:#000; --tx2:rgba(60,60,67,.62); --tx3:rgba(60,60,67,.34);
+  --blue:#007aff; --green:#34c759; --orange:#ff9500; --red:#ff3b30;
+  --purple:#af52de; --teal:#30b0c7; --indigo:#5856d6; --pink:#ff2d55; --brown:#a2845e;
+  --fill:rgba(120,120,128,.12); --fill2:rgba(120,120,128,.20);
+  --bar:rgba(249,249,249,.82);
+  --sh:0 1px 2px rgba(0,0,0,.04);
+}
+:root:not([data-t="light"]){
+  --bg:#000; --bg2:#1c1c1e; --card:#1c1c1e; --card2:#2c2c2e;
+  --sep:rgba(84,84,88,.65); --sep2:rgba(84,84,88,.40);
+  --tx:#fff; --tx2:rgba(235,235,245,.60); --tx3:rgba(235,235,245,.30);
+  --blue:#0a84ff; --green:#30d158; --orange:#ff9f0a; --red:#ff453a;
+  --purple:#bf5af2; --teal:#40c8e0; --indigo:#5e5ce6; --pink:#ff375f; --brown:#ac8e68;
+  --fill:rgba(120,120,128,.24); --fill2:rgba(120,120,128,.36);
+  --bar:rgba(28,28,30,.82);
+  --sh:none;
+}
+:root[data-t="dark"]{
+  --bg:#000; --bg2:#1c1c1e; --card:#1c1c1e; --card2:#2c2c2e;
+  --sep:rgba(84,84,88,.65); --sep2:rgba(84,84,88,.40);
+  --tx:#fff; --tx2:rgba(235,235,245,.60); --tx3:rgba(235,235,245,.30);
+  --blue:#0a84ff; --green:#30d158; --orange:#ff9f0a; --red:#ff453a;
+  --purple:#bf5af2; --teal:#40c8e0; --indigo:#5e5ce6; --pink:#ff375f; --brown:#ac8e68;
+  --fill:rgba(120,120,128,.24); --fill2:rgba(120,120,128,.36);
+  --bar:rgba(28,28,30,.82); --sh:none;
+}
+:root:not([data-t="light"]) .mpin span{
+  color:#f2f2f7;background:rgba(20,20,22,.82)}
+figure .dgwrap{background:var(--card);border-radius:14px;padding:14px 12px 10px;
+  box-shadow:var(--sh);overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;position:relative}
+figure .swipe{font-size:11.5px;color:var(--tx3);margin:6px 0 0 4px;display:none}
+figure .swipe{display:block}
+.dg text{font:600 13px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+  fill:currentColor;letter-spacing:-.005em}
+.dg text.s{font-size:12.5px;font-weight:500;opacity:.8}
+.dg text.b{font-size:14px;font-weight:700}
+.dg text.sb{font-size:12.5px;font-weight:500;opacity:.8}
+.dg .ink{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dg .thin{fill:none;stroke:currentColor;stroke-width:1;opacity:.32}
+.dg .dash{stroke-dasharray:5 4}
+.dg .fill{fill:currentColor;stroke:none}
+.dg .tint{fill:currentColor;opacity:.06;stroke:none}
+.dg .blue{stroke:var(--blue)}
+.dg .fblue{fill:var(--blue);stroke:none}
+.dg .red{stroke:var(--red)}
+.dg .fred{fill:var(--red);stroke:none}
+.dg .green{stroke:var(--green)}
+.dg .fgreen{fill:var(--green);stroke:none}
+.dg .orange{stroke:var(--orange)}
+.dg text.blue-t{fill:var(--blue)}
+.dg text.red-t{fill:var(--red)}
+.dg text.green-t{fill:var(--green)}
+.dg text.orange-t{fill:var(--orange)}
+:root[data-t="dark"] .fc,
+:root:not([data-t="light"]) .fc{box-shadow:none}
+:root:not([data-t="light"]) .fc{box-shadow:none}
+body{margin:0}

@@ -1,0 +1,168 @@
+<!doctype html><meta charset="utf-8">
+<link rel="stylesheet" href="/.claude/tools/dgcss.css">
+<div id="host" style="width:640px"></div>
+<script src="/data/diagrams.js"></script>
+<script>
+/* Geometry is measured in SCREEN space and mapped back to viewBox units, so
+   ancestor <g transform> is accounted for — getBBox() alone is in the element's
+   own user space and silently lies about anything inside a translate. */
+window.audit = function (opts) {
+  opts = opts || {};
+  const SET = opts.set || window.DIAG;
+  const CROWD = opts.crowd == null ? 2 : opts.crowd;   // units below which two labels read as touching
+  const host = document.getElementById('host');
+  const out = {};
+
+  for (const [id, d] of Object.entries(SET)) {
+    host.innerHTML = (typeof d === 'string') ? d : d.svg;
+    const svg = host.querySelector('svg');
+    const vb = svg.getAttribute('viewBox').split(/\s+/).map(Number);
+    const R = svg.getBoundingClientRect();
+    const k = vb[2] / R.width;                          // screen px -> viewBox units
+    const box = el => {
+      const r = el.getBoundingClientRect();
+      return { x: +((r.left - R.left) * k + vb[0]).toFixed(1),
+               y: +((r.top - R.top) * k + vb[1]).toFixed(1),
+               w: +(r.width * k).toFixed(1), h: +(r.height * k).toFixed(1) };
+    };
+
+    const texts = [...svg.querySelectorAll('text')]
+      .map((t, i) => {
+        const cs = getComputedStyle(t);
+        return Object.assign({ i, s: (t.textContent || '').trim(),
+          cls: t.getAttribute('class') || '',
+          fs: +cs.fontSize.replace('px', '') * k,       // in viewBox units
+          op: +cs.fillOpacity * +cs.opacity }, box(t));
+      })
+      .filter(t => t.s !== '' && t.w > 0);
+
+    const gap = (A, B) => {
+      const dx = Math.max(A.x - (B.x + B.w), B.x - (A.x + A.w));
+      const dy = Math.max(A.y - (B.y + B.h), B.y - (A.y + A.h));
+      return { dx, dy, overlap: dx < 0 && dy < 0,
+               sep: Math.max(dx, dy) };                 // <0 means the boxes intersect
+    };
+
+    const overlaps = [], crowded = [];
+    for (let a = 0; a < texts.length; a++) for (let b = a + 1; b < texts.length; b++) {
+      const A = texts[a], B = texts[b], g = gap(A, B);
+      const rec = { a: A.s, b: B.s,
+                    aBox: [A.x, A.y, A.w, A.h], bBox: [B.x, B.y, B.w, B.h],
+                    sep: +g.sep.toFixed(1) };
+      if (g.overlap && Math.min(-g.dx, -g.dy) > 1) {
+        rec.overlapArea = +(Math.min(-g.dx, A.w, B.w) * Math.min(-g.dy, A.h, B.h)).toFixed(0);
+        overlaps.push(rec);
+      } else if (!g.overlap && g.sep < CROWD) crowded.push(rec);
+    }
+
+    /* Text sitting on top of drawn geometry. A bbox test is useless here: a label
+       centred inside a stroked box "overlaps" the box while sitting in clear space.
+       So hit-test a grid of points across the glyph area against the real stroke
+       and fill geometry, via isPointInStroke / isPointInFill in each shape's own
+       user space. */
+    const shapes = [...svg.querySelectorAll('line,path,rect,circle,ellipse,polyline,polygon')]
+      .map(el => {
+        const cs = getComputedStyle(el);
+        const op = +cs.opacity;
+        const strokeOn = cs.stroke !== 'none' && +cs.strokeOpacity * op > .25;
+        const fillOn = cs.fill !== 'none' && +cs.fillOpacity * op > .3;
+        return { el, cls: el.getAttribute('class') || '', tag: el.tagName, strokeOn, fillOn,
+                 ctm: el.getScreenCTM() };
+      })
+      .filter(sh => (sh.strokeOn || sh.fillOn) && sh.ctm &&
+                    !sh.cls.includes('tint'));
+
+    const pt = svg.createSVGPoint();
+    const hitsAt = (sx, sy) => {
+      const out = [];
+      for (const sh of shapes) {
+        pt.x = sx; pt.y = sy;
+        const local = pt.matrixTransform(sh.ctm.inverse());
+        let hit = false;
+        try {
+          if (sh.strokeOn && sh.el.isPointInStroke && sh.el.isPointInStroke(local)) hit = true;
+          if (!hit && sh.fillOn && sh.el.isPointInFill && sh.el.isPointInFill(local)) hit = true;
+        } catch (e) { /* isPointInStroke is unsupported on a few shapes */ }
+        if (hit) out.push(sh);
+      }
+      return out;
+    };
+
+    const onShape = [];
+    texts.forEach(t => {
+      // sample the glyph band: inset vertically, since a text bbox includes leading
+      const r = svg.getBoundingClientRect();
+      const toS = (ux, uy) => ({ sx: r.left + (ux - vb[0]) / k, sy: r.top + (uy - vb[1]) / k });
+      const pad = t.h * 0.22;
+      const y0 = t.y + pad, y1 = t.y + t.h - pad;
+      const step = Math.max(1.5, t.fs * 0.28);
+      const seen = new Map();
+      let samples = 0, hitCount = 0;
+      for (let ux = t.x + 1; ux <= t.x + t.w - 1; ux += step) {
+        for (let uy = y0; uy <= y1; uy += Math.max(1.5, (y1 - y0) / 3)) {
+          samples++;
+          const S = toS(ux, uy);
+          const hs = hitsAt(S.sx, S.sy);
+          if (hs.length) hitCount++;
+          hs.forEach(sh => {
+            const key = sh.tag + '.' + sh.cls;
+            seen.set(key, (seen.get(key) || 0) + 1);
+          });
+        }
+      }
+      if (!samples) return;
+      const frac = hitCount / samples;
+      if (frac > 0.06) {
+        onShape.push({ text: t.s, cls: t.cls, textBox: [t.x, t.y, t.w, t.h],
+                       fracCovered: +frac.toFixed(2),
+                       over: [...seen.entries()].sort((a, b) => b[1] - a[1])
+                         .slice(0, 3).map(([k2, n]) => k2 + ' x' + n) });
+      }
+    });
+
+    const outside = texts.filter(t => t.x < vb[0] - .5 || t.y < vb[1] - .5 ||
+        t.x + t.w > vb[0] + vb[2] + .5 || t.y + t.h > vb[1] + vb[3] + .5)
+      .map(t => ({ s: t.s, box: [t.x, t.y, t.w, t.h],
+                   over: +Math.max(0, t.x + t.w - (vb[0] + vb[2])).toFixed(1) }));
+
+    out[id] = { viewBox: vb, nTexts: texts.length,
+                overlaps, crowded, onShape, outside,
+                minFs: +Math.min(...texts.map(t => t.fs)).toFixed(1),
+                texts };
+  }
+  host.innerHTML = '';
+  return out;
+};
+/* Measurements only exist inside a layout engine, so push them to disk from here. */
+window.save = async function (name, obj) {
+  const r = await fetch('/__save/' + name, { method: 'POST', body: JSON.stringify(obj, null, 1) });
+  return r.status;
+};
+/* Measure the candidate fixes on disk rather than the shipped diagrams, so a fix can
+   be checked before it is applied. */
+window.loadFixes = async function (ids) {
+  const set = {};
+  for (const id of ids) {
+    const r = await fetch('/.claude/scratch/fix/' + id + '.svg');
+    if (r.ok) set[id] = (await r.text()).trim();
+  }
+  return set;
+};
+window.report = function (opts) {
+  const r = window.audit(opts), out = {};
+  for (const [id, d] of Object.entries(r)) {
+    if (!(d.overlaps.length + d.crowded.length + d.onShape.length + d.outside.length)) continue;
+    out[id] = { viewBox: d.viewBox, overlaps: d.overlaps, crowded: d.crowded,
+                onShape: d.onShape, outside: d.outside,
+                texts: d.texts.map(t => ({ s: t.s, cls: t.cls, box: [t.x, t.y, t.w, t.h] })) };
+  }
+  return out;
+};
+window.summary = function (o) {
+  return Object.entries(o).map(([id, d]) => ({ id,
+    ov: d.overlaps.length, crowd: d.crowded.length, onShape: d.onShape.length,
+    outside: d.outside.length,
+    score: d.overlaps.length * 3 + d.onShape.length * 2 + d.outside.length * 2 + d.crowded.length }))
+    .sort((a, b) => b.score - a.score);
+};
+</script>

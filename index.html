@@ -74,6 +74,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;letter
 h2.sec{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;
   color:var(--tx2);margin:26px 0 8px;padding:0 4px}
 h2.sec:first-child{margin-top:14px}
+/* render() groups each heading with the blocks it introduces; on a phone the wrapper
+   is inert, and on a wide screen the groups are what flow into columns without a
+   heading being orphaned from its list. */
+.blk.lead > h2.sec{margin-top:14px}
 
 /* nav bar for pushed views */
 .nav{position:sticky;top:0;z-index:30;background:var(--bar);
@@ -222,6 +226,23 @@ h2.sec:first-child{margin-top:14px}
 @media (prefers-color-scheme:dark){:root:not([data-t="light"]) .mpin span{
   color:#f2f2f7;background:rgba(20,20,22,.82)}}
 .mapnote{font-size:11.5px;color:var(--tx3);padding:7px 4px 1px;line-height:1.35}
+/* ---------- area weather map ---------- */
+.wxmapbox{width:100%;height:300px;border-radius:10px;overflow:hidden;background:var(--card2)}
+.wxmapmsg{height:100%;display:grid;place-items:center;font-size:13px;color:var(--tx3);
+  text-align:center;padding:0 20px}
+/* a wind arrow with its speed; the arrow flies with the wind, not into it */
+.wpin{display:flex;align-items:center;gap:2px;pointer-events:auto;cursor:default}
+.wpin svg{width:19px;height:19px;flex:none;fill:none;stroke:#1c6dd0;stroke-width:2.1;
+  stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.9))}
+.wpin span{font:700 10.5px/1 ui-monospace,Menlo,monospace;color:#12324f;
+  background:rgba(255,255,255,.82);padding:2px 3px;border-radius:4px}
+.wpin span.hi{color:#fff;background:var(--red)}
+[data-t="dark"] .wpin svg{stroke:#78c0ff;filter:drop-shadow(0 0 2px rgba(0,0,0,.9))}
+[data-t="dark"] .wpin span{color:#e8f2ff;background:rgba(18,22,28,.8)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-t="light"]) .wpin svg{stroke:#78c0ff;filter:drop-shadow(0 0 2px rgba(0,0,0,.9))}
+  :root:not([data-t="light"]) .wpin span{color:#e8f2ff;background:rgba(18,22,28,.8)}}
 /* circular icon button — the glyph should fill the bubble, not float in it */
 .rndbtn{flex:none;width:38px;height:38px;border:0;padding:0;border-radius:50%;
   background:var(--fill);color:var(--tx2);display:grid;place-items:center;cursor:pointer}
@@ -256,8 +277,9 @@ h2.sec:first-child{margin-top:14px}
 .wxcard:active{background:var(--fill)}
 .wxtop{display:flex;align-items:baseline;gap:9px}
 .wxid{font:800 21px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.02em;flex:none}
-.wxplace{flex:1;min-width:0;font-size:13px;color:var(--tx2);white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis}
+/* the place name may truncate; the warning beside it never may */
+.wxplace{flex:1;min-width:0;font-size:13px;color:var(--tx2);display:flex;align-items:center;gap:3px}
+.wxplace .t{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wxcat{font:800 11px/1 -apple-system,system-ui,sans-serif;letter-spacing:.06em;color:#fff;
   padding:6px 9px;border-radius:7px;flex:none;background:var(--c);
   box-shadow:0 1px 4px color-mix(in srgb, var(--c) 45%, transparent)}
@@ -269,6 +291,15 @@ h2.sec:first-child{margin-top:14px}
   text-transform:uppercase;color:var(--tx3)}
 .wxst .v{font:700 14px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;margin-top:5px;
   font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* When the METAR is a neighbour's, flag it right beside the distance. Reading
+   Heathrow's ceiling and taking it for White Waltham's is exactly the mistake this
+   card could otherwise invite, so the triangle opens the explanation. */
+.warn{display:inline-flex;align-items:center;justify-content:center;vertical-align:-3px;
+  width:19px;height:19px;margin-left:1px;border-radius:5px;cursor:pointer;flex:none}
+.warn svg{width:16px;height:16px;fill:none;stroke:var(--orange);stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+.warn svg .m{stroke-width:2.1}
+.warn:active,.warn:hover{background:rgba(255,149,0,.18)}
 .wxfoot{display:flex;align-items:center;gap:8px;margin-top:11px;font-size:11.5px;color:var(--tx3)}
 .wxfoot > span:nth-child(2){flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wxsrc{font:800 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.08em;color:var(--tx2);
@@ -346,23 +377,78 @@ h2.sec::before{content:"";width:4px;height:12px;border-radius:2px;background:var
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){#app > *{animation:none}}
 
+/* ---------- desktop ----------
+   The phone layout is the design; a desktop just has room for more of it at once.
+   So: the tab bar becomes a labelled rail, and the blocks render() has grouped flow
+   into two columns. Widening the single column instead would only stretch list rows
+   until their chevrons floated away from their labels. */
+@media (min-width:900px){
+  body{--rail:224px}
+  #app{max-width:none;margin:0;padding-left:calc(var(--rail) + 28px);padding-right:28px;
+    padding-bottom:40px}
+  #app > .nav,#app > .hd,#app > .cols{max-width:760px;margin-left:auto;margin-right:auto}
+  #app > .nav{border-radius:0 0 12px 12px;padding-left:4px;padding-right:4px}
+  /* the back control belongs at the edge of the column, not centred over it */
+  #app > .nav .ttl{text-align:left;padding-left:6px}
+
+  /* tab bar becomes a side rail */
+  #tabs{top:0;right:auto;bottom:0;width:var(--rail);flex-direction:column;
+    justify-content:flex-start;gap:2px;border-top:0;border-right:.5px solid var(--sep);
+    padding:calc(env(safe-area-inset-top) + 18px) 12px 18px}
+  #tabs::before{content:"PPL(A) Theory";display:block;font-size:12px;font-weight:700;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);padding:0 10px 14px}
+  #tabs button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;
+    width:100%;padding:9px 10px;border-radius:9px;font-size:14.5px;font-weight:500;
+    letter-spacing:-.01em;color:var(--tx2)}
+  #tabs button svg{width:21px;height:21px}
+  #tabs button:hover{background:var(--fill)}
+  #tabs button[aria-selected="true"]{background:var(--fill);color:var(--blue);font-weight:600}
+}
+@media (min-width:1280px){
+  /* only the multi-column views widen — a single column of prose at 1080px would be
+     an unreadable line length */
+  #app.wide > .nav,#app.wide > .hd,#app.wide > .cols{max-width:1080px}
+  #app.wide > .cols{column-count:2;column-gap:28px}
+  /* inline-block + break-inside is what actually keeps a group intact across engines */
+  #app.wide > .cols > .blk{display:inline-block;width:100%;break-inside:avoid;
+    -webkit-column-break-inside:avoid;page-break-inside:avoid;vertical-align:top}
+  #app.wide > .cols > .blk > h2.sec{margin-top:0}
+  #app.wide > .cols > .blk{margin-bottom:26px}
+  /* a long list spans both columns and divides itself instead */
+  #app.wide > .cols > .blk.span{display:block;column-span:all;-webkit-column-span:all}
+  #app.wide > .cols > .blk.span > .grp{column-count:2;column-gap:0;
+    column-rule:.5px solid var(--sep2)}
+  #app.wide > .cols > .blk.span > .grp > .row{break-inside:avoid;
+    -webkit-column-break-inside:avoid}
+  /* the separator above a row is wrong for the row that starts the second column */
+  #app.wide > .cols > .blk.span > .grp > .row::before{left:16px;right:16px}
+}
+@media (min-width:1700px){
+  #app.wide > .nav,#app.wide > .hd,#app.wide > .cols{max-width:1240px}
+}
+
 /* ---------- diagrams ---------- */
 figure{margin:22px 0;padding:0}
 figure .dgwrap{background:var(--card);border-radius:14px;padding:14px 12px 10px;
   box-shadow:var(--sh);overflow-x:auto;-webkit-overflow-scrolling:touch;
   scrollbar-width:thin;position:relative}
 figure .swipe{font-size:11.5px;color:var(--tx3);margin:6px 0 0 4px;display:none}
-@media (max-width:560px){figure .swipe{display:block}}
+/* the hint has to track the diagram width: 640 of SVG plus the wrapper's padding
+   and the page gutters is about 690px before it stops overflowing */
+@media (max-width:690px){figure .swipe{display:block}}
 figcaption{font-size:13.5px;line-height:1.45;color:var(--tx2);margin-top:10px;padding:0 4px}
 figcaption b{color:var(--tx);font-weight:600}
 /* Diagrams keep a readable minimum size and scroll sideways on a narrow phone,
-   rather than shrinking their labels into illegibility. */
-.dg{width:100%;height:auto;display:block;color:var(--tx);min-width:520px}
+   rather than shrinking their labels into illegibility. The minimum matches the
+   640-unit viewBox every diagram is drawn in, so a label authored at 13 units
+   renders at 13px instead of being quietly scaled down to 10.6 — at 520px the
+   small labels landed at 9.3px, which is where "hard to read" came from. */
+.dg{width:100%;height:auto;display:block;color:var(--tx);min-width:640px}
 .dg text{font:600 13px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
   fill:currentColor;letter-spacing:-.005em}
-.dg text.s{font-size:11.5px;font-weight:500;opacity:.66}
+.dg text.s{font-size:12.5px;font-weight:500;opacity:.8}
 .dg text.b{font-size:14px;font-weight:700}
-.dg text.sb{font-size:11.5px;font-weight:500;opacity:.66}
+.dg text.sb{font-size:12.5px;font-weight:500;opacity:.8}
 .dg .ink{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .dg .thin{fill:none;stroke:currentColor;stroke-width:1;opacity:.32}
 .dg .dash{stroke-dasharray:5 4}

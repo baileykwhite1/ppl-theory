@@ -14,32 +14,32 @@ airspace: {
   <!-- Class A slab -->
   <rect x="150" y="28" width="480" height="46" class="fred" opacity=".13"/>
   <rect x="150" y="28" width="480" height="46" class="red ink"/>
-  <text x="164" y="49" class="b">Class A</text>
+  <text x="164" y="47" class="b">Class A</text>
   <text x="164" y="65" class="s">IFR only — VFR not permitted</text>
   <!-- Class E block -->
   <rect x="430" y="110" width="200" height="70" class="fblue" opacity=".10"/>
   <rect x="430" y="110" width="200" height="70" class="blue ink dash"/>
-  <text x="444" y="132" class="b">Class E</text>
-  <text x="444" y="148" class="s">No clearance needed</text>
-  <text x="444" y="163" class="s">Traffic info if practical</text>
+  <text x="444" y="133" class="b">Class E</text>
+  <text x="444" y="151" class="s">No clearance needed</text>
+  <text x="444" y="168" class="s">Traffic info if practical</text>
   <!-- Class D CTR -->
   <path d="M210 290 L210 150 L390 150 L390 290" class="fblue" opacity=".16"/>
   <path d="M210 290 L210 150 L390 150 L390 290" class="blue ink"/>
   <text x="224" y="174" class="b">Class D</text>
-  <text x="224" y="190" class="s">Clearance + radio</text>
-  <text x="224" y="205" class="s">Traffic info, no separation</text>
+  <text x="224" y="192" class="s">Clearance + radio</text>
+  <text x="224" y="209" class="s">Traffic info, no separation</text>
   <!-- Class G -->
   <text x="26" y="150" class="b">Class G</text>
-  <text x="26" y="166" class="s">No clearance</text>
-  <text x="26" y="181" class="s">No radio required</text>
-  <text x="26" y="196" class="s">FIS on request</text>
+  <text x="26" y="168" class="s">No clearance</text>
+  <text x="26" y="185" class="s">No radio required</text>
+  <text x="26" y="202" class="s">FIS on request</text>
   <!-- ground -->
   <line x1="0" y1="290" x2="640" y2="290" class="ink"/>
   <path d="M270 290 l14 -16 h34 l14 16 z" class="fill" opacity=".5"/>
   <text x="300" y="308" text-anchor="middle" class="s">Aerodrome</text>
   <!-- aeroplane in G -->
   <g transform="translate(80,232)"><path d="M0 0 l22 0 M11 -7 l0 14 M18 -4 l0 8" class="ink"/></g>
-  <text x="91" y="236" class="s">You, VFR</text>
+  <text x="108" y="236" class="s">You, VFR</text>
 </svg>`
 },
 
@@ -60,7 +60,7 @@ vmc: {
   <rect x="20" y="106" width="600" height="92" class="tint" opacity=".04"/>
   <text x="34" y="132" class="b">Below 10,000 ft, above 3000 ft</text>
   <text x="34" y="150" class="s">or 1000 ft above terrain,</text>
-  <text x="34" y="165" class="s">whichever is higher</text>
+  <text x="34" y="167" class="s">whichever is higher</text>
   <text x="330" y="140">5 km visibility</text>
   <text x="330" y="162" class="s">1500 m horizontally · 1000 ft vertically from cloud</text>
   <line x1="20" y1="198" x2="620" y2="198" class="ink blue"/>
@@ -116,22 +116,22 @@ isa: {
   alt: 'The International Standard Atmosphere from sea level to the tropopause',
   cap: 'The ISA. Every performance chart and altimeter is calibrated against these numbers.',
   svg: `<svg class="dg" viewBox="0 0 640 320" role="img" aria-label="International Standard Atmosphere">
-  <rect x="150" y="30" width="340" height="230" class="tint"/>
+  <rect x="170" y="30" width="290" height="230" class="tint"/>
   <!-- tropopause -->
-  <line x1="120" y1="60" x2="520" y2="60" class="ink blue"/>
-  <text x="530" y="56" class="b blue">Tropopause</text>
-  <text x="530" y="72" class="s">36,090 ft (11 km)</text>
-  <text x="530" y="87" class="s">−56.5 °C</text>
-  <text x="112" y="64" text-anchor="end" class="s">Stratosphere above</text>
+  <line x1="140" y1="60" x2="490" y2="60" class="ink blue"/>
+  <text x="500" y="56" class="b blue">Tropopause</text>
+  <text x="500" y="74" class="s">36,090 ft (11 km)</text>
+  <text x="500" y="92" class="s">−56.5 °C</text>
+  <text x="132" y="64" text-anchor="end" class="s">Stratosphere above</text>
   <!-- sea level -->
-  <line x1="120" y1="260" x2="520" y2="260" class="ink"/>
-  <text x="530" y="256" class="b">Mean sea level</text>
-  <text x="530" y="272" class="s">+15 °C · 1013.25 hPa</text>
-  <text x="530" y="287" class="s">1.225 kg/m³</text>
+  <line x1="140" y1="260" x2="490" y2="260" class="ink"/>
+  <text x="500" y="256" class="b">Mean sea level</text>
+  <text x="500" y="274" class="s">+15 °C · 1013.25 hPa</text>
+  <text x="500" y="292" class="s">1.225 kg/m³</text>
   <!-- gradient line -->
   <line x1="200" y1="260" x2="330" y2="60" class="ink blue"/>
-  <text x="212" y="176" class="blue-t">1.98 °C</text>
-  <text x="212" y="192" class="blue-t">per 1000 ft</text>
+  <text x="272" y="176" class="blue-t">1.98 °C</text>
+  <text x="272" y="194" class="blue-t">per 1000 ft</text>
   <!-- ticks -->
   <g class="s">
     <line x1="180" y1="210" x2="192" y2="210" class="thin"/><text x="150" y="214" text-anchor="end">10,000 ft</text>
@@ -145,12 +145,12 @@ isa: {
 stability: {
   alt: 'Graph of temperature against height comparing the environmental lapse rate with the dry and saturated adiabatic lapse rates',
   cap: 'Stability is a comparison, not a property. Where the ELR is steeper than the DALR, a lifted parcel keeps rising.',
-  svg: `<svg class="dg" viewBox="0 0 640 330" role="img" aria-label="Lapse rate stability comparison">
+  svg: `<svg class="dg" viewBox="0 0 640 346" role="img" aria-label="Lapse rate stability comparison">
   <!-- axes -->
   <line x1="90" y1="40" x2="90" y2="270" class="ink"/>
   <line x1="90" y1="270" x2="580" y2="270" class="ink"/>
   <text x="70" y="150" text-anchor="middle" transform="rotate(-90 70 150)" class="s">Height</text>
-  <text x="335" y="298" text-anchor="middle" class="s">Temperature (colder to the left)</text>
+  <text x="335" y="310" text-anchor="middle" class="s">Temperature (colder to the left)</text>
   <!-- unstable wedge -->
   <path d="M330 270 L150 60 L250 60 z" class="fred" opacity=".10"/>
   <!-- DALR -->
@@ -161,15 +161,15 @@ stability: {
   <text x="238" y="54">SALR</text><text x="238" y="70" class="s">≈1.5 °C/1000 ft</text>
   <!-- ELR unstable -->
   <line x1="330" y1="270" x2="110" y2="90" class="ink red dash"/>
-  <text x="102" y="108" class="red-t">ELR here</text>
-  <text x="102" y="124" class="s red-t">= unstable</text>
+  <text x="102" y="146" class="red-t">ELR here</text>
+  <text x="102" y="162" class="s red-t">= unstable</text>
   <!-- ELR stable -->
   <line x1="330" y1="270" x2="330" y2="60" class="ink blue dash"/>
   <text x="342" y="96" class="blue-t">ELR here</text>
   <text x="342" y="112" class="s blue-t">= stable</text>
   <circle cx="330" cy="270" r="4" class="fill"/>
   <text x="330" y="288" text-anchor="middle" class="s">Surface</text>
-  <text x="335" y="320" text-anchor="middle" class="s">Between the two adiabats the air is conditionally unstable</text>
+  <text x="335" y="336" text-anchor="middle" class="s">Between the two adiabats the air is conditionally unstable</text>
 </svg>`
 },
 
@@ -180,7 +180,7 @@ warmfront: {
   <line x1="20" y1="250" x2="620" y2="250" class="ink"/>
   <path d="M120 250 L560 70 L620 70 L620 250 z" class="tint"/>
   <path d="M120 250 L560 70" class="ink red"/>
-  <text x="300" y="188" class="red-t">Warm air overrunning · slope ≈ 1 in 150</text>
+  <text x="30" y="170" class="red-t">Warm air overrunning · slope ≈ 1 in 150</text>
   <text x="560" y="250" class="s" text-anchor="end">Cold air</text>
   <text x="596" y="106" class="s">Warm</text>
   <!-- clouds -->
@@ -220,14 +220,14 @@ coldfront: {
     <ellipse cx="300" cy="110" rx="42" ry="34"/>
     <ellipse cx="330" cy="72" rx="72" ry="16"/>
   </g>
-  <text x="392" y="70" class="s">Anvil</text>
-  <text x="300" y="184" text-anchor="middle" class="s">Cb</text>
+  <text x="408" y="70" class="s">Anvil</text>
+  <text x="360" y="184" class="s">Cb</text>
   <g class="thin">
     <line x1="272" y1="222" x2="266" y2="248"/><line x1="292" y1="226" x2="286" y2="248"/>
     <line x1="312" y1="222" x2="306" y2="248"/><line x1="332" y1="226" x2="326" y2="248"/>
   </g>
   <text x="300" y="272" text-anchor="middle" class="s">Heavy showers, severe turbulence, sharp wind veer</text>
-  <text x="500" y="272" text-anchor="middle" class="s">then rapid clearance</text>
+  <text x="530" y="272" text-anchor="middle" class="s">then rapid clearance</text>
 </svg>`
 },
 
@@ -283,22 +283,24 @@ aerofoil: {
     <path d="M200 170 C240 138, 330 128, 420 152 C400 176, 300 190, 200 170 Z" class="fill" opacity=".22"/>
     <path d="M200 170 C240 138, 330 128, 420 152 C400 176, 300 190, 200 170 Z" class="ink"/>
     <line x1="200" y1="170" x2="420" y2="152" class="ink dash" opacity=".8"/>
-    <text x="300" y="184" class="s">Chord line</text>
+    <text x="430" y="156" class="s">Chord line</text>
     <circle cx="290" cy="150" r="4" class="fblue"/>
-    <text x="298" y="146" class="s blue-t">Centre of pressure</text>
   </g>
+  <!-- centre of pressure, labelled clear of the aerofoil with a leader to the dot -->
+  <line x1="280" y1="121" x2="287" y2="157" class="thin"/>
+  <text x="200" y="116" class="s blue-t">Centre of pressure</text>
   <!-- AoA angle -->
   <line x1="150" y1="170" x2="470" y2="170" class="thin"/>
   <path d="M240 170 A 90 90 0 0 0 236 151" class="ink blue"/>
-  <text x="250" y="164" class="blue-t">α</text>
-  <text x="266" y="164" class="s blue-t">angle of attack</text>
+  <text x="160" y="146" class="blue-t">α</text>
+  <text x="176" y="146" class="s blue-t">angle of attack</text>
   <!-- lift and drag -->
   <line x1="330" y1="138" x2="330" y2="48" class="ink blue" marker-end="url(#ar-afb)"/>
   <text x="338" y="60" class="b blue">LIFT</text>
-  <text x="338" y="76" class="s blue-t">perpendicular to the airflow</text>
+  <text x="338" y="78" class="s blue-t">perpendicular to the airflow</text>
   <line x1="440" y1="168" x2="530" y2="168" class="ink" marker-end="url(#ar-af)"/>
   <text x="470" y="188">DRAG</text>
-  <text x="90" y="262" class="s">Most of the lift comes from reduced pressure over the upper surface, not raised pressure below.</text>
+  <text x="320" y="262" text-anchor="middle" class="s">Most of the lift comes from reduced pressure over the upper surface, not raised pressure below.</text>
 </svg>`
 },
 
@@ -309,7 +311,7 @@ dragcurve: {
   <line x1="80" y1="30" x2="80" y2="260" class="ink"/>
   <line x1="80" y1="260" x2="590" y2="260" class="ink"/>
   <text x="58" y="145" text-anchor="middle" transform="rotate(-90 58 145)" class="s">Drag</text>
-  <text x="335" y="300" text-anchor="middle" class="s">Airspeed</text>
+  <text x="590" y="284" text-anchor="end" class="s">Airspeed</text>
   <!-- induced -->
   <path d="M110 60 C170 190, 220 232, 330 246 C420 254, 500 257, 580 258" class="ink dash" opacity=".65"/>
   <text x="120" y="52" class="s">Induced drag ∝ 1/V²</text>
@@ -343,11 +345,11 @@ clcurve: {
   <circle cx="400" cy="62" r="5" class="fblue"/>
   <line x1="400" y1="62" x2="400" y2="240" class="thin dash"/>
   <text x="400" y="258" text-anchor="middle" class="b">≈16°</text>
-  <text x="412" y="56" class="b blue">C∟ max</text>
+  <text x="412" y="54" class="b blue">C∟ max</text>
   <text x="412" y="72" class="s blue-t">the stalling angle</text>
   <!-- separated flow -->
   <text x="500" y="182" class="s red-t">Flow separated</text>
-  <text x="500" y="197" class="s red-t">lift falls, drag rises</text>
+  <text x="500" y="200" class="s red-t">lift falls, drag rises</text>
   <path d="M420 70 C450 110, 470 140, 496 168" class="ink red" opacity=".5"/>
   <!-- linear region -->
   <text x="150" y="192" class="s">Roughly linear here</text>
@@ -374,13 +376,13 @@ turnforces: {
   <text x="410" y="134" class="b blue">Total lift</text>
   <!-- vertical component -->
   <line x1="300" y1="200" x2="300" y2="80" class="ink dash"/>
-  <text x="240" y="92" class="s">Vertical component</text>
-  <text x="240" y="107" class="s">= weight</text>
+  <text x="292" y="92" text-anchor="end" class="s">Vertical component</text>
+  <text x="292" y="109" text-anchor="end" class="s">= weight</text>
   <!-- horizontal component -->
   <line x1="300" y1="80" x2="404" y2="80" class="ink dash"/>
   <line x1="300" y1="200" x2="404" y2="200" class="ink red" marker-end="url(#ar-tf)"/>
-  <text x="330" y="222" class="red-t">Horizontal component</text>
-  <text x="330" y="238" class="s red-t">turns the aeroplane</text>
+  <text x="310" y="222" class="red-t">Horizontal component</text>
+  <text x="310" y="239" class="s red-t">turns the aeroplane</text>
   <!-- weight -->
   <line x1="300" y1="200" x2="300" y2="290" class="ink" marker-end="url(#ar-tf)"/>
   <text x="308" y="286">Weight</text>
@@ -435,19 +437,19 @@ triangle: {
     <path d="M0 0 L10 5 L0 10 z" class="fred"/></marker></defs>
   <!-- air vector -->
   <line x1="80" y1="230" x2="420" y2="90" class="ink" marker-end="url(#ar-tv)"/>
-  <text x="200" y="140" >Heading + TAS</text>
-  <text x="200" y="156" class="s">the air vector</text>
+  <text x="200" y="120" >Heading + TAS</text>
+  <text x="200" y="136" class="s">the air vector</text>
   <!-- wind vector -->
   <line x1="420" y1="90" x2="500" y2="160" class="ink red" marker-end="url(#ar-tvr)"/>
-  <text x="466" y="112" class="red-t">W/V</text>
-  <text x="446" y="128" class="s red-t">wind, from</text>
+  <text x="480" y="112" class="red-t">W/V</text>
+  <text x="480" y="128" class="s red-t">wind, from</text>
   <!-- ground vector -->
   <line x1="80" y1="230" x2="500" y2="160" class="ink blue" marker-end="url(#ar-tvb)"/>
   <text x="250" y="222" class="blue-t">Track + groundspeed</text>
   <text x="250" y="238" class="s blue-t">where you actually go</text>
   <!-- drift angle -->
   <path d="M170 193 A 96 96 0 0 0 172 215" class="ink"/>
-  <text x="150" y="184" class="s">drift</text>
+  <text x="148" y="181" class="s">drift</text>
   <circle cx="80" cy="230" r="4" class="fill"/>
   <text x="60" y="252" class="s">Start</text>
   <text x="335" y="286" text-anchor="middle" class="s">Wind from the left drifts you right, so you steer left of track</text>
@@ -478,8 +480,8 @@ oneinsixty: {
   <line x1="560" y1="190" x2="560" y2="202" class="thin"/>
   <text x="460" y="214" text-anchor="middle" class="s">60 NM to run</text>
   <!-- angle -->
-  <path d="M110 90 A 50 50 0 0 0 108 100" class="ink"/>
-  <text x="112" y="108" class="s">6°</text>
+  <path d="M155 90 A 95 95 0 0 1 153.2 108.6" class="ink"/>
+  <text x="172" y="105" text-anchor="middle" class="s">6°</text>
   <text x="335" y="244" text-anchor="middle">(3 ÷ 30) × 60 = 6° track error &#160;·&#160; (3 ÷ 60) × 60 = 3° closing &#160;·&#160; alter 9°</text>
 </svg>`
 },
@@ -498,11 +500,11 @@ varmag: {
   <text x="176" y="66" text-anchor="middle" class="b red-t">Compass N</text>
   <path d="M300 130 A 100 100 0 0 0 272 138" class="ink blue"/>
   <text x="306" y="126" class="blue-t">Variation</text>
-  <text x="306" y="142" class="s blue-t">true → magnetic (chart)</text>
+  <text x="306" y="143" class="s blue-t">true → magnetic (chart)</text>
   <path d="M272 160 A 140 140 0 0 0 256 168" class="ink red"/>
   <text x="120" y="150" class="red-t">Deviation</text>
-  <text x="120" y="166" class="s red-t">magnetic → compass</text>
-  <text x="120" y="181" class="s red-t">(deviation card)</text>
+  <text x="120" y="167" class="s red-t">magnetic → compass</text>
+  <text x="120" y="184" class="s red-t">(deviation card)</text>
   <circle cx="300" cy="230" r="4" class="fill"/>
   <text x="320" y="256">Variation <tspan class="b">west</tspan>, magnetic <tspan class="b">best</tspan> — add it to true</text>
 </svg>`
@@ -513,7 +515,7 @@ varmag: {
 fourstroke: {
   alt: 'The four strokes of a piston engine cycle: induction, compression, power and exhaust',
   cap: 'Two crankshaft revolutions per cycle, one power stroke per cylinder. Ignition fires before top dead centre so peak pressure arrives just after it.',
-  svg: `<svg class="dg" viewBox="0 0 640 260" role="img" aria-label="Four stroke engine cycle">
+  svg: `<svg class="dg" viewBox="0 0 640 272" role="img" aria-label="Four stroke engine cycle">
   <defs><marker id="ar-fs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker></defs>
   <g class="ink">
@@ -524,7 +526,8 @@ fourstroke: {
       <path d="M26 0 v18" class="blue"/><path d="M74 0 v0"/>
       <line x1="50" y1="112" x2="50" y2="150"/>
       <text x="50" y="-10" text-anchor="middle" class="b">1 Induction</text>
-      <text x="50" y="172" text-anchor="middle" class="s">inlet open, piston down</text>
+      <text x="50" y="172" text-anchor="middle" class="s">inlet open,</text>
+      <text x="50" y="188" text-anchor="middle" class="s">piston down</text>
     </g>
     <g transform="translate(180,40)">
       <rect x="0" y="0" width="100" height="140" rx="6"/>
@@ -532,7 +535,8 @@ fourstroke: {
       <line x1="12" y1="30" x2="88" y2="30"/>
       <line x1="50" y1="56" x2="50" y2="150"/>
       <text x="50" y="-10" text-anchor="middle" class="b">2 Compression</text>
-      <text x="50" y="172" text-anchor="middle" class="s">both valves shut, piston up</text>
+      <text x="50" y="172" text-anchor="middle" class="s">both valves shut,</text>
+      <text x="50" y="188" text-anchor="middle" class="s">piston up</text>
     </g>
     <g transform="translate(330,40)">
       <rect x="0" y="0" width="100" height="140" rx="6"/>
@@ -541,7 +545,8 @@ fourstroke: {
       <line x1="12" y1="70" x2="88" y2="70"/>
       <line x1="50" y1="96" x2="50" y2="150"/>
       <text x="50" y="-10" text-anchor="middle" class="b red-t">3 Power</text>
-      <text x="50" y="172" text-anchor="middle" class="s">spark before TDC, piston driven down</text>
+      <text x="50" y="172" text-anchor="middle" class="s">spark before TDC,</text>
+      <text x="50" y="188" text-anchor="middle" class="s">piston driven down</text>
     </g>
     <g transform="translate(480,40)">
       <rect x="0" y="0" width="100" height="140" rx="6"/>
@@ -549,13 +554,14 @@ fourstroke: {
       <line x1="12" y1="34" x2="88" y2="34"/>
       <line x1="50" y1="60" x2="50" y2="150"/>
       <text x="50" y="-10" text-anchor="middle" class="b">4 Exhaust</text>
-      <text x="50" y="172" text-anchor="middle" class="s">exhaust open, piston up</text>
+      <text x="50" y="172" text-anchor="middle" class="s">exhaust open,</text>
+      <text x="50" y="188" text-anchor="middle" class="s">piston up</text>
     </g>
   </g>
   <line x1="140" y1="110" x2="172" y2="110" class="ink" marker-end="url(#ar-fs)"/>
   <line x1="290" y1="110" x2="322" y2="110" class="ink" marker-end="url(#ar-fs)"/>
   <line x1="440" y1="110" x2="472" y2="110" class="ink" marker-end="url(#ar-fs)"/>
-  <text x="320" y="242" text-anchor="middle" class="s">Suck · Squeeze · Bang · Blow</text>
+  <text x="320" y="254" text-anchor="middle" class="s">Suck · Squeeze · Bang · Blow</text>
 </svg>`
 },
 
@@ -589,7 +595,7 @@ pitotstatic: {
   <path d="M210 138 H400" class="ink"/>
   <path d="M210 216 H400" class="ink"/>
   <circle cx="210" cy="138" r="3" class="fill"/><circle cx="210" cy="216" r="3" class="fill"/>
-  <text x="240" y="266" class="s">Static blocked in a climb: ASI under-reads, altimeter freezes, VSI reads zero</text>
+  <text x="320" y="266" text-anchor="middle" class="s">Static blocked in a climb: ASI under-reads, altimeter freezes, VSI reads zero</text>
 </svg>`
 },
 
@@ -646,7 +652,7 @@ massbalance: {
   <path d="M330 150 l-16 32 h32 z" class="fill"/>
   <line x1="330" y1="150" x2="330" y2="196" class="thin dash"/>
   <text x="330" y="212" text-anchor="middle" class="b">CG</text>
-  <text x="330" y="228" text-anchor="middle" class="s">total moment ÷ total mass</text>
+  <text x="330" y="232" text-anchor="middle" class="s">total moment ÷ total mass</text>
   <!-- masses -->
   <g class="ink">
     <rect x="150" y="108" width="70" height="34" rx="6"/>
@@ -663,8 +669,8 @@ massbalance: {
   </g>
   <text x="132" y="250" text-anchor="middle" class="s">arm</text>
   <text x="272" y="270" text-anchor="middle" class="s">arm</text>
-  <text x="560" y="96" text-anchor="end" class="s">Check take-off <tspan class="b">and</tspan> landing:</text>
-  <text x="560" y="112" text-anchor="end" class="s">burning fuel moves the CG</text>
+  <text x="560" y="92" text-anchor="end" class="s">Check take-off <tspan class="b">and</tspan> landing:</text>
+  <text x="560" y="110" text-anchor="end" class="s">burning fuel moves the CG</text>
 </svg>`
 },
 
@@ -697,7 +703,7 @@ circuit: {
   <circle cx="325" cy="70" r="6" class="fill"/>
   <text x="325" y="30" text-anchor="middle" class="b">Overhead at 2000 ft aal</text>
   <path d="M325 78 V110" class="ink dash"/>
-  <text x="60" y="286" class="s">Standard direction is left-hand unless notified. Circuit height is aerodrome-specific — check the plate.</text>
+  <text x="320" y="286" text-anchor="middle" class="s">Standard direction is left-hand unless notified. Circuit height is aerodrome-specific — check the plate.</text>
   <text x="325" y="306" text-anchor="middle" class="s">Runway</text>
 </svg>`
 },
@@ -745,12 +751,12 @@ arousal: {
   <circle cx="335" cy="60" r="5" class="fblue"/>
   <line x1="335" y1="60" x2="335" y2="220" class="thin dash"/>
   <text x="335" y="46" text-anchor="middle" class="b blue">Peak</text>
-  <text x="150" y="180" class="s">Boredom</text>
-  <text x="150" y="196" class="s">complacency</text>
-  <text x="150" y="212" class="s">missed cues</text>
-  <text x="470" y="180" class="s red-t">Tunnelling</text>
-  <text x="470" y="196" class="s red-t">regression</text>
-  <text x="470" y="212" class="s red-t">panic</text>
+  <text x="205" y="178" class="s">Boredom</text>
+  <text x="205" y="195" class="s">complacency</text>
+  <text x="205" y="212" class="s">missed cues</text>
+  <text x="400" y="178" class="s red-t">Tunnelling</text>
+  <text x="400" y="195" class="s red-t">regression</text>
+  <text x="400" y="212" class="s red-t">panic</text>
   <text x="335" y="238" text-anchor="middle" class="s">The peak is narrower for unfamiliar tasks</text>
 </svg>`
 }
