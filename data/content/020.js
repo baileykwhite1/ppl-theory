@@ -70,7 +70,7 @@ harsher ride.</p>
 </ul></div>`
 },
 {
-  id: '020-engine', title: 'The piston engine', mins: 8, tags: ['021.03', '021.04'],
+  id: '020-engine', title: 'The piston engine', mins: 8, tags: ['021.09'],
   body: `
 <h3>The four-stroke cycle</h3>
 <p><b>Induction, compression, power, exhaust</b> — two crankshaft revolutions per cycle, one
@@ -151,7 +151,7 @@ which is precisely the climb — so keep the climb speed up and the mixture rich
 </ul></div>`
 },
 {
-  id: '020-prop-systems', title: 'Propellers, fuel and electrics', mins: 6, tags: ['021.07', '021.08'],
+  id: '020-prop-systems', title: 'Propellers, fuel and electrics', mins: 6, tags: ['021.07', '021.08', '021.09'],
   body: `
 <h3>Propellers</h3>
 <p>A propeller is a rotating aerofoil producing thrust. Because the tip travels much further per
@@ -294,7 +294,7 @@ pressure: ASI over-reads in the climb.</li>
 </ul></div>`
 },
 {
-  id: '020-airworthiness', title: 'Airworthiness and documents', mins: 5, tags: ['021.14'],
+  id: '020-airworthiness', title: 'Airworthiness and documents', mins: 5, tags: ['021.01'],
   body: `
 <h3>The paperwork that makes it legal</h3>
 <ul>

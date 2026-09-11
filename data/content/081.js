@@ -322,8 +322,9 @@ Greatest height gained per unit of <em>distance</em>. Use it to clear an obstacl
 <li><b>V<sub>y</sub></b>, best rate of climb: the speed giving maximum <b>excess power</b>.
 Greatest height gained per unit of <em>time</em>. Use it to get up quickly. Faster.</li>
 </ul>
-<p>Both decrease with altitude, and they converge; where they meet, the rate of climb is zero
-and you are at the absolute ceiling.</p>
+<p>As altitude increases <b>V<sub>x</sub> increases and V<sub>y</sub> decreases</b> — as
+indicated airspeeds they move towards each other from opposite directions. Where they meet the
+rate of climb is zero and you are at the <b>absolute ceiling</b>.</p>
 
 <h3>Descent and glide</h3>
 <p>In a glide there is no thrust, so a component of weight provides the propulsive force. The
@@ -342,9 +343,11 @@ increases. So the tightest, fastest turn is slow and steeply banked.</li>
 <li>Rate one (standard rate) is 3&deg; per second, 180&deg; in one minute. A rough rule for
 bank angle: <b>speed in knots divided by 10, plus 7</b>.</li>
 </ul>
-<p>A <b>slipping</b> turn has too little bank for the rate of turn (or too much rudder into the
-turn) — the ball is towards the inside. A <b>skidding</b> turn has too much bank or too much
-rate — ball towards the outside. Step on the ball.</p>
+<p>A <b>slipping</b> turn has <b>too much bank</b> for the rate of turn (too little rudder) —
+the aeroplane slides in towards the lower wing and the ball falls to the <b>inside</b>. A
+<b>skidding</b> turn has <b>too much rudder</b>, so the rate of turn is too great for the bank —
+the tail swings the aeroplane outwards and the ball goes to the <b>outside</b>. Either way, step
+on the ball.</p>
 
 <h3>The V-speeds and the limitations they protect</h3>
 <table>

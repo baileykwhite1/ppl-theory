@@ -19,18 +19,21 @@ be used for taxiing and take-off run but not for landing.</li>
 <li><b>Runway holding position</b> — two solid and two dashed yellow lines. Never cross the
 <b>solid</b> side without a clearance; that is the runway incursion line.</li>
 <li><b>Closed runway or taxiway</b> — a white or yellow <b>cross</b>.</li>
-<li><b>Unserviceable area</b> — white or orange markers, or in the signals square, a red and
-yellow striped board.</li>
+<li><b>Unserviceable area</b> — unserviceability markers: boards, cones or flags in
+orange-and-white or red-and-white stripes, with red unserviceability lights at night.</li>
 </ul>
 
 <h3>The signals square</h3>
 <p>A ground square near the tower carrying visual signals for aircraft without radio:</p>
 <ul>
-<li><b>White dumb-bell</b> — take off and land on the runway; taxi on taxiways only.</li>
-<li><b>Dumb-bell with black bars</b> — take off and land on the runway; all ground movement on
-runways and taxiways only.</li>
-<li><b>Red and yellow striped board or a red square with yellow diagonal</b> — the aerodrome is
-unsafe; landing is prohibited.</li>
+<li><b>White dumb-bell</b> — land, take off <b>and taxi</b> on runways and taxiways only.</li>
+<li><b>Dumb-bell with a black bar across each circle</b> — land and take off on runways only,
+but <b>other manoeuvres need not</b> be confined to runways and taxiways. The bars
+<em>relax</em> the restriction; they do not add one.</li>
+<li><b>Red square panel with yellow diagonals</b> (two, forming an X) — <b>landing is
+prohibited</b>, and the prohibition is liable to be prolonged.</li>
+<li><b>Red square panel with a single yellow diagonal</b> — <b>special precautions</b> must be
+observed in approaching to land or in landing. Landing is permitted, with care.</li>
 <li><b>White landing T</b> — land and take off parallel to the shaft of the T, towards the
 crossarm.</li>
 <li><b>White double cross</b> — glider flying in progress.</li>
@@ -274,7 +277,7 @@ quiz: [
 { q: 'A displaced threshold means the paved area before it:', a: ['Must not be used at all', 'May be used for taxiing and take-off but not for landing', 'May be used for landing only', 'Is a stopway only'], c: 1, why: 'Arrows lead to the transverse bar; the area before it is usable for taxi and take-off run, not for landing.', ref: 'Ops' },
 { q: 'At runway holding position markings you must never cross:', a: ['The dashed side without clearance', 'The solid side without clearance', 'Either side', 'The centreline'], c: 1, why: 'The two solid lines are on the holding side. Crossing them without clearance is a runway incursion.', ref: 'Ops' },
 { q: 'A white cross displayed on a runway means:', a: ['Glider flying in progress', 'The runway is closed', 'Take off and land on the runway only', 'Right-hand circuits'], c: 1, why: 'A cross marks a closed runway or taxiway. A double white cross in the signals square means glider flying.', ref: 'Ops' },
-{ q: 'A white dumb-bell in the signals square means:', a: ['Glider flying in progress', 'Take off and land on the runway; taxi on taxiways only', 'The aerodrome is unsafe', 'Right-hand traffic'], c: 1, why: 'With black bars added, it means all ground movement is confined to runways and taxiways too.', ref: 'Ops' },
+{ q: 'A white dumb-bell in the signals square means:', a: ['Glider flying in progress', 'Land, take off and taxi on runways and taxiways only', 'The aerodrome is unsafe', 'Right-hand traffic'], c: 1, why: 'The plain dumb-bell confines everything — landing, take-off and taxiing — to runways and taxiways. Add a black bar across each circle and the restriction is relaxed: land and take off on runways only, but other manoeuvres need not be confined.', ref: 'SERA App 1, s3' },
 { q: 'A steady green light directed at an aircraft in flight means:', a: ['Cleared for take-off', 'Cleared to land', 'Return for landing', 'Aerodrome unsafe'], c: 1, why: 'In flight: cleared to land. On the ground the same signal means cleared for take-off.', ref: 'Ops' },
 { q: 'Red flashes directed at an aircraft in flight mean:', a: ['Give way and continue circling', 'Aerodrome unsafe, do not land', 'Return for landing', 'Cleared to land'], c: 1, why: 'Red flashes in flight: aerodrome unsafe, do not land. On the ground: taxi clear of the landing area in use.', ref: 'Ops' },
 { q: 'White flashes directed at an aircraft in flight mean:', a: ['Do not land', 'Land at this aerodrome and proceed to the apron', 'Stop', 'Cleared to taxi'], c: 1, why: 'In flight: land here and proceed to the apron. On the ground: return to the starting point.', ref: 'Ops' },

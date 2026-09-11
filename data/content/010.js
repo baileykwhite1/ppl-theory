@@ -169,21 +169,34 @@ over-reads. Cold and low pressure both put you closer to the ground than the ins
 admits.</p>
 
 <h3>Cruising levels above 3000 ft</h3>
-<p>Above 3000 ft AMSL (or a higher notified datum), in level cruise, you must use a cruising
+<p>Above <b>3000 ft from the ground or water</b> (or a higher notified datum — note that is
+height above the surface, <b>not</b> AMSL), in level cruise, SERA Appendix 3 sets a cruising
 level appropriate to your <b>magnetic track</b>, from the semicircular table:</p>
 <ul>
 <li>Track <b>000&deg; to 179&deg;</b>: odd thousands <b>+ 500 ft</b> for VFR — FL 35, 55, 75, 95…</li>
 <li>Track <b>180&deg; to 359&deg;</b>: even thousands <b>+ 500 ft</b> for VFR — FL 45, 65, 85, 105…</li>
 </ul>
 <p>IFR takes the plain odd and even thousands; VFR takes the plus-500 ft levels in between.
-The UK abolished the old quadrantal rule in 2014 — the semicircular table above is what
+For <b>IFR outside controlled airspace</b> the table is mandatory; inside controlled airspace
+you fly the level in your clearance.</p>
+<p><b>A UK difference worth knowing.</b> SERA applies the table to VFR "except … as specified by
+the competent authority" — and the UK has so specified. UK AIP ENR 1.2 records that it is
+<b>not mandatory</b> in the UK for VFR flights in level cruise above 3000 ft from the ground or
+water to adopt any particular cruising level system; such flights are <em>advised</em> to use
+the table. So for VFR in the UK it is <b>recommended, not required</b> — but fly it anyway, it
+is what everyone else is doing.</p>
+<p>The UK abolished the old quadrantal rule in 2014 — the semicircular table above is what
 applies now.</p>
 
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>It is <b>magnetic</b> track, not heading and not true.</li>
-<li>The cruising-level rule applies above 3000 ft <b>and</b> in level cruise. Climbing,
-descending or below 3000 ft, it does not.</li>
+<li>The datum is 3000 ft <b>from the ground or water</b>, not 3000 ft AMSL. Over 2000 ft
+terrain those are 1000 ft apart.</li>
+<li>For <b>VFR in the UK</b> the table is <b>advisory</b>, not mandatory — a notified UK
+difference. It is mandatory for <b>IFR outside controlled airspace</b>.</li>
+<li>Even as advice it applies only in <b>level cruise</b>. Climbing or descending, it does
+not.</li>
 <li>QFE reads zero on the runway; QNH reads elevation. If a question says the altimeter reads
 0 on the ground, the subscale has QFE in it.</li>
 </ul></div>`

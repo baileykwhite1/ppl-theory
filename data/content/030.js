@@ -138,9 +138,11 @@ Read carefully which one a question is asking for.</p>
 Both shrink with increased mass, increased altitude and increased temperature, and both are
 degraded by flap (which adds drag). Consequences:</p>
 <ul>
-<li><b>V<sub>y</sub></b> (best rate, most height per minute) and <b>V<sub>x</sub></b> (best angle,
-most height per unit distance) both <b>decrease with altitude</b> and converge at the absolute
-ceiling.</li>
+<li><b>V<sub>y</sub></b> (best rate, most height per minute) <b>decreases</b> with altitude and
+<b>V<sub>x</sub></b> (best angle, most height per unit distance) <b>increases</b> — as indicated
+airspeeds they close on each other from opposite directions and meet at the <b>absolute
+ceiling</b>, where the only climb speed left is V<sub>x</sub> = V<sub>y</sub> and the rate of
+climb is zero.</li>
 <li>The <b>service ceiling</b> is where the rate of climb falls to a defined small value
 (commonly 100 ft/min); the <b>absolute ceiling</b> is where it reaches zero.</li>
 <li>A <b>headwind steepens the climb gradient</b> over the ground without changing the rate of
@@ -159,7 +161,7 @@ can no longer produce useful power, because TAS rises for the same IAS.</p>
 <ul>
 <li>Performance factors <b>multiply</b>.</li>
 <li>Take-off and landing distances are measured to and from a <b>50 ft</b> screen.</li>
-<li>Vx and Vy both <b>decrease</b> with altitude.</li>
+<li>V<sub>y</sub> <b>decreases</b> with altitude and V<sub>x</sub> <b>increases</b>. They can only converge because they move in opposite directions.</li>
 <li>A headwind improves the climb <b>gradient</b>, not the rate of climb.</li>
 <li>Density altitude, not pressure altitude, is what performance depends on.</li>
 </ul></div>`
@@ -259,7 +261,7 @@ quiz: [
 { q: 'Two performance factors of 1.2 and 1.3 combine to give:', a: ['1.50', '1.25', '1.56', '2.50'], c: 2, why: 'They multiply: 1.2 x 1.3 = 1.56.', ref: 'Performance factors' },
 { q: 'An uphill runway slope:', a: ['Helps take-off and hinders landing', 'Hinders take-off and helps landing', 'Has no effect', 'Helps both'], c: 1, why: 'Uphill lengthens the take-off run but shortens the landing roll.', ref: 'Performance' },
 { q: 'Rate of climb depends on:', a: ['Excess thrust', 'Excess power', 'Total drag', 'Wing loading only'], c: 1, why: 'Rate depends on excess power; angle depends on excess thrust.', ref: 'Performance' },
-{ q: 'As altitude increases, Vx and Vy:', a: ['Both increase', 'Both decrease and converge', 'Vx increases and Vy decreases', 'Remain constant'], c: 1, why: 'Both decrease with altitude and converge at the absolute ceiling.', ref: 'Performance' },
+{ q: 'As altitude increases, Vx and Vy:', a: ['Both increase', 'Both decrease and converge', 'Vx increases and Vy decreases', 'Remain constant'], c: 2, why: 'As indicated airspeeds Vx increases and Vy decreases, closing on each other from opposite directions. They meet at the absolute ceiling, where the rate of climb is zero.', ref: 'Performance' },
 { q: 'The absolute ceiling is the altitude at which:', a: ['Rate of climb is 100 ft/min', 'Rate of climb is zero', 'The engine stops', 'Vx equals VNE'], c: 1, why: 'Rate of climb zero. The service ceiling is where it falls to a defined small value, commonly 100 ft/min.', ref: 'Performance' },
 { q: 'A headwind during the climb:', a: ['Increases the rate of climb', 'Increases the climb gradient over the ground', 'Reduces the climb gradient', 'Has no effect on either'], c: 1, why: 'Rate of climb is unchanged, but the gradient over the ground steepens, which helps obstacle clearance.', ref: 'Performance' },
 { q: 'Extending flap for take-off generally:', a: ['Improves the climb rate', 'Shortens the ground run but reduces the climb performance', 'Has no effect on climb', 'Reduces drag'], c: 1, why: 'More CL gets you off sooner, but the extra drag flattens the climb.', ref: 'Performance' },
@@ -300,7 +302,7 @@ cards: [
 { f: 'Do performance factors add or multiply?', b: 'Multiply.', ref: 'Perf' },
 { f: 'Uphill slope', b: 'Hinders take-off, helps landing.', ref: 'Perf' },
 { f: 'Rate versus angle of climb', b: 'Rate depends on excess power (Vy). Angle depends on excess thrust (Vx).', ref: 'Perf' },
-{ f: 'Vx and Vy with altitude', b: 'Both decrease and converge at the absolute ceiling.', ref: 'Perf' },
+{ f: 'Vx and Vy with altitude', b: 'Vx increases, Vy decreases (as IAS). They converge at the absolute ceiling.', ref: 'Perf' },
 { f: 'Service versus absolute ceiling', b: 'Service: rate falls to a defined small value (often 100 ft/min). Absolute: rate is zero.', ref: 'Perf' },
 { f: 'Effect of a headwind on the climb', b: 'Steeper gradient over the ground; rate of climb unchanged.', ref: 'Perf' },
 { f: 'Maximum range versus maximum endurance speed', b: 'Range: minimum drag speed. Endurance: minimum power speed (slower).', ref: 'Perf' },

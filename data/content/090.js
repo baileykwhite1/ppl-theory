@@ -108,7 +108,7 @@ teaches the controller nothing.</p>
 <tbody>
 <tr><td><b>Control</b></td><td>An air traffic control unit — it issues <b>instructions and clearances</b> which you must comply with</td></tr>
 <tr><td><b>Approach / Radar / Tower / Ground</b></td><td>Also ATC, for that phase of flight</td></tr>
-<tr><td><b>Information</b></td><td>An <b>AFIS</b> — it gives <em>information</em>, not instructions. There is no clearance to land from an AFIS</td></tr>
+<tr><td><b>Information</b></td><td>An <b>AFIS</b> — <em>information</em> rather than instructions to aircraft <b>in the air</b>, and no clearance to land or take off. It <em>does</em> instruct aircraft and vehicles on the <b>manoeuvring area</b></td></tr>
 <tr><td><b>Radio</b></td><td>An <b>air-ground</b> communication service, operated by a radio operator. Information only, and much of it based on what other pilots have reported</td></tr>
 </tbody></table>
 <p>This distinction matters and is heavily examined. "Golf CD, land at your discretion" from a
@@ -254,7 +254,7 @@ quiz: [
 { q: 'G-ABCD abbreviated by a ground station would normally become:', a: ['Golf Alfa Bravo', 'Golf Charlie Delta', 'Alfa Bravo Charlie', 'Golf Delta'], c: 1, why: 'First letter plus the last two: Golf Charlie Delta.', ref: 'CAP413' },
 { q: 'Which of these must always be read back?', a: ['A weather report', 'A traffic information message', 'A runway holding instruction', 'A wind check'], c: 2, why: 'Anything relating to runway entry, crossing, holding, take-off or landing, plus levels, headings, speeds, SSR codes, altimeter settings and frequency changes.', ref: 'CAP413' },
 { q: 'A readback must always include:', a: ['The time', 'Your callsign', 'The QNH', 'The word Roger'], c: 1, why: 'Without a callsign the controller does not know who read it back.', ref: 'CAP413' },
-{ q: 'A station whose callsign suffix is "Information" provides:', a: ['Air traffic control clearances', 'An aerodrome flight information service — information, not instructions', 'A radar service', 'A deconfliction service'], c: 1, why: 'AFIS gives information. It cannot clear you to land.', ref: 'CAP413' },
+{ q: 'A station whose callsign suffix is "Information" provides:', a: ['Air traffic control clearances', 'An aerodrome flight information service — information, not instructions', 'A radar service', 'A deconfliction service'], c: 1, why: 'An AFIS gives information rather than instructions to aircraft in the air, and cannot clear you to land or take off. It does issue instructions to aircraft and vehicles on the manoeuvring area.', ref: 'CAP 797 / CAP 413' },
 { q: 'A station whose callsign suffix is "Radio" is:', a: ['An air traffic control unit', 'An air-ground communication service', 'A radar unit', 'A military unit'], c: 1, why: 'Air-ground, operated by a radio operator, giving information only.', ref: 'CAP413' },
 { q: 'Which station may issue a clearance to land?', a: ['Radio', 'Information', 'Tower', 'Any of them'], c: 2, why: 'Only an ATC unit such as Tower. "Land at your discretion" from Radio or Information is not a clearance.', ref: 'CAP413' },
 { q: 'The aeronautical VHF communications band is:', a: ['108.000 to 117.950 MHz', '118.000 to 136.975 MHz', '190 to 1750 kHz', '329 to 335 MHz'], c: 1, why: '118.000 to 136.975 MHz. 108 to 117.95 MHz is the VOR band.', ref: 'CAP413' },
@@ -291,7 +291,7 @@ cards: [
 { f: 'Readability scale', b: '1 unreadable, 2 readable now and then, 3 readable with difficulty, 4 readable, 5 perfectly readable.', ref: 'CAP413' },
 { f: 'Who may abbreviate a callsign?', b: 'Only the ground station may initiate it; the pilot may then follow.', ref: 'CAP413' },
 { f: 'What must always be read back?', b: 'Levels, altimeter settings, headings, speeds, SSR codes, frequency changes, and all runway entry, crossing, holding, take-off and landing clearances — with your callsign.', ref: 'CAP413' },
-{ f: 'Control / Information / Radio — what do they provide?', b: 'Control: ATC instructions and clearances. Information: AFIS, information only. Radio: air-ground, information only.', ref: 'CAP413' },
+{ f: 'Control / Information / Radio — what do they provide?', b: 'Control: ATC instructions and clearances. Information: AFIS — information to aircraft airborne, but it does instruct traffic on the manoeuvring area; no landing clearance. Radio: air-ground, information only.', ref: 'CAP413' },
 { f: 'Who can clear you to land?', b: 'Only an ATC unit (Tower). "Land at your discretion" is not a clearance.', ref: 'CAP413' },
 { f: 'VHF comms band', b: '118.000 to 136.975 MHz. VOR is 108 to 117.95.', ref: 'CAP413' },
 { f: 'UK VHF channel spacing', b: '8.33 kHz.', ref: 'CAP413' },

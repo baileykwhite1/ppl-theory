@@ -42,8 +42,11 @@ best.</b> So going from true to magnetic:</p>
 <li><b>West variation: add</b> it to true to get magnetic.</li>
 <li><b>East variation: subtract</b> it from true to get magnetic.</li>
 </ul>
-<p>The UK has small westerly variation, so magnetic is slightly larger than true here.
-Deviation works the same way from magnetic to compass. Chain it up:
+<p>UK variation is now <b>very small and close to zero</b>: the agonic line (zero variation)
+crossed Greenwich in 2019 and is still moving west at roughly 0.2&deg; a year, so variation is
+<b>easterly</b> over much of England and westerly only in the far west. Do not carry a sign in
+your head — <b>read the isogonal on the current chart</b>, and note the annual change printed
+with it. Deviation works the same way from magnetic to compass. Chain it up:
 <b>True &rarr; (variation) &rarr; Magnetic &rarr; (deviation) &rarr; Compass.</b>
 <em>True Virgins Make Dull Company</em> going one way, and add west going from true to
 compass.</p>
@@ -169,11 +172,19 @@ is all of it. It over-reads slightly, which is the safe direction for a crosswin
 <h3>The 1-in-60 rule</h3>
 <p>An error of <b>1&deg; gives 1 NM of displacement after 60 NM</b>. Rearranged for the cockpit:</p>
 <p class="mono">track error (degrees) = (distance off track &divide; distance flown) &times; 60</p>
-<p>So 3 NM off after 30 NM flown is (3 &divide; 30) &times; 60 = 6&deg; of track error. To get
-back to track <em>at your destination</em>, apply that 6&deg;. To regain track at a chosen
-point, calculate a second closing angle the same way over the distance remaining and add it —
-the <b>double track error</b> method: if you are a third of the way along, doubling the track
-error will roughly put you back on track by half way.</p>
+<p>So 3 NM off after 30 NM flown is (3 &divide; 30) &times; 60 = 6&deg; of <b>track error</b>.
+Turning by that 6&deg; alone does <em>not</em> bring you back — it only makes your new track
+<b>parallel</b> to the one you wanted, and you arrive 3 NM abeam the destination.</p>
+<p>To close at the destination you need a second angle, worked the same way over the distance
+<b>still to run</b>:</p>
+<p class="mono">closing angle (degrees) = (distance off track &divide; distance to run) &times; 60</p>
+<p>With 60 NM left: (3 &divide; 60) &times; 60 = 3&deg;. Total correction = track error + closing
+angle = 6 + 3 = <b>9&deg;</b>.</p>
+<p>The shortcut is the <b>double track error</b> method: turn by twice the track error and you
+regain track after flying <em>the same distance again</em>. From a fix a third of the way along
+you are back on track two-thirds of the way along; it is a fix at the <b>quarter</b> point that
+puts you back on track by half way. Once back on track, take off the doubled half and fly the
+original track error.</p>
 
 <figure data-d="oneinsixty"></figure>
 <h3>The flight computer</h3>
@@ -228,8 +239,9 @@ terrain or obstacle within a corridor either side of track — 5 NM is the usual
 <li><b>Trip</b> fuel — the whole route, at the planned power settings, allowing for the climb</li>
 <li><b>Contingency</b> — a percentage of trip fuel for the unforeseen</li>
 <li><b>Alternate</b> fuel — to your diversion</li>
-<li><b>Final reserve</b> — a fixed period of flight at holding speed, commonly 45 minutes for
-a piston aeroplane; the figure to use is what your operations manual or club rules specify</li>
+<li><b>Final reserve</b> — a fixed period of flight at holding speed, 1500 ft above the
+destination. Under Part-NCO that is <b>30 minutes by day VFR</b> and <b>45 minutes at night or
+IFR</b>. Club rules may demand more, never less</li>
 <li><b>Extra</b> — because you are the commander and it is your call</li>
 </ul>
 <p>Then convert volume to mass for the mass and balance sheet, and check the total still fits
