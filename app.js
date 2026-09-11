@@ -652,11 +652,12 @@ VIEWS.limits = function () {
     are the ones people fail on.</div></div>`);
 
   html(`<h2 class="sec">Skills, not knowledge</h2><div class="grp">
-    <div class="row plain"><b>The navigation computer — partly covered now</b>
-      <div class="p" style="margin-top:4px">The circular side is built into the app under
-      Reference, so you can work time, speed, distance, fuel and conversions on a real dial
-      rather than read about one. The <b>wind side</b> is not built yet, and no emulator makes
-      you quick with cold fingers on a kneeboard. Get a real CRP-1 as well.</div></div>
+    <div class="row plain"><b>The navigation computer — covered, with a caveat</b>
+      <div class="p" style="margin-top:4px">Both sides of the CRP-1 are built into the app under
+      Reference: the circular slide rule with its airspeed and altitude windows, and the wind face
+      with its sliding grid. Every worked example in the maker's handbook reproduces on them. What
+      no emulator gives you is speed with cold fingers on a kneeboard, so get a real one as well
+      and do the same problems on both.</div></div>
     <div class="row plain"><b>The chart</b>
       <div class="p" style="margin-top:4px">The 1:500,000 exam questions want you to measure
       tracks and distances, read relief and the maximum elevation figures, and identify symbols
@@ -3753,9 +3754,294 @@ const CRP_TASKS = [
 /** The rotation that puts value `o` on the outer scale against `i` on the inner. */
 const crpSet = (o, i) => ((crpAng(crpMant(o).m) - crpAng(crpMant(i).m)) % 360 + 360) % 360;
 
+/* ============================ WIND SIDE ============================ */
+/* The reverse of the CRP-1: a transparent compass rose over a sliding grid of speed
+   arcs and drift lines. It solves the triangle of velocities mechanically — you
+   pencil the wind on the disc, turn the disc to your track, slide the grid until the
+   TAS arc sits under the pencil mark, and the answer is where things end up. The
+   emulator does exactly those moves; the numbers fall out of the geometry, which is
+   the point of teaching it this way rather than handing over a formula. */
+
+const WK = 2.2;                 // px per knot: dot on 100 puts 30 at the window foot, as the photo shows
+const WCX = 200, WCY = 300, WR = 150;
+let WIND = null;                // { set, slide, mark:{dw,w}|null, v, said }
+
+function windState() {
+  if (!WIND) WIND = { set: 0, slide: 100 * WK, mark: null, v: {}, said: '' };
+  return WIND;
+}
+
+/** Where the pencil mark sits on screen for the current disc setting. */
+function windMarkXY() {
+  const w = windState(); if (!w.mark) return null;
+  const a = (w.mark.dw - w.set) * Math.PI / 180;
+  return { x: WCX + w.mark.w * WK * Math.sin(a), y: WCY - w.mark.w * WK * Math.cos(a) };
+}
+/** Drift and groundspeed read off the face as it stands. */
+function windRead() {
+  const w = windState(), m = windMarkXY();
+  const gs = w.slide / WK;
+  if (!m) return { gs: gs, drift: null, hdg: null, tasAtMark: null };
+  const oy = WCY + w.slide;
+  const drift = Math.atan2(m.x - WCX, oy - m.y) * 180 / Math.PI;
+  const tas = Math.hypot(m.x - WCX, oy - m.y) / WK;
+  return { gs: gs, drift: drift, hdg: ((w.set + drift) % 360 + 360) % 360, tasAtMark: tas };
+}
+
+function windFace() {
+  const w = windState();
+  const oy = WCY + w.slide;
+  const slideL = 84, slideR = 316, slideT = 0, slideB = 600;
+
+  /* the slide: speed arcs and drift lines about an origin below the centre dot */
+  let grid = `<line x1="${WCX}" y1="${slideT}" x2="${WCX}" y2="${Math.min(slideB, oy - 22 * WK).toFixed(1)}" class="gl2"/>`;
+  for (let s = 20; s <= 260; s += 10) {
+    const r = s * WK;
+    grid += `<circle cx="${WCX}" cy="${oy.toFixed(1)}" r="${r.toFixed(1)}" class="${s % 50 ? 'gl' : 'gl2'}"/>`;
+    const y = oy - r;
+    if (y > slideT + 6 && y < slideB - 4)
+      grid += `<text x="${WCX}" y="${(y + 3.2).toFixed(1)}" text-anchor="middle" class="gs">${s}</text>`;
+  }
+  [5, 10, 15, 20, 25, 30, 40, 50].forEach(d => {
+    [1, -1].forEach(sg => {
+      const a = sg * d * Math.PI / 180, L0 = 22 * WK, L = 280 * WK;
+      grid += `<line x1="${(WCX + L0 * Math.sin(a)).toFixed(1)}" y1="${(oy - L0 * Math.cos(a)).toFixed(1)}"
+        x2="${(WCX + L * Math.sin(a)).toFixed(1)}" y2="${(oy - L * Math.cos(a)).toFixed(1)}" class="${d % 10 ? 'gl' : 'gl2'}"/>`;
+      if (d % 10 === 0 && d <= 30) [100, 150, 200].forEach(s => {
+        const r = s * WK, x = WCX + r * Math.sin(a), y = oy - r * Math.cos(a);
+        if (y > slideT + 8 && y < slideB - 6 && x > slideL + 8 && x < slideR - 8)
+          grid += `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="middle" class="gd">${d}</text>`;
+      });
+    });
+  });
+
+  /* the rotating compass rose */
+  let rose = '';
+  for (let d = 0; d < 360; d += 2) {
+    const a = d * Math.PI / 180, big = d % 10 === 0;
+    const r0 = WR - (big ? 14 : 8), r1 = WR - 2;
+    rose += `<line x1="${(WCX + r0 * Math.sin(a)).toFixed(1)}" y1="${(WCY - r0 * Math.cos(a)).toFixed(1)}"
+      x2="${(WCX + r1 * Math.sin(a)).toFixed(1)}" y2="${(WCY - r1 * Math.cos(a)).toFixed(1)}" stroke-width="${big ? 1.1 : .6}"/>`;
+  }
+  const CARD = { 0: 'N', 45: 'NE', 90: 'E', 135: 'SE', 180: 'S', 225: 'SW', 270: 'W', 315: 'NW' };
+  for (let d = 0; d < 360; d += 10) {
+    const a = d * Math.PI / 180, r = WR - 24;
+    const x = WCX + r * Math.sin(a), y = WCY - r * Math.cos(a);
+    const lab = CARD[d] || String(d);
+    rose += `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="middle" class="${CARD[d] ? 'rc' : 'rn'}"
+      transform="rotate(${d} ${x.toFixed(1)} ${y.toFixed(1)})">${lab}</text>`;
+    if (CARD[d] && d % 90) rose += `<path d="M${(WCX + (WR - 34) * Math.sin(a)).toFixed(1)} ${(WCY - (WR - 34) * Math.cos(a)).toFixed(1)} l-3 5 h6 z"
+      transform="rotate(${d} ${(WCX + (WR - 34) * Math.sin(a)).toFixed(1)} ${(WCY - (WR - 34) * Math.cos(a)).toFixed(1)})" class="rt"/>`;
+  }
+  /* the pencil mark, which lives on the disc */
+  let pencil = '';
+  if (w.mark) {
+    const a = w.mark.dw * Math.PI / 180, r = w.mark.w * WK;
+    const x = WCX + r * Math.sin(a), y = WCY - r * Math.cos(a);
+    pencil = `<g class="pencil"><line x1="${(x - 6).toFixed(1)}" y1="${(y - 6).toFixed(1)}" x2="${(x + 6).toFixed(1)}" y2="${(y + 6).toFixed(1)}"/>
+      <line x1="${(x - 6).toFixed(1)}" y1="${(y + 6).toFixed(1)}" x2="${(x + 6).toFixed(1)}" y2="${(y - 6).toFixed(1)}"/></g>`;
+  }
+
+  /* drift scale on the body either side of the index */
+  let dscale = '';
+  for (let d = -50; d <= 50; d += 2) {
+    const a = d * Math.PI / 180, big = d % 10 === 0, r0 = WR + 10, r1 = WR + (big ? 22 : 16);
+    dscale += `<line x1="${(WCX + r0 * Math.sin(a)).toFixed(1)}" y1="${(WCY - r0 * Math.cos(a)).toFixed(1)}"
+      x2="${(WCX + r1 * Math.sin(a)).toFixed(1)}" y2="${(WCY - r1 * Math.cos(a)).toFixed(1)}" stroke-width="${big ? 1.1 : .6}"/>`;
+    if (big && d) {
+      const x = WCX + (WR + 30) * Math.sin(a), y = WCY - (WR + 30) * Math.cos(a);
+      dscale += `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="middle"
+        transform="rotate(${d} ${x.toFixed(1)} ${y.toFixed(1)})">${Math.abs(d)}</text>`;
+    }
+  }
+
+  const oct = (() => {
+    const R = 190, cut = 58, cy = WCY;
+    const pts = [[-R + cut, -R], [R - cut, -R], [R, -R + cut], [R, R - cut],
+                 [R - cut, R], [-R + cut, R], [-R, R - cut], [-R, -R + cut]];
+    return 'M' + pts.map(([x, y]) => (WCX + x) + ' ' + (cy + y)).join('L') + 'Z';
+  })();
+  const screws = [[-148, -148], [148, -148], [148, 148], [-148, 148]]
+    .map(([x, y]) => `<g class="screw" transform="translate(${WCX + x} ${WCY + y})"><circle r="8"/><rect x="-6.5" y="-1.3" width="13" height="2.6" rx="1" transform="rotate(-20)"/></g>`).join('');
+
+  return `<svg viewBox="0 0 400 600" class="crp crpw" role="img" aria-label="CRP-1 wind side">
+    <defs>
+      <clipPath id="crpw-slide"><rect x="${slideL}" y="${slideT}" width="${slideR - slideL}" height="${slideB - slideT}"/></clipPath>
+      <mask id="crpw-hole"><rect x="0" y="0" width="400" height="600" fill="#fff"/><circle cx="${WCX}" cy="${WCY}" r="${WR + 4}" fill="#000"/></mask>
+    </defs>
+    <rect x="${slideL}" y="${slideT}" width="${slideR - slideL}" height="${slideB - slideT}" rx="8" class="slide"/>
+    <g clip-path="url(#crpw-slide)" class="grid">${grid}</g>
+    <path d="${oct}" class="body" mask="url(#crpw-hole)"/>
+    ${screws}
+    <g class="dscale">${dscale}</g>
+    <text x="${WCX - 112}" y="${WCY - WR - 34}" text-anchor="middle" class="dlab" transform="rotate(-40 ${WCX - 112} ${WCY - WR - 34})">DRIFT</text>
+    <text x="${WCX + 112}" y="${WCY - WR - 34}" text-anchor="middle" class="dlab" transform="rotate(40 ${WCX + 112} ${WCY - WR - 34})">DRIFT</text>
+    <path d="M${WCX} ${WCY - WR - 12} l-7 -13 h14 z" class="mark"/>
+    <text x="${WCX}" y="${WCY - WR - 30}" text-anchor="middle" class="index">INDEX</text>
+    <g class="rosewrap" transform="rotate(${(-w.set).toFixed(2)} ${WCX} ${WCY})">
+      <circle cx="${WCX}" cy="${WCY}" r="${WR}" class="disc"/>
+      <g class="rose">${rose}</g>
+      ${pencil}
+    </g>
+    <circle cx="${WCX}" cy="${WCY}" r="4.2" class="dot"/><circle cx="${WCX}" cy="${WCY}" r="1.6" class="doti"/>
+    <text x="${WCX}" y="590" text-anchor="middle" class="brand">CRP&#8209;1 WIND</text>
+  </svg>`;
+}
+
+/** Pointer handling: turn the rose from inside the disc, slide the grid from outside it. */
+function wireWind() {
+  const svg = $('.crpw'); if (!svg) return;
+  let mode = null, last = null;
+  const pt = e => {
+    const r = svg.getBoundingClientRect(), p = e.touches ? e.touches[0] : e;
+    if (!r.width) return null;                         // detached element: nothing sane to measure
+    const sx = 400 / r.width;
+    return { x: (p.clientX - r.left) * sx, y: (p.clientY - r.top) * sx };
+  };
+  const live = () => {
+    const w = windState();
+    const g = svg.querySelector('.rosewrap');
+    if (g) g.setAttribute('transform', `rotate(${(-w.set).toFixed(2)} ${WCX} ${WCY})`);
+    const rd = windRead();
+    const set = (id, v) => { const el = $(id); if (el) el.textContent = v; };
+    set('#wSet', String(Math.round(w.set) % 360).padStart(3, '0'));
+    set('#wGS', Math.round(rd.gs));
+    set('#wDrift', rd.drift == null ? '—' : Math.abs(rd.drift).toFixed(0) + '° ' + (rd.drift < -0.5 ? 'left' : rd.drift > 0.5 ? 'right' : ''));
+    set('#wHdg', rd.hdg == null ? '—' : String(Math.round(rd.hdg)).padStart(3, '0'));
+  };
+  svg.addEventListener('pointerdown', e => {
+    try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+    const p = pt(e); if (!p) return;
+    mode = Math.hypot(p.x - WCX, p.y - WCY) <= WR ? 'rot' : 'slide';
+    last = p; e.preventDefault();
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!mode) return;
+    const p = pt(e), w = windState(); if (!p) return;
+    if (mode === 'rot') {
+      const a0 = Math.atan2(last.y - WCY, last.x - WCX), a1 = Math.atan2(p.y - WCY, p.x - WCX);
+      let d = (a1 - a0) * 180 / Math.PI; if (d > 180) d -= 360; if (d < -180) d += 360;
+      w.set = ((w.set - d) % 360 + 360) % 360;          // dragging the rose clockwise lowers the value under the index
+      live();
+    } else {
+      w.slide = Math.max(25 * WK, Math.min(240 * WK, w.slide + (p.y - last.y)));
+      // the grid is drawn from state, so re-render it in place
+      const g = svg.querySelector('.grid'); if (g) { const tmp = document.createElement('div'); tmp.innerHTML = windFace(); g.innerHTML = tmp.querySelector('.grid').innerHTML; }
+      live();
+    }
+    last = p; e.preventDefault();
+  });
+  const up = () => { if (mode) { mode = null; render(); } };
+  svg.addEventListener('pointerup', up); svg.addEventListener('pointercancel', up);
+}
+
+/** Set the face up for a track, TAS and wind — the three moves from the handbook. */
+function windSetup(track, tas, dw, ws) {
+  const w = windState();
+  w.mark = { dw: dw, w: ws };                    // 1. wind under the index, mark UP by the speed
+  w.set = track;                                 // 2. track under the index
+  const m = windMarkXY();                        // 3. slide until the TAS arc runs through the mark
+  const inside = (tas * WK) ** 2 - (m.x - WCX) ** 2;
+  if (inside < 0) return false;                  // wind stronger than TAS across track: no solution
+  w.slide = (m.y - WCY) + Math.sqrt(inside);
+  return true;
+}
+
+
+/** The wind side, as a view. */
+function windView() {
+  const w = windState();
+  html(`<div class="hd" style="padding-top:12px"><h1 class="vt">The wind triangle</h1>
+    <div class="sub">Turn the rose from inside the disc; slide the grid from the strip above or
+    below it. Or fill in the flight and watch the three moves happen.</div></div>`);
+
+  html(`<div class="crpwrap">${windFace()}</div>`);
+
+  const rd = windRead();
+  html(`<div class="grp" style="margin-top:12px">
+    <div class="row"><div class="tx"><b>Under the index</b><i>track or wind direction, whichever you set last</i></div>
+      <div class="val mono" id="wSet">${String(Math.round(w.set) % 360).padStart(3, '0')}</div></div>
+    <div class="row"><div class="tx"><b>Groundspeed</b><i>the arc under the centre dot</i></div>
+      <div class="val mono" id="wGS">${Math.round(rd.gs)}</div></div>
+    <div class="row"><div class="tx"><b>Drift</b><i>the line the pencil mark sits on</i></div>
+      <div class="val mono" id="wDrift">${rd.drift == null ? '—' : Math.abs(rd.drift).toFixed(0) + '° ' + (rd.drift < -0.5 ? 'left' : rd.drift > 0.5 ? 'right' : '')}</div></div>
+    <div class="row"><div class="tx"><b>Heading</b><i>track, minus drift if the mark is left, plus if right</i></div>
+      <div class="val mono" id="wHdg">${rd.hdg == null ? '—' : String(Math.round(rd.hdg)).padStart(3, '0')}</div></div>
+  </div>`);
+
+  const F = [['trk', 'Track', '°T'], ['tas', 'TAS', 'kt'], ['wd', 'Wind from', '°T'], ['ws', 'Wind speed', 'kt']];
+  html('<div class="card" style="margin-top:12px">' + F.map(([k, lab, unit]) => `
+    <div class="fld"><label class="f" for="wv_${k}">${lab} <span style="opacity:.6">(${unit})</span></label>
+      <input type="number" inputmode="numeric" id="wv_${k}" class="ti" value="${w.v[k] == null ? '' : w.v[k]}"></div>`).join('')
+    + `<div class="brow" style="margin-top:12px">
+        <button class="btn sec sm" id="wGo">Set it up</button>
+        <button class="btn grey sm" id="wClr">Clear</button></div>
+       ${w.said ? `<div class="note ${w.said.indexOf('No ') === 0 ? 'o' : 'b'}" style="margin-top:12px">${w.said}</div>` : ''}
+      </div>`);
+
+  $('#wClr').onclick = () => { WIND = null; render(); };
+  $('#wGo').onclick = () => {
+    const v = {};
+    F.forEach(([k]) => { const n = parseFloat($('#wv_' + k).value); if (isFinite(n)) v[k] = n; });
+    if (['trk', 'tas', 'wd', 'ws'].some(k => v[k] == null) || v.tas <= 0 || v.ws < 0) {
+      w.said = 'No setting yet — fill in all four boxes.'; render(); return;
+    }
+    w.v = v;
+    const ok = windSetup(((v.trk % 360) + 360) % 360, v.tas, ((v.wd % 360) + 360) % 360, v.ws);
+    if (!ok) { w.said = 'No solution: the crosswind exceeds the TAS, so no heading holds that track.'; render(); return; }
+    const r = windRead();
+    w.said = '1. Set <b>' + String(Math.round(v.wd)).padStart(3, '0') + '</b> under the index and pencil a mark '
+      + '<b>' + fmtN(v.ws) + ' kt up</b> the centre line from the dot. '
+      + '2. Turn the rose to put track <b>' + String(Math.round(v.trk)).padStart(3, '0') + '</b> under the index. '
+      + '3. Slide the grid until the <b>' + fmtN(v.tas) + ' kt arc</b> runs through the mark. '
+      + 'Now read: the mark sits on the <b>' + Math.abs(r.drift).toFixed(0) + '° ' + (r.drift < 0 ? 'left' : 'right') + '</b> drift line, so heading '
+      + '<b>' + String(Math.round(r.hdg)).padStart(3, '0') + '</b>; the arc under the dot is <b>' + Math.round(r.gs) + ' kt</b> groundspeed.';
+    render();
+  };
+
+  wireWind();
+
+  html(`<h2 class="sec">How to work it</h2>`);
+  const HOW = [
+    ['Set the wind', 'Put the wind <b>direction</b> under the index. From the centre dot, count <b>up</b> the '
+      + 'centre line by the wind <b>speed</b> and make a pencil cross. That cross is the wind, and it now '
+      + 'turns with the disc.', 'W/V 330/20: 330 under the index, cross 20 kt above the dot.'],
+    ['Heading and groundspeed', 'Turn the rose to put your <b>track</b> under the index. Slide the grid '
+      + 'until the <b>TAS</b> arc passes through the cross. The drift line under the cross is your drift '
+      + '— left of centre, subtract it from track; right, add it — and the arc under the dot is '
+      + 'your groundspeed.', 'Track 020, TAS 90, W/V 330/20 gives heading 010 and 76 kt.'],
+    ['Why it works', 'The dot-to-cross line is the wind vector, the origin-to-cross line is your TAS, and '
+      + 'the origin-to-dot line is what is left over: the groundspeed, pointing along track. You have '
+      + 'drawn the triangle of velocities without knowing you were doing it.', ''],
+    ['Finding the wind', 'Set the <b>heading</b> under the index and the groundspeed under the dot. Where '
+      + 'the drift you measured crosses the TAS arc, pencil a cross. Turn the disc until the cross sits '
+      + 'on the centre line above the dot: the direction under the index is the wind, and the distance '
+      + 'from the dot is its speed.', 'Track 040, heading 030, GS 74, TAS 90 gives about 350/22.'],
+    ['Head and crosswind', 'For a runway: put the wind direction under the index, mark the speed up the '
+      + 'centre line, then turn to the <b>runway heading</b>. How far the cross now sits left or right of '
+      + 'the centre line is crosswind; how far above the dot is headwind.', 'W/V 210/20 on runway 26: about 15 kt across, 13 kt down the runway.']
+  ];
+  html('<div class="grp">' + HOW.map(([t, m, eg]) => `
+    <div class="row plain"><b>${t}</b><div class="p" style="margin-top:4px">${m}</div>
+      ${eg ? `<div class="tiny" style="margin-top:6px;color:var(--tx3)">${eg}</div>` : ''}</div>`).join('') + '</div>');
+
+  html(`<div class="note o" style="margin-top:14px"><b>Left means subtract</b>
+    Pilots reverse this under pressure. The mark left of the centre line means the wind is pushing you
+    right, so you point left of track: heading is <b>less</b> than track. Say it out loud until it is
+    boring.</div>`);
+}
+
 VIEWS.crp = function (p) {
   navbar('Navigation computer', '');
-  if (!CRP) CRP = { rot: 0, task: 'tsd', v: {}, said: '', pa: null, oat: null };
+  if (!CRP) CRP = { rot: 0, task: 'tsd', v: {}, said: '', pa: null, oat: null, side: 'comp' };
+  if (!CRP.side) CRP.side = 'comp';
+
+  html(`<div class="seg" id="crpSide" style="margin-top:12px">
+    <button data-side="comp" aria-selected="${CRP.side === 'comp'}">Computer side</button>
+    <button data-side="wind" aria-selected="${CRP.side === 'wind'}">Wind side</button></div>`);
+  bind('#crpSide button', e => { CRP.side = e.currentTarget.dataset.side; render(); });
+  if (CRP.side === 'wind') return windView();
+
   const task = CRP_TASKS.find(t => t.k === CRP.task);
 
   html(`<div class="hd" style="padding-top:12px"><h1 class="vt">The circular slide rule</h1>
@@ -3874,8 +4160,6 @@ VIEWS.crp = function (p) {
     answer in your head first, then use the dial for the figures. That one habit prevents most of the
     mistakes people make with it.</div>`);
 
-  html(`<div class="foot">The wind side &#8212; drift, heading and groundspeed from the triangle &#8212;
-    is not built yet.</div>`);
 };
 
 const fmtN = n => (Math.abs(n - Math.round(n)) < 0.05 ? String(Math.round(n)) : n.toFixed(1));

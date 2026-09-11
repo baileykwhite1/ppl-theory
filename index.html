@@ -325,6 +325,43 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
 .crp .rivet{fill:#9a9a9a;stroke:#6a6a6a;stroke-width:1}
 .crp .hub-v{fill:var(--ink);font:700 12px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
 .crp .cursor line{stroke:var(--red);stroke-width:1;opacity:.85}
+/* ---------- wind side ---------- */
+.crpw{max-width:400px}
+.crpw .slide{fill:#fbfaf6;stroke:rgba(0,0,0,.25);stroke-width:1}
+.crpw .grid .gl{fill:none;stroke:#5a5a5a;stroke-width:.45;opacity:.75}
+.crpw .grid .gl2{fill:none;stroke:#2a2a2a;stroke-width:.9}
+.crpw .grid .gs{fill:#1a1a1a;font:700 9px -apple-system,system-ui}
+.crpw .grid .gd{fill:#1a1a1a;font:600 7.5px -apple-system,system-ui}
+.crpw .disc{fill:rgba(120,150,200,.10);stroke:rgba(0,0,0,.55);stroke-width:1.2}
+.crpw .rose line{stroke:#141414}
+.crpw .rose .rn{fill:#141414;font:600 7px -apple-system,system-ui}
+.crpw .rose .rc{fill:#141414;font:800 8.5px -apple-system,system-ui}
+.crpw .rose .rt{fill:#141414}
+.crpw .pencil line{stroke:#333;stroke-width:1.6;stroke-linecap:round}
+.crpw .dscale line{stroke:#141414}
+.crpw .dscale text{fill:#141414;font:700 8px -apple-system,system-ui}
+.crpw .dlab{fill:#141414;font:800 8px -apple-system,system-ui;letter-spacing:.14em}
+.crpw .index{fill:#141414;font:800 9px -apple-system,system-ui;letter-spacing:.12em}
+.crpw .mark{fill:#141414}
+.crpw .dot{fill:#1b4f9c;stroke:#fff;stroke-width:1.2}
+.crpw .doti{fill:#fff}
+[data-t="dark"] .crpw .slide{fill:#3a3934;stroke:rgba(255,255,255,.2)}
+[data-t="dark"] .crpw .grid .gl{stroke:#c9c6bc} [data-t="dark"] .crpw .grid .gl2{stroke:#efece2}
+[data-t="dark"] .crpw .grid .gs,[data-t="dark"] .crpw .grid .gd{fill:#efece2}
+[data-t="dark"] .crpw .disc{fill:rgba(140,170,220,.10);stroke:rgba(255,255,255,.5)}
+[data-t="dark"] .crpw .rose line,[data-t="dark"] .crpw .dscale line{stroke:#efece2}
+[data-t="dark"] .crpw .rose .rn,[data-t="dark"] .crpw .rose .rc,[data-t="dark"] .crpw .rose .rt,
+[data-t="dark"] .crpw .dscale text,[data-t="dark"] .crpw .dlab,[data-t="dark"] .crpw .index,[data-t="dark"] .crpw .mark{fill:#efece2}
+[data-t="dark"] .crpw .pencil line{stroke:#efece2}
+@media (prefers-color-scheme:dark){
+  :root:not([data-t="light"]) .crpw .slide{fill:#3a3934;stroke:rgba(255,255,255,.2)}
+  :root:not([data-t="light"]) .crpw .grid .gl{stroke:#c9c6bc} :root:not([data-t="light"]) .crpw .grid .gl2{stroke:#efece2}
+  :root:not([data-t="light"]) .crpw .grid .gs,:root:not([data-t="light"]) .crpw .grid .gd{fill:#efece2}
+  :root:not([data-t="light"]) .crpw .disc{fill:rgba(140,170,220,.10);stroke:rgba(255,255,255,.5)}
+  :root:not([data-t="light"]) .crpw .rose line,:root:not([data-t="light"]) .crpw .dscale line{stroke:#efece2}
+  :root:not([data-t="light"]) .crpw .rose .rn,:root:not([data-t="light"]) .crpw .rose .rc,:root:not([data-t="light"]) .crpw .rose .rt,
+  :root:not([data-t="light"]) .crpw .dscale text,:root:not([data-t="light"]) .crpw .dlab,:root:not([data-t="light"]) .crpw .index,:root:not([data-t="light"]) .crpw .mark{fill:#efece2}
+  :root:not([data-t="light"]) .crpw .pencil line{stroke:#efece2}}
 .crp .mark{fill:var(--ink)}
 [data-t="dark"] .crp{--ink:#e9e6dc; --plate:#2b2a25; --disc:#37362f; --amb:#8a6420;
   --red:#ff6b62; --blu:#7fb4ff}
