@@ -208,6 +208,7 @@ by day.</li>
 is visibility <b>below 1000 m</b>; haze and smoke are dry obscurations.</p>
 
 <h3>Icing</h3>
+<figure data-d="carbIce"></figure>
 <ul>
 <li><b>Rime ice</b> — small supercooled droplets freezing instantly. Opaque, white, rough,
 brittle. Forms in stratiform cloud, typically 0 to &minus;20 &deg;C. Spoils the aerofoil shape.</li>

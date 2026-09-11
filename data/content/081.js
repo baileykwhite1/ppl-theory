@@ -124,6 +124,7 @@ take-off an aircraft that lifts off in ground effect and then will not climb onc
 There is also a nose-down pitching tendency from the changed downwash over the tailplane.</p>
 
 <h3>Devices</h3>
+<figure data-d="flapTypes"></figure>
 <p><b>Flaps</b> increase camber, raising C<sub>L</sub> max so the stall speed falls, and
 increasing drag — which is why they steepen the approach without increasing speed. Small
 deflections give proportionately more lift; large deflections give proportionately more drag.

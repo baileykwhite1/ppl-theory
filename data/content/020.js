@@ -42,6 +42,7 @@ reduces it.</li>
 looking outside as you move the controls.</p>
 
 <h3>Flaps</h3>
+<figure data-d="flapTypes"></figure>
 <p>Types in increasing effectiveness: <b>plain</b>, <b>split</b> (lower surface only — lots of
 drag, little extra lift), <b>slotted</b> (allows high-pressure air through a slot to re-energise
 the flow), and <b>Fowler</b> (moves rearward as well as down, increasing wing area as well as
@@ -104,6 +105,7 @@ generally acceptable but not ideal. UK Avgas <b>100LL</b> is dyed <b>blue</b>; J
 straw/clear — a fuel check means looking at colour, smell and water content.</p>
 
 <h3>Carburettor and injection</h3>
+<figure data-d="carbIce"></figure>
 <p>A float-type carburettor uses a <b>venturi</b>: the airflow accelerates, static pressure
 falls, and fuel is drawn from the float chamber. The throttle butterfly controls the mass of
 mixture reaching the cylinders. Attached to it are the <b>idle cut-off</b>, the
@@ -189,6 +191,7 @@ and after refuelling. Condensation is worst in partly filled tanks, so tanks are
 notoriously optimistic.</p>
 
 <h3>Electrical system</h3>
+<figure data-d="elecBus"></figure>
 <p>A typical light aeroplane has a <b>14 V</b> or <b>28 V</b> DC system with a lead-acid
 battery and an engine-driven <b>alternator</b> (or older <b>generator</b>). The <b>master
 switch</b> usually has two halves, battery and alternator. A <b>voltage regulator</b> controls
@@ -246,6 +249,7 @@ so it under-reads TAS at altitude), <b>compressibility</b> (negligible below abo
 and <b>manoeuvre-induced error</b>. Chain: IAS &rarr; CAS &rarr; EAS &rarr; TAS.</p>
 
 <h3>Gyroscopic instruments</h3>
+<figure data-d="gyroProps"></figure>
 <p>Two gyroscopic properties do all the work: <b>rigidity in space</b> (a spinning gyro resists
 change to its plane of rotation) and <b>precession</b> (a force applied to the rim produces
 movement 90&deg; further round in the direction of spin).</p>

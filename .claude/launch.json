@@ -1,11 +1,6 @@
 {
   "version": "0.0.1",
   "configurations": [
-    {
-      "name": "ppl",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [".claude/serve.py", "8799"],
-      "port": 8799
-    }
+    { "name": "diagprev", "runtimeExecutable": "python3", "runtimeArgs": ["-m","http.server","8791","--directory",".claude/scratch/rev/_tmp"], "port": 8791 }
   ]
 }

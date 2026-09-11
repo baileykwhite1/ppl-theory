@@ -169,6 +169,7 @@ over-reads. Cold and low pressure both put you closer to the ground than the ins
 admits.</p>
 
 <h3>Cruising levels above 3000 ft</h3>
+<figure data-d="semicircular"></figure>
 <p>Above <b>3000 ft from the ground or water</b> (or a higher notified datum — note that is
 height above the surface, <b>not</b> AMSL), in level cruise, SERA Appendix 3 sets a cruising
 level appropriate to your <b>magnetic track</b>, from the semicircular table:</p>
@@ -237,6 +238,7 @@ not already an amsl figure, add your clearance (1000 ft is the usual planning fi
 QNH is the setting that relates to terrain.</p>
 
 <h3>Airspace you must simply avoid</h3>
+<figure data-d="pdrareas"></figure>
 <p><b>Prohibited</b> — flight is not permitted. <b>Restricted</b> — flight is permitted only
 in accordance with specified conditions. <b>Danger area</b> — an area in which activities
 dangerous to flight may take place at notified times; not necessarily illegal to enter, but
@@ -275,6 +277,7 @@ hours may be reduced to <b>35</b> on a course at an ATO approved for the purpose
 says 45, it is out of date.</p>
 
 <h3>Keeping the SEP rating alive — also changed</h3>
+<figure data-d="sepreval"></figure>
 <p>An SEP (or TMG) class rating is valid for <b>24 months</b>. To revalidate, either pass a
 proficiency check with an examiner in the 3 months before expiry, <em>or</em> within the
 validity period complete <b>12 hours</b> of flight time in the class, including:</p>
@@ -330,6 +333,7 @@ material, colour-coded by subject. Not usually time-critical.</li>
 </ul>
 
 <h3>Distress versus urgency</h3>
+<figure data-d="sarsignals"></figure>
 <p>The distinction is the exam question and, one day, the radio call.</p>
 <ul>
 <li><b>Distress — MAYDAY</b> (said three times). Grave and imminent danger, requiring
@@ -343,6 +347,7 @@ already talking to someone, make the call on the frequency in use — do not was
 changing.</p>
 
 <h3>Transponder codes worth knowing cold</h3>
+<figure data-d="transponder"></figure>
 <table>
 <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
 <tbody>
