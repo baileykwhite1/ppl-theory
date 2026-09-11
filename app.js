@@ -3626,40 +3626,44 @@ function crpDial() {
      window is the density the whole dial is set to. The angular positions fall out
      of the ISA: an altitude sits at 180*log10(delta) and a temperature at
      180*log10(theta), which puts 0 ft against +15 C at zero rotation. */
-  const AP0 = -40, AP1 = 40;                       // aperture half-width, disc coords
-  /* Both scales ride the disc, because the aperture is cut in the disc and turns with
-     it. Temperature sits at fixed angles across the window; the pressure altitude
-     printed opposite each one is the altitude that pairs with it at the density the
-     dial is currently set to. Turn the disc and the altitudes change, which is the
-     whole point of the window. */
-  const WTEMPS = [40, 30, 20, 10, 0, -10, -20, -30, -40, -50];
-  const wAng = i => AP0 + 6 + i * (AP1 - AP0 - 12) / (WTEMPS.length - 1);
+  /* Three windows, as the handbook describes them (paragraphs 16 to 18).
+       AIR SPEED  set temperature against pressure altitude, then RAS on the inner
+                  reads TAS on the outer.
+       ALTITUDE   the same pair of scales, but aligned for the true-altitude
+                  correction rather than for density; indicated on the inner reads
+                  true on the outer.
+       DENSITY ALTITUDE  not set at all — read off, once the air speed window is set.
+     All three ride the rotating disc, and every figure in them is derived from the
+     current rotation, so turning the dial moves them. */
+  const sigma = Math.pow(10, -2 * rot / 360);        // air speed window
+  const aRatio = Math.pow(10, rot / 360);            // altitude window
+  const WT = [30, 20, 10, 0, -10, -20, -30, -40, -50];
+  const AT = [30, 20, 10, 0, -10, -20, -30];
+  const spread = (i, n, a0, a1) => a0 + i * (a1 - a0) / (n - 1);
+  const kFmt = v => (v > -1 && v < 45) ? String(Math.round(v) + 0) : '';
 
-  const tempScale = WTEMPS.map((t, i) => {
-    const a = wAng(i), [x, y] = polar(80, a);
-    return `<text x="${x.toFixed(1)}" y="${(y + 2.2).toFixed(1)}" text-anchor="middle" class="wtemp"
-      transform="rotate(${a.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})">${t}</text>`;
-  }).join('');
+  function twoRow(vals, a0, a1, rTemp, rVal, idPfx, valOf) {
+    return vals.map((t, i) => {
+      const a = spread(i, vals.length, a0, a1);
+      const [tx, ty] = polar(rTemp, a), [vx, vy] = polar(rVal, a);
+      return `<text x="${tx.toFixed(1)}" y="${(ty + 2).toFixed(1)}" text-anchor="middle" class="wtemp"
+          transform="rotate(${a.toFixed(1)} ${tx.toFixed(1)} ${ty.toFixed(1)})">${t}</text>
+        <text id="${idPfx}${i}" x="${vx.toFixed(1)}" y="${(vy + 2).toFixed(1)}" text-anchor="middle" class="walt"
+          transform="rotate(${a.toFixed(1)} ${vx.toFixed(1)} ${vy.toFixed(1)})">${valOf(t)}</text>`;
+    }).join('');
+  }
+  const arc = (r0, r1, a0, a1) => `M ${P2(r1, a0)} A ${r1} ${r1} 0 0 1 ${P2(r1, a1)}
+    L ${P2(r0, a1)} A ${r0} ${r0} 0 0 0 ${P2(r0, a0)} Z`;
 
-  // a rounded -0.4 prints as "-0", which looks like a fault rather than a number
-  const altAt = (sig, t) => {
-    const v = paFor(sig, t) / 1000;
-    return (v > -1 && v < 40) ? String(Math.round(v) + 0) : '';
-  };
-  const sigma = Math.pow(10, -2 * rot / 360);
-  const altScale = WTEMPS.map((t, i) => {
-    const a = wAng(i), [x, y] = polar(66, a);
-    return `<text id="crpA${i}" x="${x.toFixed(1)}" y="${(y + 2.2).toFixed(1)}" text-anchor="middle" class="walt"
-      transform="rotate(${a.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})">${altAt(sigma, t)}</text>`;
-  }).join('');
+  const asPath = arc(60, 88, -46, 46);
+  const alPath = arc(46, 72, -146, -101);
+  const daPath = arc(46, 72, 101, 146);
+  const apPath = `${asPath} ${alPath} ${daPath}`;      // punched out of the disc face
 
-  const apPath = `M ${P2(88, AP0)} A 88 88 0 0 1 ${P2(88, AP1)}
-                  L ${P2(58, AP1)} A 58 58 0 0 0 ${P2(58, AP0)} Z`;
-
-  /* The other two windows read a single value, so they are text rather than a scale.
-     Both are derived from the rotation, which is what makes them move with the dial. */
+  const asRow = twoRow(WT, -40, 40, 82, 67, 'crpA', t => kFmt(paFor(sigma, t) / 1000));
+  const alRow = twoRow(AT, -141, -106, 66, 53, 'crpB',
+                       t => kFmt((15 - ((t + 273.15) / aRatio - 273.15)) / 1.98));
   const dAlt = (1 - Math.pow(sigma, 1 / 4.2558797)) / 6.87535e-6;
-  const paAt15 = paFor(sigma, 15);
 
   return `<svg viewBox="0 0 400 400" class="crp" role="img"
     aria-label="CRP-1 computer side, inner scale set to a ratio of ${ratio.toFixed(3)}">
@@ -3681,24 +3685,24 @@ function crpDial() {
         <path d="M${C} ${C - 126} l-6 11 h12 z"/>
         <text x="${C}" y="${C - 112}" text-anchor="middle">60</text>
       </g>
-      <path d="${apPath}" class="apedge"/>
-      <g class="fixedwin">${tempScale}</g>
-      <g class="altsc">${altScale}</g>
-      <text x="${C}" y="${C - 44}" text-anchor="middle" class="wlab">AIR SPEED</text>
-      <text x="${C}" y="${C - 36}" text-anchor="middle" class="wlab2">PRESS.ALT &#215;1000 ft &#183; AIR TEMP &#176;C</text>
-      <circle cx="${C}" cy="${C}" r="26" class="hub"/>
-      <circle cx="${C}" cy="${C}" r="7" class="rivet"/>
-      <text x="${C}" y="${C + 20}" text-anchor="middle" class="hub-v">${ratio.toFixed(3)}</text>
-    </g>
-    <g class="reado">
-      <rect x="${C - 96}" y="${C + 34}" width="84" height="26" rx="3" class="window"/>
-      <text x="${C - 54}" y="${C + 44}" text-anchor="middle" class="wlab">DENSITY ALT</text>
-      <text id="crpDA" x="${C - 54}" y="${C + 56}" text-anchor="middle" class="wbig">${
-        (dAlt / 1000).toFixed(1)}</text>
-      <rect x="${C + 12}" y="${C + 34}" width="84" height="26" rx="3" class="window"/>
-      <text x="${C + 54}" y="${C + 44}" text-anchor="middle" class="wlab">ALT @ +15&#176;C</text>
-      <text id="crpTA" x="${C + 54}" y="${C + 56}" text-anchor="middle" class="wbig">${
-        (paAt15 / 1000).toFixed(1)}</text>
+      <path d="${asPath}" class="apedge"/><path d="${alPath}" class="apedge"/>
+      <path d="${daPath}" class="apedge"/>
+      ${asRow}${alRow}
+      <text id="crpDA" x="${polar(59, 123)[0].toFixed(1)}" y="${(polar(59, 123)[1] + 3).toFixed(1)}"
+        text-anchor="middle" class="wbig">${(dAlt / 1000).toFixed(1)}</text>
+
+      <text x="${C}" y="${C - 46}" text-anchor="middle" class="wlab">AIR SPEED</text>
+      <text x="${C}" y="${C - 38}" text-anchor="middle" class="wlab2">MACH No. + DENSITY</text>
+      <text x="${C - 84}" y="${C + 6}" text-anchor="middle" class="wlab"
+        transform="rotate(-90 ${C - 84} ${C + 6})">ALTITUDE</text>
+      <text x="${C + 84}" y="${C + 6}" text-anchor="middle" class="wlab"
+        transform="rotate(90 ${C + 84} ${C + 6})">DENSITY ALT &#215;1000 ft</text>
+      <text x="${C - 30}" y="${C - 26}" text-anchor="end" class="wlab2">AIR TEMP &#176;C &#8594;</text>
+      <text x="${C - 30}" y="${C - 18}" text-anchor="end" class="wlab2">PRESS.ALT &#215;1000 ft &#8594;</text>
+
+      <circle cx="${C}" cy="${C}" r="22" class="hub"/>
+      <circle cx="${C}" cy="${C}" r="6" class="rivet"/>
+      <text x="${C}" y="${C + 16}" text-anchor="middle" class="hub-v">${ratio.toFixed(3)}</text>
     </g>
     <g class="cursor"><line x1="${C}" y1="26" x2="${C}" y2="${C + 150}"/></g>
     <path d="M${C} 26 l-7 12 h14 z" class="mark"/>
@@ -3898,15 +3902,17 @@ function wireDial() {
     if (hv) hv.textContent = Math.pow(10, CRP.rot / 360).toFixed(3);
     // the airspeed window is live by geometry; these two are single values, so they
     // have to be recomputed as the disc turns
-    const sg = Math.pow(10, -2 * CRP.rot / 360);
-    const da = svg.querySelector('#crpDA'), ta = svg.querySelector('#crpTA');
+    const sg = Math.pow(10, -2 * CRP.rot / 360), ar = Math.pow(10, CRP.rot / 360);
+    const kf = v => (v > -1 && v < 45) ? String(Math.round(v) + 0) : '';
+    const da = svg.querySelector('#crpDA');
     if (da) da.textContent = (((1 - Math.pow(sg, 1 / 4.2558797)) / 6.87535e-6) / 1000).toFixed(1);
-    if (ta) ta.textContent = (paFor(sg, 15) / 1000).toFixed(1);
-    // and the altitude figures inside the airspeed window
-    [40, 30, 20, 10, 0, -10, -20, -30, -40, -50].forEach((t, i) => {
-      const el = svg.querySelector('#crpA' + i); if (!el) return;
-      const v = paFor(sg, t) / 1000;
-      el.textContent = (v > -1 && v < 40) ? String(Math.round(v) + 0) : '';
+    [30, 20, 10, 0, -10, -20, -30, -40, -50].forEach((t, i) => {
+      const el = svg.querySelector('#crpA' + i);
+      if (el) el.textContent = kf(paFor(sg, t) / 1000);
+    });
+    [30, 20, 10, 0, -10, -20, -30].forEach((t, i) => {
+      const el = svg.querySelector('#crpB' + i);
+      if (el) el.textContent = kf((15 - ((t + 273.15) / ar - 273.15)) / 1.98);
     });
     e.preventDefault();
   };
