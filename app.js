@@ -1440,9 +1440,14 @@ function wireAirfield(inputSel, listSel, foundSel, onPick, multi) {
     // typing a code in full counts as picking it, so callers still get their callback
     if (exact && exact[0] !== lastExact) { lastExact = exact[0]; if (onPick) onPick(exact); }
     if (!exact) lastExact = '';
+    found.className = 'acfound' + (multi ? ' route' : '');
     found.innerHTML = exact
-      ? (multi ? codesOf(inp.value).map(c => (afByCode(c) || [c, c])[1]).join(' → ')
-               : esc(exact[1]) + (exact[2] ? '<i>' + esc(exact[2]) + '</i>' : ''))
+      ? (multi
+          ? '<div class="r">' + esc(codesOf(inp.value).map(c => (afByCode(c) || [c, c])[1]).join(' \u2192 ')) + '</div>'
+          : '<div class="r"><span class="cd">' + esc(exact[0]) + '</span>'
+            + '<span class="nm">' + esc(exact[1])
+            + (exact[2] ? '<i>' + esc(exact[2]) + '</i>' : '') + '</span>'
+            + '<span class="tick">\u2713</span></div>')
       : '';
     found.style.display = exact ? 'block' : 'none';
     const hits = exact ? [] : afSearch(v, 6);
@@ -2465,7 +2470,7 @@ VIEWS.training = function () {
     <div class="card">
       <label class="f" for="tIcao">Airfield</label>
       <input type="text" id="tIcao" maxlength="28" autocapitalize="characters" spellcheck="false"
-        placeholder="Code or name — EGLM, Waltham…" value="${esc(S.field || '')}" class="ti"
+        placeholder="e.g. EGLM or London Heathrow" value="${esc(S.field || '')}" class="ti"
         style="text-transform:uppercase;letter-spacing:.04em">
       <div id="tFound" class="acfound" style="display:none"></div>
       <div id="tList" class="aclist" style="display:none"></div>
@@ -2925,7 +2930,7 @@ VIEWS.welcome = function () {
   html(`<div class="card">
     <label class="f" for="wIcao">Home airfield</label>
     <input type="text" id="wIcao" maxlength="28" autocapitalize="characters" autocomplete="off"
-      spellcheck="false" placeholder="Code or name — EGLM, Waltham…" value="${esc(SETUP.field)}" class="ti"
+      spellcheck="false" placeholder="e.g. EGLM or London Heathrow" value="${esc(SETUP.field)}" class="ti"
       style="text-transform:uppercase;letter-spacing:.04em">
     <div id="wFound" class="acfound" style="display:none"></div>
     <div id="wList" class="aclist" style="display:none"></div>
@@ -3694,18 +3699,18 @@ VIEWS.logedit = function (p) {
     ${fld('lfDate', 'Date', v.date, 'type="date"')}
     <div class="fld"><label class="f" for="lfFrom">From</label>
       <input id="lfFrom" class="ti" value="${esc(v.from)}" maxlength="28" autocapitalize="characters"
-        spellcheck="false" placeholder="Code or name" style="text-transform:uppercase">
+        spellcheck="false" placeholder="e.g. EGLM or White Waltham" style="text-transform:uppercase">
       <div id="lfFromFound" class="acfound" style="display:none"></div>
       <div id="lfFromList" class="aclist" style="display:none"></div></div>
     <div class="fld"><label class="f" for="lfVia">Via (optional)</label>
       <input id="lfVia" class="ti" value="${esc(v.via || '')}" maxlength="60" autocapitalize="characters"
-        spellcheck="false" placeholder="Stops, e.g. EGBJ EGHR" style="text-transform:uppercase">
+        spellcheck="false" placeholder="Any stops, e.g. EGBJ EGHR" style="text-transform:uppercase">
       <div id="lfViaFound" class="acfound" style="display:none"></div>
       <div id="lfViaList" class="aclist" style="display:none"></div>
       <div class="tiny" style="margin-top:5px">Search and tap to add each stop in order.</div></div>
     <div class="fld"><label class="f" for="lfTo">To</label>
       <input id="lfTo" class="ti" value="${esc(v.to)}" maxlength="28" autocapitalize="characters"
-        spellcheck="false" placeholder="Code or name" style="text-transform:uppercase">
+        spellcheck="false" placeholder="e.g. EGTF or Fairoaks" style="text-transform:uppercase">
       <div id="lfToFound" class="acfound" style="display:none"></div>
       <div id="lfToList" class="aclist" style="display:none"></div></div>
   </div>

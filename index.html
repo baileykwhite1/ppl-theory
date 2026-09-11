@@ -201,6 +201,8 @@ h2.sec:first-child{margin-top:14px}
 .ti{width:100%;background:var(--fill);color:var(--tx);border:1.5px solid transparent;
   border-radius:10px;padding:12px;font:inherit;font-size:17px;transition:.15s}
 .ti:focus{outline:none;border-color:var(--blue);background:var(--bg2)}
+/* the code fields uppercase what you type; the hint is not a code, so it stays as written */
+input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);opacity:1}
 
 /* flight log */
 .mapwrap{background:var(--card);border-radius:16px;padding:10px;box-shadow:var(--sh);overflow:hidden}
@@ -320,8 +322,19 @@ h2.sec:first-child{margin-top:14px}
 .aclist .cd{font:700 12px/1 ui-monospace,Menlo,monospace;color:var(--blue);flex:none;width:38px}
 .aclist .nm{font-size:15px;line-height:1.3}
 .aclist .nm i{display:block;font-style:normal;font-size:12.5px;color:var(--tx2);margin-top:1px}
-.acfound{margin-top:9px;font-size:14px;color:var(--green);font-weight:600}
-.acfound i{display:block;font-style:normal;font-weight:400;color:var(--tx2);font-size:13px;margin-top:1px}
+/* A pick keeps the row it was picked from, rather than collapsing into a line of
+   green text — the shape you chose is the shape you keep, with a tick to say it took. */
+.acfound{margin-top:8px;border-radius:10px;overflow:hidden;background:var(--bg2);
+  box-shadow:var(--sh);border:1.5px solid var(--green)}
+.acfound .r{display:flex;gap:10px;align-items:baseline;padding:11px 13px}
+.acfound .cd{font:700 12px/1 ui-monospace,Menlo,monospace;color:var(--green);flex:none;width:38px}
+.acfound .nm{flex:1;min-width:0;font-size:15px;line-height:1.3}
+.acfound .nm i{display:block;font-style:normal;font-size:12.5px;color:var(--tx2);margin-top:1px}
+.acfound .tick{flex:none;color:var(--green);font-size:15px;font-weight:700;align-self:center}
+/* the multi-leg field lists a route rather than one aerodrome */
+.acfound.route{border-color:var(--blue)}
+.acfound.route .r{font-size:14.5px;color:var(--tx);font-weight:600;display:block;
+  line-height:1.45;word-break:break-word}
 
 /* confirmation sheet — window.confirm() is silently ignored in some embedded browsers */
 .sheetwrap{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;
