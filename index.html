@@ -277,6 +277,9 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
 @media (prefers-color-scheme:dark){:root:not([data-t="light"]) .mpin span{
   color:#f2f2f7;background:rgba(20,20,22,.82)}}
 .mapnote{font-size:11.5px;color:var(--tx3);padding:7px 4px 1px;line-height:1.35}
+/* exam clock — counts the budget down, then counts the overrun up in red */
+.qmeta .clk{font:600 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;color:var(--tx2);letter-spacing:.02em}
+.qmeta .clk.over{color:var(--red)}
 /* ---------- area weather map ---------- */
 .wxmapbox{width:100%;height:300px;border-radius:10px;overflow:hidden;background:var(--card2)}
 .wxmapmsg{height:100%;display:grid;place-items:center;font-size:13px;color:var(--tx3);

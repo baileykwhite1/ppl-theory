@@ -166,6 +166,16 @@ const SOURCES = [
 
 const STATUSES = [['none', 'Not started'], ['studying', 'Studying'], ['ready', 'Ready to sit'], ['passed', 'Passed']];
 const PASS_MARK = 75;
+/* AMC1 FCL.215 puts about 120 questions across all nine papers, so a paper is
+   roughly a dozen questions. The exact count varies by subject and is not published
+   as a single table, so this is labelled as typical wherever it is shown. */
+const TYPICAL_PAPER = 12;
+const SECS_PER_Q = 90;
+/** How many you must get right, and how many you can afford to drop. */
+function margin(n) {
+  const need = Math.ceil(n * PASS_MARK / 100);
+  return { need: need, spare: n - need };
+}
 const NEW_CARDS_PER_DAY = 20;
 
 /* ============================ state ============================ */
@@ -236,6 +246,7 @@ const activeName = () => (P.list.find(p => p.id === P.active) || { name: '?' }).
 const initials = n => n.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
 
 let saveTimer = null;
+let QCLK = null;          // exam-mode clock interval
 function save() {
   clearTimeout(saveTimer);
   saveTimer = setTimeout(flush, 120);
@@ -321,6 +332,17 @@ const byCode = {}; SUBJECTS.forEach(s => byCode[s.code] = s);
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const allLO = s => s.groups.reduce((a, g) => a + g.items.length, 0);
+/**
+ * Questions you have answered and are not currently getting wrong. S.wrong is
+ * decremented when you later get one right, so this tracks what you can actually
+ * do now rather than what you have merely been shown.
+ */
+function mastery(codes) {
+  const all = bank(codes || SUBJECTS.map(x => x.code));
+  let done = 0;
+  all.forEach(q => { const k = qKey(q); if (S.seen[k] && !S.wrong[k]) done++; });
+  return { done: done, total: all.length };
+}
 const doneLO = s => s.groups.reduce((a, g) => a + g.items.filter(i => S.lo[i.c]).length, 0);
 const pctLO = s => Math.round(doneLO(s) / Math.max(1, allLO(s)) * 100);
 const arts = c => (SC[c] && SC[c].articles) || [];
@@ -447,10 +469,9 @@ function bind(sel, fn, ev) {
 /* ============================ HOME ============================ */
 
 VIEWS.home = function () {
-  const totLO = SUBJECTS.reduce((a, s) => a + allLO(s), 0);
-  const dnLO = SUBJECTS.reduce((a, s) => a + doneLO(s), 0);
   const totArt = SUBJECTS.reduce((a, s) => a + arts(s.code).length, 0);
   const dnArt = SUBJECTS.reduce((a, s) => a + readCount(s.code), 0);
+  const m = mastery();
   const p = passed();
   const due = dueCards().length;
   const newAvail = Math.max(0, NEW_CARDS_PER_DAY - (S.newToday[todayKey()] || 0));
@@ -483,13 +504,18 @@ VIEWS.home = function () {
   }
 
   // --- overall progress
-  const overall = Math.round((dnLO / Math.max(1, totLO) * 0.6 + dnArt / Math.max(1, totArt) * 0.4) * 100);
+  /* Weighted on evidence, not on self-assessment. It used to be 60% "objectives
+     you have ticked yourself", with a Mark all button next to it — so the number
+     could read 100% for someone who had opened nothing. Articles read and questions
+     you currently answer correctly are things the app has actually observed. */
+  const overall = Math.round((dnArt / Math.max(1, totArt) * 0.45
+                            + m.done / Math.max(1, m.total) * 0.55) * 100);
   html(`<div class="hero" style="display:flex;align-items:center;gap:16px">
     <div style="position:relative;flex:none">${ring(overall, 68, 'blue', 6)}
       <div style="position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:700">${overall}%</div></div>
     <div style="flex:1;min-width:0">
       <div class="ch" style="margin:0">Course progress</div>
-      <div class="p" style="font-size:13.5px;margin-top:3px">${dnLO} of ${totLO} learning objectives · ${dnArt} of ${totArt} articles</div>
+      <div class="p" style="font-size:13.5px;margin-top:3px">${dnArt} of ${totArt} articles read · ${m.done} of ${m.total} questions right</div>
       <div class="pbar" style="margin-top:9px"><i style="width:${overall}%"></i></div>
     </div></div>`);
 
@@ -598,13 +624,62 @@ VIEWS.home = function () {
       <div class="tx"><b>Books</b><i>Pooleys volume for each exam</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rTrn"><div class="ic" style="--c:var(--teal)">&#9992;</div>
       <div class="tx"><b>My training</b><i>${S.stage ? esc(stageLabel(S.stage)) : 'Stage not set'}${S.field ? ' · ' + esc(S.field) : ''}</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="rGaps"><div class="ic" style="--c:var(--orange)">!</div>
+      <div class="tx"><b>What this app will not teach you</b><i>Read this before you rely on it</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rSrc"><div class="ic" style="--c:var(--tx3)">&#8599;</div>
       <div class="tx"><b>Sources &amp; settings</b><i>Every source, plus export</i></div><div class="chev">&#8250;</div></button>
     </div>`);
+  $('#rGaps').onclick = () => go('limits');
   $('#rTrn').onclick = () => go('training');
   $('#rRules').onclick = () => go('rules');
   $('#rBooks').onclick = () => go('books');
   $('#rSrc').onclick = () => go('sources');
+
+  html(`<div class="foot">Personal revision aid — not a CAA publication.<br>
+    Confirm anything that matters with your ATO/DTO, Ground Examiner or the CAA.</div>`);
+};
+
+/* The honest limits. An app that only ever tells you how well you are doing is the
+   most dangerous kind of revision aid, because the gaps it cannot see are invisible
+   to you too. */
+VIEWS.limits = function () {
+  navbar('Limits', '');
+  html(`<div class="hd" style="padding-top:14px"><h1 class="vt">What this app will not teach you</h1>
+    <div class="sub">It covers the theory well. These are the things it cannot do, and they
+    are the ones people fail on.</div></div>`);
+
+  html(`<h2 class="sec">Skills, not knowledge</h2><div class="grp">
+    <div class="row plain"><b>The navigation computer</b>
+      <div class="p" style="margin-top:4px">Flight Performance and Planning and Navigation both
+      assume you can work a <b>CRP-1</b> quickly and correctly — the wind side for the triangle,
+      the circular side for time, speed, distance, fuel, TAS and density altitude. Reading about
+      it is not the same as being fast with it. Practise with the real thing on the desk.</div></div>
+    <div class="row plain"><b>The chart</b>
+      <div class="p" style="margin-top:4px">The 1:500,000 exam questions want you to measure
+      tracks and distances, read relief and the maximum elevation figures, and identify symbols
+      under time pressure. You need a paper chart, a ruler and a protractor. Nothing on a phone
+      substitutes for that.</div></div>
+    <div class="row plain"><b>The data sheets</b>
+      <div class="p" style="margin-top:4px">Mass and balance questions are worked from the
+      aeroplane data in <b>CAP 696</b>, which is provided in the exam. Being able to find the
+      right table, read the loading graph and interpolate is most of the mark. Get a copy and
+      work through it.</div></div>
+  </div>`);
+
+  html(`<h2 class="sec">How to read your score here</h2><div class="grp">
+    <div class="row plain"><b>The question bank repeats</b>
+      <div class="p" style="margin-top:4px">There are ${SUBJECTS.reduce((a, s) => a + SC[s.code].quiz.length, 0)}
+      questions. Work through them a few times and you start recognising the wording rather than
+      knowing the answer, and your mock scores drift up while your knowledge does not. Treat a
+      high score on questions you have seen before as meaning very little.</div></div>
+    <div class="row plain"><b>A real paper is short</b>
+      <div class="p" style="margin-top:4px">About ${TYPICAL_PAPER} questions, so
+      <b>${margin(TYPICAL_PAPER).spare} wrong is a fail</b>. There is no room for two careless
+      errors plus one thing you never learned.</div></div>
+    <div class="row plain"><b>Nothing here is a recommendation</b>
+      <div class="p" style="margin-top:4px">Only your ATO or DTO can put you forward for an exam,
+      and only an instructor can tell you whether you are ready. This app has no idea how you fly.</div></div>
+  </div>`);
 
   html(`<div class="foot">Personal revision aid — not a CAA publication.<br>
     Confirm anything that matters with your ATO/DTO, Ground Examiner or the CAA.</div>`);
@@ -649,7 +724,10 @@ function nextUp() {
 /* ============================ LEARN ============================ */
 
 VIEWS.learn = function () {
-  html(`<div class="hd"><h1>Learn</h1><div class="sub">37 articles and 551 learning objectives across nine subjects</div></div>`);
+  const nArt = SUBJECTS.reduce((a, s) => a + arts(s.code).length, 0);
+  const nLO = SUBJECTS.reduce((a, s) => a + allLO(s), 0);
+  html(`<div class="hd"><h1>Learn</h1><div class="sub">${nArt} articles and ${nLO} PPL(A) learning
+    objectives across nine subjects</div></div>`);
   const order = (S.learnSort === 'block')
     ? SUBJECTS.slice().sort((a, b) => posOf(a.code) - posOf(b.code) || a.code.localeCompare(b.code))
     : SUBJECTS;
@@ -700,7 +778,7 @@ VIEWS.subject = function (p) {
 
   if (which === 'art') {
     html(`<button class="btn" id="qz" style="margin-bottom:16px">Test me on ${esc(s.name)}</button>`);
-    $('#qz').onclick = () => startQuiz({ codes: [s.code], n: 20, mode: 'exam', title: s.name });
+    $('#qz').onclick = () => startQuiz({ codes: [s.code], n: TYPICAL_PAPER, mode: 'exam', title: s.name });
     html('<div class="grp">' + arts(s.code).map(a => `
       <button class="row" data-art="${a.id}">
         <div class="ic" style="--c:var(--${S.read[a.id] ? 'green' : m.c})">${S.read[a.id] ? '&#10003;' : '&#9679;'}</div>
@@ -713,17 +791,18 @@ VIEWS.subject = function (p) {
     html(`<div class="card" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600">
       <span>${done} of ${tot} studied</span><span>${pctLO(s)}%</span></div>
       <div class="pbar" style="margin-top:9px"><i style="width:${pctLO(s)}%;background:var(--${m.c})"></i></div>
+      <div class="tiny" style="margin-top:10px">Your own checklist — tick these off as you
+        cover them. It is not counted towards your progress on Home, which is measured from
+        articles read and questions you get right.</div>
       <div class="brow" style="margin-top:12px">
-        <button class="btn sec sm" id="allOn">Mark all</button>
         <button class="btn grey sm" id="allOff">Clear all</button></div></div>`);
-    $('#allOn').onclick = () => { s.groups.forEach(g => g.items.forEach(i => S.lo[i.c] = 1)); save(); render(); };
     $('#allOff').onclick = () => { s.groups.forEach(g => g.items.forEach(i => delete S.lo[i.c])); save(); render(); };
 
     s.groups.forEach(g => {
       html(`<div class="gtitle"><span>${g.code}</span><div>${esc(g.title)}</div></div><div class="grp">` +
         g.items.map(i => `<button class="lo${S.lo[i.c] ? ' on' : ''}" data-lo="${i.c}">
           <span class="bx"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
-          <span class="t">${i.t}${i.a ? '' : '<span class="ctx" title="printed in CAP2090 but not ticked in the PPL Aeroplane column">CTX</span>'}<em>${i.c}</em></span>
+          <span class="t">${i.t}<em>${i.c}</em></span>
         </button>`).join('') + '</div>');
     });
     bind('[data-lo]', e => {
@@ -766,7 +845,7 @@ VIEWS.subject = function (p) {
       <div class="brow">
         <button class="btn sm" id="mock">Mock (20)</button>
         <button class="btn sec sm" id="prac">Practice</button></div></div>`);
-    $('#mock').onclick = () => startQuiz({ codes: [s.code], n: 20, mode: 'exam', title: s.name });
+    $('#mock').onclick = () => startQuiz({ codes: [s.code], n: TYPICAL_PAPER, mode: 'exam', title: s.name });
     $('#prac').onclick = () => startQuiz({ codes: [s.code], n: 15, mode: 'practice', title: s.name });
   }
 };
@@ -847,7 +926,13 @@ function startQuiz(opt) {
 }
 
 VIEWS.quiz = function () {
-  html(`<div class="hd"><h1>Quiz</h1><div class="sub">385 questions across the nine subjects</div></div>`);
+  const nQ = SUBJECTS.reduce((a, s) => a + SC[s.code].quiz.length, 0);
+  const mg = margin(TYPICAL_PAPER);
+  html(`<div class="hd"><h1>Quiz</h1><div class="sub">${nQ} questions across the nine subjects</div></div>`);
+  html(`<div class="note o"><b>A real paper leaves almost no margin</b>
+    About 120 questions cover all nine subjects, so a paper is typically around
+    ${TYPICAL_PAPER}. At 75% that means you need <b>${mg.need} of ${TYPICAL_PAPER}</b> —
+    you can afford <b>${mg.spare} wrong</b>. Exam mode below is timed and sized to match.</div>`);
 
   const mp = mistakePool();
   if (mp.length) {
@@ -867,7 +952,8 @@ VIEWS.quiz = function () {
 
   html(`<h2 class="sec">Full mock</h2><div class="grp">
     <button class="row" id="m45"><div class="ic" style="--c:var(--blue)">45</div>
-      <div class="tx"><b>All-subject mock</b><i>45 questions, 5 per subject, exam mode</i></div><div class="chev">&#8250;</div></button>
+      <div class="tx"><b>All-subject sweep</b><i>45 questions, 5 per subject, timed — broader than any
+        single paper, for checking you are not blind anywhere</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="m30"><div class="ic" style="--c:var(--indigo)">30</div>
       <div class="tx"><b>Mixed practice</b><i>30 questions with instant explanations</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="m10"><div class="ic" style="--c:var(--teal)">10</div>
@@ -881,14 +967,14 @@ VIEWS.quiz = function () {
     const m = META[s.code], b = S.best[s.code];
     return `<button class="row" data-mk="${s.code}">
       <div class="ic" style="--c:var(--${m.c})">${s.code}</div>
-      <div class="tx"><b>${esc(s.name)}</b><i>${SC[s.code].quiz.length} questions · ${
-        bank([s.code]).filter(q => !S.seen[qKey(q)]).length} not yet seen</i></div>
+      <div class="tx"><b>${esc(s.name)}</b><i>${TYPICAL_PAPER} questions, timed · ${
+        bank([s.code]).filter(q => !S.seen[qKey(q)]).length} of ${SC[s.code].quiz.length} not yet seen</i></div>
       ${b != null ? `<span class="bdg ${b >= PASS_MARK ? 'g' : 'o'}">${b}%</span>` : '<span class="bdg">—</span>'}
       <div class="chev">&#8250;</div></button>`;
   }).join('') + '</div>');
   bind('[data-mk]', e => {
     const c = e.currentTarget.dataset.mk;
-    startQuiz({ codes: [c], n: 20, mode: 'exam', title: byCode[c].name });
+    startQuiz({ codes: [c], n: TYPICAL_PAPER, mode: 'exam', title: byCode[c].name });
   });
 
   if (S.hist.length) {
@@ -930,8 +1016,10 @@ VIEWS.quizrun = function () {
     title: 'End this quiz?', body: 'Your answers so far will be scored, and any you have not reached count as blank.',
     yes: 'End and score' }, finishQuiz);
 
+  const budget = n * SECS_PER_Q;
   html(`<div class="qwrap">
     <div class="qmeta"><span>Question ${Q.at + 1} of ${n}</span>
+      ${Q.mode === 'exam' ? '<span class="clk" id="qClock">--:--</span>' : ''}
       <span style="color:var(--${META[q.code].c})">${esc(byCode[q.code].name)}</span></div>
     <div class="pbar"><i style="width:${(Q.at + 1) / n * 100}%"></i></div>
     <div class="qtext">${esc(q.q)}</div>
@@ -960,10 +1048,26 @@ VIEWS.quizrun = function () {
   html(`<div class="qfoot"><div class="brow">${btns.join('')}</div></div>`);
   if ($('#qPrev')) $('#qPrev').onclick = () => { Q.at--; render(); };
   if ($('#qNext')) $('#qNext').onclick = () => { Q.at++; render(); };
+
+  /* The clock runs in exam mode only, and it never stops you — a real paper is timed
+     but the point here is to feel the pace, not to have the app snatch the paper away
+     mid-answer. Over the budget it simply turns red. */
+  if (Q.mode === 'exam') {
+    clearInterval(QCLK);
+    const tick = () => {
+      const el = $('#qClock'); if (!el) { clearInterval(QCLK); return; }
+      const left = budget - Math.floor((Date.now() - Q.t0) / 1000);
+      const over = left < 0, a = Math.abs(left);
+      el.textContent = (over ? '+' : '') + pad(Math.floor(a / 60), 2) + ':' + pad(a % 60, 2);
+      el.classList.toggle('over', over);
+    };
+    tick(); QCLK = setInterval(tick, 1000);
+  } else clearInterval(QCLK);
   if ($('#qDone')) $('#qDone').onclick = finishQuiz;
 };
 
 function finishQuiz() {
+  clearInterval(QCLK);
   // remember what was got wrong, so it can be drilled later
   Q.qs.forEach((q, i) => {
     const k = qKey(q);
@@ -997,6 +1101,21 @@ VIEWS.quizres = function () {
     <div class="lbl" style="color:var(--${pass ? 'green' : 'red'})">${pass ? 'Pass' : 'Below the pass mark'}</div>
     <div class="sub">${Q.correct} of ${Q.qs.length} correct · pass mark ${PASS_MARK}% ·
       ${Math.floor(Q.secs / 60)}m ${Q.secs % 60}s</div></div>`);
+
+  // What the score would have meant on a real paper of this length.
+  {
+    const mg = margin(Q.qs.length), miss = Q.qs.length - Q.correct;
+    const budget = Q.qs.length * SECS_PER_Q;
+    html(`<div class="note ${pass ? 'b' : 'o'}" style="margin-top:14px">
+      <b>${mg.need} of ${Q.qs.length} needed — you could afford ${mg.spare} wrong</b>
+      You dropped ${miss}. ${Q.mode === 'exam'
+        ? (Q.secs > budget
+            ? 'You also ran ' + Math.round((Q.secs - budget) / 60) + ' min over a '
+              + Math.round(budget / 60) + ' min allowance.'
+            : 'Inside the ' + Math.round(budget / 60) + ' min allowance, with '
+              + Math.round((budget - Q.secs) / 60) + ' min to spare.')
+        : 'This was practice mode, so it was untimed.'}</div>`);
+  }
 
   // per-subject breakdown when the quiz spanned more than one
   if (Q.codes.length > 1) {
@@ -3305,8 +3424,11 @@ VIEWS.profiles = function (p) {
 
   } else {
     html('<div class="grp">' + [
-      ['Exams passed', t.pass + ' of 9'], ['Articles read', t.read + ' of 37'],
-      ['Objectives studied', t.lo + ' of 551'], ['Flashcards started', t.srs + ' of 327'],
+      ['Exams passed', t.pass + ' of 9'],
+      ['Articles read', t.read + ' of ' + SUBJECTS.reduce((a, x) => a + arts(x.code).length, 0)],
+      ['Questions answered right', mastery().done + ' of ' + mastery().total],
+      ['Objectives ticked off', t.lo + ' of ' + SUBJECTS.reduce((a, x) => a + allLO(x), 0)],
+      ['Flashcards started', t.srs + ' of ' + SUBJECTS.reduce((a, x) => a + (SC[x.code].cards || []).length, 0)],
       ['Quiz attempts', String((S.hist || []).length)],
       ['Questions still wrong', String(Object.keys(S.wrong || {}).length)]
     ].map(([k, v]) => `<div class="row"><div class="tx"><b>${k}</b></div><div class="val">${v}</div></div>`).join('') + '</div>');
