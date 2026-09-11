@@ -3495,6 +3495,27 @@ const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1, 2) + '-' + pad(d.
 
 const CRP_LABELS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28,
                     30, 35, 40, 45, 50, 55, 60, 70, 80, 90];
+/* The labelled index arrows a CRP-1 carries on its outer scale. Each sits at the
+   conversion constant itself, so bringing one arrow against another on the inner
+   scale sets the whole disc to that conversion — which is how you actually use
+   them, rather than doing arithmetic. */
+const CRP_INDEX = [
+  // Each family carries its own datum so the eight arrows spread round the scale
+  // instead of stacking; within a family the ratio is the real conversion constant.
+  { v: 10,    t: 'LTR', c: 'blue'  },   // 1 imp gal = 4.546 l, 1 US gal = 3.785 l
+  { v: 22.00, t: 'IMP', c: 'blue'  },
+  { v: 26.42, t: 'USG', c: 'blue'  },
+  { v: 15,    t: 'KG',  c: 'green' },   // 1 kg = 2.2046 lb
+  { v: 33.07, t: 'LB',  c: 'green' },
+  { v: 11,    t: 'NM',  c: 'red'   },   // 1 nm = 1.852 km = 1.1508 sm
+  { v: 12.66, t: 'SM',  c: 'red'   },
+  { v: 20.37, t: 'KM',  c: 'red'   }
+];
+/* The hours ring inside the minutes scale. Each hour sits at its own minute count,
+   reduced into the decade the scale actually covers. */
+const CRP_HOURS = [[60, '1:00'], [90, '1:30'], [120, '2:00'], [150, '2:30'],
+                   [180, '3:00'], [240, '4:00'], [300, '5:00'], [360, '6:00']];
+
 const crpAng = v => 360 * ((Math.log10(v) % 1) + 1) % 360;
 /** Reduce any positive number to [10,100) and remember the decades taken out. */
 function crpMant(v) {
@@ -3504,29 +3525,33 @@ function crpMant(v) {
   return { m: m, d: d };
 }
 
-let CRP = null;   // { rot, mode, task, answered }
+let CRP = null;   // { rot, task, v, said }
 
-function crpScale(r0, r1, cls, rot) {
+const C = 180;    // dial centre
+const polar = (r, deg) => {
+  const a = (deg - 90) * Math.PI / 180;
+  return [C + Math.cos(a) * r, C + Math.sin(a) * r];
+};
+
+/** One logarithmic scale: graduations at the density the real instrument carries. */
+function crpScale(rIn, rOut, rLab, cls, rot, labels) {
   let out = '';
-  const tick = (v, len, w) => {
-    const a = (crpAng(v) + rot - 90) * Math.PI / 180;
-    const x0 = 160 + Math.cos(a) * r0, y0 = 160 + Math.sin(a) * r0;
-    const x1 = 160 + Math.cos(a) * (r0 + len), y1 = 160 + Math.sin(a) * (r0 + len);
+  const tick = (v, r0, r1, w) => {
+    const [x0, y0] = polar(r0, crpAng(v) + rot), [x1, y1] = polar(r1, crpAng(v) + rot);
     out += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke-width="${w}"/>`;
   };
-  for (let v = 10; v < 100; v += 0.1) {
-    const nv = +v.toFixed(1);
-    if (nv >= 50 && Math.round(nv * 10) % 5 !== 0) continue;
-    if (nv >= 20 && nv < 50 && Math.round(nv * 10) % 2 !== 0) continue;
-    tick(nv, (r1 - r0) * 0.35, 0.6);
+  const span = rOut - rIn;
+  for (let v = 100; v < 1000; v += 1) {        // tenths, in integer steps to avoid drift
+    const nv = v / 10;
+    if (nv >= 50 && v % 5 !== 0) continue;
+    if (nv >= 20 && nv < 50 && v % 2 !== 0) continue;
+    tick(nv, rOut - span * 0.34, rOut, 0.55);
   }
-  for (let v = 10; v < 100; v += (v < 20 ? 0.5 : v < 50 ? 1 : 5)) tick(+v.toFixed(1), (r1 - r0) * 0.6, 0.9);
-  CRP_LABELS.forEach(v => {
-    tick(v, (r1 - r0) * 0.95, 1.5);
-    const a = (crpAng(v) + rot - 90) * Math.PI / 180;
-    const rt = r0 + (r1 - r0) * 1.42;
-    out += `<text x="${(160 + Math.cos(a) * rt).toFixed(1)}" y="${(160 + Math.sin(a) * rt + 3.4).toFixed(1)}"
-      text-anchor="middle" class="lb">${v}</text>`;
+  for (let v = 100; v < 1000; v += (v < 200 ? 5 : v < 500 ? 10 : 50)) tick(v / 10, rOut - span * 0.62, rOut, 0.9);
+  labels.forEach(v => {
+    tick(v, rIn, rOut, 1.6);
+    const [x, y] = polar(rLab, crpAng(v) + rot);
+    out += `<text x="${x.toFixed(1)}" y="${(y + 3.2).toFixed(1)}" text-anchor="middle" class="lb">${v}</text>`;
   });
   return `<g class="${cls}">${out}</g>`;
 }
@@ -3534,18 +3559,51 @@ function crpScale(r0, r1, cls, rot) {
 function crpDial() {
   const rot = CRP.rot;
   const ratio = Math.pow(10, rot / 360);
-  return `<svg viewBox="0 0 320 320" class="crp" role="img" aria-label="Circular slide rule">
-    <circle cx="160" cy="160" r="152" class="rim"/>
-    ${crpScale(118, 138, 'outer', 0)}
-    <circle cx="160" cy="160" r="112" class="inner-bg"/>
-    ${crpScale(74, 94, 'inner', rot)}
-    <g class="idx" transform="rotate(${rot} 160 160)">
-      <path d="M160 44 l-6 12 h12 z"/>
+
+  // outer: the fixed body scale, plus the conversion index arrows
+  let idx = '';
+  CRP_INDEX.forEach(k => {
+    const a = crpAng(k.v);
+    // built pointing outwards at twelve o'clock, then swung round to its value
+    idx += `<g class="ix ix-${k.c}" transform="rotate(${a.toFixed(1)} ${C} ${C})">
+      <path d="M${C} ${C - 131} l-3.4 7 h6.8 z"/>
+      <text x="${C}" y="${C - 113}" text-anchor="middle"
+        transform="rotate(${(-a).toFixed(1)} ${C} ${C - 117})">${k.t}</text></g>`;
+  });
+
+  // inner: the rotating disc — minutes outside, hours inside, rate index at 60
+  let hrs = '';
+  CRP_HOURS.forEach(([mins, lab]) => {
+    const a = crpAng(crpMant(mins).m) + rot;
+    const [x0, y0] = polar(62, a), [x1, y1] = polar(70, a);
+    const [lx, ly] = polar(54, a);
+    hrs += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}"/>
+      <text x="${lx.toFixed(1)}" y="${(ly + 2.6).toFixed(1)}" text-anchor="middle">${lab}</text>`;
+  });
+  const rateA = crpAng(60) + rot;
+  const [rx, ry] = polar(112, rateA);
+
+  return `<svg viewBox="0 0 360 360" class="crp" role="img"
+    aria-label="Circular slide rule, inner scale rotated to a ratio of ${ratio.toFixed(3)}">
+    <circle cx="${C}" cy="${C}" r="176" class="rim"/>
+    <circle cx="${C}" cy="${C}" r="168" class="body"/>
+    ${crpScale(132, 150, 158, 'outer', 0, CRP_LABELS)}
+    ${idx}
+    <g class="disc">
+      <circle cx="${C}" cy="${C}" r="110" class="disc-bg"/>
+      ${crpScale(88, 104, 80, 'inner', rot, CRP_LABELS)}
+      <g class="hrs">${hrs}</g>
+      <g class="rate">
+        <path d="M${rx.toFixed(1)} ${ry.toFixed(1)} l-5 9 h10 z"
+          transform="rotate(${rateA.toFixed(1)} ${rx.toFixed(1)} ${ry.toFixed(1)})"/>
+      </g>
+      <circle cx="${C}" cy="${C}" r="34" class="hub"/>
+      <text x="${C}" y="${C - 6}" text-anchor="middle" class="hub-t">MINUTES</text>
+      <text x="${C}" y="${C + 8}" text-anchor="middle" class="hub-v">${ratio.toFixed(3)}</text>
+      <text x="${C}" y="${C + 19}" text-anchor="middle" class="hub-t">RATIO</text>
     </g>
-    <circle cx="160" cy="160" r="30" class="hub"/>
-    <text x="160" y="156" text-anchor="middle" class="hub-t">RATIO</text>
-    <text x="160" y="172" text-anchor="middle" class="hub-v">${ratio.toFixed(3)}</text>
-    <path d="M160 8 l-7 14 h14 z" class="mark"/>
+    <path d="M${C} 14 l-8 15 h16 z" class="mark"/>
+    <text x="${C}" y="45" text-anchor="middle" class="top-t">INDEX</text>
   </svg>`;
 }
 
@@ -3659,15 +3717,19 @@ function wireDial() {
     const a = angAt(e);
     let d = a - last; if (d > 180) d -= 360; if (d < -180) d += 360;
     CRP.rot = ((CRP.rot + d) % 360 + 360) % 360; last = a;
-    const g = svg.querySelector('.inner'), ix = svg.querySelector('.idx');
-    if (g) g.setAttribute('transform', `rotate(${CRP.rot - (CRP.rotBase || 0)} 160 160)`);
-    if (ix) ix.setAttribute('transform', `rotate(${CRP.rot} 160 160)`);
+    const g = svg.querySelector('.disc');
+    if (g) g.setAttribute('transform', `rotate(${CRP.rot - (CRP.rotBase || 0)} 180 180)`);
     const hv = svg.querySelector('.hub-v');
     if (hv) hv.textContent = Math.pow(10, CRP.rot / 360).toFixed(3);
     e.preventDefault();
   };
   const up = () => { if (last != null) { last = null; CRP.rotBase = 0; render(); } };
-  svg.addEventListener('pointerdown', e => { svg.setPointerCapture(e.pointerId); CRP.rotBase = CRP.rot; down(e); });
+  svg.addEventListener('pointerdown', e => {
+    // capture keeps the drag alive if the finger leaves the dial, but it throws for a
+    // pointer the element never saw — never let that stop the drag itself
+    try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+    CRP.rotBase = CRP.rot; down(e);
+  });
   svg.addEventListener('pointermove', move);
   svg.addEventListener('pointerup', up);
   svg.addEventListener('pointercancel', up);

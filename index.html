@@ -277,23 +277,58 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
 @media (prefers-color-scheme:dark){:root:not([data-t="light"]) .mpin span{
   color:#f2f2f7;background:rgba(20,20,22,.82)}}
 .mapnote{font-size:11.5px;color:var(--tx3);padding:7px 4px 1px;line-height:1.35}
-/* ---------- navigation computer ---------- */
-.crpwrap{background:var(--card);border-radius:var(--r-lg);padding:12px;box-shadow:var(--sh);
+/* ---------- navigation computer ----------
+   Dressed as the instrument: a cream body with a printed black outer scale, a
+   rotating disc a shade lighter with the minutes scale on it, the rate index at 60,
+   and the labelled conversion arrows round the rim. Dark mode inverts the body
+   rather than keeping a glaring white disc. */
+.crpwrap{background:var(--card);border-radius:var(--r-lg);padding:10px;box-shadow:var(--sh);
   margin-top:12px;display:flex;justify-content:center}
-.crp{width:100%;max-width:340px;height:auto;display:block;touch-action:none;cursor:grab;
-  color:var(--tx);user-select:none;-webkit-user-select:none}
+.crp{width:100%;max-width:360px;height:auto;display:block;touch-action:none;cursor:grab;
+  user-select:none;-webkit-user-select:none}
 .crp:active{cursor:grabbing}
-.crp .rim{fill:var(--card2);stroke:var(--sep);stroke-width:1}
-.crp .inner-bg{fill:var(--bg2);stroke:var(--sep2);stroke-width:1}
-.crp .outer line{stroke:currentColor;opacity:.75;stroke-linecap:round}
-.crp .inner line{stroke:var(--blue);opacity:.9;stroke-linecap:round}
-.crp .outer .lb{fill:currentColor;font:600 9px -apple-system,system-ui;opacity:.9}
-.crp .inner .lb{fill:var(--blue);font:600 8.5px -apple-system,system-ui}
-.crp .hub{fill:var(--card);stroke:var(--sep2)}
-.crp .hub-t{fill:var(--tx3);font:700 7px -apple-system,system-ui;letter-spacing:.08em}
-.crp .hub-v{fill:var(--tx);font:700 13px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
-.crp .mark{fill:var(--red)}
-.crp .idx path{fill:var(--blue)}
+.crp .rim{fill:#c9302c}
+.crp .body{fill:#f4f1e8}
+.crp .disc-bg{fill:#fdfcf7;stroke:rgba(0,0,0,.28);stroke-width:1.2}
+.crp .outer line{stroke:#1a1a1a;stroke-linecap:butt}
+.crp .outer .lb{fill:#1a1a1a;font:700 10px -apple-system,system-ui}
+.crp .inner line{stroke:#1a1a1a;stroke-linecap:butt}
+.crp .inner .lb{fill:#1a1a1a;font:700 9px -apple-system,system-ui}
+.crp .hrs line{stroke:#0a58a8;stroke-width:1.1}
+.crp .hrs text{fill:#0a58a8;font:600 7px -apple-system,system-ui}
+.crp .ix path{fill:#1a1a1a}
+.crp .ix text{font:700 6.5px -apple-system,system-ui;fill:#1a1a1a;letter-spacing:.02em}
+.crp .ix-blue path,.crp .ix-blue text{fill:#0a58a8}
+.crp .ix-green path,.crp .ix-green text{fill:#1d7a3e}
+.crp .ix-red path,.crp .ix-red text{fill:#c9302c}
+.crp .rate path{fill:#c9302c;stroke:#7d1d1a;stroke-width:.6}
+.crp .hub{fill:#e8e4d8;stroke:rgba(0,0,0,.25)}
+.crp .hub-t{fill:#5a5647;font:700 6.5px -apple-system,system-ui;letter-spacing:.1em}
+.crp .hub-v{fill:#1a1a1a;font:700 15px ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.crp .mark{fill:#c9302c;stroke:#7d1d1a;stroke-width:.6}
+.crp .top-t{fill:#f4f1e8;font:700 6.5px -apple-system,system-ui;letter-spacing:.12em}
+[data-t="dark"] .crp .body{fill:#2a2924}
+[data-t="dark"] .crp .disc-bg{fill:#35342d;stroke:rgba(255,255,255,.22)}
+[data-t="dark"] .crp .outer line,[data-t="dark"] .crp .inner line{stroke:#ece9df}
+[data-t="dark"] .crp .outer .lb,[data-t="dark"] .crp .inner .lb,
+[data-t="dark"] .crp .ix path,[data-t="dark"] .crp .ix text{fill:#ece9df}
+[data-t="dark"] .crp .ix-blue path,[data-t="dark"] .crp .ix-blue text{fill:#6fb1ff}
+[data-t="dark"] .crp .ix-green path,[data-t="dark"] .crp .ix-green text{fill:#5fd67f}
+[data-t="dark"] .crp .ix-red path,[data-t="dark"] .crp .ix-red text{fill:#ff7a6e}
+[data-t="dark"] .crp .hrs line,[data-t="dark"] .crp .hrs text{stroke:#6fb1ff;fill:#6fb1ff}
+[data-t="dark"] .crp .hub{fill:#26251f;stroke:rgba(255,255,255,.2)}
+[data-t="dark"] .crp .hub-v{fill:#ece9df}
+@media (prefers-color-scheme:dark){:root:not([data-t="light"]) .crp .body{fill:#2a2924}
+  :root:not([data-t="light"]) .crp .disc-bg{fill:#35342d;stroke:rgba(255,255,255,.22)}
+  :root:not([data-t="light"]) .crp .outer line,:root:not([data-t="light"]) .crp .inner line{stroke:#ece9df}
+  :root:not([data-t="light"]) .crp .outer .lb,:root:not([data-t="light"]) .crp .inner .lb,
+  :root:not([data-t="light"]) .crp .ix path,:root:not([data-t="light"]) .crp .ix text{fill:#ece9df}
+  :root:not([data-t="light"]) .crp .ix-blue path,:root:not([data-t="light"]) .crp .ix-blue text{fill:#6fb1ff}
+  :root:not([data-t="light"]) .crp .ix-green path,:root:not([data-t="light"]) .crp .ix-green text{fill:#5fd67f}
+  :root:not([data-t="light"]) .crp .ix-red path,:root:not([data-t="light"]) .crp .ix-red text{fill:#ff7a6e}
+  :root:not([data-t="light"]) .crp .hrs line,:root:not([data-t="light"]) .crp .hrs text{stroke:#6fb1ff;fill:#6fb1ff}
+  :root:not([data-t="light"]) .crp .hub{fill:#26251f;stroke:rgba(255,255,255,.2)}
+  :root:not([data-t="light"]) .crp .hub-v{fill:#ece9df}}
 /* exam clock — counts the budget down, then counts the overrun up in red */
 .qmeta .clk{font:600 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums;color:var(--tx2);letter-spacing:.02em}
 .qmeta .clk.over{color:var(--red)}
