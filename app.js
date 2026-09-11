@@ -3527,31 +3527,58 @@ function crpMant(v) {
 
 let CRP = null;   // { rot, task, v, said }
 
-const C = 180;    // dial centre
+/* Drawn from a Pooleys CRP-1 on the desk: rounded-octagon body with four screws, the
+   fixed black log scale printed on it, a rotating disc carrying a white minutes band
+   over an amber hours ring, the red 60 rate index, and the airspeed window in the
+   middle. Index arrows sit at conversion constants rather than at the exact spots
+   Pooleys chose, so every alignment you can make here is arithmetically right. */
+
+const C = 200;
 const polar = (r, deg) => {
   const a = (deg - 90) * Math.PI / 180;
   return [C + Math.cos(a) * r, C + Math.sin(a) * r];
 };
+const P2 = (r, deg) => polar(r, deg).map(v => v.toFixed(1)).join(' ');
 
-/** One logarithmic scale: graduations at the density the real instrument carries. */
-function crpScale(rIn, rOut, rLab, cls, rot, labels) {
+/* The airspeed and altitude windows are the ISA in mechanical form. Every figure
+   below reproduces the worked examples in the CRP-1 handbook exactly: RAS 150 at
+   18 000 ft and -30 C gives TAS 195; indicated 17 400 at 18 000 ft and -5 C gives a
+   true altitude of 18 500; and that same setting shows 20 000 ft density altitude. */
+function densityRatio(paFt, oatC) {
+  const delta = Math.pow(1 - 6.87535e-6 * paFt, 5.2558797);
+  return delta / ((oatC + 273.15) / 288.15);
+}
+const isaTemp = paFt => 15 - 1.98 * (paFt / 1000);
+/** The ISA altitude at which the air is as thin as it is here and now. */
+const densityAlt = (paFt, oatC) =>
+  (1 - Math.pow(densityRatio(paFt, oatC), 1 / 4.2558797)) / 6.87535e-6;
+/** Cold air is dense, so the altimeter over-reads: true altitude is lower than shown. */
+const trueAlt = (indFt, paFt, oatC) => indFt * ((oatC + 273.15) / (isaTemp(paFt) + 273.15));
+/** Pressure altitude that pairs with this OAT at a given density ratio. */
+function paFor(sigma, oatC) {
+  const delta = sigma * ((oatC + 273.15) / 288.15);
+  return (1 - Math.pow(delta, 1 / 5.2558797)) / 6.87535e-6;
+}
+
+function crpScale(rIn, rOut, rLab, cls, rot, labels, labelSize) {
   let out = '';
   const tick = (v, r0, r1, w) => {
-    const [x0, y0] = polar(r0, crpAng(v) + rot), [x1, y1] = polar(r1, crpAng(v) + rot);
-    out += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke-width="${w}"/>`;
+    out += `<line x1="${polar(r0, crpAng(v) + rot)[0].toFixed(1)}" y1="${polar(r0, crpAng(v) + rot)[1].toFixed(1)}"
+      x2="${polar(r1, crpAng(v) + rot)[0].toFixed(1)}" y2="${polar(r1, crpAng(v) + rot)[1].toFixed(1)}" stroke-width="${w}"/>`;
   };
   const span = rOut - rIn;
-  for (let v = 100; v < 1000; v += 1) {        // tenths, in integer steps to avoid drift
+  for (let v = 100; v < 1000; v += 1) {
     const nv = v / 10;
     if (nv >= 50 && v % 5 !== 0) continue;
     if (nv >= 20 && nv < 50 && v % 2 !== 0) continue;
-    tick(nv, rOut - span * 0.34, rOut, 0.55);
+    tick(nv, rOut - span * 0.32, rOut, 0.5);
   }
-  for (let v = 100; v < 1000; v += (v < 200 ? 5 : v < 500 ? 10 : 50)) tick(v / 10, rOut - span * 0.62, rOut, 0.9);
+  for (let v = 100; v < 1000; v += (v < 200 ? 5 : v < 500 ? 10 : 50)) tick(v / 10, rOut - span * 0.58, rOut, 0.8);
   labels.forEach(v => {
-    tick(v, rIn, rOut, 1.6);
+    tick(v, rIn, rOut, 1.5);
     const [x, y] = polar(rLab, crpAng(v) + rot);
-    out += `<text x="${x.toFixed(1)}" y="${(y + 3.2).toFixed(1)}" text-anchor="middle" class="lb">${v}</text>`;
+    out += `<text x="${x.toFixed(1)}" y="${(y + labelSize * 0.36).toFixed(1)}" text-anchor="middle"
+      style="font-size:${labelSize}px">${v}</text>`;
   });
   return `<g class="${cls}">${out}</g>`;
 }
@@ -3560,50 +3587,114 @@ function crpDial() {
   const rot = CRP.rot;
   const ratio = Math.pow(10, rot / 360);
 
-  // outer: the fixed body scale, plus the conversion index arrows
-  let idx = '';
-  CRP_INDEX.forEach(k => {
+  /* body: rounded octagon, as the plastic actually is */
+  const oct = (() => {
+    const R = 196, cut = 62;
+    const pts = [[-R + cut, -R], [R - cut, -R], [R, -R + cut], [R, R - cut],
+                 [R - cut, R], [-R + cut, R], [-R, R - cut], [-R, -R + cut]];
+    return 'M' + pts.map(([x, y]) => (C + x) + ' ' + (C + y)).join('L') + 'Z';
+  })();
+  const screws = [[-150, -150], [150, -150], [150, 150], [-150, 150]]
+    .map(([x, y]) => `<g class="screw" transform="translate(${C + x} ${C + y})">
+      <circle r="8"/><rect x="-6.5" y="-1.3" width="13" height="2.6" rx="1" transform="rotate(28)"/></g>`).join('');
+
+  /* the conversion index arrows, styled as the printed red and blue rim marks */
+  const idx = CRP_INDEX.map(k => {
     const a = crpAng(k.v);
-    // built pointing outwards at twelve o'clock, then swung round to its value
-    idx += `<g class="ix ix-${k.c}" transform="rotate(${a.toFixed(1)} ${C} ${C})">
-      <path d="M${C} ${C - 131} l-3.4 7 h6.8 z"/>
-      <text x="${C}" y="${C - 113}" text-anchor="middle"
-        transform="rotate(${(-a).toFixed(1)} ${C} ${C - 117})">${k.t}</text></g>`;
-  });
+    return `<g class="ix ix-${k.c}" transform="rotate(${a.toFixed(1)} ${C} ${C})">
+      <path d="M${C} ${C - 170} l-3.2 7 h6.4 z"/>
+      <text x="${C}" y="${C - 186}" text-anchor="middle"
+        transform="rotate(${(-a).toFixed(1)} ${C} ${C - 190})">${k.t}</text></g>`;
+  }).join('');
 
-  // inner: the rotating disc — minutes outside, hours inside, rate index at 60
-  let hrs = '';
-  CRP_HOURS.forEach(([mins, lab]) => {
+  /* hours, printed on the amber ring inside the minutes */
+  const hrs = CRP_HOURS.map(([mins, lab]) => {
     const a = crpAng(crpMant(mins).m) + rot;
-    const [x0, y0] = polar(62, a), [x1, y1] = polar(70, a);
-    const [lx, ly] = polar(54, a);
-    hrs += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}"/>
-      <text x="${lx.toFixed(1)}" y="${(ly + 2.6).toFixed(1)}" text-anchor="middle">${lab}</text>`;
-  });
-  const rateA = crpAng(60) + rot;
-  const [rx, ry] = polar(112, rateA);
+    const [lx, ly] = polar(108, a);
+    return `<line x1="${P2(118, a).split(' ')[0]}" y1="${P2(118, a).split(' ')[1]}"
+        x2="${P2(124, a).split(' ')[0]}" y2="${P2(124, a).split(' ')[1]}"/>
+      <text x="${lx.toFixed(1)}" y="${(ly + 2.7).toFixed(1)}" text-anchor="middle"
+        transform="rotate(${(a > 180 ? a + 90 : a - 90).toFixed(1)} ${lx.toFixed(1)} ${ly.toFixed(1)})">${lab}</text>`;
+  }).join('');
 
-  return `<svg viewBox="0 0 360 360" class="crp" role="img"
-    aria-label="Circular slide rule, inner scale rotated to a ratio of ${ratio.toFixed(3)}">
-    <circle cx="${C}" cy="${C}" r="176" class="rim"/>
-    <circle cx="${C}" cy="${C}" r="168" class="body"/>
-    ${crpScale(132, 150, 158, 'outer', 0, CRP_LABELS)}
+  const rateA = crpAng(60) + rot;
+
+  /* Three apertures, as the instrument has: AIR SPEED across the top, ALTITUDE on
+     the left and DENSITY ALTITUDE on the right. The temperature scale is what you set
+     against, the altitude figures are generated from the density relationship at the
+     current rotation, so what lines up in a window is what the physics says lines up. */
+  const sigma = Math.pow(10, -2 * rot / 360);
+  const pa = CRP.pa, oat = CRP.oat, haveSet = pa != null && oat != null;
+
+  function aperture(cls, r0, r1, a0, a1) {
+    return `<path d="M ${P2(r1, a0)} A ${r1} ${r1} 0 0 1 ${P2(r1, a1)}
+      L ${P2(r0, a1)} A ${r0} ${r0} 0 0 0 ${P2(r0, a0)} Z" class="${cls}"/>`;
+  }
+  function scaleIn(vals, r, a0, a1, cls, fmt) {
+    return vals.map((v, i) => {
+      const a = a0 + i * (a1 - a0) / (vals.length - 1);
+      const [x, y] = polar(r, a);
+      return `<text x="${x.toFixed(1)}" y="${(y + 2.2).toFixed(1)}" text-anchor="middle" class="${cls}"
+        transform="rotate(${a.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})">${fmt(v)}</text>`;
+    }).join('');
+  }
+
+  const TEMPS = [40, 20, 0, -20, -40, -60];
+  // AIR SPEED window, top
+  let win = aperture('window', 58, 82, -42, 42)
+    + scaleIn(TEMPS, 76, -38, 38, 'wtemp', t => t)
+    + scaleIn(TEMPS, 64, -38, 38, 'walt', t => {
+        const v = paFor(sigma, t) / 1000; return (v > -3 && v < 30) ? v.toFixed(0) : '';
+      })
+    + `<text x="${C}" y="${C - 44}" text-anchor="middle" class="wlab">AIR SPEED</text>
+       <text x="${C}" y="${C - 36}" text-anchor="middle" class="wlab2">MACH No. + DENSITY</text>`;
+
+  // ALTITUDE window, left — the same setting, read for true altitude
+  win += aperture('window', 44, 64, -118, -62)
+    + scaleIn([30, 10, -10, -30], 59, -113, -67, 'wtemp', t => t)
+    + scaleIn([30, 10, -10, -30], 48, -113, -67, 'walt', t => {
+        const v = paFor(sigma, t) / 1000; return (v > -3 && v < 30) ? v.toFixed(0) : '';
+      })
+    + `<text x="${polar(70, -90)[0].toFixed(1)}" y="${polar(70, -90)[1].toFixed(1)}"
+        text-anchor="middle" class="wlab" transform="rotate(-90 ${polar(70, -90)[0].toFixed(1)} ${polar(70, -90)[1].toFixed(1)})">ALTITUDE</text>`;
+
+  // DENSITY ALTITUDE window, right — falls out of the same setting
+  const dAlt = haveSet ? densityAlt(pa, oat) / 1000 : null;
+  win += aperture('window', 44, 64, 62, 118)
+    + `<text x="${polar(54, 90)[0].toFixed(1)}" y="${(polar(54, 90)[1] + 2.6).toFixed(1)}"
+        text-anchor="middle" class="wbig" transform="rotate(90 ${polar(54, 90)[0].toFixed(1)} ${polar(54, 90)[1].toFixed(1)})">${
+        dAlt == null ? '\u2014' : dAlt.toFixed(1)}</text>
+       <text x="${polar(70, 90)[0].toFixed(1)}" y="${polar(70, 90)[1].toFixed(1)}"
+        text-anchor="middle" class="wlab" transform="rotate(90 ${polar(70, 90)[0].toFixed(1)} ${polar(70, 90)[1].toFixed(1)})">DENSITY ALT &#215;1000</text>`;
+
+  // the two pointer captions the real one prints beside the top window
+  win += `<text x="${C - 52}" y="${C - 62}" text-anchor="end" class="wlab2">AIR TEMP &#176;C &#8594;</text>
+          <text x="${C - 52}" y="${C - 54}" text-anchor="end" class="wlab2">PRESS.ALT &#215;1000 ft &#8594;</text>`;
+
+  return `<svg viewBox="0 0 400 400" class="crp" role="img"
+    aria-label="CRP-1 computer side, inner scale set to a ratio of ${ratio.toFixed(3)}">
+    <path d="${oct}" class="body"/>
+    ${screws}
+    ${crpScale(150, 168, 176, 'outer', 0, CRP_LABELS, 10.5)}
     ${idx}
     <g class="disc">
-      <circle cx="${C}" cy="${C}" r="110" class="disc-bg"/>
-      ${crpScale(88, 104, 80, 'inner', rot, CRP_LABELS)}
+      <circle cx="${C}" cy="${C}" r="142" class="disc-bg"/>
+      <circle cx="${C}" cy="${C}" r="126" class="amber"/>
+      <circle cx="${C}" cy="${C}" r="98" class="centre"/>
+      ${crpScale(126, 142, 134, 'inner', rot, CRP_LABELS, 9.5)}
       <g class="hrs">${hrs}</g>
-      <g class="rate">
-        <path d="M${rx.toFixed(1)} ${ry.toFixed(1)} l-5 9 h10 z"
-          transform="rotate(${rateA.toFixed(1)} ${rx.toFixed(1)} ${ry.toFixed(1)})"/>
+      <g class="rate" transform="rotate(${rateA.toFixed(1)} ${C} ${C})">
+        <path d="M${C} ${C - 126} l-6 11 h12 z"/>
+        <text x="${C}" y="${C - 112}" text-anchor="middle">60</text>
       </g>
-      <circle cx="${C}" cy="${C}" r="34" class="hub"/>
-      <text x="${C}" y="${C - 6}" text-anchor="middle" class="hub-t">MINUTES</text>
-      <text x="${C}" y="${C + 8}" text-anchor="middle" class="hub-v">${ratio.toFixed(3)}</text>
-      <text x="${C}" y="${C + 19}" text-anchor="middle" class="hub-t">RATIO</text>
+      ${win}
+      <circle cx="${C}" cy="${C}" r="26" class="hub"/>
+      <circle cx="${C}" cy="${C}" r="7" class="rivet"/>
+      <text x="${C}" y="${C + 20}" text-anchor="middle" class="hub-v">${ratio.toFixed(3)}</text>
     </g>
-    <path d="M${C} 14 l-8 15 h16 z" class="mark"/>
-    <text x="${C}" y="45" text-anchor="middle" class="top-t">INDEX</text>
+    <g class="cursor"><line x1="${C}" y1="26" x2="${C}" y2="${C + 150}"/></g>
+    <path d="M${C} 26 l-7 12 h14 z" class="mark"/>
+    <text x="${C}" y="${C + 188}" text-anchor="middle" class="brand">CRP&#8209;1 COMPUTER</text>
   </svg>`;
 }
 
@@ -3626,6 +3717,20 @@ const CRP_TASKS = [
     how: 'Identical to time and distance: <b>flow on the outer against the 60 index</b>, then '
        + 'read quantity against time. Fuel is where the decimal point bites — the scale cannot '
        + 'tell 7.5 from 75 from 750.' },
+  { k: 'tas', t: 'Airspeed',
+    fields: [['ras', 'RAS / CAS', 'kt'], ['pa', 'Pressure altitude', 'ft'], ['oat', 'Air temp', '\u00b0C']],
+    solve: v => (v.ras && v.pa != null && v.oat != null) ? { tas: v.ras / Math.sqrt(densityRatio(v.pa, v.oat)) } : null,
+    allowZero: ['pa', 'oat'], out: ['tas', 'TAS', 'kt'],
+    how: 'In the <b>AIR SPEED window</b>, set the pressure altitude against the air temperature. '
+       + 'That one setting fixes the density, and every RAS on the inner scale then reads its '
+       + 'TAS on the outer. The <b>density altitude</b> falls out of the same setting.' },
+  { k: 'alt', t: 'Altitude',
+    fields: [['ind', 'Indicated altitude', 'ft'], ['pa', 'Pressure altitude', 'ft'], ['oat', 'Air temp', '\u00b0C']],
+    solve: v => (v.ind && v.pa != null && v.oat != null) ? { tru: trueAlt(v.ind, v.pa, v.oat) } : null,
+    allowZero: ['pa', 'oat'], out: ['tru', 'True altitude', 'ft'],
+    how: 'In the <b>ALTITUDE window</b>, set the pressure altitude against the corrected air '
+       + 'temperature, then read true altitude on the outer against indicated on the inner. '
+       + 'Colder than standard and the altimeter over-reads \u2014 you are lower than it says.' },
   { k: 'conv', t: 'Conversions',
     fields: [['a', 'Litres', 'l'], ['b', 'US gallons', 'usg']],
     solve: v => v.a ? { b: v.a / 3.785 } : v.b ? { a: v.b * 3.785 } : null,
@@ -3638,7 +3743,7 @@ const crpSet = (o, i) => ((crpAng(crpMant(o).m) - crpAng(crpMant(i).m)) % 360 + 
 
 VIEWS.crp = function (p) {
   navbar('Navigation computer', '');
-  if (!CRP) CRP = { rot: 0, task: 'tsd', v: {}, drill: null, said: '' };
+  if (!CRP) CRP = { rot: 0, task: 'tsd', v: {}, said: '', pa: null, oat: null };
   const task = CRP_TASKS.find(t => t.k === CRP.task);
 
   html(`<div class="hd" style="padding-top:12px"><h1 class="vt">The circular slide rule</h1>
@@ -3662,9 +3767,12 @@ VIEWS.crp = function (p) {
       </div>`);
 
   const readFields = () => {
-    const v = {};
-    task.fields.forEach(([k]) => { const el = $('#cv_' + k); const n = parseFloat(el.value);
-      if (el.value.trim() !== '' && isFinite(n) && n > 0) v[k] = n; });
+    const v = {}, zeroOk = task.allowZero || [];
+    task.fields.forEach(([k]) => {
+      const el = $('#cv_' + k), num = parseFloat(el.value);
+      if (el.value.trim() === '' || !isFinite(num)) return;
+      if (num > 0 || zeroOk.indexOf(k) >= 0) v[k] = num;      // temp and altitude may be <= 0
+    });
     return v;
   };
 
@@ -3679,24 +3787,83 @@ VIEWS.crp = function (p) {
     if (!got) { CRP.said = 'That combination cannot be solved — check the numbers.'; render(); return; }
     Object.assign(v, got);
     CRP.v = v;
-    // the setting itself: rate problems go against the 60 index, a conversion against its pair
+    /* rate problems go against the 60 index, a conversion against its pair, and the
+       window problems against whatever ratio the air density implies */
     if (CRP.task === 'conv') CRP.rot = crpSet(v.a, v.b);
+    else if (CRP.task === 'tas') CRP.rot = crpSet(got.tas, v.ras);
+    else if (CRP.task === 'alt') CRP.rot = crpSet(got.tru, v.ind);
     else CRP.rot = crpSet(CRP.task === 'tsd' ? v.spd : v.rate, 60);
+    if (CRP.task === 'tas' || CRP.task === 'alt') { CRP.pa = v.pa; CRP.oat = v.oat; }
     const key = Object.keys(got)[0];
-    const f = task.fields.find(x => x[0] === key);
-    CRP.said = 'Set ' + (CRP.task === 'conv'
-        ? fmtN(v.a) + ' l against ' + fmtN(v.b) + ' usg'
-        : fmtN(CRP.task === 'tsd' ? v.spd : v.rate) + ' on the outer against the 60 index')
-      + '. Reading off: <b>' + f[1] + ' ' + fmtN(got[key]) + ' ' + f[2] + '</b>.'
-      + (got[key] < 10 || got[key] >= 100
-          ? ' Note the dial itself only shows the digits — you place the decimal point.' : '');
+    // the window problems produce a value that is not one of their input boxes
+    const f = task.fields.find(x => x[0] === key) || task.out;
+    let setTxt, extra = '';
+    if (CRP.task === 'conv') setTxt = 'Set ' + fmtN(v.a) + ' l against ' + fmtN(v.b) + ' usg';
+    else if (CRP.task === 'tas') {
+      setTxt = 'In the AIR SPEED window, set ' + fmtN(v.pa) + ' ft against ' + fmtN(v.oat) + '\u00b0C';
+      extra = ' Density altitude at that setting: <b>'
+            + fmtN(Math.round(densityAlt(v.pa, v.oat) / 100) * 100) + ' ft</b>.';
+    } else if (CRP.task === 'alt') {
+      setTxt = 'In the ALTITUDE window, set ' + fmtN(v.pa) + ' ft against ' + fmtN(v.oat) + '\u00b0C';
+      extra = ' ISA at that level is ' + isaTemp(v.pa).toFixed(0) + '\u00b0C, so the air is '
+            + (v.oat < isaTemp(v.pa) ? 'colder than standard and you are <b>lower</b> than indicated.'
+                                     : 'warmer than standard and you are <b>higher</b> than indicated.');
+    } else setTxt = 'Set ' + fmtN(CRP.task === 'tsd' ? v.spd : v.rate)
+                  + ' on the outer against the 60 index';
+    CRP.said = setTxt + '. Reading off: <b>' + f[1] + ' ' + fmtN(got[key]) + ' ' + f[2] + '</b>.' + extra
+      + ((CRP.task === 'tsd' || CRP.task === 'fuel') && (got[key] < 10 || got[key] >= 100)
+          ? ' Note the dial itself only shows the digits \u2014 you place the decimal point.' : '');
     render();
   };
 
   wireDial();
 
-  html(`<div class="foot">A real CRP-1 has a wind side too, and a temperature/altitude window
-    for TAS and density altitude. Those are coming.</div>`);
+  /* How to work it. Written from the method rather than copied from anyone's booklet,
+     and every figure quoted here is reproduced by the emulator above. */
+  html(`<h2 class="sec">How to work it</h2>`);
+  const HOWTO = [
+    ['Multiply', 'Set <b>10</b> on the inner against the first number on the outer. Against the '
+      + 'second number on the inner, read the answer on the outer.',
+      '3.5 &#215; 1.8: set 10 under 3.5, and 1.8 on the inner gives 63 on the outer &#8212; 6.3.'],
+    ['Divide', 'Set the divisor on the inner against the dividend on the outer. Read the answer '
+      + 'on the outer against <b>10</b> on the inner.',
+      '6.3 &#247; 3.5: set 3.5 under 6.3, and 10 on the inner gives 18 &#8212; 1.8.'],
+    ['Time for a distance', 'Set the <b>60 index</b> on the inner against the groundspeed on the '
+      + 'outer. Against the distance on the outer, read the time on the inner.',
+      '225 nm at 90 kt: 150 minutes, which the amber ring also shows as 2:30.'],
+    ['Distance in a time', 'Same setting. Against the time on the inner, read the distance on the outer.',
+      '29 min at 87 kt gives 42 nm.'],
+    ['Speed from both', 'Set the time on the inner against the distance on the outer, then read the '
+      + 'speed on the outer against the <b>60 index</b>.',
+      '23 nm in 10 min gives 138 kt.'],
+    ['Fuel', 'Exactly the same three, with flow in place of speed and quantity in place of distance.',
+      '12 gal/h for 80 min gives 16 gal. 22 gal/h with 55 gal aboard gives 150 minutes endurance.'],
+    ['Convert anything', 'Set the known value on the inner against <b>its own index arrow</b> on the '
+      + 'outer. Read the answer on the inner against whichever other index you want.',
+      '66 nm against NM reads 76 against SM and 122 against KM. 500 lb against LB reads 227 against KG.'],
+    ['TAS', 'In the <b>AIR SPEED window</b>, set pressure altitude against air temperature. Then read '
+      + 'TAS on the outer against RAS on the inner. The same setting shows density altitude.',
+      'RAS 150 at 18,000 ft and &#8722;30&#176;C gives TAS 195 kt.'],
+    ['True altitude', 'In the <b>ALTITUDE window</b>, set pressure altitude against the corrected '
+      + 'temperature, then read true altitude on the outer against indicated on the inner.',
+      'Indicated 17,400 ft at 18,000 ft and &#8722;5&#176;C gives about 18,500 ft true.'],
+    ['1 in 60', 'Set distance flown on the inner against distance off track on the outer; the track '
+      + 'error is on the outer against the <b>60 index</b>. Repeat with distance still to run for the '
+      + 'closing angle, and add the two.',
+      '3 nm off after 36 nm with 45 to run: 5&#176; + 4&#176; = 9&#176; of correction.']
+  ];
+  html('<div class="grp">' + HOWTO.map(([t, m, eg]) => `
+    <div class="row plain"><b>${t}</b>
+      <div class="p" style="margin-top:4px">${m}</div>
+      <div class="tiny" style="margin-top:6px;color:var(--tx3)">${eg}</div></div>`).join('') + '</div>');
+
+  html(`<div class="note o" style="margin-top:14px"><b>The scale does not know where the point goes</b>
+    It shows digits, not magnitude &#8212; 7, 70 and 700 all sit in the same place. Work out the rough
+    answer in your head first, then use the dial for the figures. That one habit prevents most of the
+    mistakes people make with it.</div>`);
+
+  html(`<div class="foot">The wind side &#8212; drift, heading and groundspeed from the triangle &#8212;
+    is not built yet.</div>`);
 };
 
 const fmtN = n => (Math.abs(n - Math.round(n)) < 0.05 ? String(Math.round(n)) : n.toFixed(1));
@@ -3718,7 +3885,7 @@ function wireDial() {
     let d = a - last; if (d > 180) d -= 360; if (d < -180) d += 360;
     CRP.rot = ((CRP.rot + d) % 360 + 360) % 360; last = a;
     const g = svg.querySelector('.disc');
-    if (g) g.setAttribute('transform', `rotate(${CRP.rot - (CRP.rotBase || 0)} 180 180)`);
+    if (g) g.setAttribute('transform', `rotate(${CRP.rot - (CRP.rotBase || 0)} 200 200)`);
     const hv = svg.querySelector('.hub-v');
     if (hv) hv.textContent = Math.pow(10, CRP.rot / 360).toFixed(3);
     e.preventDefault();
