@@ -624,11 +624,14 @@ VIEWS.home = function () {
       <div class="tx"><b>Books</b><i>Pooleys volume for each exam</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rTrn"><div class="ic" style="--c:var(--teal)">&#9992;</div>
       <div class="tx"><b>My training</b><i>${S.stage ? esc(stageLabel(S.stage)) : 'Stage not set'}${S.field ? ' · ' + esc(S.field) : ''}</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="rCrp"><div class="ic" style="--c:var(--green)">&#9881;</div>
+      <div class="tx"><b>Navigation computer</b><i>Work a CRP-1 circular slide rule</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rGaps"><div class="ic" style="--c:var(--orange)">!</div>
       <div class="tx"><b>What this app will not teach you</b><i>Read this before you rely on it</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rSrc"><div class="ic" style="--c:var(--tx3)">&#8599;</div>
       <div class="tx"><b>Sources &amp; settings</b><i>Every source, plus export</i></div><div class="chev">&#8250;</div></button>
     </div>`);
+  $('#rCrp').onclick = () => go('crp');
   $('#rGaps').onclick = () => go('limits');
   $('#rTrn').onclick = () => go('training');
   $('#rRules').onclick = () => go('rules');
@@ -649,11 +652,11 @@ VIEWS.limits = function () {
     are the ones people fail on.</div></div>`);
 
   html(`<h2 class="sec">Skills, not knowledge</h2><div class="grp">
-    <div class="row plain"><b>The navigation computer</b>
-      <div class="p" style="margin-top:4px">Flight Performance and Planning and Navigation both
-      assume you can work a <b>CRP-1</b> quickly and correctly — the wind side for the triangle,
-      the circular side for time, speed, distance, fuel, TAS and density altitude. Reading about
-      it is not the same as being fast with it. Practise with the real thing on the desk.</div></div>
+    <div class="row plain"><b>The navigation computer — partly covered now</b>
+      <div class="p" style="margin-top:4px">The circular side is built into the app under
+      Reference, so you can work time, speed, distance, fuel and conversions on a real dial
+      rather than read about one. The <b>wind side</b> is not built yet, and no emulator makes
+      you quick with cold fingers on a kneeboard. Get a real CRP-1 as well.</div></div>
     <div class="row plain"><b>The chart</b>
       <div class="p" style="margin-top:4px">The 1:500,000 exam questions want you to measure
       tracks and distances, read relief and the maximum elevation figures, and identify symbols
@@ -3481,6 +3484,194 @@ function medExpiry(issueISO, dobISO) {
                    (age >= 40 && age < 50 && exp.getTime() === birthday(51).getTime()) };
 }
 const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1, 2) + '-' + pad(d.getDate(), 2);
+
+/* ============================ NAVIGATION COMPUTER ============================ */
+/* A CRP-1 is two logarithmic scales on concentric discs. Rotating the inner disc
+   fixes one ratio, and every proportional problem in the PPL — time, speed,
+   distance, fuel, conversions — is that same ratio read at a different place. The
+   emulator is therefore small: draw two log scales, let one turn, and read pairs
+   off it. What it has to teach on top is the bit a real one does not do for you,
+   which is where the decimal point goes. */
+
+const CRP_LABELS = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28,
+                    30, 35, 40, 45, 50, 55, 60, 70, 80, 90];
+const crpAng = v => 360 * ((Math.log10(v) % 1) + 1) % 360;
+/** Reduce any positive number to [10,100) and remember the decades taken out. */
+function crpMant(v) {
+  let m = v, d = 0;
+  while (m >= 100) { m /= 10; d++; }
+  while (m < 10) { m *= 10; d--; }
+  return { m: m, d: d };
+}
+
+let CRP = null;   // { rot, mode, task, answered }
+
+function crpScale(r0, r1, cls, rot) {
+  let out = '';
+  const tick = (v, len, w) => {
+    const a = (crpAng(v) + rot - 90) * Math.PI / 180;
+    const x0 = 160 + Math.cos(a) * r0, y0 = 160 + Math.sin(a) * r0;
+    const x1 = 160 + Math.cos(a) * (r0 + len), y1 = 160 + Math.sin(a) * (r0 + len);
+    out += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke-width="${w}"/>`;
+  };
+  for (let v = 10; v < 100; v += 0.1) {
+    const nv = +v.toFixed(1);
+    if (nv >= 50 && Math.round(nv * 10) % 5 !== 0) continue;
+    if (nv >= 20 && nv < 50 && Math.round(nv * 10) % 2 !== 0) continue;
+    tick(nv, (r1 - r0) * 0.35, 0.6);
+  }
+  for (let v = 10; v < 100; v += (v < 20 ? 0.5 : v < 50 ? 1 : 5)) tick(+v.toFixed(1), (r1 - r0) * 0.6, 0.9);
+  CRP_LABELS.forEach(v => {
+    tick(v, (r1 - r0) * 0.95, 1.5);
+    const a = (crpAng(v) + rot - 90) * Math.PI / 180;
+    const rt = r0 + (r1 - r0) * 1.42;
+    out += `<text x="${(160 + Math.cos(a) * rt).toFixed(1)}" y="${(160 + Math.sin(a) * rt + 3.4).toFixed(1)}"
+      text-anchor="middle" class="lb">${v}</text>`;
+  });
+  return `<g class="${cls}">${out}</g>`;
+}
+
+function crpDial() {
+  const rot = CRP.rot;
+  const ratio = Math.pow(10, rot / 360);
+  return `<svg viewBox="0 0 320 320" class="crp" role="img" aria-label="Circular slide rule">
+    <circle cx="160" cy="160" r="152" class="rim"/>
+    ${crpScale(118, 138, 'outer', 0)}
+    <circle cx="160" cy="160" r="112" class="inner-bg"/>
+    ${crpScale(74, 94, 'inner', rot)}
+    <g class="idx" transform="rotate(${rot} 160 160)">
+      <path d="M160 44 l-6 12 h12 z"/>
+    </g>
+    <circle cx="160" cy="160" r="30" class="hub"/>
+    <text x="160" y="156" text-anchor="middle" class="hub-t">RATIO</text>
+    <text x="160" y="172" text-anchor="middle" class="hub-v">${ratio.toFixed(3)}</text>
+    <path d="M160 8 l-7 14 h14 z" class="mark"/>
+  </svg>`;
+}
+
+/* The three families of problem a PPL actually works on the circular side. Each is
+   the same ratio; only the labels and the decimal-point sense differ. */
+const CRP_TASKS = [
+  { k: 'tsd', t: 'Time, speed, distance',
+    fields: [['spd', 'Groundspeed', 'kt'], ['dist', 'Distance', 'nm'], ['mins', 'Time', 'min']],
+    solve: v => v.spd && v.dist ? { mins: v.dist * 60 / v.spd }
+              : v.spd && v.mins ? { dist: v.spd * v.mins / 60 }
+              : v.dist && v.mins ? { spd: v.dist * 60 / v.mins } : null,
+    how: 'Set the <b>speed on the outer scale</b> against the <b>60 index</b> on the inner. '
+       + 'Every distance on the outer now reads its time on the inner, both ways, for as long '
+       + 'as the speed holds.' },
+  { k: 'fuel', t: 'Fuel',
+    fields: [['rate', 'Fuel flow', 'l/h'], ['mins', 'Time', 'min'], ['qty', 'Fuel used', 'l']],
+    solve: v => v.rate && v.mins ? { qty: v.rate * v.mins / 60 }
+              : v.rate && v.qty ? { mins: v.qty * 60 / v.rate }
+              : v.mins && v.qty ? { rate: v.qty * 60 / v.mins } : null,
+    how: 'Identical to time and distance: <b>flow on the outer against the 60 index</b>, then '
+       + 'read quantity against time. Fuel is where the decimal point bites — the scale cannot '
+       + 'tell 7.5 from 75 from 750.' },
+  { k: 'conv', t: 'Conversions',
+    fields: [['a', 'Litres', 'l'], ['b', 'US gallons', 'usg']],
+    solve: v => v.a ? { b: v.a / 3.785 } : v.b ? { a: v.b * 3.785 } : null,
+    how: 'A conversion is a fixed ratio, so it is one setting of the disc. Line the two units '
+       + 'up once and every other pair is already aligned — that is the whole trick.' }
+];
+
+/** The rotation that puts value `o` on the outer scale against `i` on the inner. */
+const crpSet = (o, i) => ((crpAng(crpMant(o).m) - crpAng(crpMant(i).m)) % 360 + 360) % 360;
+
+VIEWS.crp = function (p) {
+  navbar('Navigation computer', '');
+  if (!CRP) CRP = { rot: 0, task: 'tsd', v: {}, drill: null, said: '' };
+  const task = CRP_TASKS.find(t => t.k === CRP.task);
+
+  html(`<div class="hd" style="padding-top:12px"><h1 class="vt">The circular slide rule</h1>
+    <div class="sub">The computer side of a CRP-1. Drag the dial, or fill in what you know and
+    watch where it sets itself.</div></div>`);
+
+  html(`<div class="seg" id="crpTab">` + CRP_TASKS.map(t =>
+    `<button data-ct="${t.k}" aria-selected="${t.k === CRP.task}">${t.t.split(',')[0]}</button>`).join('') + '</div>');
+  bind('#crpTab button', e => { CRP.task = e.currentTarget.dataset.ct; CRP.v = {}; CRP.said = ''; render(); });
+
+  html(`<div class="crpwrap">${crpDial()}</div>`);
+  html(`<div class="note b"><b>${esc(task.t)}</b>${task.how}</div>`);
+
+  html('<div class="card" style="margin-top:12px">' + task.fields.map(([k, lab, unit]) => `
+    <div class="fld"><label class="f" for="cv_${k}">${lab} <span style="opacity:.6">(${unit})</span></label>
+      <input type="number" inputmode="decimal" id="cv_${k}" class="ti" value="${CRP.v[k] == null ? '' : CRP.v[k]}"></div>`).join('')
+    + `<div class="brow" style="margin-top:12px">
+        <button class="btn sec sm" id="crpGo">Set the dial</button>
+        <button class="btn grey sm" id="crpClr">Clear</button></div>
+       ${CRP.said ? `<div class="note ${CRP.said.indexOf('Set ') === 0 ? 'b' : 'o'}" style="margin-top:12px">${CRP.said}</div>` : ''}
+      </div>`);
+
+  const readFields = () => {
+    const v = {};
+    task.fields.forEach(([k]) => { const el = $('#cv_' + k); const n = parseFloat(el.value);
+      if (el.value.trim() !== '' && isFinite(n) && n > 0) v[k] = n; });
+    return v;
+  };
+
+  $('#crpClr').onclick = () => { CRP.v = {}; CRP.said = ''; CRP.rot = 0; render(); };
+  $('#crpGo').onclick = () => {
+    const v = readFields();
+    if (Object.keys(v).length < (task.fields.length - 1)) {
+      CRP.said = 'Fill in any ' + (task.fields.length - 1) + ' of the ' + task.fields.length + ' boxes.';
+      render(); return;
+    }
+    const got = task.solve(v);
+    if (!got) { CRP.said = 'That combination cannot be solved — check the numbers.'; render(); return; }
+    Object.assign(v, got);
+    CRP.v = v;
+    // the setting itself: rate problems go against the 60 index, a conversion against its pair
+    if (CRP.task === 'conv') CRP.rot = crpSet(v.a, v.b);
+    else CRP.rot = crpSet(CRP.task === 'tsd' ? v.spd : v.rate, 60);
+    const key = Object.keys(got)[0];
+    const f = task.fields.find(x => x[0] === key);
+    CRP.said = 'Set ' + (CRP.task === 'conv'
+        ? fmtN(v.a) + ' l against ' + fmtN(v.b) + ' usg'
+        : fmtN(CRP.task === 'tsd' ? v.spd : v.rate) + ' on the outer against the 60 index')
+      + '. Reading off: <b>' + f[1] + ' ' + fmtN(got[key]) + ' ' + f[2] + '</b>.'
+      + (got[key] < 10 || got[key] >= 100
+          ? ' Note the dial itself only shows the digits — you place the decimal point.' : '');
+    render();
+  };
+
+  wireDial();
+
+  html(`<div class="foot">A real CRP-1 has a wind side too, and a temperature/altitude window
+    for TAS and density altitude. Those are coming.</div>`);
+};
+
+const fmtN = n => (Math.abs(n - Math.round(n)) < 0.05 ? String(Math.round(n)) : n.toFixed(1));
+
+/** Drag anywhere on the dial to rotate the inner scale. */
+function wireDial() {
+  const svg = $('.crp'); if (!svg) return;
+  let last = null;
+  const angAt = e => {
+    const r = svg.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const pt = e.touches ? e.touches[0] : e;
+    return Math.atan2(pt.clientY - cy, pt.clientX - cx) * 180 / Math.PI;
+  };
+  const down = e => { last = angAt(e); e.preventDefault(); };
+  const move = e => {
+    if (last == null) return;
+    const a = angAt(e);
+    let d = a - last; if (d > 180) d -= 360; if (d < -180) d += 360;
+    CRP.rot = ((CRP.rot + d) % 360 + 360) % 360; last = a;
+    const g = svg.querySelector('.inner'), ix = svg.querySelector('.idx');
+    if (g) g.setAttribute('transform', `rotate(${CRP.rot - (CRP.rotBase || 0)} 160 160)`);
+    if (ix) ix.setAttribute('transform', `rotate(${CRP.rot} 160 160)`);
+    const hv = svg.querySelector('.hub-v');
+    if (hv) hv.textContent = Math.pow(10, CRP.rot / 360).toFixed(3);
+    e.preventDefault();
+  };
+  const up = () => { if (last != null) { last = null; CRP.rotBase = 0; render(); } };
+  svg.addEventListener('pointerdown', e => { svg.setPointerCapture(e.pointerId); CRP.rotBase = CRP.rot; down(e); });
+  svg.addEventListener('pointermove', move);
+  svg.addEventListener('pointerup', up);
+  svg.addEventListener('pointercancel', up);
+}
 
 /* ============================ FLIGHT LOG ============================ */
 /* A simple logbook, plus the thing that makes it worth keeping here: progress
