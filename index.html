@@ -331,10 +331,8 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
 .acfound .nm{flex:1;min-width:0;font-size:15px;line-height:1.3}
 .acfound .nm i{display:block;font-style:normal;font-size:12.5px;color:var(--tx2);margin-top:1px}
 .acfound .tick{flex:none;color:var(--green);font-size:15px;font-weight:700;align-self:center}
-/* the multi-leg field lists a route rather than one aerodrome */
-.acfound.route{border-color:var(--blue)}
-.acfound.route .r{font-size:14.5px;color:var(--tx);font-weight:600;display:block;
-  line-height:1.45;word-break:break-word}
+/* a multi-stop field stacks the same row once per leg, hairline-separated */
+.acfound .r + .r{border-top:.5px solid var(--sep2)}
 
 /* confirmation sheet — window.confirm() is silently ignored in some embedded browsers */
 .sheetwrap{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;

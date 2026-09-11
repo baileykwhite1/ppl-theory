@@ -1440,14 +1440,16 @@ function wireAirfield(inputSel, listSel, foundSel, onPick, multi) {
     // typing a code in full counts as picking it, so callers still get their callback
     if (exact && exact[0] !== lastExact) { lastExact = exact[0]; if (onPick) onPick(exact); }
     if (!exact) lastExact = '';
-    found.className = 'acfound' + (multi ? ' route' : '');
+    // one row per aerodrome, in the shape it was picked from — a multi-stop field is
+    // just several of them, in the order they will be flown
+    const rowFor = a => '<div class="r"><span class="cd">' + esc(a[0]) + '</span>'
+      + '<span class="nm">' + esc(a[1])
+      + (a[2] ? '<i>' + esc(a[2]) + '</i>' : '') + '</span>'
+      + '<span class="tick">\u2713</span></div>';
+    found.className = 'acfound';
     found.innerHTML = exact
-      ? (multi
-          ? '<div class="r">' + esc(codesOf(inp.value).map(c => (afByCode(c) || [c, c])[1]).join(' \u2192 ')) + '</div>'
-          : '<div class="r"><span class="cd">' + esc(exact[0]) + '</span>'
-            + '<span class="nm">' + esc(exact[1])
-            + (exact[2] ? '<i>' + esc(exact[2]) + '</i>' : '') + '</span>'
-            + '<span class="tick">\u2713</span></div>')
+      ? (multi ? codesOf(inp.value).map(c => rowFor(afByCode(c) || [c, c, ''])).join('')
+               : rowFor(exact))
       : '';
     found.style.display = exact ? 'block' : 'none';
     const hits = exact ? [] : afSearch(v, 6);
