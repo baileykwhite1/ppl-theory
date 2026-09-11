@@ -19,6 +19,20 @@
   --fill:rgba(120,120,128,.12); --fill2:rgba(120,120,128,.20);
   --bar:rgba(249,249,249,.82);
   --sh:0 1px 2px rgba(0,0,0,.04);
+  /* Liquid glass. The chrome is a lens over the content: it tints, blurs and
+     over-saturates what is behind it, and carries a lit top edge so it reads as a
+     physical pane rather than a flat translucent rectangle. Content never uses it —
+     text has to sit on something opaque to stay readable. */
+  --glass:rgba(255,255,255,.60);
+  --glass-dense:rgba(252,252,253,.96);
+  --glass-lens:saturate(185%) blur(26px);
+  --glass-edge:inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(255,255,255,.22),
+               inset 0 0 0 .5px rgba(255,255,255,.45);
+  /* the neutral hairline is what gives the pane an edge against near-white content;
+     in dark the lit inner rim does that job on its own */
+  --glass-sh:0 0 0 .5px rgba(0,0,0,.07), 0 10px 30px rgba(0,0,0,.11), 0 2px 6px rgba(0,0,0,.05);
+  --glass-fill:rgba(120,120,128,.16);
+  --r-lg:18px; --r-md:15px; --r-sm:11px;
 }
 @media (prefers-color-scheme:dark){:root:not([data-t="light"]){
   --bg:#000; --bg2:#1c1c1e; --card:#1c1c1e; --card2:#2c2c2e;
@@ -29,6 +43,13 @@
   --fill:rgba(120,120,128,.24); --fill2:rgba(120,120,128,.36);
   --bar:rgba(28,28,30,.82);
   --sh:none;
+  --glass:rgba(28,28,30,.58);
+  --glass-dense:rgba(38,38,42,.96);
+  --glass-lens:saturate(180%) blur(26px);
+  --glass-edge:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(255,255,255,.03),
+               inset 0 0 0 .5px rgba(255,255,255,.09);
+  --glass-sh:0 10px 34px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.4);
+  --glass-fill:rgba(120,120,128,.26);
 }}
 :root[data-t="dark"]{
   --bg:#000; --bg2:#1c1c1e; --card:#1c1c1e; --card2:#2c2c2e;
@@ -38,6 +59,13 @@
   --purple:#bf5af2; --teal:#40c8e0; --indigo:#5e5ce6; --pink:#ff375f; --brown:#ac8e68;
   --fill:rgba(120,120,128,.24); --fill2:rgba(120,120,128,.36);
   --bar:rgba(28,28,30,.82); --sh:none;
+  --glass:rgba(28,28,30,.58);
+  --glass-dense:rgba(38,38,42,.96);
+  --glass-lens:saturate(180%) blur(26px);
+  --glass-edge:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(255,255,255,.03),
+               inset 0 0 0 .5px rgba(255,255,255,.09);
+  --glass-sh:0 10px 34px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.4);
+  --glass-fill:rgba(120,120,128,.26);
 }
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -67,7 +95,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;letter
 [hidden]{display:none!important}
 
 /* ---------- layout ---------- */
-#app{max-width:720px;margin:0 auto;padding:0 16px calc(88px + env(safe-area-inset-bottom))}
+#app{max-width:720px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom))}
 .hd{padding:8px 0 4px}
 .hd h1{font-size:34px;font-weight:700;letter-spacing:-.03em}
 .hd .sub{color:var(--tx2);font-size:15px;line-height:1.4;margin-top:3px;max-width:34em}
@@ -80,9 +108,10 @@ h2.sec:first-child{margin-top:14px}
 .blk.lead > h2.sec{margin-top:14px}
 
 /* nav bar for pushed views */
-.nav{position:sticky;top:0;z-index:30;background:var(--bar);
-  backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-bottom:.5px solid var(--sep);margin:0 -16px 0;padding:env(safe-area-inset-top) 8px 0;
+.nav{position:sticky;top:0;z-index:30;background:var(--glass);
+  backdrop-filter:var(--glass-lens);-webkit-backdrop-filter:var(--glass-lens);
+  box-shadow:0 1px 0 var(--sep2), 0 8px 22px -18px rgba(0,0,0,.5);
+  margin:0 -16px 0;padding:env(safe-area-inset-top) 8px 0;
   display:flex;align-items:center;gap:4px;min-height:44px}
 .nav .back{color:var(--blue);font-size:17px;padding:10px 8px;display:flex;align-items:center;gap:2px}
 .nav .ttl{flex:1;text-align:center;font-size:17px;font-weight:600;padding:10px 0;
@@ -90,18 +119,31 @@ h2.sec:first-child{margin-top:14px}
 .nav .rt{min-width:60px;text-align:right;color:var(--blue);font-size:17px;padding:10px 8px}
 
 /* ---------- tab bar ---------- */
-#tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;
-  background:var(--bar);backdrop-filter:saturate(180%) blur(20px);
-  -webkit-backdrop-filter:saturate(180%) blur(20px);
-  border-top:.5px solid var(--sep);padding-bottom:env(safe-area-inset-bottom)}
-#tabs button{flex:1;padding:7px 0 5px;display:flex;flex-direction:column;align-items:center;
-  gap:2px;color:var(--tx3);font-size:9.5px;font-weight:500;letter-spacing:0;min-width:0}
-#tabs button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;
-  stroke-linecap:round;stroke-linejoin:round}
+/* A capsule floating clear of the edge, with the page visibly moving underneath it.
+   Sitting off the bottom is what separates glass from a tinted bar stuck to the frame. */
+#tabs{position:fixed;left:max(10px,env(safe-area-inset-left));
+  right:max(10px,env(safe-area-inset-right));
+  bottom:calc(8px + env(safe-area-inset-bottom));z-index:40;display:flex;
+  border-radius:26px;padding:5px 4px;
+  background:var(--glass);backdrop-filter:var(--glass-lens);
+  -webkit-backdrop-filter:var(--glass-lens);
+  box-shadow:var(--glass-sh), var(--glass-edge)}
+#tabs button{flex:1;padding:6px 0 5px;display:flex;flex-direction:column;align-items:center;
+  gap:2px;color:var(--tx2);font-size:9.5px;font-weight:500;letter-spacing:0;min-width:0;
+  border-radius:20px;position:relative;transition:color .18s}
+#tabs button svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;transition:transform .22s cubic-bezier(.2,.9,.3,1.4)}
 #tabs button[aria-selected="true"]{color:var(--blue)}
+/* the lit pill that travels to the selected tab */
+#tabs button[aria-selected="true"]::before{content:"";position:absolute;inset:1px 2px;
+  border-radius:19px;background:var(--glass-fill);
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.5)}
+#tabs button[aria-selected="true"] svg{transform:translateY(-1px) scale(1.06)}
+#tabs button > *{position:relative}
+#tabs button:active svg{transform:scale(.9)}
 
 /* ---------- grouped list ---------- */
-.grp{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:var(--sh)}
+.grp{background:var(--card);border-radius:var(--r-md);overflow:hidden;box-shadow:var(--sh)}
 .grp + .grp{margin-top:16px}
 .row{display:flex;align-items:center;gap:12px;padding:12px 16px;position:relative;width:100%;
   text-align:left;min-height:48px}
@@ -125,10 +167,10 @@ h2.sec:first-child{margin-top:14px}
 .row.plain{display:block;padding:14px 16px}
 
 /* ---------- cards & tiles ---------- */
-.card{background:var(--card);border-radius:14px;padding:16px;box-shadow:var(--sh)}
+.card{background:var(--card);border-radius:var(--r-lg);padding:16px;box-shadow:var(--sh)}
 .card + .card{margin-top:12px}
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
-.tile{background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--sh);
+.tile{background:var(--card);border-radius:var(--r-md);padding:14px;box-shadow:var(--sh);
   display:flex;flex-direction:column;gap:2px;text-align:left;position:relative}
 .tile .k{padding-right:26px}
 .info{position:absolute;top:9px;right:9px;width:22px;height:22px;border-radius:50%;
@@ -145,11 +187,16 @@ h2.sec:first-child{margin-top:14px}
 .tile .s{font-size:13px;color:var(--tx2)}
 
 /* buttons */
-.btn{display:block;width:100%;background:var(--blue);color:#fff;border-radius:12px;
+.btn{display:block;width:100%;background:var(--blue);color:#fff;border-radius:14px;
+  transition:transform .14s cubic-bezier(.2,.9,.3,1.2), filter .14s;
   padding:14px;font-size:17px;font-weight:600;text-align:center}
-.btn:active{opacity:.8}
-.btn.sec{background:var(--fill);color:var(--blue)}
-.btn.grey{background:var(--fill);color:var(--tx)}
+.btn:active{transform:scale(.975);filter:brightness(.93)}
+/* secondary actions are the glass ones: present, but clearly behind the primary */
+.btn.sec,.btn.grey{background:var(--glass-fill);
+  backdrop-filter:var(--glass-lens);-webkit-backdrop-filter:var(--glass-lens);
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.5)}
+.btn.sec{color:var(--blue)}
+.btn.grey{color:var(--tx)}
 .btn.grn{background:var(--green)}
 .btn.warn{background:var(--orange)}
 .btn.dgr{background:var(--red)}
@@ -159,10 +206,12 @@ h2.sec:first-child{margin-top:14px}
 .brow .btn{flex:1}
 
 /* segmented control */
-.seg{display:flex;background:var(--fill);border-radius:9px;padding:2px;margin:4px 0 14px}
+.seg{display:flex;background:var(--fill);border-radius:12px;padding:3px;margin:4px 0 14px;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.05)}
 .seg button{flex:1;padding:7px 4px;font-size:13px;font-weight:600;border-radius:7px;
   color:var(--tx);white-space:nowrap}
-.seg button[aria-selected="true"]{background:var(--bg2);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.seg button[aria-selected="true"]{background:var(--bg2);
+  box-shadow:0 2px 6px rgba(0,0,0,.13), inset 0 .5px 0 rgba(255,255,255,.7)}
 
 /* progress */
 .pbar{height:6px;background:var(--fill);border-radius:99px;overflow:hidden}
@@ -247,8 +296,11 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
   :root:not([data-t="light"]) .wpin span{color:#e8f2ff;background:rgba(18,22,28,.8)}}
 /* circular icon button — the glyph should fill the bubble, not float in it */
 .rndbtn{flex:none;width:38px;height:38px;border:0;padding:0;border-radius:50%;
-  background:var(--fill);color:var(--tx2);display:grid;place-items:center;cursor:pointer}
-.rndbtn:active{background:var(--fill2)}
+  background:var(--glass-fill);backdrop-filter:var(--glass-lens);
+  -webkit-backdrop-filter:var(--glass-lens);color:var(--tx2);display:grid;place-items:center;
+  cursor:pointer;box-shadow:inset 0 .5px 0 rgba(255,255,255,.5);
+  transition:transform .14s cubic-bezier(.2,.9,.3,1.3)}
+.rndbtn:active{background:var(--fill2);transform:scale(.92)}
 .rndbtn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;
   stroke-linecap:round;stroke-linejoin:round}
 .map text{font:600 8px ui-monospace,Menlo,monospace;fill:currentColor;opacity:.75}
@@ -337,12 +389,15 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
 /* confirmation sheet — window.confirm() is silently ignored in some embedded browsers */
 .sheetwrap{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;
   justify-content:center;pointer-events:none}
-.sheetbg{position:absolute;inset:0;background:rgba(0,0,0,.35);opacity:0;transition:.24s;
-  pointer-events:auto}
+.sheetbg{position:absolute;inset:0;background:rgba(0,0,0,.42);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;transition:.24s;pointer-events:auto}
 .sheetwrap.in .sheetbg{opacity:1}
 .sheet{position:relative;width:100%;max-width:520px;margin:0 12px
-  calc(12px + env(safe-area-inset-bottom));background:var(--bg2);border-radius:18px;
-  padding:20px 18px 16px;box-shadow:0 8px 40px rgba(0,0,0,.28);
+  calc(12px + env(safe-area-inset-bottom));background:var(--glass-dense);
+  backdrop-filter:var(--glass-lens);-webkit-backdrop-filter:var(--glass-lens);
+  border-radius:24px;
+  padding:20px 18px 16px;box-shadow:0 18px 50px rgba(0,0,0,.30), var(--glass-edge);
   transform:translateY(20px);opacity:0;transition:.26s cubic-bezier(.2,.8,.2,1);
   pointer-events:auto}
 .sheetwrap.in .sheet{transform:none;opacity:1}
@@ -402,18 +457,22 @@ h2.sec::before{content:"";width:4px;height:12px;border-radius:2px;background:var
   /* the back control belongs at the edge of the column, not centred over it */
   #app > .nav .ttl{text-align:left;padding-left:6px}
 
-  /* tab bar becomes a side rail */
-  #tabs{top:0;right:auto;bottom:0;width:var(--rail);flex-direction:column;
-    justify-content:flex-start;gap:2px;border-top:0;border-right:.5px solid var(--sep);
-    padding:calc(env(safe-area-inset-top) + 18px) 12px 18px}
+  /* The capsule unrolls into a glass rail. The floating-pill geometry is undone
+     explicitly, since the mobile rule sets left/bottom/radius. */
+  #tabs{top:0;left:0;right:auto;bottom:0;width:var(--rail);flex-direction:column;
+    justify-content:flex-start;gap:2px;border-radius:0;
+    padding:calc(env(safe-area-inset-top) + 18px) 12px 18px;
+    box-shadow:1px 0 0 var(--sep2), 10px 0 30px -24px rgba(0,0,0,.6)}
   #tabs::before{content:"PPL(A) Theory";display:block;font-size:12px;font-weight:700;
     letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);padding:0 10px 14px}
   #tabs button{flex:none;flex-direction:row;justify-content:flex-start;gap:12px;
-    width:100%;padding:9px 10px;border-radius:9px;font-size:14.5px;font-weight:500;
+    width:100%;padding:9px 10px;border-radius:11px;font-size:14.5px;font-weight:500;
     letter-spacing:-.01em;color:var(--tx2)}
   #tabs button svg{width:21px;height:21px}
   #tabs button:hover{background:var(--fill)}
-  #tabs button[aria-selected="true"]{background:var(--fill);color:var(--blue);font-weight:600}
+  #tabs button[aria-selected="true"]{color:var(--blue);font-weight:600}
+  #tabs button[aria-selected="true"]::before{inset:0;border-radius:11px}
+  #tabs button[aria-selected="true"] svg{transform:none}
 }
 @media (min-width:1280px){
   /* only the multi-column views widen — a single column of prose at 1080px would be
