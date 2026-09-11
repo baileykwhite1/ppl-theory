@@ -91,7 +91,7 @@ less baggage, not less reserve.</p>
 </ul></div>`
 },
 {
-  id: '030-performance', title: 'Take-off, landing and climb performance', mins: 7, tags: ['032.01', '034.01'],
+  id: '030-performance', title: 'Take-off, landing and climb performance', mins: 7, tags: ['032.01'],
   body: `
 <h3>The four things that ruin performance</h3>
 <p>Everything on the take-off run comes down to <b>air density</b> and <b>mass</b>. Density falls
@@ -179,7 +179,7 @@ can no longer produce useful power, because TAS rises for the same IAS.</p>
 </ul></div>`
 },
 {
-  id: '030-planning', title: 'Flight planning and the decisions in it', mins: 6, tags: ['033.01', '033.02', '034.01'],
+  id: '030-planning', title: 'Flight planning and the decisions in it', mins: 6, tags: ['033.01', '033.02', '033.03', '033.04'],
   body: `
 <h3>The order of work</h3>
 <p>A good plan is built in a fixed order so nothing gets forgotten:</p>
