@@ -1535,4 +1535,106 @@ flapTypes: {
 </svg>`
 },
 
+minheights: {
+  alt: 'Three side-by-side cross-sections on one ground line: an aeroplane 500 ft above a radio mast in open country, 1000 ft above a tall chimney over town rooftops, and at night 1000 ft or 2000 ft above a hill summit, with orange bars beneath showing the 500 ft, 600 m and 8 km radii drawn to one scale.',
+  cap: 'The three minimum-height rules on one ground line and one vertical scale; each dashed line is the lowest height permitted. Open country by day: 500 ft above the ground, or 500 ft above the highest obstacle within 500 ft of you — so the floor steps up over the mast. Congested area by day: 1000 ft above the highest obstacle within 600 m, measured from the chimney top, never from the ground. Night: 1000 ft above the highest obstacle within 8 km, or 2000 ft over high terrain or in mountainous areas — the hill sets your floor even over the flat ground beside it. The orange radius bars share one scale: 600 m is nearly four times 500 ft, and 8 km is more than fifty times it, far beyond the page.',
+  svg: `<svg class="dg" viewBox="0 0 640 302" role="img" aria-label="The 500 ft, 1000 ft and night minimum-height rules drawn side by side on one ground line, with their 500 ft, 600 m and 8 km radii as orange bars to a common scale">
+  <defs><marker id="minheights-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker></defs>
+
+  <!-- panel headings -->
+  <text x="12" y="22" class="b">Open country, by day</text>
+  <text x="12" y="41" class="s">above ground or obstacle</text>
+  <text x="226" y="22" class="b">Congested area, by day</text>
+  <text x="226" y="41" class="s">above the highest obstacle</text>
+  <text x="440" y="22" class="b">At night</text>
+  <text x="440" y="41" class="s">above the highest obstacle</text>
+
+  <!-- panel separators (sky only) and common ground line -->
+  <line x1="214" y1="8" x2="214" y2="236" class="thin"/>
+  <line x1="428" y1="8" x2="428" y2="236" class="thin"/>
+  <line x1="0" y1="236" x2="496" y2="236" class="ink"/>
+
+  <!-- ===== Panel 1: open country, 500 ft rule ===== -->
+  <!-- radio mast -->
+  <path d="M129 236 L135 206 L141 236" class="ink"/>
+  <line x1="133" y1="216" x2="137" y2="216" class="ink"/>
+  <line x1="131" y1="226" x2="139" y2="226" class="ink"/>
+  <!-- minimum-height floor: 500 ft agl, stepping up to 500 ft above the mast within 500 ft of it -->
+  <path d="M12 200 H115" class="ink dash"/>
+  <path d="M115 170 H155" class="ink dash"/>
+  <path d="M155 200 H206" class="ink dash"/>
+  <!-- 500 ft from the ground -->
+  <line x1="60" y1="236" x2="60" y2="200" class="ink" marker-end="url(#minheights-ar)"/>
+  <text x="66" y="222">500 ft</text>
+  <!-- 500 ft from the mast top -->
+  <line x1="135" y1="206" x2="143" y2="206" class="thin"/>
+  <line x1="143" y1="206" x2="143" y2="170" class="ink" marker-end="url(#minheights-ar)"/>
+  <text x="149" y="192">500 ft</text>
+  <!-- aeroplane on the raised floor -->
+  <g transform="translate(135 163)">
+    <path d="M-12 0 L-11 -3 L6 -3 L12 -1 L12 1 L6 2.5 L-11 2.5 Z M-11 -3 L-8 -9 L-5 -9 L-6 -3 Z M-2 2.5 L4 2.5 L2 5 L-4 5 Z M-12 -1 L-15 -1.5 L-14 0 Z" class="fill"/>
+  </g>
+  <!-- radius bar: 500 ft either side -->
+  <line x1="115" y1="266" x2="155" y2="266" class="orange ink"/>
+  <line x1="115" y1="261" x2="115" y2="271" class="orange ink"/>
+  <line x1="155" y1="261" x2="155" y2="271" class="orange ink"/>
+  <line x1="135" y1="263" x2="135" y2="269" class="orange ink"/>
+  <text x="135" y="288" text-anchor="middle" class="orange-t">radius 500 ft</text>
+
+  <!-- ===== Panel 2: congested area, 1000 ft rule ===== -->
+  <!-- rooftops and one tall chimney -->
+  <path d="M228 236 V229 L235 222 L242 229 L249 222 L256 229 L263 222 L270 229 L277 222 L284 229 L291 222 L298 229 L305 222 L312 229 V236" class="ink"/>
+  <rect x="316" y="206" width="10" height="30" class="ink"/>
+  <path d="M348 236 V229 L355 222 L362 229 L369 222 L376 229 L383 222 L390 229 L397 222 L404 229 L411 222 L418 229 V236" class="ink"/>
+  <!-- floor: 1000 ft above the chimney top -->
+  <path d="M224 134 H418" class="ink dash"/>
+  <!-- 1000 ft arrow, foot on the chimney top -->
+  <line x1="326" y1="206" x2="340" y2="206" class="thin"/>
+  <line x1="340" y1="206" x2="340" y2="134" class="ink" marker-end="url(#minheights-ar)"/>
+  <text x="346" y="174">1000 ft</text>
+  <!-- construction line to the ground: the wrong datum -->
+  <line x1="340" y1="206" x2="340" y2="236" class="thin"/>
+  <line x1="336.5" y1="232.5" x2="343.5" y2="239.5" class="ink"/>
+  <line x1="336.5" y1="239.5" x2="343.5" y2="232.5" class="ink"/>
+  <text x="330" y="254" text-anchor="end" class="s">not from here</text>
+  <!-- aeroplane -->
+  <g transform="translate(321 127)">
+    <path d="M-12 0 L-11 -3 L6 -3 L12 -1 L12 1 L6 2.5 L-11 2.5 Z M-11 -3 L-8 -9 L-5 -9 L-6 -3 Z M-2 2.5 L4 2.5 L2 5 L-4 5 Z M-12 -1 L-15 -1.5 L-14 0 Z" class="fill"/>
+  </g>
+  <!-- radius bar: 600 m either side, same scale as panel 1 -->
+  <line x1="242.3" y1="266" x2="399.7" y2="266" class="orange ink"/>
+  <line x1="242.3" y1="261" x2="242.3" y2="271" class="orange ink"/>
+  <line x1="399.7" y1="261" x2="399.7" y2="271" class="orange ink"/>
+  <line x1="321" y1="263" x2="321" y2="269" class="orange ink"/>
+  <text x="321" y="288" text-anchor="middle" class="orange-t">radius 600 m</text>
+
+  <!-- ===== Panel 3: night ===== -->
+  <!-- terrain: lowland then a hill -->
+  <path d="M496 236 L536 228 L566 212 L590 200 L608 212 L626 222 L640 226" class="ink"/>
+  <!-- two floors, both measured from the summit (highest obstacle within 8 km) -->
+  <path d="M436 128 H632" class="ink dash"/>
+  <path d="M436 56 H632" class="ink dash"/>
+  <line x1="590" y1="200" x2="590" y2="128" class="ink" marker-end="url(#minheights-ar)"/>
+  <text x="584" y="164" text-anchor="end">1000 ft</text>
+  <text x="584" y="183" text-anchor="end" class="s">elsewhere</text>
+  <line x1="590" y1="200" x2="604" y2="200" class="thin"/>
+  <line x1="604" y1="200" x2="604" y2="56" class="ink" marker-end="url(#minheights-ar)"/>
+  <text x="596" y="74" text-anchor="end">2000 ft</text>
+  <text x="596" y="93" text-anchor="end" class="s">high terrain</text>
+  <text x="596" y="112" text-anchor="end" class="s">or mountainous</text>
+  <!-- aeroplane over the flat ground, on the 1000 ft floor -->
+  <g transform="translate(470 121)">
+    <path d="M-12 0 L-11 -3 L6 -3 L12 -1 L12 1 L6 2.5 L-11 2.5 Z M-11 -3 L-8 -9 L-5 -9 L-6 -3 Z M-2 2.5 L4 2.5 L2 5 L-4 5 Z M-12 -1 L-15 -1.5 L-14 0 Z" class="fill"/>
+  </g>
+  <line x1="470" y1="128" x2="470" y2="261" class="thin dash"/>
+  <!-- radius bar: 8 km either side, same scale, runs off both edges -->
+  <line x1="426" y1="266" x2="632" y2="266" class="orange ink"/>
+  <path d="M426 261 L420 266 L426 271" class="orange ink"/>
+  <path d="M632 261 L638 266 L632 271" class="orange ink"/>
+  <line x1="470" y1="263" x2="470" y2="269" class="orange ink"/>
+  <text x="470" y="288" text-anchor="middle" class="orange-t">radius 8 km</text>
+</svg>`
+},
+
 };

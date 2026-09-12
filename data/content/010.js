@@ -208,6 +208,7 @@ not.</li>
 <p>Two numbers, and a great deal of misunderstanding about which applies where.</p>
 
 <h3>The 500 ft rule</h3>
+<figure data-d="minheights"></figure>
 <p>Except when taking off or landing, or with permission, a VFR flight shall not be flown at a
 height less than <b>500 ft above the ground or water</b>, or 500 ft above the highest obstacle
 within a radius of <b>500 ft</b> of the aircraft. This is the general low-flying rule and it
@@ -631,6 +632,7 @@ other pointing at the fire.</li>
 </ul>
 
 <h3>Ground to air: the survivor's code</h3>
+<figure data-d="sarsignals"></figure>
 <p>Five symbols, laid out at least <b>2.5 m (8 ft)</b> long and made as conspicuous as you can
 manage &mdash; fabric, wood, stones, trampled snow, spilt oil (ICAO Annex 12, Appendix).</p>
 <table>

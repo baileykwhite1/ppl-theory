@@ -343,6 +343,7 @@ your level correctly regardless of your subscale setting), and <b>Mode S</b> add
 identity and data. Select ALT to make Mode C work.</p>
 
 <h3>The codes that matter</h3>
+<figure data-d="transponder"></figure>
 <p>A Mode A code is four digits, each <b>0 to 7</b> — 4096 of them. Eight are worth knowing cold, and <b>Mode C goes on with all of them</b>:</p>
 <table>
 <thead><tr><th>Code</th><th>Meaning, and when you set it</th></tr></thead>
