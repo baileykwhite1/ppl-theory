@@ -53,8 +53,10 @@ crossarm.</li>
 <tr><td><b>Red pyrotechnic</b></td><td>Do not land for the time being</td><td>—</td></tr>
 </tbody></table>
 <p>The pattern is worth noticing: <b>green means permission, red means stop or don't, flashes
-soften the meaning</b>. Acknowledge by rocking the wings by day, or flashing the landing light
-or navigation lights at night.</p>
+soften the meaning</b>. Acknowledge by day <b>in flight</b> by rocking the wings — though not on the base or final
+leg of the approach — and <b>on the ground</b> by moving the ailerons or rudder. By night, in
+the air and on the ground alike, flash the landing lights on and off twice, or the navigation
+lights if you carry no landing light (SERA Appendix 1, 3.1.2).</p>
 
 <h3>Runway and approach lighting</h3>
 <p>Runway edge lights are <b>white</b>; the <b>threshold</b> is <b>green</b> (seen on approach);
