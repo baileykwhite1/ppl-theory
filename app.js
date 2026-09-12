@@ -345,6 +345,18 @@ function mastery(codes) {
 }
 const doneLO = s => s.groups.reduce((a, g) => a + g.items.filter(i => S.lo[i.c]).length, 0);
 const pctLO = s => Math.round(doneLO(s) / Math.max(1, allLO(s)) * 100);
+/* Which articles claim to cover a given syllabus group. The tags are hand-assigned on
+   each article, and they are group-level: a tag says "this article covers part of that
+   group", not that every objective under it is taught. Used to link the checklist to
+   the reading, which is the only thing the tags are good enough to do. */
+const artsForLO = (() => {
+  const map = {};
+  SUBJECTS.forEach(s => (SC[s.code] ? SC[s.code].articles : []).forEach(a => {
+    (a.tags || []).forEach(t => (map[t] = map[t] || []).push({ code: s.code, id: a.id, title: a.title }));
+  }));
+  return g => map[g] || [];
+})();
+
 const arts = c => (SC[c] && SC[c].articles) || [];
 const readCount = c => arts(c).filter(a => S.read[a.id]).length;
 const passed = () => SUBJECTS.filter(s => sub(s.code).st === 'passed').length;
@@ -664,16 +676,20 @@ VIEWS.limits = function () {
       with its sliding grid. Every worked example in the maker's handbook reproduces on them. What
       no emulator gives you is speed with cold fingers on a kneeboard, so get a real one as well
       and do the same problems on both.</div></div>
-    <div class="row plain"><b>The chart</b>
-      <div class="p" style="margin-top:4px">The 1:500,000 exam questions want you to measure
-      tracks and distances, read relief and the maximum elevation figures, and identify symbols
-      under time pressure. You need a paper chart, a ruler and a protractor. Nothing on a phone
-      substitutes for that.</div></div>
-    <div class="row plain"><b>The data sheets</b>
-      <div class="p" style="margin-top:4px">Mass and balance questions are worked from the
-      aeroplane data in <b>CAP 696</b>, which is provided in the exam. Being able to find the
-      right table, read the loading graph and interpolate is most of the mark. Get a copy and
-      work through it.</div></div>
+    <div class="row plain"><b>The chart &mdash; partly covered</b>
+      <div class="p" style="margin-top:4px">There is a plotting trainer under Reference: real
+      coastline and real aerodrome positions on the projection the 1:500,000 uses, so the track
+      angles and distances you measure on it are true, and it will tell you whether your
+      protractor is square to a meridian. What it is <b>not</b> is the CAA sheet, which is
+      copyright &mdash; none of the symbols, airspace or relief are on it, and reading those under
+      time pressure is half the exam. You still need a paper chart, a ruler and a protractor.</div></div>
+    <div class="row plain"><b>The data sheets &mdash; the method only</b>
+      <div class="p" style="margin-top:4px">Mass, balance and performance are under Reference too:
+      the loading table, both envelope points and the safety factors, worked on an invented
+      aeroplane. Mass and balance questions in the exam are worked from <b>CAP 696</b>, which is
+      provided in the paper and is Crown copyright, so it is not reproduced here. Finding the
+      right table in it, reading the loading graph and interpolating is most of the mark. Get a
+      copy and work through it.</div></div>
   </div>`);
 
   html(`<h2 class="sec">How to read your score here</h2><div class="grp">
@@ -686,6 +702,13 @@ VIEWS.limits = function () {
       <div class="p" style="margin-top:4px">About ${TYPICAL_PAPER} questions, so
       <b>${margin(TYPICAL_PAPER).spare} wrong is a fail</b>. There is no room for two careless
       errors plus one thing you never learned.</div></div>
+    <div class="row plain"><b>"Covered" is coarser than it looks</b>
+      <div class="p" style="margin-top:4px">Every one of the ${SUBJECTS.reduce((a, s) => a + s.groups.length, 0)}
+      syllabus groups has an article behind it, and the Objectives tab links each group to the
+      article that treats it. That is <b>group level</b>: it means the topic is dealt with
+      somewhere in that article, not that all ${SUBJECTS.reduce((a, s) => a + allLO(s), 0)}
+      individual objectives beneath are spelled out. Where an objective looks thin, assume it
+      is and go to the book.</div></div>
     <div class="row plain"><b>Nothing here is a recommendation</b>
       <div class="p" style="margin-top:4px">Only your ATO or DTO can put you forward for an exam,
       and only an instructor can tell you whether you are ready. This app has no idea how you fly.</div></div>
@@ -803,17 +826,28 @@ VIEWS.subject = function (p) {
       <div class="pbar" style="margin-top:9px"><i style="width:${pctLO(s)}%;background:var(--${m.c})"></i></div>
       <div class="tiny" style="margin-top:10px">Your own checklist — tick these off as you
         cover them. It is not counted towards your progress on Home, which is measured from
-        articles read and questions you get right.</div>
+        articles read and questions you get right. Under each group heading is the article that
+        covers it — group level, so it means the topic is treated somewhere in there, not
+        that every objective below is spelled out.</div>
       <div class="brow" style="margin-top:12px">
         <button class="btn grey sm" id="allOff">Clear all</button></div></div>`);
     $('#allOff').onclick = () => { s.groups.forEach(g => g.items.forEach(i => delete S.lo[i.c])); save(); render(); };
 
     s.groups.forEach(g => {
-      html(`<div class="gtitle"><span>${g.code}</span><div>${esc(g.title)}</div></div><div class="grp">` +
+      const src = artsForLO(g.code);
+      html(`<div class="gtitle"><span>${g.code}</span><div>${esc(g.title)}</div></div>`
+        + (src.length ? '<div class="losrc">' + src.map(a =>
+            `<button data-gart="${a.code}:${a.id}">${esc(a.title)}</button>`).join('') + '</div>'
+          : '<div class="losrc"><span class="none">No article covers this \u2014 read it elsewhere</span></div>')
+        + '<div class="grp">' +
         g.items.map(i => `<button class="lo${S.lo[i.c] ? ' on' : ''}" data-lo="${i.c}">
           <span class="bx"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
           <span class="t">${i.t}<em>${i.c}</em></span>
         </button>`).join('') + '</div>');
+    });
+    bind('[data-gart]', e => {
+      const [c, id] = e.currentTarget.dataset.gart.split(':');
+      go('article', { code: c, id: id });
     });
     bind('[data-lo]', e => {
       const k = e.currentTarget.dataset.lo;
