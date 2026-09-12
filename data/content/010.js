@@ -381,7 +381,7 @@ whole syllabus.</p>
 </ul></div>`
 },
 {
-  id: '010-icao', title: 'The Chicago Convention, ICAO and the Annexes', mins: 7, tags: ['010.01', '010.14'],
+  id: '010-icao', title: 'The Chicago Convention, ICAO and the Annexes', mins: 7, tags: ['010.01', '010.03', '010.14'],
   body: `
 <p>Every rule you fly under traces back to one treaty, signed at Chicago on <b>7 December
 1944</b>. It settles whose sky it is, whose licence counts abroad, and who writes the rest.</p>

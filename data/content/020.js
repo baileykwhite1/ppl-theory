@@ -3,7 +3,7 @@ window.SC = window.SC || {};
 window.SC['020'] = {
 articles: [
 {
-  id: '020-airframe', title: 'Airframe, controls and undercarriage', mins: 6, tags: ['021.01', '021.02'],
+  id: '020-airframe', title: 'Airframe, controls and undercarriage', mins: 6, tags: ['021.01', '021.02', '021.04', '021.06'],
   body: `
 <h3>Structure and loads</h3>
 <p>Five basic loads act on aircraft structures: <b>tension</b>, <b>compression</b>, <b>shear</b>,
@@ -221,7 +221,7 @@ are covered in the instruments article.</p>
 </ul></div>`
 },
 {
-  id: '020-instruments', title: 'Instruments and their errors', mins: 7, tags: ['022.01', '022.02', '022.03'],
+  id: '020-instruments', title: 'Instruments and their errors', mins: 7, tags: ['022.01', '022.02', '022.03', '022.04'],
   body: `
 <h3>The pitot-static three</h3>
 <p><b>ASI</b> — measures the difference between pitot (total) and static pressure, which is
@@ -328,7 +328,7 @@ pressure: ASI over-reads in the climb.</li>
 </ul></div>`
 },
 {
-  id: '020-airworthiness', title: 'Airworthiness and documents', mins: 5, tags: ['021.01'],
+  id: '020-airworthiness', title: 'Airworthiness and documents', mins: 5, tags: ['010.02', '021.01'],
   body: `
 <h3>The paperwork that makes it legal</h3>
 <ul>

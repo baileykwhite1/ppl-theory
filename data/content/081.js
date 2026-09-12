@@ -88,7 +88,7 @@ which is why gliders have long thin wings.</p>
 </ul></div>`
 },
 {
-  id: '081-drag', title: 'Drag, and the speed that matters', mins: 6, tags: ['081.05', '081.06'],
+  id: '081-drag', title: 'Drag, and the speed that matters', mins: 6, tags: ['081.04', '081.05', '081.06', '081.08', '081.10'],
   body: `
 <h3>Two kinds of drag, pulling in opposite directions</h3>
 <p><b>Parasite drag</b> (form + skin friction + interference) is caused by moving an
@@ -235,7 +235,7 @@ outboard.</p>
 </ul></div>`
 },
 {
-  id: '081-stability', title: 'Stability, control and the CG', mins: 7, tags: ['081.14', '081.15', '081.17'],
+  id: '081-stability', title: 'Stability, control and the CG', mins: 7, tags: ['081.12', '081.13', '081.14', '081.15', '081.16', '081.17', '081.18', '081.19', '081.20', '081.26'],
   body: `
 <h3>Static and dynamic</h3>
 <p><b>Static stability</b> is the initial tendency after a disturbance: positive means it starts
@@ -353,7 +353,7 @@ line to prevent <b>flutter</b>; that has nothing to do with stick force.</p>
 </ul></div>`
 },
 {
-  id: '081-mechanics', title: 'Flight mechanics and the V-speeds', mins: 6, tags: ['081.11', '081.27'],
+  id: '081-mechanics', title: 'Flight mechanics and the V-speeds', mins: 6, tags: ['081.11', '081.21', '081.22', '081.27'],
   body: `
 <h3>The four forces</h3>
 <p>In <b>steady straight and level flight</b>, all forces and moments are in equilibrium:

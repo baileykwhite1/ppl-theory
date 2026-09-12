@@ -263,7 +263,7 @@ the <b>AAIB without delay</b> — and an accident to the <b>police</b> as well.<
 </ul></div>`
 },
 {
-  id: '070-hazards', title: 'Special operational hazards', mins: 6, tags: ['070.04', '070.07'],
+  id: '070-hazards', title: 'Special operational hazards', mins: 6, tags: ['070.04', '070.07', '070.08'],
   body: `
 <h3>Wake turbulence</h3>
 <figure data-d="wakeavoid"></figure>

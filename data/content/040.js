@@ -126,7 +126,7 @@ you.</p>
 </ul></div>`
 },
 {
-  id: '040-psychology', title: 'Aviation psychology and decision making', mins: 7, tags: ['040.01', '040.04'],
+  id: '040-psychology', title: 'Aviation psychology and decision making', mins: 7, tags: ['040.01', '040.04', '040.05', '040.06', '040.08', '040.09'],
   body: `
 <h3>Information processing, and where it breaks</h3>
 <p>Sensation, then perception (making sense of it against expectation and memory), then decision,

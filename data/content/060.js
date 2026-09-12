@@ -286,7 +286,7 @@ beats a precise one worked out while the weather closes in.</p>
 </ul></div>`
 },
 {
-  id: '060-radionav', title: 'Radio navigation for the PPL', mins: 6, tags: ['061.07', '061.08', '061.10'],
+  id: '060-radionav', title: 'Radio navigation for the PPL', mins: 6, tags: ['010.07', '061.07', '061.08', '061.09', '061.10'],
   body: `
 <h3>VOR</h3>
 <figure data-d="vorCdi"></figure>
