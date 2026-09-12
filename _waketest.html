@@ -1,0 +1,108 @@
+<!doctype html><meta charset="utf-8">
+<style>
+:root{--bg:#f2f2f7;--card:#fff;--tx:#000;--blue:#007aff;--green:#34c759;--red:#ff3b30;--orange:#ff9500}
+body{background:var(--bg);margin:0;padding:20px;color:var(--tx)}
+.dgwrap{background:var(--card);border-radius:14px;padding:14px 12px 10px;max-width:700px}
+.dg{width:660px;height:auto;display:block;color:var(--tx)}
+.dg text{font:600 13px -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;fill:currentColor;letter-spacing:-.005em}
+.dg text.s{font-size:12.5px;font-weight:500;opacity:.8}
+.dg text.b{font-size:14px;font-weight:700}
+.dg .ink{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dg .thin{fill:none;stroke:currentColor;stroke-width:1;opacity:.32}
+.dg .dash{stroke-dasharray:5 4}
+.dg .fill{fill:currentColor;stroke:none}
+.dg .tint{fill:currentColor;opacity:.06;stroke:none}
+.dg .green{stroke:var(--green)} .dg .fgreen{fill:var(--green);stroke:none}
+.dg text.green-t{fill:var(--green)}
+</style>
+<div class="dgwrap">
+<svg class="dg" viewBox="0 0 640 370" role="img" aria-label="Left, rear view: a heavy aeroplane with counter-rotating wingtip vortices sinking, a crosswind holding the upwind vortex over the runway while the downwind one drifts clear. Right, side views: landing short of a departing heavy's rotation point, and landing beyond a landing heavy's touchdown point while staying above its path.">
+  <defs>
+    <marker id="wakeavoid-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" class="fill"/></marker>
+    <marker id="wakeavoid-arrowg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" class="fgreen"/></marker>
+  </defs>
+
+  <line x1="274" y1="10" x2="274" y2="356" class="thin"/>
+
+  <text x="10" y="22" class="b">From behind: where they go</text>
+  <text x="160" y="38" text-anchor="middle" class="s">heavy, slow, clean</text>
+
+  <line x1="106" y1="68" x2="214" y2="68" class="ink"/>
+  <rect x="153" y="57" width="14" height="17" rx="6" class="ink"/>
+  <line x1="160" y1="57" x2="160" y2="45" class="ink"/>
+  <line x1="150" y1="47" x2="170" y2="47" class="ink"/>
+  <line x1="128" y1="68" x2="128" y2="75" class="ink"/>
+  <line x1="192" y1="68" x2="192" y2="75" class="ink"/>
+
+  <path d="M106,72 C100,130 98,200 110,286" class="ink" marker-end="url(#wakeavoid-arrow)"/>
+  <path d="M214,72 C222,130 238,206 254,286" class="ink" marker-end="url(#wakeavoid-arrow)"/>
+  <path d="M107.5,161.3 A13,13 0 1 1 114,150" class="ink" marker-end="url(#wakeavoid-arrow)"/>
+  <path d="M220.5,162.3 A13,13 0 1 0 214,151" class="ink" marker-end="url(#wakeavoid-arrow)"/>
+  <line x1="160" y1="108" x2="160" y2="170" class="ink" opacity=".8" marker-end="url(#wakeavoid-arrow)"/>
+  <text x="160" y="188" text-anchor="middle" class="s">sinking</text>
+  <text x="160" y="206" text-anchor="middle" class="s">300-500 ft/min</text>
+
+  <text x="14" y="238" class="s">crosswind</text>
+  <line x1="14" y1="250" x2="70" y2="250" class="ink" opacity=".7" marker-end="url(#wakeavoid-arrow)"/>
+
+  <line x1="10" y1="296" x2="262" y2="296" class="thin"/>
+  <line x1="96" y1="296" x2="224" y2="296" class="ink"/>
+  <line x1="96" y1="290" x2="96" y2="302" class="ink"/>
+  <line x1="224" y1="290" x2="224" y2="302" class="ink"/>
+  <text x="160" y="288" text-anchor="middle" class="s">runway</text>
+  <text x="12" y="316">upwind vortex held over the runway</text>
+  <text x="12" y="336">downwind vortex drifts clear</text>
+
+  <text x="290" y="22" class="b">From the side: where your wheels go</text>
+
+  <text x="300" y="44">Behind a departing heavy</text>
+  <line x1="300" y1="164" x2="616" y2="164" class="ink"/>
+  <path d="M474,164 C520,160 560,154 612,150 L612,164 Z" class="tint"/>
+  <path d="M474,164 C520,160 560,154 612,150" class="ink dash" opacity=".55"/>
+  <path d="M470,164 C505,132 530,100 575,70" class="ink"/>
+  <line x1="470" y1="156" x2="470" y2="178" class="ink"/>
+  <g transform="translate(568,75) rotate(-34)">
+    <path d="M-16,-2.5 L4,-2.5 L13,0 L4,2.5 L-16,2.5 Z" class="ink"/>
+    <path d="M-15,-2 L-12,-11 L-8,-2" class="ink"/>
+    <path d="M-4,2 L-9,10 L-1,2" class="ink"/>
+  </g>
+  <text x="592" y="66" class="s">heavy</text>
+  <text x="520" y="136" class="s">its wake sinks</text>
+  <rect x="320" y="157" width="144" height="7" class="fgreen" opacity=".22"/>
+  <line x1="330" y1="130" x2="397" y2="160" class="green ink" marker-end="url(#wakeavoid-arrowg)"/>
+  <g transform="translate(352,140) rotate(24)">
+    <path d="M-13,-2 L3,-2 L10,0 L3,2 L-13,2 Z" class="green ink"/>
+    <path d="M-12,-1.6 L-9.5,-9 L-6.5,-1.6" class="green ink"/>
+    <path d="M-3,1.6 L-7,8 L-1,1.6" class="green ink"/>
+  </g>
+  <text x="300" y="96" class="green-t">touch down before it</text>
+  <text x="300" y="114" class="green-t">or rotate before it</text>
+  <text x="300" y="132" class="green-t s">you</text>
+  <text x="300" y="184" class="s">runway</text>
+  <text x="478" y="184" class="s">rotation point</text>
+
+  <text x="300" y="208">Behind a landing heavy</text>
+  <line x1="300" y1="330" x2="616" y2="330" class="ink"/>
+  <path d="M300,278 L470,330 C410,327 350,318 300,304 Z" class="tint"/>
+  <path d="M300,304 C350,318 410,327 470,330" class="ink dash" opacity=".55"/>
+  <line x1="300" y1="278" x2="470" y2="330" class="ink"/>
+  <line x1="470" y1="322" x2="470" y2="344" class="ink"/>
+  <g transform="translate(356,295) rotate(17)">
+    <path d="M-16,-2.5 L4,-2.5 L13,0 L4,2.5 L-16,2.5 Z" class="ink"/>
+    <path d="M-15,-2 L-12,-11 L-8,-2" class="ink"/>
+    <path d="M-4,2 L-9,10 L-1,2" class="ink"/>
+  </g>
+  <rect x="476" y="323" width="140" height="7" class="fgreen" opacity=".22"/>
+  <line x1="306" y1="242" x2="513" y2="327" class="green ink" marker-end="url(#wakeavoid-arrowg)"/>
+  <g transform="translate(350,260) rotate(22)">
+    <path d="M-13,-2 L3,-2 L10,0 L3,2 L-13,2 Z" class="green ink"/>
+    <path d="M-12,-1.6 L-9.5,-9 L-6.5,-1.6" class="green ink"/>
+    <path d="M-3,1.6 L-7,8 L-1,1.6" class="green ink"/>
+  </g>
+  <text x="300" y="228" class="green-t">stay above its path</text>
+  <text x="628" y="286" text-anchor="end" class="green-t">touch down beyond it</text>
+  <text x="628" y="306" text-anchor="end" class="green-t">or lift off beyond it</text>
+  <text x="464" y="350" text-anchor="end" class="s">its touchdown point</text>
+</svg>
+
+</div>

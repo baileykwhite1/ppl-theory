@@ -284,6 +284,25 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
    plastic rather than leaving a white disc glaring out of a black screen. */
 #crpTab{overflow-x:auto;-webkit-overflow-scrolling:touch}
 #crpTab button{flex:0 0 auto;padding-left:12px;padding-right:12px;white-space:nowrap}
+/* ---------- data sheets ---------- */
+.sht{width:100%;border-collapse:collapse;font-size:14px}
+.sht th{text-align:left;font-weight:600;opacity:.6;padding:4px 6px;font-size:12.5px;
+  text-transform:uppercase;letter-spacing:.03em}
+.sht td{padding:7px 6px;border-top:1px solid var(--ln);vertical-align:middle}
+.sht td:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
+.sht .okc{color:var(--green);font-weight:600}
+.sht .badc{color:var(--red);font-weight:600}
+.ti.tin{width:88px;padding:6px 8px;text-align:right}
+.shsvg{width:100%;min-width:520px;height:auto;display:block;color:var(--tx)}
+.shsvg .env{fill:currentColor;fill-opacity:.07;stroke:currentColor;stroke-width:1.6}
+.shsvg .ax{stroke:currentColor;stroke-width:1.2}
+.shsvg .axt{stroke:currentColor;stroke-width:1;opacity:.5}
+.shsvg .axl{fill:currentColor;opacity:.7;font:500 11.5px system-ui,sans-serif}
+.shsvg .axn{fill:currentColor;opacity:.7;font:600 12px system-ui,sans-serif}
+.shsvg .mv{stroke:var(--blue);stroke-width:1.6;stroke-dasharray:5 4}
+.shsvg .pto{fill:var(--blue)}
+.shsvg .pld{fill:var(--orange)}
+.shsvg .ptl{fill:currentColor;font:600 12px system-ui,sans-serif}
 /* ---------- the chart ---------- */
 /* Paper colours are fixed rather than themed: a chart is a printed sheet, and the
    land/sea contrast has to survive both app themes unchanged. */

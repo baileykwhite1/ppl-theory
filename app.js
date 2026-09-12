@@ -628,6 +628,8 @@ VIEWS.home = function () {
       <div class="tx"><b>Navigation computer</b><i>Work a CRP-1 circular slide rule</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rChart"><div class="ic" style="--c:var(--blue)">&#9906;</div>
       <div class="tx"><b>The chart</b><i>Measure a true track and a distance</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="rSheets"><div class="ic" style="--c:var(--orange)">&#9878;</div>
+      <div class="tx"><b>Mass, balance and performance</b><i>Load it, plot it, then factor it</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rGaps"><div class="ic" style="--c:var(--orange)">!</div>
       <div class="tx"><b>What this app will not teach you</b><i>Read this before you rely on it</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rSrc"><div class="ic" style="--c:var(--tx3)">&#8599;</div>
@@ -635,6 +637,7 @@ VIEWS.home = function () {
     </div>`);
   $('#rCrp').onclick = () => go('crp');
   $('#rChart').onclick = () => go('chart');
+  $('#rSheets').onclick = () => go('sheets');
   $('#rGaps').onclick = () => go('limits');
   $('#rTrn').onclick = () => go('training');
   $('#rRules').onclick = () => go('rules');
@@ -4602,6 +4605,268 @@ function chartLearn() {
     and real aerodrome positions on the same projection, so the angles and distances you measure
     are true &#8212; but the symbols, airspace and terrain of the real sheet are not here. Practise
     the measurement here; learn the sheet from the sheet.</div>`);
+}
+
+
+/* ==================== MASS, BALANCE AND PERFORMANCE ====================
+   The data-sheet half of the same request as the CRP-1. CAP 696 is Crown
+   copyright and so is any POH, so the aeroplane below is a made-up light single
+   and is labelled as one everywhere it appears. What is real is the method: the
+   table, the moment arithmetic, the envelope check for BOTH take-off and
+   landing, and the Safety Sense Leaflet 7 factors, which multiply.
+   The envelope matches the cgEnvelope figure in 030 so the two agree. */
+
+const SH_ENV = {
+  mtom: 1050, minMass: 600, aft: 2.42,
+  /** Forward limit moves aft as mass rises — the reason the envelope is not a box. */
+  fwd: m => (m <= 850 ? 2.10 : 2.10 + (m - 850) / 200 * 0.15)
+};
+const SH_ITEMS = [
+  ['bem', 'Basic empty mass', 2.28, null],
+  ['front', 'Pilot and front passenger', 2.05, null],
+  ['rear', 'Rear passengers', 3.00, null],
+  ['bag', 'Baggage', 3.63, 45]
+];
+const AVGAS_KG_L = 0.72;
+
+let SH = null;
+
+VIEWS.sheets = function () {
+  navbar('Mass, balance and performance', '');
+  if (!SH) SH = {
+    tab: 'mb',
+    m: { bem: 700, front: 160, rear: 0, bag: 10 },
+    litres: 120, burn: 60, fuelArm: 2.41,
+    p: { oat: 20, elev: 500, mass: 1000, wind: 0, surf: 'paved', slope: 0, kind: 'to' }
+  };
+
+  html(`<div class="seg" id="shTab" style="margin-top:12px">
+    <button data-st="mb" aria-selected="${SH.tab === 'mb'}">Mass and balance</button>
+    <button data-st="perf" aria-selected="${SH.tab === 'perf'}">Take-off and landing</button></div>`);
+  bind('#shTab button', e => { SH.tab = e.currentTarget.dataset.st; render(); });
+
+  html(`<div class="note o" style="margin-top:12px"><b>An invented aeroplane.</b> CAP 696 and every
+    POH are copyright, so the masses, arms and limits below are made up — plausible for a light
+    single, but not any real type. The <em>method</em> is the real thing. Work your own aeroplane
+    from its own POH.</div>`);
+
+  return SH.tab === 'mb' ? sheetsMB() : sheetsPerf();
+};
+
+/** The loading table, the two envelope points, and the verdict. */
+function sheetsMB() {
+  const fuelKg = SH.litres * AVGAS_KG_L, burnKg = SH.burn * AVGAS_KG_L;
+  const rows = SH_ITEMS.map(([k, lab, arm, max]) => {
+    const m = +SH.m[k] || 0;
+    return { k: k, lab: lab, arm: arm, max: max, m: m, mom: m * arm };
+  });
+  const toRows = rows.concat([{ k: 'fuel', lab: 'Fuel at take-off', arm: SH.fuelArm, m: fuelKg, mom: fuelKg * SH.fuelArm }]);
+  const ldRows = rows.concat([{ k: 'fuel', lab: 'Fuel at landing', arm: SH.fuelArm, m: fuelKg - burnKg, mom: (fuelKg - burnKg) * SH.fuelArm }]);
+  const sum = rs => rs.reduce((a, r) => ({ m: a.m + r.m, mom: a.mom + r.mom }), { m: 0, mom: 0 });
+  const TO = sum(toRows), LD = sum(ldRows);
+  TO.cg = TO.m ? TO.mom / TO.m : 0; LD.cg = LD.m ? LD.mom / LD.m : 0;
+  SH.toMass = TO.m;
+
+  const inEnv = p => p.m >= SH_ENV.minMass && p.m <= SH_ENV.mtom
+    && p.cg >= SH_ENV.fwd(p.m) - 1e-9 && p.cg <= SH_ENV.aft + 1e-9;
+  const okTO = inEnv(TO), okLD = inEnv(LD);
+
+  html(`<div class="hd" style="padding-top:12px"><h1 class="vt">Load it, then check both ends</h1>
+    <div class="sub">Moment is mass times arm. The CG is the total moment divided by the total mass.
+    Take-off and landing are two different points, and both have to be inside.</div></div>`);
+
+  html('<div class="card" style="margin-top:12px"><table class="sht"><thead><tr>'
+    + '<th>Item</th><th>Mass (kg)</th><th>Arm (m)</th><th>Moment</th></tr></thead><tbody>'
+    + rows.map(r => `<tr><td>${r.lab}${r.max ? ` <span style="opacity:.6">max ${r.max}</span>` : ''}</td>
+        <td><input type="number" inputmode="decimal" class="ti tin" id="sm_${r.k}" value="${r.m}"></td>
+        <td>${r.arm.toFixed(2)}</td><td>${r.mom.toFixed(1)}</td></tr>`).join('')
+    + `<tr><td>Fuel <span style="opacity:.6">litres</span></td>
+        <td><input type="number" inputmode="decimal" class="ti tin" id="sm_lit" value="${SH.litres}"></td>
+        <td>${SH.fuelArm.toFixed(2)}</td><td>${(fuelKg * SH.fuelArm).toFixed(1)}</td></tr>`
+    + `<tr><td>Trip fuel <span style="opacity:.6">litres burned</span></td>
+        <td><input type="number" inputmode="decimal" class="ti tin" id="sm_burn" value="${SH.burn}"></td>
+        <td colspan="2" style="opacity:.7">${fmtN(burnKg)} kg at the tank arm</td></tr>`
+    + '</tbody></table>'
+    + `<div class="fld" style="margin-top:12px"><label class="f">Where the tanks sit</label>
+        <div class="seg sm" id="shArm">
+          <button data-fa="2.41" aria-selected="${SH.fuelArm === 2.41}">Near the CG (2.41)</button>
+          <button data-fa="2.72" aria-selected="${SH.fuelArm === 2.72}">Well aft (2.72)</button>
+        </div></div>`
+    + '</div>');
+
+  SH_ITEMS.forEach(([k]) => {
+    const el = $('#sm_' + k); if (!el) return;
+    el.onchange = () => { SH.m[k] = Math.max(0, parseFloat(el.value) || 0); render(); };
+  });
+  $('#sm_lit').onchange = () => { SH.litres = Math.max(0, parseFloat($('#sm_lit').value) || 0); render(); };
+  $('#sm_burn').onchange = () => { SH.burn = Math.max(0, parseFloat($('#sm_burn').value) || 0); render(); };
+  bind('#shArm button', e => { SH.fuelArm = parseFloat(e.currentTarget.dataset.fa); render(); });
+
+  html(`<div class="chwrap">${sheetEnvelope(TO, LD)}</div>`);
+
+  const verdict = (lab, p, ok) => {
+    const f = SH_ENV.fwd(p.m);
+    const why = p.m > SH_ENV.mtom ? 'over MTOM by ' + fmtN(p.m - SH_ENV.mtom) + ' kg'
+      : p.cg > SH_ENV.aft ? 'CG ' + (p.cg - SH_ENV.aft).toFixed(3) + ' m behind the aft limit'
+      : p.cg < f ? 'CG ' + (f - p.cg).toFixed(3) + ' m ahead of the forward limit at this mass'
+      : p.m < SH_ENV.minMass ? 'below the minimum mass on the chart' : '';
+    return `<tr><td><b>${lab}</b></td><td>${fmtN(p.m)} kg</td><td>${p.cg.toFixed(3)} m</td>
+      <td class="${ok ? 'okc' : 'badc'}">${ok ? 'inside' : 'OUTSIDE — ' + why}</td></tr>`;
+  };
+  html('<div class="card" style="margin-top:12px"><table class="sht"><thead><tr>'
+    + '<th></th><th>Mass</th><th>CG</th><th>Envelope</th></tr></thead><tbody>'
+    + verdict('Take-off', TO, okTO) + verdict('Landing', LD, okLD)
+    + '</tbody></table>'
+    + `<div class="note ${okTO && okLD ? 'b' : 'o'}" style="margin-top:12px">${
+        okTO && okLD
+          ? 'Both points are inside. Note which way the CG moved as the fuel went: '
+            + (Math.abs(LD.cg - TO.cg) < 0.003
+                ? 'barely at all, because these tanks sit almost on the CG.'
+                : 'it went <b>' + (LD.cg < TO.cg ? 'forward' : 'aft') + '</b> by '
+                  + Math.abs(LD.cg - TO.cg).toFixed(3) + ' m, because the tank arm is '
+                  + (SH.fuelArm > TO.cg ? 'behind' : 'ahead of') + ' the CG.')
+          : 'Fix the loading before you fly it. Reducing fuel is the last resort, not the first — '
+            + 'the reserve is not yours to spend.'}</div></div>`);
+
+  html(`<h2 class="sec">The arithmetic, written out</h2>
+    <div class="note">Take-off total moment ${TO.mom.toFixed(1)} &#247; total mass ${fmtN(TO.m)} kg
+      = <b>${TO.cg.toFixed(3)} m</b>. Landing ${LD.mom.toFixed(1)} &#247; ${fmtN(LD.m)} kg
+      = <b>${LD.cg.toFixed(3)} m</b>. The forward limit at the take-off mass is
+      ${SH_ENV.fwd(TO.m).toFixed(3)} m and the aft limit is ${SH_ENV.aft.toFixed(2)} m —
+      the forward one moves with mass, the aft one does not.</div>`);
+}
+
+/** The envelope with the two points and the arrow between them. */
+function sheetEnvelope(TO, LD) {
+  const W = 640, H = 380, L = 64, R = 22, T = 22, B = 46;
+  const x0 = 2.05, x1 = 2.55, y0 = SH_ENV.minMass - 20, y1 = SH_ENV.mtom + 60;
+  const X = v => L + (v - x0) / (x1 - x0) * (W - L - R);
+  const Y = v => H - B - (v - y0) / (y1 - y0) * (H - T - B);
+  let poly = [];
+  for (let m = SH_ENV.minMass; m <= SH_ENV.mtom; m += 10) poly.push([X(SH_ENV.fwd(m)), Y(m)]);
+  poly.push([X(SH_ENV.aft), Y(SH_ENV.mtom)], [X(SH_ENV.aft), Y(SH_ENV.minMass)]);
+  let ticks = '';
+  for (let v = 2.10; v <= 2.5001; v += 0.10) {
+    ticks += `<line class="axt" x1="${X(v).toFixed(1)}" y1="${(H - B).toFixed(1)}" x2="${X(v).toFixed(1)}" y2="${(H - B + 5).toFixed(1)}"/>
+      <text class="axl" x="${X(v).toFixed(1)}" y="${(H - B + 19).toFixed(1)}" text-anchor="middle">${v.toFixed(2)}</text>`;
+  }
+  for (let m = 600; m <= 1050; m += 100) {
+    ticks += `<line class="axt" x1="${(L - 5).toFixed(1)}" y1="${Y(m).toFixed(1)}" x2="${L.toFixed(1)}" y2="${Y(m).toFixed(1)}"/>
+      <text class="axl" x="${(L - 9).toFixed(1)}" y="${(Y(m) + 4).toFixed(1)}" text-anchor="end">${m}</text>`;
+  }
+  const pt = (p, cls, lab) => `<circle class="${cls}" cx="${X(p.cg).toFixed(1)}" cy="${Y(p.m).toFixed(1)}" r="5.5"/>
+    <text class="ptl" x="${(X(p.cg) + 10).toFixed(1)}" y="${(Y(p.m) + 4).toFixed(1)}">${lab}</text>`;
+  return `<svg class="shsvg" viewBox="0 0 ${W} ${H}" role="img"
+    aria-label="The loading envelope with the take-off and landing points plotted and an arrow between them">
+    <polygon class="env" points="${poly.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ')}"/>
+    <line class="ax" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/>
+    <line class="ax" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>
+    ${ticks}
+    <text class="axn" x="${L}" y="${T - 6}">Mass, kg</text>
+    <text class="axn" x="${W - R}" y="${H - 10}" text-anchor="end">CG, metres aft of datum</text>
+    <line class="mv" x1="${X(TO.cg).toFixed(1)}" y1="${Y(TO.m).toFixed(1)}" x2="${X(LD.cg).toFixed(1)}" y2="${Y(LD.m).toFixed(1)}"/>
+    ${pt(TO, 'pto', 'take-off')}${pt(LD, 'pld', 'landing')}
+  </svg>`;
+}
+
+/* The Safety Sense Leaflet 7 factors, as the 030 article tabulates them. They are a
+   rough check on top of the POH graph, not a substitute for it, and they MULTIPLY:
+   two adverse conditions of 1.2 and 1.3 give 1.56, not 1.5. */
+const SH_SURF = [
+  ['paved', 'Paved, dry', 1.00, 1.00],
+  ['dry', 'Dry grass, up to 20 cm', 1.20, 1.15],
+  ['wet', 'Wet grass', 1.30, 1.35]
+];
+
+function sheetsPerf() {
+  const p = SH.p, to = p.kind === 'to';
+  // the mass you just loaded is the mass you take off at — don't make them retype it
+  if (SH.toMass && p.mass !== Math.round(SH.toMass) && !p.massEdited) p.mass = Math.round(SH.toMass);
+  html(`<div class="hd" style="padding-top:12px"><h1 class="vt">Factor it up</h1>
+    <div class="sub">Start from a POH figure in still air, at sea level, in ISA, at maximum mass —
+    then apply what today is actually like. Every factor multiplies.</div></div>`);
+
+  html(`<div class="seg" id="shKind" style="margin-top:12px">
+    <button data-k="to" aria-selected="${to}">Take-off to 50 ft</button>
+    <button data-k="ld" aria-selected="${!to}">Landing from 50 ft</button></div>`);
+  bind('#shKind button', e => { p.kind = e.currentTarget.dataset.k; render(); });
+
+  const F = [
+    ['base', 'POH distance, still air, sea level, ISA, MTOM', 'm', p.base == null ? 500 : p.base],
+    ['elev', 'Aerodrome elevation', 'ft', p.elev],
+    ['oat', 'Outside air temperature', '°C', p.oat],
+    ['mass', 'Take-off mass', 'kg', p.mass],
+    ['wind', 'Headwind (negative for tailwind)', 'kt', p.wind],
+    ['slope', 'Slope, uphill positive', '%', p.slope]
+  ];
+  html('<div class="card" style="margin-top:12px">' + F.map(([k, lab, unit, v]) => `
+    <div class="fld"><label class="f" for="sp_${k}">${lab} <span style="opacity:.6">(${unit})</span></label>
+      <input type="number" inputmode="decimal" id="sp_${k}" class="ti" value="${v}"></div>`).join('')
+    + `<div class="fld"><label class="f">Surface</label><div class="seg sm" id="shSurf">`
+    + SH_SURF.map(s => `<button data-sf="${s[0]}" aria-selected="${p.surf === s[0]}">${s[1].split(',')[0]}</button>`).join('')
+    + `</div></div></div>`);
+  F.forEach(([k]) => {
+    const el = $('#sp_' + k); if (!el) return;
+    el.onchange = () => {
+      const v = parseFloat(el.value);
+      if (isFinite(v)) {
+        if (k === 'base') p.base = v; else p[k] = v;
+        if (k === 'mass') p.massEdited = true;
+        render();
+      }
+    };
+  });
+  bind('#shSurf button', e => { p.surf = e.currentTarget.dataset.sf; render(); });
+
+  // ISA at the aerodrome, so the temperature factor is counted from standard, not from 15
+  const base = p.base == null ? 500 : p.base;
+  const isaHere = 15 - 1.98 * (p.elev / 1000);
+  const steps = [];
+  steps.push(['Elevation', p.elev, 'ft above sea level', Math.pow(1.10, p.elev / 1000)]);
+  steps.push(['Temperature', (p.oat - isaHere).toFixed(1), '°C above ISA here (ISA is '
+    + isaHere.toFixed(1) + '°C at ' + fmtN(p.elev) + ' ft)', Math.pow(1.10, (p.oat - isaHere) / 10)]);
+  const over = (p.mass - SH_ENV.mtom) / SH_ENV.mtom;
+  steps.push(['Mass', Math.abs(over * 100).toFixed(1),
+    '% ' + (over >= 0 ? 'above' : 'below') + ' MTOM ' + SH_ENV.mtom + ' kg',
+    Math.pow(to ? 1.20 : 1.10, over * 10)]);
+  const surf = SH_SURF.find(s => s[0] === p.surf) || SH_SURF[0];
+  steps.push(['Surface', surf[1], '', to ? surf[2] : surf[3]]);
+  steps.push(['Slope', p.slope, '% ' + (p.slope >= 0 ? 'uphill' : 'downhill'),
+    Math.pow(1.10, (to ? p.slope : -p.slope) / 2)]);
+  /* SSL 7 quotes a tailwind of 10% of the lift-off speed as x1.20; 60 kt stands in for
+     that speed here, so 6 kt of tailwind is one application. A headwind gets NO credit:
+     it can drop or swing before you roll, and a distance you only achieve if the wind
+     holds is not a distance you have. */
+  steps.push(['Wind', Math.abs(p.wind), 'kt ' + (p.wind >= 0 ? 'headwind — no credit taken' : 'tailwind'),
+    p.wind >= 0 ? 1 : Math.pow(1.20, (-p.wind) / 6)]);
+
+  let run = base;
+  const rows = steps.map(s => {
+    const before = run; run *= s[3];
+    return `<tr><td><b>${s[0]}</b><div style="opacity:.65;font-size:13px">${s[1]} ${s[2]}</div></td>
+      <td>&#215;${s[3].toFixed(3)}</td><td>${Math.round(before)} &#8594; <b>${Math.round(run)}</b> m</td></tr>`;
+  }).join('');
+  const unfactored = run;
+  const sf = to ? 1.33 : 1.43;
+  const final = unfactored * sf;
+
+  html('<div class="card" style="margin-top:12px"><table class="sht"><thead><tr>'
+    + '<th>Condition</th><th>Factor</th><th>Distance</th></tr></thead><tbody>'
+    + `<tr><td><b>POH figure</b></td><td>&#8212;</td><td><b>${Math.round(base)}</b> m</td></tr>`
+    + rows
+    + `<tr><td><b>Safety factor</b><div style="opacity:.65;font-size:13px">${to ? 'take-off' : 'landing'}</div></td>
+        <td>&#215;${sf.toFixed(2)}</td><td>${Math.round(unfactored)} &#8594; <b>${Math.round(final)}</b> m</td></tr>`
+    + '</tbody></table>'
+    + `<div class="note b" style="margin-top:12px">Unfactored <b>${Math.round(unfactored)} m</b>,
+        and with the ${to ? '1.33' : '1.43'} safety factor <b>${Math.round(final)} m</b>. Compare that
+        against the ${to ? 'TODA' : 'LDA'}, not against the runway length on the plate.</div></div>`);
+
+  html(`<h2 class="sec">Why they multiply</h2>
+    <div class="note">Each factor is a proportion of whatever distance you have reached, not a fixed
+    number of metres, so they compound. Dry grass and a 1000 ft elevation together are
+    1.20 &#215; 1.10 = <b>1.32</b>, not 1.30. Getting this wrong is the single most common
+    performance mistake, and it errs on the short side every time — which is the dangerous
+    direction. These figures are a rough check on top of the POH graph, never a substitute for it.</div>`);
 }
 
 /* ============================ FLIGHT LOG ============================ */
