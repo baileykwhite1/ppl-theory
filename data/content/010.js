@@ -717,6 +717,7 @@ contrast with the shoulder is poor.</li>
 </ul>
 
 <h3>A displaced threshold</h3>
+<figure data-d="taxisigns"></figure>
 <p>Land beyond the transverse bar. The paved area before it is marked according to what it can
 actually take &mdash; in the UK, three ways, not two:</p>
 <ul>

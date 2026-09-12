@@ -81,7 +81,8 @@ window.audit = function (opts) {
                  ctm: el.getScreenCTM() };
       })
       .filter(sh => (sh.strokeOn || sh.fillOn) && sh.ctm &&
-                    !sh.cls.includes('tint') && !sh.cls.includes('face'));
+                    !sh.cls.includes('tint') && !sh.cls.includes('face') &&
+                    !sh.cls.includes('panel'));
 
     const pt = svg.createSVGPoint();
     const hitsAt = (sx, sy) => {

@@ -68,6 +68,7 @@ short final, hence the wake turbulence separation minima.</p>
 which is why gliders have long thin wings.</p>
 
 <h3>The boundary layer</h3>
+<figure data-d="boundarylayer"></figure>
 <p>Air has <b>viscosity</b>, so it sticks to a surface. At the skin itself the air is stationary relative to the wing — the <b>no-slip condition</b> — and the speed rises through a very thin layer until it matches the free stream. That layer is the <b>boundary layer</b>: millimetres thick near the leading edge, thickening towards the trailing edge. All of the skin friction, and all of the stall, happen inside it.</p>
 <p>It comes in two forms:</p>
 <ul>

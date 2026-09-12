@@ -3804,4 +3804,214 @@ vhfband: {
 </svg>`
 },
 
+readbackloop: {
+  alt: 'ATC and the aircraft drawn as two boxes joined by a clearance arrow one way and a readback arrow the other, forming a closed loop, with the items that must be read back listed above and a dead-end stub labelled Roger below.',
+  cap: 'The readback is not politeness — it is the only error-detecting loop on the frequency, and it only closes if the controller hears the instruction come back. That is why your <b>callsign</b> has to be in it: without it the controller cannot tell whose readback they just heard, so the loop stays open. <b>Roger</b> means only that you received something. It verifies nothing and closes nothing.',
+  svg: `<svg class="dg" viewBox="0 0 640 322" role="img" aria-label="A closed loop between ATC and the aircraft: the clearance goes one way, the readback comes back the other, and a separate dead-end stub is labelled Roger">
+  <defs>
+    <marker id="readbackloop-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fill"/>
+    </marker>
+    <marker id="readbackloop-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fred"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="24" class="b">The only error check on the frequency</text>
+  <text x="14" y="48" class="s">Read back, with your callsign:</text>
+  <text x="30" y="72">Levels, and altimeter settings</text>
+  <text x="30" y="92">Headings and speeds</text>
+  <text x="336" y="72">Runway in use, and runway clearances</text>
+  <text x="336" y="92">Routes, SSR codes, frequencies</text>
+
+  <rect x="24" y="118" width="108" height="76" class="ink"/>
+  <text x="78" y="150" text-anchor="middle">ATC</text>
+  <text x="78" y="170" text-anchor="middle" class="s">controller</text>
+
+  <rect x="508" y="118" width="108" height="76" class="ink"/>
+  <text x="562" y="150" text-anchor="middle">G-CD</text>
+  <text x="562" y="170" text-anchor="middle" class="s">pilot</text>
+
+  <line x1="140" y1="140" x2="500" y2="140" class="ink" marker-end="url(#readbackloop-ar)"/>
+  <text x="320" y="130" text-anchor="middle" class="s">the clearance goes out</text>
+
+  <line x1="500" y1="172" x2="140" y2="172" class="ink" marker-end="url(#readbackloop-ar)"/>
+  <text x="320" y="192" text-anchor="middle" class="s">the readback comes back &#8212; and the loop closes</text>
+
+  <line x1="562" y1="200" x2="562" y2="240" class="red ink" marker-end="url(#readbackloop-arr)"/>
+  <text x="562" y="262" text-anchor="middle" class="red-t">&#8220;Roger&#8221;</text>
+  <line x1="514" y1="276" x2="610" y2="276" class="red ink"/>
+  <text x="556" y="298" text-anchor="middle" class="s red-t">received, nothing more</text>
+
+  <text x="24" y="248" class="s">Leave out the callsign and the controller cannot tell</text>
+  <text x="24" y="266" class="s">whose readback that was, so the loop never closes.</text>
+</svg>`
+},
+
+taxisigns: {
+  alt: 'A taxiway meeting a runway in plan, with the holding position marking drawn as two solid lines on the taxiway side and two dashed on the runway side, and below it four sign panels: two red mandatory signs, a black location sign and a yellow direction sign.',
+  cap: 'Two solid lines and two dashed, painted <b>yellow</b> like every other taxiway marking &#8212; runway markings are white. The <b>solid</b> pair always faces the side you approach from, and you do not cross it without a clearance &#8212; that is the runway incursion line. The signs carry the same message in colour: <b>red</b> is an instruction you must obey before you pass it, <b>yellow</b> is information about where you are and where things lead.',
+  svg: `<svg class="dg" viewBox="0 0 640 336" role="img" aria-label="A runway holding position marking in plan with two solid and two dashed lines, and four taxiway sign panels below">
+  <text x="14" y="22" class="b">The holding position marking, from above</text>
+
+  <rect x="20" y="74" width="306" height="72" class="tint"/>
+  <line x1="30" y1="110" x2="318" y2="110" class="orange ink dash" opacity=".5"/>
+  <text x="34" y="66" class="s">taxiway &#8212; you approach from here</text>
+
+  <line x1="332" y1="70" x2="332" y2="150" class="orange ink"/>
+  <line x1="341" y1="70" x2="341" y2="150" class="orange ink"/>
+  <line x1="356" y1="70" x2="356" y2="150" class="orange ink dash"/>
+  <line x1="365" y1="70" x2="365" y2="150" class="orange ink dash"/>
+
+  <rect x="380" y="54" width="240" height="112" class="tint"/>
+  <line x1="392" y1="110" x2="612" y2="110" class="ink dash" opacity=".45"/>
+  <text x="606" y="46" text-anchor="end" class="s">runway</text>
+
+  <text x="326" y="186" text-anchor="end" class="orange-t">two solid</text>
+  <text x="326" y="204" text-anchor="end" class="s">hold on this side</text>
+  <text x="372" y="186">two dashed</text>
+  <text x="372" y="204" class="s">already the runway side</text>
+
+  <text x="14" y="240" class="b">Red instructs. Yellow informs.</text>
+
+  <rect x="20" y="252" width="128" height="50" class="fred panel"/>
+  <text x="84" y="283" text-anchor="middle" class="white-t">09-27</text>
+  <text x="84" y="322" text-anchor="middle" class="s">Mandatory: runway</text>
+
+  <rect x="172" y="252" width="128" height="50" class="fred panel"/>
+  <text x="236" y="283" text-anchor="middle" class="white-t">NO ENTRY</text>
+  <text x="236" y="322" text-anchor="middle" class="s">Mandatory: no entry</text>
+
+  <rect x="324" y="252" width="128" height="50" class="face panel"/>
+  <rect x="329" y="257" width="118" height="40" class="orange ink"/>
+  <text x="388" y="283" text-anchor="middle" class="orange-t">B</text>
+  <text x="388" y="322" text-anchor="middle" class="s">Location: you are on B</text>
+
+  <rect x="476" y="252" width="128" height="50" class="forange panel"/>
+  <text x="540" y="283" text-anchor="middle" class="dark-t">B &#8594;</text>
+  <text x="540" y="322" text-anchor="middle" class="s">Direction: B is that way</text>
+</svg>`
+},
+
+boundarylayer: {
+  alt: 'A magnified strip of aerofoil upper surface with velocity profiles at three stations: a thin smoothly graded laminar profile, a thicker fuller turbulent profile after the transition point, and a reversed profile at the separation point where the flow lifts away; below, three aerofoil sections at increasing angle of attack with the separation point moving forward towards the leading edge.',
+  cap: 'The stall is not an event, it is this point walking forward. Aft of the pressure minimum the boundary layer is running uphill against a rising pressure; where it runs out of energy it leaves the surface. Note the paradox in the profiles: the turbulent layer is thicker and drags more, but its mixing keeps fast air down near the skin, so it clings on far longer than the laminar one &#8212; which is why slots and vortex generators deliberately trip the flow.',
+  svg: `<svg class="dg" viewBox="0 0 640 372" role="img" aria-label="Velocity profiles through the boundary layer at three stations along an aerofoil upper surface, and the separation point moving forward with angle of attack">
+  <defs>
+    <marker id="boundarylayer-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fill"/>
+    </marker>
+    <marker id="boundarylayer-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fred"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="22" class="b">The upper surface, hugely magnified</text>
+  <text x="626" y="22" text-anchor="end" class="s">free stream &#8594;</text>
+
+  <path d="M30 168 L560 168" class="ink"/>
+  <path d="M30 160 C 140 140, 210 128, 240 122 C 300 112, 380 100, 452 96" class="ink dash"/>
+  <path d="M452 96 C 496 96, 520 108, 544 128" class="red ink dash"/>
+  <text x="150" y="48" class="s">edge of the boundary layer</text>
+  <line x1="176" y1="54" x2="196" y2="134" class="thin"/>
+
+  <line x1="96" y1="168" x2="96" y2="128" class="thin"/>
+  <line x1="96" y1="164" x2="99" y2="164" class="ink"/>
+  <line x1="96" y1="156" x2="106" y2="156" class="ink"/>
+  <line x1="96" y1="148" x2="114" y2="148" class="ink"/>
+  <line x1="96" y1="140" x2="120" y2="140" class="ink"/>
+  <line x1="96" y1="132" x2="123" y2="132" class="ink"/>
+  <text x="96" y="108" text-anchor="middle">Laminar</text>
+  <text x="96" y="126" text-anchor="middle" class="s">thin, low friction</text>
+
+  <line x1="240" y1="176" x2="240" y2="122" class="thin"/>
+  <text x="240" y="196" text-anchor="middle" class="s">transition</text>
+
+  <line x1="300" y1="168" x2="300" y2="110" class="thin"/>
+  <line x1="300" y1="164" x2="311" y2="164" class="ink"/>
+  <line x1="300" y1="154" x2="321" y2="154" class="ink"/>
+  <line x1="300" y1="144" x2="327" y2="144" class="ink"/>
+  <line x1="300" y1="134" x2="330" y2="134" class="ink"/>
+  <line x1="300" y1="124" x2="332" y2="124" class="ink"/>
+  <line x1="300" y1="114" x2="333" y2="114" class="ink"/>
+  <text x="300" y="92" text-anchor="middle">Turbulent</text>
+  <text x="300" y="74" text-anchor="middle" class="s">thicker, but full of energy at the skin</text>
+
+  <line x1="452" y1="168" x2="452" y2="110" class="thin"/>
+  <line x1="452" y1="164" x2="443" y2="164" class="ink"/>
+  <line x1="452" y1="154" x2="454" y2="154" class="ink"/>
+  <line x1="452" y1="144" x2="465" y2="144" class="ink"/>
+  <line x1="452" y1="134" x2="476" y2="134" class="ink"/>
+  <line x1="452" y1="124" x2="482" y2="124" class="ink"/>
+  <line x1="452" y1="114" x2="485" y2="114" class="ink"/>
+  <circle cx="452" cy="168" r="5" class="fred"/>
+  <text x="470" y="164" class="red-t">Separation point</text>
+  <text x="470" y="182" class="s">flow reverses at the skin</text>
+  <text x="470" y="200" class="s">and leaves the surface</text>
+  <text x="452" y="216" text-anchor="middle" class="s">rising pressure this way &#8594;</text>
+
+  <text x="14" y="252" class="b">It walks forward as you raise the angle of attack</text>
+  <text x="626" y="252" text-anchor="end" class="s">airflow left to right, so forward is left</text>
+
+  <path d="M40 300 C 78 276, 130 276, 168 296 C 130 306, 78 306, 40 300 Z" class="ink"/>
+  <circle cx="150" cy="288" r="4.5" class="fred"/>
+  <text x="104" y="334" text-anchor="middle" class="s">small angle</text>
+  <text x="104" y="352" text-anchor="middle" class="s">separation right aft</text>
+
+  <path d="M236 306 C 274 274, 326 268, 364 284 C 328 302, 274 312, 236 306 Z" class="ink"/>
+  <circle cx="316" cy="272" r="4.5" class="fred"/>
+  <text x="300" y="334" text-anchor="middle" class="s">moderate</text>
+  <text x="300" y="352" text-anchor="middle" class="s">it has moved forward</text>
+
+  <path d="M432 312 C 466 268, 520 256, 560 270 C 522 294, 468 312, 432 312 Z" class="ink"/>
+  <circle cx="470" cy="268" r="4.5" class="fred"/>
+  <text x="500" y="334" text-anchor="middle" class="s red-t">stalling angle</text>
+  <text x="500" y="352" text-anchor="middle" class="s">the whole surface is separated</text>
+
+  <line x1="152" y1="284" x2="312" y2="270" class="red ink dash" marker-end="url(#boundarylayer-arr)"/>
+  <line x1="320" y1="266" x2="464" y2="264" class="red ink dash" marker-end="url(#boundarylayer-arr)"/>
+</svg>`
+},
+
+turnback: {
+  alt: 'Plan view of a runway with the departure track continuing ahead, a shaded fan of about thirty degrees either side of the extended centreline labelled as what is available, and overlaid in red the turn-back track as a banked teardrop with height annotations falling from 500 feet to a ground contact short of and displaced from the runway.',
+  cap: 'The turn back is not a 180. It is a steep teardrop of well over 200&#176;, plus a further turn to line up, and it displaces you sideways so you arrive beside the runway rather than on it. The height goes while you are still turning. Land ahead means anywhere in the shaded fan &#8212; and a field you arrive at wings-level and under control beats the runway you do not reach.',
+  svg: `<svg class="dg" viewBox="0 0 640 344" role="img" aria-label="Plan view comparing landing ahead within a thirty degree fan against a turn back to the runway, with height annotations along the turn">
+  <defs>
+    <marker id="turnback-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fill"/>
+    </marker>
+    <marker id="turnback-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fred"/>
+    </marker>
+  </defs>
+
+  <path d="M336 182 L556 76 L556 288 Z" class="tint"/>
+  <text x="474" y="150" text-anchor="middle" class="s">about 30&#176; either side</text>
+  <text x="474" y="230" text-anchor="middle">Land ahead</text>
+  <text x="474" y="248" text-anchor="middle" class="s">anywhere in here</text>
+
+  <rect x="46" y="172" width="252" height="20" class="ink"/>
+  <line x1="60" y1="182" x2="286" y2="182" class="thin dash"/>
+  <text x="52" y="164" class="s">runway</text>
+  <line x1="298" y1="182" x2="330" y2="182" class="ink dash"/>
+
+  <circle cx="336" cy="182" r="5" class="fill"/>
+  <text x="330" y="206" text-anchor="end">engine fails</text>
+  <text x="330" y="224" text-anchor="end" class="s">500 ft, climbing away</text>
+
+  <path d="M336 182 C 318 128, 262 96, 204 100 C 140 104, 106 146, 116 190 C 126 232, 178 254, 226 246"
+        class="red ink" marker-end="url(#turnback-arr)"/>
+  <text x="212" y="86" text-anchor="middle" class="s red-t">300 ft &#8212; still turning</text>
+  <text x="86" y="214" text-anchor="end" class="s red-t">150 ft</text>
+  <circle cx="226" cy="246" r="5" class="fred"/>
+  <text x="240" y="268" class="red-t">ground contact</text>
+  <text x="240" y="286" class="s">beside the runway, not on it</text>
+
+  <text x="14" y="24" class="b">Why you land ahead</text>
+  <text x="14" y="310" class="s">At 45&#176; of bank the stall speed is 1.19 &#215; the wings-level figure, and the</text>
+  <text x="14" y="328" class="s">headwind that helped you climb out is a tailwind all the way back.</text>
+</svg>`
+},
+
 };

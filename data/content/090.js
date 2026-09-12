@@ -72,6 +72,7 @@ abbreviation.</b> With a type prefix it becomes, for example, "Cessna Golf Charl
 two similar callsigns are on frequency, use the full callsign until told otherwise.</p>
 
 <h3>Items that must always be read back</h3>
+<figure data-d="readbackloop"></figure>
 <p>Anything that could cause a loss of separation or a runway incursion, in particular:</p>
 <ul>
 <li><b>Level instructions</b> — climb, descend, maintain, and altimeter settings</li>

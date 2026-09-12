@@ -8,6 +8,7 @@ articles: [
   id: '070-aerodrome', title: 'Aerodrome operations and the circuit', mins: 7, tags: ['070.02', '070.03'],
   body: `
 <h3>Markings and signals</h3>
+<figure data-d="taxisigns"></figure>
 <p>Runway markings are <b>white</b>; taxiway markings are <b>yellow</b>. The runway designator is
 the magnetic direction to the nearest ten degrees, rounded, with the leading zero retained —
 so runway 05 is aligned about 050&deg; magnetic, and its reciprocal is 23. Parallel runways carry
@@ -149,6 +150,7 @@ accidents caused by a pilot troubleshooting a minor problem while failing to fly
 large.</p>
 
 <h3>Engine failure after take-off</h3>
+<figure data-d="turnback"></figure>
 <p>The one that needs to be a reflex, because there is no time to think. Below a briefed height,
 the answer is <b>land ahead</b> — attempting to turn back at low level is the classic fatal
 decision, because the turn costs height and airspeed and the stall speed rises in the bank.</p>

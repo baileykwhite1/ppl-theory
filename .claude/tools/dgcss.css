@@ -62,6 +62,15 @@ figure .swipe{display:block}
 .dg .white{fill:none;stroke:#fff}
 .dg .fwhite{fill:#fff;stroke:none}
 .dg text.white-t{fill:#fff}
+/* A sign panel is a painted board, so its colours are fixed like the instrument face:
+   a mandatory sign is white on red and a direction sign is black on yellow in every
+   theme. .forange completes the fblue/fred/fgreen set. */
+.dg .forange{fill:var(--orange);stroke:none}
+.dg text.dark-t{fill:#15181c}
+/* Marks a filled rect as a background that text deliberately sits on — a sign face, a
+   key block. Purely declarative: it paints nothing, and the geometry audit skips it the
+   way it skips .tint, so a legend inside its own panel is not reported as a collision. */
+.dg .panel{}
 :root[data-t="dark"] .fc,
 :root:not([data-t="light"]) .fc{box-shadow:none}
 :root:not([data-t="light"]) .fc{box-shadow:none}
