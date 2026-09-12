@@ -227,6 +227,7 @@ defined as the period from 30 minutes after sunset until 30 minutes before sunri
 </ul>
 
 <h3>What goes on the plog</h3>
+<figure data-d="safetyAlt"></figure>
 <p>For each leg: true track from the chart, distance, forecast W/V, TAS, then the computed
 drift, magnetic heading and groundspeed, then leg time and cumulative time, and a fuel figure.
 Plus, for each leg, a <b>safety altitude</b>. Work out the safety altitude from the highest

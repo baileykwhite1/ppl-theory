@@ -133,6 +133,7 @@ Keep them short: "Golf Charlie Delta, downwind."</li>
 </ul>
 
 <h3>VHF propagation and frequencies</h3>
+<figure data-d="vhfband"></figure>
 <figure data-d="vhfrange"></figure>
 <p>Aeronautical VHF communications occupy <b>118.000 to 136.975 MHz</b> and are
 <b>line of sight</b>. Range therefore depends on altitude and is blocked by terrain. A rough

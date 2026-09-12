@@ -3647,4 +3647,161 @@ vhfrange: {
 </svg>`
 },
 
+safetyAlt: {
+  alt: 'Two stacked panels over the same stretch of track: a plan view with a corridor 5 NM either side of track containing spot heights of 1120, 1480 and 980 feet and a 2100 foot spot crossed out beyond the corridor, and an elevation view below where the 1480 foot hill carries a 400 foot mast to 1880 feet, with a 1000 foot dimension arrow above it reaching a blue safety altitude line at 2900 feet.',
+  cap: 'Take the highest terrain or obstacle inside the corridor, not the highest thing on the chart — the 2100 ft spot lies outside the 5 NM either side of track and plays no part. The 1480 ft hill carries a 400 ft mast, so the obstacle tops out at 1880 ft; add 1000 ft (2000 ft over high ground) and round up to the next 100 ft.',
+  svg: `<svg class="dg" viewBox="0 0 640 400" role="img" aria-label="Building a safety altitude from the highest obstacle inside a 5 NM corridor either side of track">
+  <defs>
+    <marker id="safetyAlt-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker>
+    <marker id="safetyAlt-arb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker>
+  </defs>
+
+  <text x="8" y="22" class="b">Plan view - the 5 NM corridor</text>
+
+  <circle cx="250" cy="44" r="4.5" class="ink"/>
+  <line x1="246.8" y1="40.8" x2="253.2" y2="47.2" class="ink"/>
+  <line x1="253.2" y1="40.8" x2="246.8" y2="47.2" class="ink"/>
+  <text x="262" y="48">2100 ft</text>
+  <text x="322" y="48" class="s">outside the corridor - ignored</text>
+
+  <rect x="96" y="68" width="480" height="80" class="tint"/>
+  <line x1="96" y1="68" x2="576" y2="68" class="ink dash"/>
+  <line x1="96" y1="148" x2="576" y2="148" class="ink dash"/>
+
+  <line x1="96" y1="108" x2="578" y2="108" class="ink" marker-end="url(#safetyAlt-ar)"/>
+  <text x="90" y="112" text-anchor="end">track</text>
+
+  <line x1="120" y1="70" x2="120" y2="106" class="ink" marker-start="url(#safetyAlt-ar)" marker-end="url(#safetyAlt-ar)"/>
+  <line x1="120" y1="110" x2="120" y2="146" class="ink" marker-start="url(#safetyAlt-ar)" marker-end="url(#safetyAlt-ar)"/>
+  <text x="128" y="86">5 NM</text>
+  <text x="128" y="134">5 NM</text>
+
+  <circle cx="206" cy="88" r="3" class="fill"/>
+  <text x="216" y="92">1120 ft</text>
+  <circle cx="486" cy="88" r="3" class="fill"/>
+  <text x="496" y="92">980 ft</text>
+  <circle cx="334" cy="132" r="4" class="fblue"/>
+  <text x="346" y="136" class="blue-t">1480 ft</text>
+  <text x="404" y="136" class="s">highest in the corridor</text>
+
+  <text x="8" y="182" class="b">Elevation along the same track</text>
+
+  <path d="M96 384 L96 378 L132 372 L168 356 L190 332 L206 319 L224 338 L252 356 L276 358 L300 330 L318 300 L330 298 L342 300 L360 318 L386 344 L420 356 L452 348 L470 334 L486 327 L506 344 L534 362 L560 374 L578 380 L578 384 Z" class="tint"/>
+  <path d="M96 378 L132 372 L168 356 L190 332 L206 319 L224 338 L252 356 L276 358 L300 330 L318 300 L330 298 L342 300 L360 318 L386 344 L420 356 L452 348 L470 334 L486 327 L506 344 L534 362 L560 374 L578 380" class="ink"/>
+
+  <text x="196" y="312" text-anchor="end" class="s">1120 ft</text>
+  <text x="498" y="320" class="s">980 ft</text>
+  <text x="300" y="296" text-anchor="end" class="blue-t">1480 ft</text>
+
+  <line x1="330" y1="298" x2="330" y2="275" class="ink"/>
+  <line x1="330" y1="277" x2="320" y2="298" class="thin"/>
+  <line x1="330" y1="277" x2="340" y2="298" class="thin"/>
+  <text x="318" y="272" text-anchor="end">400 ft mast</text>
+
+  <line x1="332" y1="275" x2="372" y2="275" class="thin"/>
+  <text x="382" y="279" class="blue-t">1880 ft</text>
+
+  <line x1="356" y1="275" x2="356" y2="218" class="blue ink" marker-start="url(#safetyAlt-arb)" marker-end="url(#safetyAlt-arb)"/>
+  <text x="364" y="250" class="blue-t">+1000 ft</text>
+
+  <line x1="96" y1="216" x2="576" y2="216" class="blue ink"/>
+  <text x="96" y="206" class="b blue-t">safety altitude 2900 ft</text>
+  <text x="96" y="234" class="s">2880 rounded up to the next 100 ft</text>
+</svg>`
+},
+
+vhfband: {
+  alt: 'A ruler of the VHF band from 108 to 137 MHz: the tinted 108.000 to 117.975 segment is VOR and ILS localiser, 118.000 to 136.975 is communications, a red flag drops onto 121.500, and a pointer at 123.000 opens out below into one 25 kHz channel split into three 8.33 kHz channels labelled 123.005, 123.010 and 123.015.',
+  cap: 'The comms band starts at 118.000. Everything below it, down to 108.000, belongs to the VOR and ILS localiser — you tune those, you do not talk on them, though they carry voice identification and some carry a VOLMET. That boundary is the exam trap. 121.500 sits inside the comms band, not beside it. Each old 25 kHz channel now holds three 8.33 kHz channels, which is where the six-digit frequencies come from.',
+  svg: `<svg class="dg" viewBox="0 0 640 306" role="img" aria-label="A ruler of the aeronautical VHF band from 108 to 137 MHz showing the navigation segment, the communications segment, the emergency frequency 121.500, and one 25 kHz channel magnified into three 8.33 kHz channels">
+  <text x="132" y="20" text-anchor="middle" class="b">VOR and ILS localiser</text>
+  <text x="132" y="38" text-anchor="middle" class="s">navigation, not comms</text>
+  <text x="302" y="20" text-anchor="middle" class="b red-t">121.500</text>
+  <text x="302" y="38" text-anchor="middle" class="s red-t">emergency – D and D</text>
+  <text x="460" y="20" text-anchor="middle" class="b">VHF communications</text>
+  <text x="460" y="38" text-anchor="middle" class="s">8.33 kHz channel spacing</text>
+
+  <text x="34" y="58" class="s">108.000</text>
+  <text x="226" y="58" text-anchor="end" class="s">117.975</text>
+  <text x="238" y="58" class="s">118.000</text>
+  <text x="610" y="58" text-anchor="end" class="s">136.975</text>
+
+  <rect x="32" y="66" width="199.5" height="32" class="tint"/>
+  <rect x="32" y="66" width="199.5" height="32" class="ink"/>
+  <rect x="232" y="66" width="379.5" height="32" class="ink"/>
+  <line x1="232" y1="62" x2="232" y2="104" class="ink"/>
+
+  <line x1="32" y1="98" x2="32" y2="103" class="ink"/>
+  <line x1="52" y1="98" x2="52" y2="103" class="ink"/>
+  <line x1="92" y1="98" x2="92" y2="103" class="ink"/>
+  <line x1="112" y1="98" x2="112" y2="103" class="ink"/>
+  <line x1="132" y1="98" x2="132" y2="103" class="ink"/>
+  <line x1="152" y1="98" x2="152" y2="103" class="ink"/>
+  <line x1="192" y1="98" x2="192" y2="103" class="ink"/>
+  <line x1="212" y1="98" x2="212" y2="103" class="ink"/>
+  <line x1="252" y1="98" x2="252" y2="103" class="ink"/>
+  <line x1="292" y1="98" x2="292" y2="103" class="ink"/>
+  <line x1="312" y1="98" x2="312" y2="103" class="ink"/>
+  <line x1="352" y1="98" x2="352" y2="103" class="ink"/>
+  <line x1="392" y1="98" x2="392" y2="103" class="ink"/>
+  <line x1="412" y1="98" x2="412" y2="103" class="ink"/>
+  <line x1="432" y1="98" x2="432" y2="103" class="ink"/>
+  <line x1="452" y1="98" x2="452" y2="103" class="ink"/>
+  <line x1="492" y1="98" x2="492" y2="103" class="ink"/>
+  <line x1="512" y1="98" x2="512" y2="103" class="ink"/>
+  <line x1="532" y1="98" x2="532" y2="103" class="ink"/>
+  <line x1="552" y1="98" x2="552" y2="103" class="ink"/>
+  <line x1="592" y1="98" x2="592" y2="103" class="ink"/>
+  <line x1="612" y1="98" x2="612" y2="103" class="ink"/>
+
+  <line x1="72" y1="98" x2="72" y2="109" class="ink"/>
+  <line x1="172" y1="98" x2="172" y2="109" class="ink"/>
+  <line x1="272" y1="98" x2="272" y2="109" class="ink"/>
+  <line x1="372" y1="98" x2="372" y2="109" class="ink"/>
+  <line x1="472" y1="98" x2="472" y2="109" class="ink"/>
+  <line x1="572" y1="98" x2="572" y2="109" class="ink"/>
+
+  <text x="72" y="124" text-anchor="middle" class="s">110</text>
+  <text x="172" y="124" text-anchor="middle" class="s">115</text>
+  <text x="272" y="124" text-anchor="middle" class="s">120</text>
+  <text x="372" y="124" text-anchor="middle" class="s">125</text>
+  <text x="472" y="124" text-anchor="middle" class="s">130</text>
+  <text x="572" y="124" text-anchor="middle" class="s">135</text>
+  <text x="612" y="124" text-anchor="middle" class="s">MHz</text>
+
+  <line x1="302" y1="48" x2="302" y2="104" class="red ink"/>
+  <path d="M302 48 L318 54 L302 60 Z" class="fred"/>
+
+  <path d="M332 99 L338 108 L326 108 Z" class="fill"/>
+  <line x1="332" y1="108" x2="332" y2="142" class="thin dash"/>
+  <line x1="332" y1="142" x2="220" y2="160" class="thin dash"/>
+  <line x1="332" y1="142" x2="600" y2="160" class="thin dash"/>
+
+  <rect x="220" y="160" width="380" height="28" class="tint"/>
+  <rect x="220" y="160" width="380" height="28" class="ink"/>
+  <text x="206" y="168" text-anchor="end" class="b">one 25 kHz channel</text>
+  <text x="206" y="188" text-anchor="end" class="s">magnified from 123.000</text>
+
+  <text x="206" y="209" text-anchor="end" class="s">one becomes three</text>
+  <line x1="282" y1="190" x2="282" y2="212" class="ink"/>
+  <path d="M282 220 L277 211 L287 211 Z" class="fill"/>
+  <line x1="410" y1="190" x2="410" y2="212" class="ink"/>
+  <path d="M410 220 L405 211 L415 211 Z" class="fill"/>
+  <line x1="538" y1="190" x2="538" y2="212" class="ink"/>
+  <path d="M538 220 L533 211 L543 211 Z" class="fill"/>
+
+  <rect x="220" y="222" width="124" height="28" class="ink"/>
+  <rect x="348" y="222" width="124" height="28" class="ink"/>
+  <rect x="476" y="222" width="124" height="28" class="ink"/>
+  <text x="206" y="238" text-anchor="end" class="b">three 8.33 kHz channels</text>
+
+  <text x="282" y="268" text-anchor="middle">123.005</text>
+  <text x="410" y="268" text-anchor="middle">123.010</text>
+  <text x="538" y="268" text-anchor="middle">123.015</text>
+  <text x="410" y="290" text-anchor="middle" class="s">six-digit designators – set exactly what is published</text>
+</svg>`
+},
+
 };
