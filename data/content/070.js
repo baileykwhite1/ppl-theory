@@ -5,7 +5,7 @@ window.SC = window.SC || {};
 window.SC['070'] = {
 articles: [
 {
-  id: '070-aerodrome', title: 'Aerodrome operations and the circuit', mins: 7, tags: ['070.02', '070.03'],
+  id: '070-aerodrome', title: 'Aerodrome operations and the circuit', mins: 7, tags: ['070.01', '070.02', '070.03'],
   body: `
 <h3>Markings and signals</h3>
 <figure data-d="taxisigns"></figure>
@@ -23,6 +23,23 @@ be used for taxiing and take-off run but not for landing.</li>
 <li><b>Unserviceable area</b> — unserviceability markers: boards, cones or flags in
 orange-and-white or red-and-white stripes, with red unserviceability lights at night.</li>
 </ul>
+
+<h3>Where the operating rules come from</h3>
+<p><b>ICAO Annex 6, Operation of Aircraft</b>, is the source of the operating rules, and it is
+split by what the flight is for: Part I covers commercial air transport by aeroplane, Part II
+<b>general aviation</b> by aeroplane, and Part III helicopters. Your flying sits in Part II, which
+is why the requirements on you are lighter than the ones on an airline &mdash; and why arguing from
+an airline rule to a private one usually gives the wrong answer.</p>
+<p>Two definitions from it are worth having exactly, because the rest hangs off them. The
+<b>pilot-in-command</b> is the pilot designated as being in command and charged with the safe
+conduct of the flight &mdash; not necessarily the one handling the controls. <b>Flight time</b> for
+an aeroplane is the total time from the moment it <b>first moves for the purpose of taking
+off</b> until the moment it finally comes to rest at the end of the flight &mdash; chock to chock, not
+wheels-up to wheels-down, which is why taxi time counts in your logbook.</p>
+<p>In the UK the Annex reaches you through retained EU law rather than directly: <b>Part-NCO</b>
+of Regulation (EU) 965/2012 carries the operating rules for non-commercial flight with
+non-complex aircraft, which is what you fly. Annex 6 Part II is where those rules came from;
+Part-NCO is what actually binds you.</p>
 
 <h3>The signals square</h3>
 <figure data-d="signalsquare"></figure>

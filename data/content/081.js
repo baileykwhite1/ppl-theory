@@ -353,7 +353,7 @@ line to prevent <b>flutter</b>; that has nothing to do with stick force.</p>
 </ul></div>`
 },
 {
-  id: '081-mechanics', title: 'Flight mechanics and the V-speeds', mins: 6, tags: ['081.11', '081.21', '081.22', '081.27'],
+  id: '081-mechanics', title: 'Flight mechanics and the V-speeds', mins: 6, tags: ['081.11', '081.21', '081.22', '081.23', '081.27'],
   body: `
 <h3>The four forces</h3>
 <p>In <b>steady straight and level flight</b>, all forces and moments are in equilibrium:
@@ -429,6 +429,31 @@ groundspeed.</p>
 <b>+4.4g</b>; aerobatic <b>+6.0g</b>. The V-n diagram plots load factor against speed, bounded
 by the stall on the left (a curve, because the stall limits the g available at low speed), the
 structural limit above, and V<sub>NE</sub> on the right.</p>
+
+<h3>The gust envelope</h3>
+<p>The manoeuvre envelope assumes <em>you</em> pull the g. The <b>gust envelope</b> covers the g
+the air imposes on you, and it is drawn for a stated vertical gust &mdash; the certification cases
+are a strong gust at cruising speed and a lesser one at the never-exceed speed. The gust lines run
+diagonally across the diagram from the origin, because the load a gust produces rises with speed.</p>
+<p>The mechanism is angle of attack. A vertical gust adds a vertical component to the relative
+airflow, so the angle of attack changes instantly, and with it the lift. Four things decide how
+hard that hits you:</p>
+<ul>
+<li><b>Gust velocity</b> &mdash; a sharper gust is a bigger change of angle.</li>
+<li><b>Your speed</b> &mdash; the faster you fly, the more lift a given change of angle produces,
+so the same gust means a larger load factor. This is the whole reason for the yellow arc and for
+slowing down in turbulence.</li>
+<li><b>Wing loading</b> &mdash; a heavily loaded wing rides gusts better. A light aeroplane with a
+big wing is thrown about; the same gust that is uncomfortable in a trainer is barely felt in an
+airliner.</li>
+<li><b>Lift curve slope</b>, which in practice means <b>aspect ratio</b> &mdash; a long thin wing
+responds more sharply to a change of angle than a short stubby one.</li>
+</ul>
+<p>Note the direction of the mass effect, because it is the opposite of the manoeuvre case: being
+<b>lighter</b> lowers V<sub>A</sub> and protects you from your own control inputs, but it makes
+you <b>more</b> susceptible to gust loads, not less. The answer to turbulence is always to slow
+down &mdash; to V<sub>NO</sub> or below, and to the turbulence penetration speed if your POH gives
+one.</p>
 
 <h3>Flutter</h3>
 <p>Flutter is a vibration driven by the airflow, not by the pilot. A wing that bends upwards also

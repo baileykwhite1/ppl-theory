@@ -3,7 +3,7 @@ window.SC = window.SC || {};
 window.SC['020'] = {
 articles: [
 {
-  id: '020-airframe', title: 'Airframe, controls and undercarriage', mins: 6, tags: ['021.01', '021.02', '021.04', '021.06'],
+  id: '020-airframe', title: 'Airframe, controls and undercarriage', mins: 6, tags: ['021.01', '021.02', '021.03', '021.04', '021.06'],
   body: `
 <h3>Structure and loads</h3>
 <p>Five basic loads act on aircraft structures: <b>tension</b>, <b>compression</b>, <b>shear</b>,
@@ -68,7 +68,27 @@ harsher ride.</p>
 <li>In flight the wing <b>upper</b> surface is in compression.</li>
 <li>Mass balance prevents <b>flutter</b>; aerodynamic balance reduces <b>stick force</b>.</li>
 <li>Fowler flap is the most effective type; split flap gives the most drag for the least lift.</li>
-</ul></div>`
+</ul></div><h3>Hydraulics, in principle</h3>
+<p>A hydraulic system works because liquids are, for practical purposes,
+<b>incompressible</b>. Push a small piston a long way and a large piston moves a short way with a
+greater force &mdash; the pressures are equal throughout, so force is traded for distance. That is
+the whole of a light aeroplane brake system: a master cylinder at the pedal, a line, and a slave
+cylinder at the caliper.</p>
+<p><b>The fluid.</b> Two families, and they must never be mixed because each destroys the other's
+seals. <b>Mineral-based</b> fluid is dyed <b>red</b> and is what almost every light aeroplane
+brake system uses. <b>Synthetic phosphate-ester</b> fluid is dyed purple and is found in transport
+aircraft; it is fire-resistant, which is why they use it, and aggressive to paint and skin. Both
+want to be clean, at the right level, and free of <b>air</b>: air is compressible, so a bubble in
+the line gives the spongy pedal that travels a long way and does little.</p>
+<p><b>When it degrades.</b> The failures you might actually meet are a leak, and heat. A leaking
+seal or line loses fluid and then pressure &mdash; brake effectiveness falls away, usually on one
+wheel first, so the aeroplane pulls to the good side. Heavy braking heats the discs enough to boil
+the fluid locally, and the vapour <em>is</em> compressible: the pedal goes soft after repeated hard
+braking and firms up again as it cools. There is no warning system on a light aeroplane, so the
+indications are the ones you feel &mdash; a long or spongy pedal, a pull to one side, and a
+puddle or a wet caliper on the walk-round.</p>
+
+`
 },
 {
   id: '020-engine', title: 'The piston engine', mins: 8, tags: ['021.09'],
@@ -221,7 +241,7 @@ are covered in the instruments article.</p>
 </ul></div>`
 },
 {
-  id: '020-instruments', title: 'Instruments and their errors', mins: 7, tags: ['022.01', '022.02', '022.03', '022.04'],
+  id: '020-instruments', title: 'Instruments and their errors', mins: 7, tags: ['022.01', '022.02', '022.03', '022.04', '022.05', '022.06', '022.07'],
   body: `
 <h3>The pitot-static three</h3>
 <p><b>ASI</b> — measures the difference between pitot (total) and static pressure, which is
@@ -287,6 +307,57 @@ leaning, peaking as you approach stoichiometric.</li>
 <li><b>Slip ball, stall warner, hour meter</b> and, increasingly, an <b>EFIS</b> presenting all
 of the above on a screen — with the same underlying sensors and the same failure modes.</li>
 </ul>
+
+<h3>Glass: what changes and what does not</h3>
+<p>An electronic flight display replaces the six separate instruments with one or two screens: a
+<b>primary flight display</b> carrying attitude, airspeed, altitude, heading and vertical speed in
+one picture, and often a <b>multi-function display</b> for moving map and engine data. The
+sensing behind them is different too &mdash; an air data computer and solid-state attitude and
+heading reference in place of a spinning gyro and a pressure capsule.</p>
+<p>The advantages are real: one scan instead of six, no gyro topple or erection errors, and a map
+that shows you rather than needing to be interpreted.</p>
+<p>The limitations are the examinable part. Screens are <b>electrically powered</b>, so an
+alternator failure now threatens your attitude reference as well as your radio &mdash; which is why
+such aircraft carry a standby attitude indicator, a standby altimeter and ASI, and a battery to
+run them. Screens wash out in direct sunlight and need dimming at night. A failed display drops
+to a <b>reversionary mode</b> that squeezes both pictures onto the surviving screen, and you
+should have practised that before you need it. And the most insidious one: the picture is so
+complete and so convincing that it invites you to fly the screen rather than look out &mdash; the
+information is better, and the temptation to stop scanning outside is worse.</p>
+
+<h3>Warnings: the stall warner, and what you do not have</h3>
+<p>The one alerting system a light aeroplane certainly has is the <b>stall warner</b>. As angle of
+attack rises, the stagnation point moves down and aft around the leading edge, so the suction that
+holds a small vane or reed at the leading edge changes: a <b>vane</b> is lifted and closes a
+switch, or a <b>reed</b> starts to sound as air is drawn through it. Both are triggered by
+<b>angle of attack</b>, not by speed &mdash; which is why the warner works at any weight, bank
+angle or flap setting, and why it sounds earlier in a steep turn. It is set to give warning a few
+knots before the stall; the exact margin is in your POH.</p>
+<p>A reed type needs no electrical power and will sound with the master off. A vane-and-switch
+type drives a horn or light from the bus, so it is worth a deliberate check: lift the vane on the
+walk-round with the master on and listen for it.</p>
+<p>What you almost certainly do not have is a flight warning system in the airline sense &mdash; no
+master caution, no aural terrain warning, no traffic alerting. A low-voltage light, an oil-pressure
+light and the stall warner may be the whole set. That is the real point of the objective: on this
+aeroplane, the warning system is mostly <b>you</b>, looking at the instruments.</p>
+
+<h3>The radio as a piece of equipment</h3>
+<p>Three transmission modes appear in the syllabus, and you will only ever use the first.</p>
+<ul>
+<li><b>VHF</b>, 118.000 to 136.975 MHz for communications, amplitude-modulated. It is
+<b>line of sight</b>, so range depends on height, and only one station can usefully transmit at a
+time &mdash; two at once produces the heterodyne squeal that blocks both. Channels are spaced
+25 kHz or <b>8.33 kHz</b>; the six-digit number you set is a channel designator, not the
+frequency being radiated.</li>
+<li><b>HF</b>, roughly 3 to 30 MHz, single sideband. It refracts off the ionosphere, so it works
+over thousands of miles and over ocean where there is no VHF station &mdash; at the price of poor,
+noisy, fading audio that varies with the time of day. Long-haul and remote operations only.</li>
+<li><b>SATCOM</b> &mdash; voice and data via satellite. Reliable and near-global, expensive, and
+fitted to airliners and business aircraft, not to a training single.</li>
+</ul>
+<p>The practical limits on your VHF are the ones that bite: range set by height and terrain, a
+single channel shared by everyone on it, and the fact that the set is on the <b>bus</b> &mdash;
+lose the alternator and the radio is one of the first things to shed.</p>
 
 <h3>Pitot heat and ice protection</h3>
 <p>Pitot heat is an electrical element inside the pitot head and its drain hole. It keeps ice and

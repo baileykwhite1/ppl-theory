@@ -126,7 +126,7 @@ you.</p>
 </ul></div>`
 },
 {
-  id: '040-psychology', title: 'Aviation psychology and decision making', mins: 7, tags: ['040.01', '040.04', '040.05', '040.06', '040.08', '040.09'],
+  id: '040-psychology', title: 'Aviation psychology and decision making', mins: 7, tags: ['040.01', '040.04', '040.05', '040.06', '040.07', '040.08', '040.09'],
   body: `
 <h3>Information processing, and where it breaks</h3>
 <p>Sensation, then perception (making sense of it against expectation and memory), then decision,
@@ -228,7 +228,31 @@ and do what they say.</p>
 unalterably.</li>
 <li>The five hazardous attitudes and their antidotes are examined by name.</li>
 <li>Slip/lapse versus mistake versus violation — know which defence applies to which.</li>
-</ul></div>`
+</ul></div><h3>Managing the cockpit: risk and situational awareness</h3>
+<p>Two kinds of awareness, and they fail differently.</p>
+<p><b>Risk area awareness</b> is knowing, before you go, which parts of this flight are the
+dangerous parts &mdash; and it is largely a planning act. The risk is not spread evenly: it sits in
+the take-off and the climb-out, in the descent and approach and landing, in the weather you have
+decided is good enough, in the fuel margin you accepted, and in the terrain and airspace you are
+routing near. Naming those in advance is what lets you brief them: what you will do if the engine
+stops on this runway, at what point you will turn back, what the weather has to be for you to
+continue. A risk you have named has a plan attached; one you have not is a surprise.</p>
+<p><b>Situational awareness</b> is the running picture in flight &mdash; where you are, what the
+aeroplane is doing, what the weather and the traffic and the fuel are doing, and what comes next.
+It is built from the same information everyone has, which is why two pilots in the same cockpit
+can have different pictures, and why one of them can be wrong. The warning signs are worth
+memorising because they are noticeable from the inside: <b>ambiguity</b>, where two sources
+disagree; <b>fixation</b>, where everything is going into one problem; <b>confusion</b> or a
+feeling that something is not right; <b>undocumented procedure</b>, doing it a way you have not
+done it before; failing to meet a planned target &mdash; a height, a time, a position;
+<b>nobody flying the aeroplane</b>; and nobody looking out.</p>
+<p>The recovery is always the same and always in this order: <b>fly the aeroplane</b>, buy time by
+climbing, slowing or turning away, then rebuild the picture from a source you trust &mdash; a
+position fix, an altimeter setting, a fuel gauge read rather than remembered &mdash; and only then
+decide. Ask for help early; a request for a position fix or a radar service costs nothing and is
+never held against you.</p>
+
+`
 }
 ],
 
