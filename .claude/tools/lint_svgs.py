@@ -1,8 +1,8 @@
 """Spec lint for generated diagrams: the mechanical rules from DIAGRAM-SPEC.md.
 Usage: lint_svgs.py drawn.json   -> prints offenders, exits 1 if any."""
 import json, re, sys
-ALLOWED_CLASSES = set('dg b s sb blue-t red-t green-t orange-t ink thin dash fill tint '
-                      'blue red green orange fblue fred fgreen'.split())
+ALLOWED_CLASSES = set('dg b s sb sub blue-t red-t green-t orange-t ink thin dash fill tint '
+                      'blue red green orange fblue fred fgreen face white fwhite white-t'.split())
 def lint(d):
     s, i, p = d['svg'], d['id'], []
     if not re.search(r'viewBox="0 0 640 \d+"', s): p.append('viewBox not 640 wide')

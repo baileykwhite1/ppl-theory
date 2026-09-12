@@ -46,7 +46,7 @@ airspace: {
 vmc: {
   alt: 'Three altitude bands showing the VMC visibility and distance from cloud minima',
   cap: 'Table S5-1 as a picture. The break at 3000 ft is where Class G stops owing you 1500 m from cloud and only asks you to stay clear of it.',
-  svg: `<svg class="dg" viewBox="0 0 640 340" role="img" aria-label="VMC minima by altitude band">
+  svg: `<svg class="dg" viewBox="0 0 640 378" role="img" aria-label="VMC minima by altitude band">
   <!-- band 3: FL100+ -->
   <rect x="20" y="20" width="600" height="86" class="tint"/>
   <line x1="20" y1="20" x2="620" y2="20" class="thin"/>
@@ -74,7 +74,9 @@ vmc: {
   <text x="314" y="278" class="s">Classes F G</text>
   <text x="314" y="296" class="blue-t">5 km · clear of cloud · surface in sight</text>
   <line x1="20" y1="316" x2="620" y2="316" class="ink"/>
-  <text x="320" y="334" text-anchor="middle" class="s">Ground</text>
+  <text x="320" y="332" text-anchor="middle" class="s">Ground</text>
+  <line x1="20" y1="344" x2="620" y2="344" class="thin"/>
+  <text x="34" y="364" class="s">Concession: Class F/G, by day, at 140 kt IAS or less — visibility may reduce to 1500 m.</text>
 </svg>`
 },
 
@@ -82,7 +84,7 @@ altimetry: {
   alt: 'Three altimeter subscale settings and the datum each one measures from',
   cap: 'Same aeroplane, three readings. QFE measures from the aerodrome, QNH from sea level, 1013 from a pressure datum that moves with the weather.',
   svg: `<svg class="dg" viewBox="0 0 640 300" role="img" aria-label="QFE, QNH and standard pressure setting datums">
-  <defs><marker id="ar-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+  <defs><marker id="altimetry-ar-alt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker></defs>
   <!-- aeroplane -->
   <g transform="translate(300,44)"><path d="M-16 0 h32 M0 -9 l0 18 M9 -5 l0 10" class="ink blue"/></g>
@@ -98,11 +100,11 @@ altimetry: {
   <text x="60" y="262" class="b">1013.25 hPa datum</text>
   <text x="580" y="262" text-anchor="end" class="s">1013 set — reads a flight level</text>
   <!-- measures -->
-  <line x1="200" y1="56" x2="200" y2="118" class="ink blue" marker-end="url(#ar-alt)"/>
+  <line x1="200" y1="56" x2="200" y2="118" class="ink blue" marker-end="url(#altimetry-ar-alt)"/>
   <text x="208" y="92" class="blue-t">HEIGHT</text>
-  <line x1="360" y1="56" x2="360" y2="198" class="ink" marker-end="url(#ar-alt)"/>
+  <line x1="360" y1="56" x2="360" y2="198" class="ink" marker-end="url(#altimetry-ar-alt)"/>
   <text x="368" y="132" >ALTITUDE</text>
-  <line x1="500" y1="56" x2="500" y2="268" class="ink" marker-end="url(#ar-alt)"/>
+  <line x1="500" y1="56" x2="500" y2="268" class="ink" marker-end="url(#altimetry-ar-alt)"/>
   <text x="508" y="168">FLIGHT LEVEL</text>
   <!-- terrain -->
   <path d="M60 120 h520 v18 h-520 z" class="tint"/>
@@ -235,7 +237,7 @@ seabreeze: {
   alt: 'Sea breeze circulation, with air rising over warm land and flowing onshore at the surface',
   cap: 'By day the land heats faster, so the surface flow is onshore. At night it reverses and weakens.',
   svg: `<svg class="dg" viewBox="0 0 640 280" role="img" aria-label="Sea breeze circulation">
-  <defs><marker id="ar-sb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <defs><marker id="seabreeze-ar-sb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker></defs>
   <!-- sea and land -->
   <rect x="20" y="210" width="300" height="40" class="tint"/>
@@ -247,13 +249,13 @@ seabreeze: {
   <circle cx="540" cy="52" r="16" class="ink orange"/>
   <g class="orange ink"><line x1="540" y1="24" x2="540" y2="14"/><line x1="566" y1="34" x2="574" y2="26"/><line x1="514" y1="34" x2="506" y2="26"/></g>
   <!-- circulation -->
-  <path d="M200 190 H430" class="ink blue" marker-end="url(#ar-sb)"/>
+  <path d="M200 190 H430" class="ink blue" marker-end="url(#seabreeze-ar-sb)"/>
   <text x="300" y="182" text-anchor="middle" class="blue-t">Sea breeze — onshore</text>
-  <path d="M450 190 V90" class="ink blue" marker-end="url(#ar-sb)"/>
+  <path d="M450 190 V90" class="ink blue" marker-end="url(#seabreeze-ar-sb)"/>
   <text x="462" y="140" class="s blue-t">Rising</text>
-  <path d="M430 74 H210" class="ink blue" marker-end="url(#ar-sb)"/>
+  <path d="M430 74 H210" class="ink blue" marker-end="url(#seabreeze-ar-sb)"/>
   <text x="320" y="66" text-anchor="middle" class="s blue-t">Return flow aloft</text>
-  <path d="M190 90 V180" class="ink blue" marker-end="url(#ar-sb)"/>
+  <path d="M190 90 V180" class="ink blue" marker-end="url(#seabreeze-ar-sb)"/>
   <text x="140" y="140" class="s blue-t">Sinking</text>
   <!-- cloud over land -->
   <g class="fill" opacity=".3"><ellipse cx="450" cy="104" rx="36" ry="14"/><ellipse cx="470" cy="94" rx="24" ry="12"/></g>
@@ -267,15 +269,15 @@ aerofoil: {
   alt: 'Aerofoil section showing chord line, relative airflow, angle of attack, and the lift and drag components',
   cap: 'Angle of attack is measured to the relative airflow — not to the horizon and not to the fuselage.',
   svg: `<svg class="dg" viewBox="0 0 640 290" role="img" aria-label="Aerofoil, angle of attack, lift and drag">
-  <defs><marker id="ar-af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <defs><marker id="aerofoil-ar-af" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker>
-  <marker id="ar-afb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <marker id="aerofoil-ar-afb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker></defs>
   <!-- relative airflow -->
   <g class="ink" opacity=".45">
-    <line x1="30" y1="120" x2="150" y2="120" marker-end="url(#ar-af)"/>
-    <line x1="30" y1="160" x2="150" y2="160" marker-end="url(#ar-af)"/>
-    <line x1="30" y1="200" x2="150" y2="200" marker-end="url(#ar-af)"/>
+    <line x1="30" y1="120" x2="150" y2="120" marker-end="url(#aerofoil-ar-af)"/>
+    <line x1="30" y1="160" x2="150" y2="160" marker-end="url(#aerofoil-ar-af)"/>
+    <line x1="30" y1="200" x2="150" y2="200" marker-end="url(#aerofoil-ar-af)"/>
   </g>
   <text x="30" y="108" class="s">Relative airflow</text>
   <!-- aerofoil, rotated nose-up -->
@@ -295,10 +297,10 @@ aerofoil: {
   <text x="160" y="146" class="blue-t">α</text>
   <text x="176" y="146" class="s blue-t">angle of attack</text>
   <!-- lift and drag -->
-  <line x1="330" y1="138" x2="330" y2="48" class="ink blue" marker-end="url(#ar-afb)"/>
+  <line x1="330" y1="138" x2="330" y2="48" class="ink blue" marker-end="url(#aerofoil-ar-afb)"/>
   <text x="338" y="60" class="b blue">LIFT</text>
   <text x="338" y="78" class="s blue-t">perpendicular to the airflow</text>
-  <line x1="440" y1="168" x2="530" y2="168" class="ink" marker-end="url(#ar-af)"/>
+  <line x1="440" y1="168" x2="530" y2="168" class="ink" marker-end="url(#aerofoil-ar-af)"/>
   <text x="470" y="188">DRAG</text>
   <text x="320" y="262" text-anchor="middle" class="s">Most of the lift comes from reduced pressure over the upper surface, not raised pressure below.</text>
 </svg>`
@@ -324,11 +326,11 @@ dragcurve: {
   <!-- VMD -->
   <circle cx="322" cy="196" r="5" class="fblue"/>
   <line x1="322" y1="196" x2="322" y2="260" class="thin dash"/>
-  <text x="322" y="278" text-anchor="middle" class="b blue">V<tspan font-size="9">MD</tspan></text>
+  <text x="322" y="278" text-anchor="middle" class="b blue">V<tspan class="sub">MD</tspan></text>
   <text x="322" y="176" text-anchor="middle" class="s blue-t">induced = parasite</text>
   <!-- back of curve -->
   <path d="M110 266 H316" class="ink red"/>
-  <text x="120" y="296" class="s red-t">Back of the drag curve — slower needs more power</text>
+  <text x="120" y="301" class="s red-t">Back of the drag curve — slower needs more power</text>
 </svg>`
 },
 
@@ -361,9 +363,9 @@ turnforces: {
   alt: 'Rear view of an aeroplane in a 60 degree banked turn showing total lift resolved into vertical and horizontal components',
   cap: 'The horizontal component turns you; the vertical still has to hold the weight. At 60° that costs 2g, and 41% on the stall speed.',
   svg: `<svg class="dg" viewBox="0 0 640 320" role="img" aria-label="Forces in a banked turn">
-  <defs><marker id="ar-tf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <defs><marker id="turnforces-ar-tf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker>
-  <marker id="ar-tfb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <marker id="turnforces-ar-tfb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker></defs>
   <!-- aeroplane banked 60 -->
   <g transform="rotate(-60 300 200)">
@@ -372,7 +374,7 @@ turnforces: {
   </g>
   <text x="196" y="252" class="s">60° bank</text>
   <!-- total lift along the aircraft vertical -->
-  <line x1="300" y1="200" x2="404" y2="140" class="ink blue" marker-end="url(#ar-tfb)"/>
+  <line x1="300" y1="200" x2="404" y2="140" class="ink blue" marker-end="url(#turnforces-ar-tfb)"/>
   <text x="410" y="134" class="b blue">Total lift</text>
   <!-- vertical component -->
   <line x1="300" y1="200" x2="300" y2="80" class="ink dash"/>
@@ -380,11 +382,11 @@ turnforces: {
   <text x="292" y="109" text-anchor="end" class="s">= weight</text>
   <!-- horizontal component -->
   <line x1="300" y1="80" x2="404" y2="80" class="ink dash"/>
-  <line x1="300" y1="200" x2="404" y2="200" class="ink red" marker-end="url(#ar-tf)"/>
+  <line x1="300" y1="200" x2="404" y2="200" class="ink red" marker-end="url(#turnforces-ar-tf)"/>
   <text x="310" y="222" class="red-t">Horizontal component</text>
   <text x="310" y="239" class="s red-t">turns the aeroplane</text>
   <!-- weight -->
-  <line x1="300" y1="200" x2="300" y2="290" class="ink" marker-end="url(#ar-tf)"/>
+  <line x1="300" y1="200" x2="300" y2="290" class="ink" marker-end="url(#turnforces-ar-tf)"/>
   <text x="308" y="286">Weight</text>
   <!-- numbers -->
   <g><text x="470" y="192" class="b">n = 1 / cos 60° = 2.0</text>
@@ -395,29 +397,37 @@ turnforces: {
 
 asiarcs: {
   alt: 'Airspeed indicator dial showing the white, green and yellow arcs and the red never-exceed line',
-  cap: 'Every arc boundary is a limitation. V<sub>A</sub> is the one that is not marked — and it gets lower as you get lighter.',
+  cap: 'Every arc boundary is a limitation. Note that white is a separate, inner arc that <em>overlaps</em> the green — V<sub>S0</sub> sits below V<sub>S1</sub> because flap lowers the stall, and V<sub>FE</sub> falls well inside the green range. V<sub>A</sub> is the one limitation not marked on the dial at all — and it gets lower as you get lighter.',
   svg: `<svg class="dg" viewBox="0 0 640 300" role="img" aria-label="Airspeed indicator arc markings">
+  <circle cx="200" cy="150" r="112" class="face"/>
   <circle cx="200" cy="150" r="112" class="ink"/>
-  <circle cx="200" cy="150" r="4" class="fill"/>
-  <!-- white arc: VS0 to VFE  (200deg to 290deg) -->
-  <path d="M 108 86 A 112 112 0 0 1 148 58" class="ink" stroke-width="9" stroke-linecap="butt" opacity=".9"/>
-  <!-- green arc -->
-  <path d="M 148 58 A 112 112 0 0 1 300 190" class="green ink" stroke-width="9" stroke-linecap="butt"/>
-  <!-- yellow arc -->
-  <path d="M 300 190 A 112 112 0 0 1 262 236" class="orange ink" stroke-width="9" stroke-linecap="butt"/>
-  <!-- red line -->
-  <line x1="262" y1="236" x2="272" y2="248" class="red ink" stroke-width="5"/>
+  <circle cx="200" cy="150" r="4" class="fwhite"/>
+  <!-- White sits on an INNER radius and overlaps the green: VS0 is below VS1, and
+       VFE lies well inside the green range. Drawn end-to-end they would say
+       VFE = VS1, which is not what the instrument means. -->
+  <path d="M 118.9 171.7 A 84 84 0 0 1 221.7 68.9" class="white" stroke-width="9" stroke-linecap="butt"/>
+  <text x="136" y="171" text-anchor="middle" class="s white-t">V<tspan class="sub">S0</tspan></text>
+  <text x="217" y="90" text-anchor="middle" class="s white-t">V<tspan class="sub">FE</tspan></text>
+  <!-- green arc, outer -->
+  <path d="M 103.4 124.1 A 100 100 0 0 1 299.5 139.6" class="green ink" stroke-width="10" stroke-linecap="butt"/>
+  <text x="80" y="122" text-anchor="end" class="s green-t">V<tspan class="sub">S1</tspan></text>
+  <text x="266" y="147" text-anchor="middle" class="s green-t">V<tspan class="sub">NO</tspan></text>
+  <!-- yellow arc, same outer radius -->
+  <path d="M 299.5 139.6 A 100 100 0 0 1 270.7 220.7" class="orange ink" stroke-width="10" stroke-linecap="butt"/>
+  <!-- red radial, crossing the band as it does on the instrument -->
+  <line x1="263.6" y1="213.6" x2="277.8" y2="227.8" class="red ink" stroke-width="5"/>
+  <text x="291" y="245" text-anchor="middle" class="s red-t">V<tspan class="sub">NE</tspan></text>
   <!-- labels -->
-  <text x="200" y="146" text-anchor="middle" class="s">KNOTS</text>
-  <text x="200" y="166" text-anchor="middle" class="s">IAS</text>
+  <text x="200" y="146" text-anchor="middle" class="s white-t">KNOTS</text>
+  <text x="200" y="166" text-anchor="middle" class="s white-t">IAS</text>
   <g class="s">
     <text x="330" y="70">White arc — flap operating range</text>
-    <text x="330" y="88" class="sb">bottom = V<tspan font-size="8">S0</tspan> · top = V<tspan font-size="8">FE</tspan></text>
+    <text x="330" y="88" class="sb">bottom = V<tspan class="sub">S0</tspan> · top = V<tspan class="sub">FE</tspan></text>
     <text x="330" y="122" class="green-t">Green arc — normal operating</text>
-    <text x="330" y="140" class="sb">bottom = V<tspan font-size="8">S1</tspan> · top = V<tspan font-size="8">NO</tspan></text>
+    <text x="330" y="140" class="sb">bottom = V<tspan class="sub">S1</tspan> · top = V<tspan class="sub">NO</tspan></text>
     <text x="330" y="174" class="orange-t">Yellow arc — caution</text>
     <text x="330" y="192" class="sb">smooth air only</text>
-    <text x="330" y="226" class="red-t">Red line — V<tspan font-size="8">NE</tspan></text>
+    <text x="330" y="226" class="red-t">Red line — V<tspan class="sub">NE</tspan></text>
     <text x="330" y="244" class="sb">never exceed</text>
   </g>
 </svg>`
@@ -429,22 +439,22 @@ triangle: {
   alt: 'The triangle of velocities showing the air vector, wind vector and ground vector',
   cap: 'Heading and TAS, plus the wind, gives track and groundspeed. Drift is the angle between heading and track.',
   svg: `<svg class="dg" viewBox="0 0 640 300" role="img" aria-label="Triangle of velocities">
-  <defs><marker id="ar-tv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <defs><marker id="triangle-ar-tv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker>
-  <marker id="ar-tvb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <marker id="triangle-ar-tvb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker>
-  <marker id="ar-tvr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <marker id="triangle-ar-tvr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fred"/></marker></defs>
   <!-- air vector -->
-  <line x1="80" y1="230" x2="420" y2="90" class="ink" marker-end="url(#ar-tv)"/>
+  <line x1="80" y1="230" x2="420" y2="90" class="ink" marker-end="url(#triangle-ar-tv)"/>
   <text x="200" y="120" >Heading + TAS</text>
   <text x="200" y="136" class="s">the air vector</text>
   <!-- wind vector -->
-  <line x1="420" y1="90" x2="500" y2="160" class="ink red" marker-end="url(#ar-tvr)"/>
+  <line x1="420" y1="90" x2="500" y2="160" class="ink red" marker-end="url(#triangle-ar-tvr)"/>
   <text x="480" y="112" class="red-t">W/V</text>
   <text x="480" y="128" class="s red-t">wind, from</text>
   <!-- ground vector -->
-  <line x1="80" y1="230" x2="500" y2="160" class="ink blue" marker-end="url(#ar-tvb)"/>
+  <line x1="80" y1="230" x2="500" y2="160" class="ink blue" marker-end="url(#triangle-ar-tvb)"/>
   <text x="250" y="222" class="blue-t">Track + groundspeed</text>
   <text x="250" y="238" class="s blue-t">where you actually go</text>
   <!-- drift angle -->
@@ -460,11 +470,11 @@ oneinsixty: {
   alt: 'The 1 in 60 rule: one degree of error gives one nautical mile of displacement after sixty nautical miles',
   cap: 'Track error = (distance off ÷ distance flown) × 60. Add a closing angle over the distance remaining to regain track by the destination.',
   svg: `<svg class="dg" viewBox="0 0 640 260" role="img" aria-label="The 1 in 60 rule">
-  <defs><marker id="ar-16" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <defs><marker id="oneinsixty-ar-16" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker></defs>
   <line x1="60" y1="90" x2="560" y2="90" class="ink dash"/>
   <text x="300" y="80" text-anchor="middle" class="s">Planned track</text>
-  <line x1="60" y1="90" x2="360" y2="150" class="ink blue" marker-end="url(#ar-16)"/>
+  <line x1="60" y1="90" x2="360" y2="150" class="ink blue" marker-end="url(#oneinsixty-ar-16)"/>
   <text x="180" y="136" class="blue-t">Actual track</text>
   <circle cx="60" cy="90" r="4" class="fill"/>
   <circle cx="560" cy="90" r="5" class="fill"/>
@@ -490,13 +500,13 @@ varmag: {
   alt: 'True north, magnetic north and compass north, with variation and deviation between them',
   cap: 'Variation west, magnetic best. The chart is drawn to true; the compass points somewhere else again.',
   svg: `<svg class="dg" viewBox="0 0 640 280" role="img" aria-label="True, magnetic and compass north">
-  <defs><marker id="ar-vm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <defs><marker id="varmag-ar-vm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker></defs>
-  <line x1="300" y1="230" x2="300" y2="50" class="ink" marker-end="url(#ar-vm)"/>
+  <line x1="300" y1="230" x2="300" y2="50" class="ink" marker-end="url(#varmag-ar-vm)"/>
   <text x="300" y="38" text-anchor="middle" class="b">True N</text>
-  <line x1="300" y1="230" x2="248" y2="58" class="ink blue" marker-end="url(#ar-vm)"/>
+  <line x1="300" y1="230" x2="248" y2="58" class="ink blue" marker-end="url(#varmag-ar-vm)"/>
   <text x="228" y="46" text-anchor="middle" class="b blue">Magnetic N</text>
-  <line x1="300" y1="230" x2="218" y2="78" class="ink red" marker-end="url(#ar-vm)"/>
+  <line x1="300" y1="230" x2="218" y2="78" class="ink red" marker-end="url(#varmag-ar-vm)"/>
   <text x="176" y="66" text-anchor="middle" class="b red-t">Compass N</text>
   <path d="M300 130 A 100 100 0 0 0 272 138" class="ink blue"/>
   <text x="306" y="126" class="blue-t">Variation</text>
@@ -516,7 +526,7 @@ fourstroke: {
   alt: 'The four strokes of a piston engine cycle: induction, compression, power and exhaust',
   cap: 'Two crankshaft revolutions per cycle, one power stroke per cylinder. Ignition fires before top dead centre so peak pressure arrives just after it.',
   svg: `<svg class="dg" viewBox="0 0 640 272" role="img" aria-label="Four stroke engine cycle">
-  <defs><marker id="ar-fs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+  <defs><marker id="fourstroke-ar-fs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker></defs>
   <g class="ink">
     <g transform="translate(30,40)">
@@ -558,9 +568,9 @@ fourstroke: {
       <text x="50" y="188" text-anchor="middle" class="s">piston up</text>
     </g>
   </g>
-  <line x1="140" y1="110" x2="172" y2="110" class="ink" marker-end="url(#ar-fs)"/>
-  <line x1="290" y1="110" x2="322" y2="110" class="ink" marker-end="url(#ar-fs)"/>
-  <line x1="440" y1="110" x2="472" y2="110" class="ink" marker-end="url(#ar-fs)"/>
+  <line x1="140" y1="110" x2="172" y2="110" class="ink" marker-end="url(#fourstroke-ar-fs)"/>
+  <line x1="290" y1="110" x2="322" y2="110" class="ink" marker-end="url(#fourstroke-ar-fs)"/>
+  <line x1="440" y1="110" x2="472" y2="110" class="ink" marker-end="url(#fourstroke-ar-fs)"/>
   <text x="320" y="254" text-anchor="middle" class="s">Suck · Squeeze · Bang · Blow</text>
 </svg>`
 },
@@ -680,21 +690,21 @@ circuit: {
   alt: 'A standard left-hand aerodrome circuit with the overhead join',
   cap: 'A standard left-hand circuit. The overhead join arrives at 2000 ft, descends on the dead side, and crosses the upwind end.',
   svg: `<svg class="dg" viewBox="0 0 640 320" role="img" aria-label="Aerodrome circuit and overhead join">
-  <defs><marker id="ar-ci" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+  <defs><marker id="circuit-ar-ci" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
     <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker></defs>
   <!-- runway -->
   <rect x="250" y="120" width="150" height="20" class="ink" transform="rotate(0 325 130)"/>
   <text x="325" y="134" text-anchor="middle" class="s" fill="none"></text>
   <!-- circuit -->
-  <path d="M400 130 H500" class="ink blue" marker-end="url(#ar-ci)"/>
+  <path d="M400 130 H500" class="ink blue" marker-end="url(#circuit-ar-ci)"/>
   <text x="450" y="118" text-anchor="middle" class="blue-t">Upwind</text>
-  <path d="M500 130 V220" class="ink blue" marker-end="url(#ar-ci)"/>
+  <path d="M500 130 V220" class="ink blue" marker-end="url(#circuit-ar-ci)"/>
   <text x="512" y="180" class="blue-t">Crosswind</text>
-  <path d="M500 220 H180" class="ink blue" marker-end="url(#ar-ci)"/>
+  <path d="M500 220 H180" class="ink blue" marker-end="url(#circuit-ar-ci)"/>
   <text x="340" y="240" text-anchor="middle" class="blue-t">Downwind</text>
-  <path d="M180 220 V160" class="ink blue" marker-end="url(#ar-ci)"/>
+  <path d="M180 220 V160" class="ink blue" marker-end="url(#circuit-ar-ci)"/>
   <text x="118" y="196" class="blue-t">Base</text>
-  <path d="M180 160 H250" class="ink blue" marker-end="url(#ar-ci)"/>
+  <path d="M180 160 H250" class="ink blue" marker-end="url(#circuit-ar-ci)"/>
   <text x="212" y="152" text-anchor="middle" class="blue-t">Final</text>
   <!-- dead side -->
   <rect x="250" y="40" width="250" height="62" class="tint"/>
@@ -763,7 +773,7 @@ arousal: {
 
 semicircular: {
   alt: 'A compass rose divided by a vertical line running through 000 degrees at the top and 180 degrees at the bottom; the eastern half is marked odd thousands plus 500 feet and the western half even thousands plus 500 feet, an example track of 050 degrees magnetic is drawn into the eastern half, and a panel beside the rose lists the IFR and VFR flight levels for each track range.',
-  cap: 'Magnetic track, not heading, picks the level: tracks 000°–179° take the odd thousands, 180°–359° the even ones, with IFR on the plain thousand and VFR 500 ft above it. It bites only in level cruise above 3000 ft, and in the UK the VFR levels are advisory rather than mandatory.',
+  cap: 'Magnetic track, not heading, picks the level: tracks 000°–179° take the odd thousands, 180°–359° the even ones, with IFR on the plain thousand and VFR 500 ft above it. It bites only in level cruise above 3000 ft from the ground or water, and in the UK the VFR levels are advisory rather than mandatory.',
   svg: `<svg class="dg" viewBox="0 0 640 344" role="img" aria-label="Compass rose split at 000 and 180 degrees showing semicircular cruising levels">
   <defs>
     <marker id="semicircular-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
@@ -803,7 +813,8 @@ semicircular: {
   <text x="222" y="188" text-anchor="middle" class="s">thousands</text>
   <text x="222" y="208" text-anchor="middle" class="blue-t">+ 500 ft</text>
 
-  <text x="340" y="90" class="b">Above 3000 ft, in level cruise</text>
+  <text x="340" y="90" class="b">In level cruise, above 3000 ft</text>
+  <text x="340" y="106" class="s">above the ground or water</text>
 
   <text x="340" y="126" class="b">Track 000° – 179°</text>
   <text x="340" y="146" class="s">odd thousands</text>
@@ -1166,8 +1177,8 @@ carbIce: {
       <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker>
   </defs>
 
-  <text x="14" y="28" class="b">Inside the carburettor</text>
-  <text x="420" y="28" class="b">When ice is likely</text>
+  <text x="14" y="24" class="b">Inside the carburettor</text>
+  <text x="420" y="24" class="b">When ice is likely</text>
 
   <path class="tint" d="M95 108 H170 C192 108 197 134 209 134 H223 C235 134 240 108 262 108 H352 V192 H262 C240 192 235 166 223 166 H209 C197 166 192 192 170 192 H95 Z"/>
   <path class="ink" d="M95 108 H170 C192 108 197 134 209 134 H223 C235 134 240 108 262 108 H352"/>

@@ -623,6 +623,7 @@ figcaption b{color:var(--tx);font-weight:600}
 .dg text.s{font-size:12.5px;font-weight:500;opacity:.8}
 .dg text.b{font-size:14px;font-weight:700}
 .dg text.sb{font-size:12.5px;font-weight:500;opacity:.8}
+.dg tspan.sub{font-size:.74em;baseline-shift:-.22em}
 .dg .ink{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .dg .thin{fill:none;stroke:currentColor;stroke-width:1;opacity:.32}
 .dg .dash{stroke-dasharray:5 4}
@@ -634,6 +635,11 @@ figcaption b{color:var(--tx);font-weight:600}
 .dg .orange{stroke:var(--orange)}
 .dg text.blue-t{fill:var(--blue)}  .dg text.red-t{fill:var(--red)}
 .dg text.green-t{fill:var(--green)} .dg text.orange-t{fill:var(--orange)}
+/* An instrument face is a physical black dial, not a themed surface: the white
+   arc on an ASI only reads as white against it. Fixed colours on purpose. */
+.dg .face{fill:#15181c;stroke:none}
+.dg .white{fill:none;stroke:#fff}   .dg .fwhite{fill:#fff;stroke:none}
+.dg text.white-t{fill:#fff}
 
 /* ---------- article ---------- */
 .article{font-size:17px;line-height:1.58;padding:4px 0 20px}

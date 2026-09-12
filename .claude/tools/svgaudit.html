@@ -10,6 +10,7 @@ window.audit = function (opts) {
   opts = opts || {};
   const SET = opts.set || window.DIAG;
   const CROWD = opts.crowd == null ? 2 : opts.crowd;   // units below which two labels read as touching
+  const LEADING = opts.leading == null ? 4 : opts.leading;  // max gap still readable as one label's next line
   const host = document.getElementById('host');
   const out = {};
 
@@ -43,7 +44,16 @@ window.audit = function (opts) {
                sep: Math.max(dx, dy) };                 // <0 means the boxes intersect
     };
 
-    const overlaps = [], crowded = [];
+    /* Two consecutive <text> that sit directly one above the other, within normal
+       line leading and horizontally overlapping, are the two lines of ONE label
+       ("Require" / "assistance"). Reporting those as crowded buries the real
+       collisions — the same false-positive trap as bbox-vs-stroke. Count them
+       separately as `stacked`, which is informational. */
+    const isStacked = (A, B, ai, bi, g) =>
+      bi === ai + 1 && !g.overlap && g.dy >= 0 && g.dy <= LEADING &&
+      B.y > A.y && g.dx < 0;
+
+    const overlaps = [], crowded = [], stacked = [];
     for (let a = 0; a < texts.length; a++) for (let b = a + 1; b < texts.length; b++) {
       const A = texts[a], B = texts[b], g = gap(A, B);
       const rec = { a: A.s, b: B.s,
@@ -52,7 +62,8 @@ window.audit = function (opts) {
       if (g.overlap && Math.min(-g.dx, -g.dy) > 1) {
         rec.overlapArea = +(Math.min(-g.dx, A.w, B.w) * Math.min(-g.dy, A.h, B.h)).toFixed(0);
         overlaps.push(rec);
-      } else if (!g.overlap && g.sep < CROWD) crowded.push(rec);
+      } else if (isStacked(A, B, a, b, g)) stacked.push(rec);
+      else if (!g.overlap && g.sep < CROWD) crowded.push(rec);
     }
 
     /* Text sitting on top of drawn geometry. A bbox test is useless here: a label
@@ -70,7 +81,7 @@ window.audit = function (opts) {
                  ctm: el.getScreenCTM() };
       })
       .filter(sh => (sh.strokeOn || sh.fillOn) && sh.ctm &&
-                    !sh.cls.includes('tint'));
+                    !sh.cls.includes('tint') && !sh.cls.includes('face'));
 
     const pt = svg.createSVGPoint();
     const hitsAt = (sx, sy) => {
@@ -126,7 +137,7 @@ window.audit = function (opts) {
                    over: +Math.max(0, t.x + t.w - (vb[0] + vb[2])).toFixed(1) }));
 
     out[id] = { viewBox: vb, nTexts: texts.length,
-                overlaps, crowded, onShape, outside,
+                overlaps, crowded, stacked, onShape, outside,
                 minFs: +Math.min(...texts.map(t => t.fs)).toFixed(1),
                 texts };
   }
@@ -152,7 +163,7 @@ window.report = function (opts) {
   const r = window.audit(opts), out = {};
   for (const [id, d] of Object.entries(r)) {
     if (!(d.overlaps.length + d.crowded.length + d.onShape.length + d.outside.length)) continue;
-    out[id] = { viewBox: d.viewBox, overlaps: d.overlaps, crowded: d.crowded,
+    out[id] = { viewBox: d.viewBox, overlaps: d.overlaps, crowded: d.crowded, stacked: d.stacked.length,
                 onShape: d.onShape, outside: d.outside,
                 texts: d.texts.map(t => ({ s: t.s, cls: t.cls, box: [t.x, t.y, t.w, t.h] })) };
   }
