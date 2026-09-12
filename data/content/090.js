@@ -133,6 +133,7 @@ Keep them short: "Golf Charlie Delta, downwind."</li>
 </ul>
 
 <h3>VHF propagation and frequencies</h3>
+<figure data-d="vhfrange"></figure>
 <p>Aeronautical VHF communications occupy <b>118.000 to 136.975 MHz</b> and are
 <b>line of sight</b>. Range therefore depends on altitude and is blocked by terrain. A rough
 approximation for range in nautical miles is <b>1.25 times the square root of the height in
@@ -265,6 +266,7 @@ serious before asking, when the same call twenty minutes earlier would have been
 is no penalty for asking, and no prize for silence.</p>
 
 <h3>Message categories and their priority</h3>
+<figure data-d="msgpriority"></figure>
 <p>Everything passed on an aeronautical frequency belongs to a category, and the categories are
 ranked. The ranking decides who gets the frequency when two stations want it at once. It is
 examined as an ordered list, so learn it in order — it descends from "someone may die" to

@@ -3028,4 +3028,623 @@ earSection: {
 </svg>`
 },
 
+lightsignals: {
+  alt: 'A six-row table of aerodrome light signals. Each signal is drawn as a coloured disc in the left column — a solid ring around it for a steady light, a broken ring for a flashing one, and a starburst for the red pyrotechnic — with its meaning for an aircraft in flight in the middle column and for an aircraft on the ground in the right column.',
+  cap: 'Every signal carries two meanings, and only your position decides which applies. Steady green is cleared to land in the air but cleared for take-off on the ground; green flashes mean return for landing in the air but cleared to taxi on the ground. A broken ring marks a flashing signal; the red pyrotechnic is for aircraft in flight only.',
+  svg: `<svg class="dg" viewBox="0 0 640 304" role="img" aria-label="Table of aerodrome light signals with separate meanings for an aircraft in flight and an aircraft on the ground">
+  <text x="12" y="19" class="b">Signal</text>
+  <text x="264" y="19" class="b">Aircraft in flight</text>
+  <text x="460" y="19" class="b">Aircraft on the ground</text>
+  <line x1="12" y1="27" x2="632" y2="27" class="ink"/>
+
+  <rect x="12" y="61" width="620" height="34" class="tint"/>
+  <rect x="12" y="129" width="620" height="34" class="tint"/>
+  <rect x="12" y="197" width="620" height="40" class="tint"/>
+
+  <line x1="252" y1="27" x2="252" y2="197" class="thin"/>
+  <line x1="452" y1="27" x2="452" y2="197" class="thin"/>
+
+  <circle cx="34" cy="44" r="9" class="fgreen"/>
+  <circle cx="34" cy="44" r="15" class="green ink"/>
+  <text x="62" y="48">Steady green</text>
+  <text x="264" y="48" class="s">Cleared to land</text>
+  <text x="460" y="48" class="s">Cleared for take-off</text>
+
+  <circle cx="34" cy="78" r="9" class="fred"/>
+  <circle cx="34" cy="78" r="15" class="red ink"/>
+  <text x="62" y="82">Steady red</text>
+  <text x="264" y="74" class="s">Give way to other aircraft</text>
+  <text x="264" y="89" class="s">and continue circling</text>
+  <text x="460" y="82" class="s">Stop</text>
+
+  <circle cx="34" cy="112" r="9" class="fgreen"/>
+  <circle cx="34" cy="112" r="15" class="green ink dash"/>
+  <text x="62" y="116">Series of green flashes</text>
+  <text x="264" y="116" class="s">Return for landing *</text>
+  <text x="460" y="116" class="s">Cleared to taxi</text>
+
+  <circle cx="34" cy="146" r="9" class="fred"/>
+  <circle cx="34" cy="146" r="15" class="red ink dash"/>
+  <text x="62" y="150">Series of red flashes</text>
+  <text x="264" y="142" class="s">Aerodrome unsafe,</text>
+  <text x="264" y="157" class="s">do not land</text>
+  <text x="460" y="142" class="s">Taxi clear of landing</text>
+  <text x="460" y="157" class="s">area in use</text>
+
+  <circle cx="34" cy="180" r="9" class="fill" opacity=".16"/>
+  <circle cx="34" cy="180" r="9" class="ink"/>
+  <circle cx="34" cy="180" r="15" class="ink dash"/>
+  <text x="62" y="184">Series of white flashes</text>
+  <text x="264" y="176" class="s">Land at this aerodrome</text>
+  <text x="264" y="191" class="s">and proceed to apron *</text>
+  <text x="460" y="176" class="s">Return to starting point</text>
+  <text x="460" y="191" class="s">on the aerodrome</text>
+
+  <circle cx="34" cy="216" r="9" class="fred"/>
+  <line x1="47" y1="216" x2="52" y2="216" class="red ink"/>
+  <line x1="43.2" y1="225.2" x2="46.7" y2="228.7" class="red ink"/>
+  <line x1="34" y1="229" x2="34" y2="234" class="red ink"/>
+  <line x1="24.8" y1="225.2" x2="21.3" y2="228.7" class="red ink"/>
+  <line x1="21" y1="216" x2="16" y2="216" class="red ink"/>
+  <line x1="24.8" y1="206.8" x2="21.3" y2="203.3" class="red ink"/>
+  <line x1="34" y1="203" x2="34" y2="198" class="red ink"/>
+  <line x1="43.2" y1="206.8" x2="46.7" y2="203.3" class="red ink"/>
+  <text x="62" y="220">Red pyrotechnic</text>
+  <text x="264" y="211" class="s">Notwithstanding any previous instructions,</text>
+  <text x="264" y="226" class="s">do not land for the time being</text>
+
+  <line x1="12" y1="237" x2="632" y2="237" class="ink"/>
+  <text x="12" y="255" class="s">* Clearance to land and to taxi will be given in due course.</text>
+  <text x="12" y="273" class="s">Acknowledge: in flight, rock the wings by day or flash the landing lights twice at night.</text>
+  <text x="12" y="291" class="s">On the ground, move the ailerons or rudder by day. The red pyrotechnic has no on-ground meaning.</text>
+</svg>`
+},
+
+axes: {
+  alt: 'A light aeroplane drawn in three-quarter view with the longitudinal, lateral and normal axes passing through the centre of gravity, each carrying a rotation arrow and labels giving its motion, its control surface and the stability it provides.',
+  cap: 'Each axis carries one motion, one control and one stabilising surface. Note the crossover the exam relies on: the aeroplane pitches about the lateral axis, but that stability is called longitudinal. All three axes cross at the CG — that is what the aeroplane rotates about, not the middle of the fuselage.',
+  svg: `<svg class="dg" viewBox="0 0 640 400" role="img" aria-label="Three-quarter view of a light aeroplane with the longitudinal, lateral and normal axes drawn through the centre of gravity, each with a rotation arrow and labels for its motion, control surface and the stability it provides">
+  <defs>
+    <marker id="axes-ah" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" class="fblue"/>
+    </marker>
+  </defs>
+
+  <path d="M285,241 L381.6,243.9 L389.1,238.4 L307.5,224.5 L215.9,196.2 L208.4,201.7 Z" class="tint"/>
+  <path d="M335,200.8 L370.2,205.5 L377.2,200.3 L346,192.7 L314.8,185.1 L307.8,190.3 Z" class="tint"/>
+  <path d="M331,205.5 L342.5,169.9 L347.5,166.2 L347.5,193.4 Z" class="tint"/>
+  <path d="M247.5,268.4 L277.8,253.9 L318.7,224.8 L350.1,192.2 L301.3,220.6 L262.2,250.1 Z" class="tint"/>
+  <path d="M247.5,268.4 L277.8,253.9 L318.7,224.8 L350.1,192.2 L301.3,220.6 L262.2,250.1 Z" class="ink"/>
+  <path d="M285,241 L381.6,243.9 L389.1,238.4 L307.5,224.5 L215.9,196.2 L208.4,201.7 Z" class="ink"/>
+  <path d="M335,200.8 L370.2,205.5 L377.2,200.3 L346,192.7 L314.8,185.1 L307.8,190.3 Z" class="ink"/>
+  <path d="M331,205.5 L342.5,169.9 L347.5,166.2 L347.5,193.4 Z" class="ink"/>
+  <line x1="350.5" y1="233.5" x2="383.1" y2="239.1" class="thin"/>
+  <line x1="255.2" y1="210.3" x2="218.6" y2="199.0" class="thin"/>
+  <path d="M373.9,202.7 L342.7,195.1 L311.5,187.5" class="thin"/>
+  <line x1="342.6" y1="197.0" x2="346.0" y2="167.3" class="thin"/>
+
+  <line x1="175" y1="321.5" x2="387.5" y2="166" class="blue ink dash"/>
+  <line x1="148.4" y1="193.1" x2="451.6" y2="266.9" class="blue ink dash"/>
+  <line x1="300" y1="103.2" x2="300" y2="343.3" class="blue ink dash"/>
+
+  <path d="M221.1,299.3 L214.2,288.3 L204.2,280.4 L193.0,277.1 L182.6,279.1 L175.0,285.9 L171.6,296.3 L173.1,308.4 L179.1,319.7 L188.6,328.4 L199.8,332.6 L210.5,331.7 L218.8,325.8" class="blue ink" marker-end="url(#axes-ah)"/>
+  <path d="M416.3,260.1 L420.3,247.9 L426.0,238.2 L432.5,233.0 L438.5,233.1 L442.9,238.6 L444.8,248.3 L444.0,260.6 L440.5,273.1 L435.0,283.4 L428.6,289.7 L422.4,290.7 L417.6,286.2" class="blue ink" marker-end="url(#axes-ah)"/>
+  <path d="M296.3,157.1 L314.4,156.1 L329.7,151.9 L339.5,145.5 L341.8,137.8 L336.4,130.5 L324.1,124.9 L307.3,121.9 L289.1,122.3 L273.0,125.8 L261.9,131.9 L258.0,139.4 L261.9,146.9" class="blue ink" marker-end="url(#axes-ah)"/>
+
+  <circle cx="300" cy="230" r="6" class="ink"/>
+  <path d="M300,230 L300,224 A6,6 0 0 1 306,230 Z" class="fill"/>
+  <path d="M300,230 L300,236 A6,6 0 0 1 294,230 Z" class="fill"/>
+  <line x1="256" y1="193" x2="293" y2="224" class="thin"/>
+  <text x="236" y="190" class="b">CG</text>
+
+  <text x="14" y="34" class="b">The crossover to watch</text>
+  <text x="14" y="52" class="s">Motion about the lateral axis</text>
+  <text x="14" y="68" class="s">is pitch — but the stability</text>
+  <text x="14" y="84" class="s">about it is called longitudinal.</text>
+
+  <text x="300" y="34" text-anchor="middle" class="b">Normal axis (vertical)</text>
+  <text x="300" y="52" text-anchor="middle">Yaw — rudder</text>
+  <text x="300" y="70" text-anchor="middle" class="blue-t">Directional stability</text>
+  <text x="300" y="88" text-anchor="middle" class="s">provided by the fin</text>
+
+  <text x="14" y="296" class="b">Longitudinal axis</text>
+  <text x="14" y="312" class="s">nose to tail</text>
+  <text x="14" y="330">Roll — ailerons</text>
+  <text x="14" y="348" class="blue-t">Lateral stability</text>
+  <text x="14" y="364" class="s">dihedral, keel surface</text>
+
+  <text x="468" y="240" class="b">Lateral axis</text>
+  <text x="468" y="256" class="s">wingtip to wingtip</text>
+  <text x="468" y="274">Pitch — elevator</text>
+  <text x="468" y="292" class="blue-t">Longitudinal stability</text>
+  <text x="468" y="308" class="s">tailplane and CG position</text>
+
+  <text x="406" y="336" class="b">All three pass through the CG</text>
+  <text x="406" y="354" class="s">The aeroplane rotates about the</text>
+  <text x="406" y="370" class="s">CG, not the middle of the fuselage.</text>
+</svg>`
+},
+
+signalsquare: {
+  alt: 'A four-by-two grid of eight signals-square ground signals — white dumb-bell, dumb-bell with a black bar across each disc, red panel with one yellow diagonal, red panel with two yellow diagonals, double white cross, landing T, right-hand traffic arrow and the black C on yellow — each with its meaning underneath.',
+  cap: 'The eight signals, with the two pairs that catch people out set side by side. The black bars across the dumb-bell <b>relax</b> the rule: runways are still required for take-off and landing, but ground movement is no longer confined to runways and taxiways. <b>One</b> yellow diagonal means special precautions on approach and landing; <b>two</b> mean landing is prohibited.',
+  svg: `<svg class="dg" viewBox="0 0 640 346" role="img" aria-label="The signals square: eight ground signals with their meanings">
+  <text x="14" y="22" class="b">Signals square</text>
+  <text x="626" y="22" text-anchor="end" class="s">White = outline, black = solid</text>
+
+  <rect x="14" y="34" width="612" height="296" class="ink"/>
+  <path class="thin" d="M167 34 V330 M320 34 V330 M473 34 V330 M14 182 H626"/>
+
+  <circle cx="73" cy="74" r="9" class="ink"/>
+  <circle cx="107" cy="74" r="9" class="ink"/>
+  <path class="ink" d="M80.8 69.5 H99.2 M80.8 78.5 H99.2"/>
+  <text x="90" y="120" text-anchor="middle">Dumb-bell</text>
+  <text x="90" y="138" text-anchor="middle" class="s">Land, take off and</text>
+  <text x="90" y="155" text-anchor="middle" class="s">taxi on runways and</text>
+  <text x="90" y="172" text-anchor="middle" class="s">taxiways only</text>
+
+  <circle cx="226" cy="74" r="9" class="ink"/>
+  <circle cx="260" cy="74" r="9" class="ink"/>
+  <path class="ink" d="M233.8 69.5 H252.2 M233.8 78.5 H252.2"/>
+  <rect x="223.5" y="65.4" width="5" height="17.2" class="fill"/>
+  <rect x="257.5" y="65.4" width="5" height="17.2" class="fill"/>
+  <text x="243" y="120" text-anchor="middle">Bars across the ends</text>
+  <text x="243" y="138" text-anchor="middle" class="s">Take off and land on</text>
+  <text x="243" y="155" text-anchor="middle" class="s">runways only; ground</text>
+  <text x="243" y="172" text-anchor="middle" class="s">movement not confined</text>
+
+  <rect x="375" y="52" width="44" height="44" class="fred" opacity=".16"/>
+  <rect x="375" y="52" width="44" height="44" class="red ink"/>
+  <path class="orange ink" d="M377.9 95 L418 54.9 M376 93.1 L416.1 53"/>
+  <text x="397" y="120" text-anchor="middle">One yellow diagonal</text>
+  <text x="397" y="138" text-anchor="middle" class="s red-t">Special precautions</text>
+  <text x="397" y="155" text-anchor="middle" class="s">when approaching</text>
+  <text x="397" y="172" text-anchor="middle" class="s">and landing</text>
+
+  <rect x="528" y="52" width="44" height="44" class="fred" opacity=".16"/>
+  <rect x="528" y="52" width="44" height="44" class="red ink"/>
+  <path class="orange ink" d="M530.9 95 L571 54.9 M529 93.1 L569.1 53 M530.9 53 L571 93.1 M529 54.9 L569.1 95"/>
+  <text x="550" y="120" text-anchor="middle">Two yellow diagonals</text>
+  <text x="550" y="138" text-anchor="middle" class="s red-t">Landing prohibited</text>
+  <text x="550" y="155" text-anchor="middle" class="s">aerodrome unsafe and</text>
+  <text x="550" y="172" text-anchor="middle" class="s">likely to be prolonged</text>
+
+  <path class="ink" d="M73 210 H81 V218 H89 V226 H81 V234 H73 V226 H65 V218 H73 Z"/>
+  <path class="ink" d="M99 210 H107 V218 H115 V226 H107 V234 H99 V226 H91 V218 H99 Z"/>
+  <text x="90" y="268" text-anchor="middle">Double white cross</text>
+  <text x="90" y="286" text-anchor="middle" class="s">Glider flying</text>
+  <text x="90" y="303" text-anchor="middle" class="s">in progress</text>
+
+  <path class="ink" d="M227 202 H259 V210 H247 V242 H239 V210 H227 Z"/>
+  <text x="243" y="268" text-anchor="middle">Landing T</text>
+  <text x="243" y="286" text-anchor="middle" class="s">Land and take off</text>
+  <text x="243" y="303" text-anchor="middle" class="s">along the shaft,</text>
+  <text x="243" y="320" text-anchor="middle" class="s">towards the crossarm</text>
+
+  <rect x="371" y="198" width="52" height="48" class="thin"/>
+  <path class="ink" d="M377 204 H415 V228"/>
+  <polygon class="fill" points="415,242 409,228 421,228"/>
+  <text x="397" y="268" text-anchor="middle">Right-hand arrow</text>
+  <text x="397" y="286" text-anchor="middle" class="s">Red and yellow, laid</text>
+  <text x="397" y="303" text-anchor="middle" class="s">clockwise: right-hand</text>
+  <text x="397" y="320" text-anchor="middle" class="s">circuit is in force</text>
+
+  <rect x="533" y="200" width="34" height="42" class="fill" opacity=".16"/>
+  <rect x="533" y="200" width="34" height="42" class="ink"/>
+  <path class="ink" d="M556 212 A9 9 0 1 0 556 230"/>
+  <text x="550" y="268" text-anchor="middle">Black C on yellow</text>
+  <text x="550" y="286" text-anchor="middle" class="s">Air traffic services</text>
+  <text x="550" y="303" text-anchor="middle" class="s">reporting office</text>
+</svg>`
+},
+
+msgpriority: {
+  alt: 'A six-rung ladder of aeronautical message categories in descending priority — distress, urgency, direction finding, flight safety, meteorological, flight regularity — each rung giving the spoken signal and an example, with a downward priority arrow at the left and a bracket marking the top two rungs as taking absolute priority on any frequency.',
+  cap: 'The ranking decides who gets the frequency when two stations want it at once. Only the top two carry a spoken signal, each said three times, and only they outrank everything else — make the call on the frequency already in use rather than changing to 121.500. Below flight regularity CAP 413 lists four lower categories still, but these six are the examined order.',
+  svg: `<svg class="dg" viewBox="0 0 640 334" role="img" aria-label="Ladder of aeronautical message categories in descending order of priority, distress at the top and flight regularity at the bottom">
+  <defs>
+    <marker id="msgpriority-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" class="fill"/>
+    </marker>
+  </defs>
+
+  <text x="6" y="34" class="s">Priority decreases</text>
+  <line x1="20" y1="58" x2="20" y2="314" class="ink" marker-end="url(#msgpriority-arrow)"/>
+
+  <text x="52" y="52" class="s">Category</text>
+  <text x="200" y="52" class="s">Spoken signal</text>
+
+  <rect x="40" y="62" width="426" height="36" rx="3" class="fred" opacity=".13"/>
+  <rect x="40" y="62" width="426" height="36" rx="3" class="red ink"/>
+  <text x="30" y="76" text-anchor="middle" class="red-t">1</text>
+  <text x="52" y="76" class="b red-t">Distress</text>
+  <text x="200" y="76" class="red-t">MAYDAY MAYDAY MAYDAY</text>
+  <text x="52" y="95" class="s">Engine failure, forced landing</text>
+
+  <rect x="40" y="104" width="426" height="36" rx="3" class="fred" opacity=".13"/>
+  <rect x="40" y="104" width="426" height="36" rx="3" class="red ink"/>
+  <text x="30" y="118" text-anchor="middle" class="red-t">2</text>
+  <text x="52" y="118" class="b red-t">Urgency</text>
+  <text x="200" y="118" class="red-t">PAN PAN, PAN PAN, PAN PAN</text>
+  <text x="52" y="137" class="s">A passenger taken ill; a pilot unsure of position</text>
+
+  <rect x="40" y="146" width="426" height="36" rx="3" class="ink"/>
+  <text x="30" y="160" text-anchor="middle">3</text>
+  <text x="52" y="160" class="b">Direction finding</text>
+  <text x="200" y="160" class="s">none</text>
+  <text x="52" y="179" class="s">A request for a QDM or a VDF bearing</text>
+
+  <rect x="40" y="188" width="426" height="36" rx="3" class="ink"/>
+  <text x="30" y="202" text-anchor="middle">4</text>
+  <text x="52" y="202" class="b">Flight safety</text>
+  <text x="200" y="202" class="s">none</text>
+  <text x="52" y="221" class="s">A clearance, a position report, a flight plan message</text>
+
+  <rect x="40" y="230" width="426" height="36" rx="3" class="ink"/>
+  <text x="30" y="244" text-anchor="middle">5</text>
+  <text x="52" y="244" class="b">Meteorological</text>
+  <text x="200" y="244" class="s">none</text>
+  <text x="52" y="263" class="s">The ATIS, a VOLMET, an aerodrome report on request</text>
+
+  <rect x="40" y="272" width="426" height="36" rx="3" class="ink"/>
+  <text x="30" y="286" text-anchor="middle">6</text>
+  <text x="52" y="286" class="b">Flight regularity</text>
+  <text x="200" y="286" class="s">none</text>
+  <text x="52" y="305" class="s">A company message — an engineer wanted on arrival</text>
+
+  <path d="M470 62 L478 62 L478 140 L470 140" class="red ink"/>
+  <text x="488" y="96" class="red-t">Absolute priority</text>
+  <text x="488" y="113" class="s">on any frequency</text>
+</svg>`
+},
+
+vndiagram: {
+  alt: 'A V-n diagram with load factor on the vertical axis and indicated airspeed along the bottom: an accelerated stall curve rises from the origin to meet the +3.8 limit load factor line at VA, a second dashed curve for a lighter aeroplane meets it further to the left, a negative stall curve falls to the −1.52 limit, VNO and VNE are marked along the bottom with a shaded caution band between them, and a shaded band above the limit line between VA and VNE is labelled structural failure.',
+  cap: 'Every boundary is a limitation. Left of the stall curve the wing simply stalls, so below V<sub>A</sub> full control deflection stalls the wing before it can overstress the aeroplane — the g you can pull is limited by the wing, not the structure. Lighten the aeroplane and it stalls more slowly: the whole curve slides left, and with it the point where it meets +3.8. That is why V<sub>A</sub> <em>falls</em> as mass falls — the one limitation that gets more restrictive as you get lighter. Between V<sub>NO</sub> and V<sub>NE</sub>, the yellow arc, smooth air only.',
+  svg: `<svg class="dg" viewBox="0 0 640 400" role="img" aria-label="V-n manoeuvring envelope: load factor against indicated airspeed">
+  <defs><marker id="vndiagram-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker></defs>
+  <!-- overstress is only reachable between VA and VNE: below VA the wing stalls first -->
+  <rect x="416" y="64" width="183" height="33" class="tint"/>
+  <rect x="477" y="97" width="122" height="234" class="tint"/>
+  <text x="7" y="32" class="s">Load factor n</text>
+  <text x="7" y="50" class="s">normal category limits</text>
+  <line x1="96" y1="64" x2="96" y2="338" class="thin"/>
+  <line x1="96" y1="264" x2="600" y2="264" class="thin"/>
+  <text x="90" y="101" text-anchor="end" class="s">+3.8</text>
+  <text x="90" y="224" text-anchor="end" class="s">+1</text>
+  <text x="90" y="268" text-anchor="end" class="s">0</text>
+  <text x="90" y="335" text-anchor="end" class="s">&#8722;1.52</text>
+  <text x="628" y="256" text-anchor="end" class="s">IAS</text>
+  <!-- limit levels drawn thin where the stall curve reaches them first -->
+  <line x1="96" y1="97" x2="416" y2="97" class="thin dash"/>
+  <line x1="96" y1="331" x2="299" y2="331" class="thin dash"/>
+  <line x1="96" y1="220" x2="261" y2="220" class="thin dash"/>
+  <!-- the envelope: stall curve, +3.8 limit, VNE, -1.52 limit, negative stall curve -->
+  <path d="M 96 264 L 142 261 L 172 255 L 203 246 L 233 233 L 261 220 L 291 202 L 322 181 L 352 158 L 383 131 L 416 97 L 599 97 L 599 331 L 299 331 L 264 310 L 230 293 L 194 279 L 157 270 Z" class="ink"/>
+  <!-- same aeroplane, lighter: stalls slower, so the curve slides left -->
+  <path d="M 96 264 L 142 260 L 172 252 L 194 244 L 218 233 L 242 220 L 273 200 L 303 176 L 334 148 L 358 123 L 382 97" class="blue ink dash"/>
+  <line x1="416" y1="97" x2="416" y2="338" class="thin dash"/>
+  <line x1="477" y1="97" x2="477" y2="338" class="thin dash"/>
+  <line x1="599" y1="331" x2="599" y2="338" class="thin dash"/>
+  <line x1="382" y1="97" x2="382" y2="338" class="blue thin dash"/>
+  <circle cx="261" cy="220" r="3" class="fill"/>
+  <circle cx="416" cy="97" r="4" class="fill"/>
+  <circle cx="382" cy="97" r="4" class="fblue"/>
+  <line x1="406" y1="110" x2="372" y2="110" class="blue ink" marker-end="url(#vndiagram-ar)"/>
+  <text x="507" y="86" text-anchor="middle" class="s">Structural failure</text>
+  <text x="106" y="132" class="s">Below VA the wing stalls before</text>
+  <text x="106" y="150" class="s">full deflection can break it</text>
+  <text x="106" y="188" class="s blue-t">Lighter: stalls slower,</text>
+  <text x="106" y="206" class="s blue-t">so VA falls too</text>
+  <text x="268" y="238">VS1</text>
+  <text x="538" y="286" text-anchor="middle" class="s">Caution range</text>
+  <text x="538" y="304" text-anchor="middle" class="s">smooth air only</text>
+  <text x="416" y="360" text-anchor="middle">VA</text>
+  <text x="477" y="360" text-anchor="middle">VNO</text>
+  <text x="599" y="360" text-anchor="middle">VNE</text>
+  <text x="382" y="382" text-anchor="middle" class="s blue-t">VA when lighter</text>
+</svg>`
+},
+
+wakeavoid: {
+  alt: 'Two panels: a rear view of a heavy aeroplane trailing counter-rotating wingtip vortices that sink, with a crosswind holding the upwind one over the runway while the downwind one drifts clear; and side views of a light aeroplane landing short of a departing heavy\'s rotation point, and landing beyond a landing heavy\'s touchdown point while staying above its approach path.',
+  cap: 'Vortices sink 300 to 500 ft/min, level about 900 ft below the generating aircraft\'s path, and drift with the wind, so a light crosswind can hold the upwind one over the runway while the downwind one clears. All four cases are one rule: stay above the heavy\'s path, and put your wheels where its wake never reached, short of its rotation point or beyond its touchdown point.',
+  svg: `<svg class="dg" viewBox="0 0 640 370" role="img" aria-label="Left, rear view: a heavy aeroplane with counter-rotating wingtip vortices sinking, a crosswind holding the upwind vortex over the runway while the downwind one drifts clear. Right, side views: landing short of a departing heavy's rotation point, and landing beyond a landing heavy's touchdown point while staying above its path.">
+  <defs>
+    <marker id="wakeavoid-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" class="fill"/></marker>
+    <marker id="wakeavoid-arrowg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" class="fgreen"/></marker>
+  </defs>
+
+  <line x1="274" y1="10" x2="274" y2="356" class="thin"/>
+
+  <text x="10" y="22" class="b">From behind: where they go</text>
+  <text x="160" y="38" text-anchor="middle" class="s">heavy, slow, clean</text>
+
+  <line x1="106" y1="68" x2="214" y2="68" class="ink"/>
+  <rect x="153" y="57" width="14" height="17" rx="6" class="ink"/>
+  <line x1="160" y1="57" x2="160" y2="45" class="ink"/>
+  <line x1="150" y1="47" x2="170" y2="47" class="ink"/>
+  <line x1="128" y1="68" x2="128" y2="75" class="ink"/>
+  <line x1="192" y1="68" x2="192" y2="75" class="ink"/>
+
+  <path d="M106,72 C100,130 98,200 110,286" class="ink" marker-end="url(#wakeavoid-arrow)"/>
+  <path d="M214,72 C222,130 238,206 254,286" class="ink" marker-end="url(#wakeavoid-arrow)"/>
+  <path d="M107.5,161.3 A13,13 0 1 1 114,150" class="ink" marker-end="url(#wakeavoid-arrow)"/>
+  <path d="M220.5,162.3 A13,13 0 1 0 214,151" class="ink" marker-end="url(#wakeavoid-arrow)"/>
+  <line x1="160" y1="108" x2="160" y2="170" class="ink" opacity=".8" marker-end="url(#wakeavoid-arrow)"/>
+  <text x="160" y="188" text-anchor="middle" class="s">sinking</text>
+  <text x="160" y="206" text-anchor="middle" class="s">300-500 ft/min</text>
+
+  <text x="14" y="238" class="s">crosswind</text>
+  <line x1="14" y1="250" x2="70" y2="250" class="ink" opacity=".7" marker-end="url(#wakeavoid-arrow)"/>
+
+  <line x1="10" y1="296" x2="262" y2="296" class="thin"/>
+  <line x1="96" y1="296" x2="224" y2="296" class="ink"/>
+  <line x1="96" y1="290" x2="96" y2="302" class="ink"/>
+  <line x1="224" y1="290" x2="224" y2="302" class="ink"/>
+  <text x="160" y="288" text-anchor="middle" class="s">runway</text>
+  <text x="12" y="316">upwind vortex held over the runway</text>
+  <text x="12" y="336">downwind vortex drifts clear</text>
+
+  <text x="290" y="22" class="b">From the side: where your wheels go</text>
+
+  <text x="300" y="44">Behind a departing heavy</text>
+  <line x1="300" y1="164" x2="616" y2="164" class="ink"/>
+  <path d="M474,164 C520,160 560,154 612,150 L612,164 Z" class="tint"/>
+  <path d="M474,164 C520,160 560,154 612,150" class="ink dash" opacity=".55"/>
+  <path d="M470,164 C505,132 530,100 575,70" class="ink"/>
+  <line x1="470" y1="156" x2="470" y2="178" class="ink"/>
+  <g transform="translate(568,75) rotate(-34)">
+    <path d="M-16,-2.5 L4,-2.5 L13,0 L4,2.5 L-16,2.5 Z" class="ink"/>
+    <path d="M-15,-2 L-12,-11 L-8,-2" class="ink"/>
+    <path d="M-4,2 L-9,10 L-1,2" class="ink"/>
+  </g>
+  <text x="592" y="66" class="s">heavy</text>
+  <text x="520" y="136" class="s">its wake sinks</text>
+  <rect x="320" y="157" width="144" height="7" class="fgreen" opacity=".28"/>
+  <line x1="330" y1="130" x2="397" y2="160" class="green ink" marker-end="url(#wakeavoid-arrowg)"/>
+  <g transform="translate(352,140) rotate(24)">
+    <path d="M-13,-2 L3,-2 L10,0 L3,2 L-13,2 Z" class="green ink"/>
+    <path d="M-12,-1.6 L-9.5,-9 L-6.5,-1.6" class="green ink"/>
+    <path d="M-3,1.6 L-7,8 L-1,1.6" class="green ink"/>
+  </g>
+  <text x="300" y="96" class="green-t">touch down before it</text>
+  <text x="300" y="114" class="green-t">or rotate before it</text>
+  <text x="300" y="132" class="green-t s">you</text>
+  <text x="300" y="184" class="s">runway</text>
+  <text x="478" y="184" class="s">rotation point</text>
+
+  <text x="300" y="208">Behind a landing heavy</text>
+  <line x1="300" y1="330" x2="616" y2="330" class="ink"/>
+  <path d="M300,278 L470,330 C410,327 350,318 300,304 Z" class="tint"/>
+  <path d="M300,304 C350,318 410,327 470,330" class="ink dash" opacity=".55"/>
+  <line x1="300" y1="278" x2="470" y2="330" class="ink"/>
+  <line x1="470" y1="322" x2="470" y2="344" class="ink"/>
+  <g transform="translate(356,295) rotate(17)">
+    <path d="M-16,-2.5 L4,-2.5 L13,0 L4,2.5 L-16,2.5 Z" class="ink"/>
+    <path d="M-15,-2 L-12,-11 L-8,-2" class="ink"/>
+    <path d="M-4,2 L-9,10 L-1,2" class="ink"/>
+  </g>
+  <rect x="476" y="323" width="140" height="7" class="fgreen" opacity=".28"/>
+  <line x1="306" y1="242" x2="513" y2="327" class="green ink" marker-end="url(#wakeavoid-arrowg)"/>
+  <g transform="translate(350,260) rotate(22)">
+    <path d="M-13,-2 L3,-2 L10,0 L3,2 L-13,2 Z" class="green ink"/>
+    <path d="M-12,-1.6 L-9.5,-9 L-6.5,-1.6" class="green ink"/>
+    <path d="M-3,1.6 L-7,8 L-1,1.6" class="green ink"/>
+  </g>
+  <text x="300" y="228" class="green-t">stay above its path</text>
+  <text x="628" y="286" text-anchor="end" class="green-t">touch down beyond it</text>
+  <text x="628" y="306" text-anchor="end" class="green-t">or lift off beyond it</text>
+  <text x="464" y="350" text-anchor="end" class="s">its touchdown point</text>
+</svg>`
+},
+
+adfBearing: {
+  alt: 'Plan view of an aeroplane, nose up the page, on heading 040 magnetic with the ADF needle 70 degrees right of the nose: one arc runs from magnetic north to the nose and a second from the nose to the needle, and together they make the 110 degree magnetic bearing to the NDB, with a dashed reciprocal of 290 running back through the aircraft; a smaller second case shows heading 310 plus relative bearing 120 making 430, which becomes 070 once 360 is taken off.',
+  cap: 'Heading is measured from magnetic north, relative bearing from the nose, and laid end to end the two make the magnetic bearing to the beacon: MB = MH + RB, less 360 whenever the sum runs past it. Add 180 and you have the bearing from the station — the position line you draw from the NDB, converted to true for the chart.',
+  svg: `<svg class="dg" viewBox="0 0 640 350" role="img" aria-label="Relative bearing added to magnetic heading gives the magnetic bearing to an NDB, with the reciprocal and the 360 degree wrap">
+  <defs>
+    <marker id="adfBearing-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker>
+    <marker id="adfBearing-arb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker>
+  </defs>
+  <line x1="404" y1="22" x2="404" y2="336" class="thin"/>
+  <!-- main case: MH 040, RB 070, MB 110 -->
+  <text x="20" y="36" class="b">MB = MH + RB</text>
+  <text x="20" y="56" class="s">the bearing to the station</text>
+  <line x1="196" y1="242" x2="88" y2="113.3" class="ink" marker-end="url(#adfBearing-ar)"/>
+  <text x="20" y="104">Magnetic</text>
+  <text x="20" y="124">north</text>
+  <line x1="196" y1="242" x2="196" y2="96" class="ink"/>
+  <line x1="196" y1="242" x2="344.5" y2="188" class="ink" marker-end="url(#adfBearing-ar)"/>
+  <line x1="196" y1="242" x2="109.5" y2="273.5" class="ink dash" marker-end="url(#adfBearing-ar)"/>
+  <g transform="translate(196,242)"><path d="M0 -27 L3 -11 L29 5 L29 10 L3 4 L2 17 L11 24 L11 27 L0 23 L-11 27 L-11 24 L-2 17 L-3 4 L-29 10 L-29 5 L-3 -11 Z" class="fill" opacity=".92"/></g>
+  <text x="314" y="232" text-anchor="middle" class="s">ADF needle</text>
+  <circle cx="363" cy="181" r="11" class="ink"/>
+  <circle cx="363" cy="181" r="4" class="fill"/>
+  <text x="363" y="160" text-anchor="middle" class="b">NDB</text>
+  <path d="M147.2 183.8 A 76 76 0 0 1 196 166" class="ink"/>
+  <text x="159" y="140" text-anchor="middle">MH 040°</text>
+  <path d="M196 166 A 76 76 0 0 1 267.4 216" class="ink"/>
+  <text x="254" y="155" text-anchor="middle">RB 070°</text>
+  <path d="M106 134.8 A 140 140 0 0 1 327.6 194.1" class="blue ink" marker-end="url(#adfBearing-arb)"/>
+  <text x="250" y="72" text-anchor="middle" class="b blue-t">MB 110°</text>
+  <text x="250" y="92" text-anchor="middle" class="s blue-t">= 040° + 070°</text>
+  <text x="120" y="300" text-anchor="middle">Reciprocal 290°</text>
+  <text x="120" y="320" text-anchor="middle" class="s">the position line from the NDB</text>
+  <!-- wrap case: MH 310, RB 120, sum 430 -->
+  <text x="424" y="36" class="b">When the sum passes 360°</text>
+  <line x1="500" y1="150" x2="500" y2="84" class="ink"/>
+  <line x1="500" y1="150" x2="561.3" y2="98.6" class="ink" marker-end="url(#adfBearing-ar)"/>
+  <line x1="500" y1="150" x2="569.3" y2="190" class="ink" marker-end="url(#adfBearing-ar)"/>
+  <g transform="translate(500,150) scale(.58)"><path d="M0 -27 L3 -11 L29 5 L29 10 L3 4 L2 17 L11 24 L11 27 L0 23 L-11 27 L-11 24 L-2 17 L-3 4 L-29 10 L-29 5 L-3 -11 Z" class="fill" opacity=".92"/></g>
+  <text x="576" y="92" text-anchor="middle" class="b">N</text>
+  <circle cx="586.6" cy="200" r="9" class="ink"/>
+  <circle cx="586.6" cy="200" r="3.5" class="fill"/>
+  <path d="M533.7 121.7 A 44 44 0 1 1 500 106" class="thin" marker-end="url(#adfBearing-ar)"/>
+  <text x="500" y="214" text-anchor="middle">MH 310°</text>
+  <path d="M546 111.4 A 60 60 0 0 1 552 180" class="blue ink" marker-end="url(#adfBearing-arb)"/>
+  <text x="572" y="156" class="b blue-t">MB 070°</text>
+  <text x="424" y="268" class="s">MH 310° + RB 120° = 430°</text>
+  <text x="424" y="290" class="blue-t">430° − 360° = MB 070°</text>
+  <text x="424" y="314" class="s">the sum ran past north —</text>
+  <text x="424" y="334" class="s">a bearing never exceeds 360°</text>
+</svg>`
+},
+
+induceddrag: {
+  alt: 'A wing seen from behind and above, with higher pressure below spilling round the tip, rolling into a trailing tip vortex and pushing the wake behind the wing downwards; below it a wing section where that downwash tilts the local airflow down by the induced angle, so the lift vector, perpendicular to that tilted airflow, leans rearwards and its rearward component is labelled induced drag.',
+  cap: 'Higher pressure below spills round the tip, rolls up into the trailing vortex, and pushes the wake behind the wing downwards. That downwash tilts the airflow the wing actually meets, and because lift acts perpendicular to the relative airflow, the whole lift vector tilts back with it — the rearward component is <b>induced drag</b>. The induced angle &alpha;<sub>i</sub> is drawn far larger than the couple of degrees of real life, so the tilt can be seen.',
+  svg: `<svg class="dg" viewBox="0 0 640 416" role="img" aria-label="How induced drag is produced: pressure spilling round the wingtip forms a trailing vortex and downwash, which tilts the local airflow and so tilts the lift vector rearwards">
+  <defs>
+    <marker id="induceddrag-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker>
+    <marker id="induceddrag-arb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fblue"/></marker>
+  </defs>
+
+  <text x="18" y="28" class="b">1  Where the downwash comes from</text>
+
+  <!-- direction of flight -->
+  <line x1="600" y1="104" x2="520" y2="51" class="ink" opacity=".55" marker-end="url(#induceddrag-ar)"/>
+  <text x="478" y="124" class="s">Direction of flight</text>
+
+  <!-- the wing, seen from behind and above: root at the left, tip at the right -->
+  <path d="M56 112 L252 88 L282 108 L102 143 Z" class="fill" opacity=".12"/>
+  <path d="M102 143 L282 108 L252 88 L56 112" class="ink"/>
+  <line x1="56" y1="112" x2="102" y2="143" class="ink dash" opacity=".55"/>
+
+  <text x="72" y="70" class="s">Lower pressure above</text>
+  <text x="24" y="190" class="s">Higher pressure below</text>
+
+  <!-- higher pressure below spills outboard round the tip on to the upper surface -->
+  <path d="M288 120 C320 116, 324 72, 262 68" class="ink" marker-end="url(#induceddrag-ar)"/>
+  <text x="300" y="58" class="s">Spills round the tip</text>
+
+  <!-- the spill rolls up into a vortex trailing aft from the tip -->
+  <path d="M 306.8 132.8 L 310.1 134.5 L 313.7 135.3 L 317.4 135.4 L 321.1 134.5 L 324.4 133.0 L 327.3 130.9 L 329.6 128.3 L 331.1 125.6 L 331.8 122.8 L 331.8 120.3 L 331.0 118.2 L 329.5 116.7 L 327.6 116.0 L 325.4 116.1 L 323.0 117.0 L 320.8 118.7 L 318.8 121.2 L 317.3 124.2 L 316.5 127.7 L 316.3 131.4 L 317.0 135.0 L 318.4 138.5 L 320.6 141.5 L 323.4 143.9 L 326.7 145.6 L 330.4 146.4 L 334.1 146.5 L 337.7 145.6 L 341.1 144.1 L 344.0 142.0 L 346.2 139.4 L 347.7 136.7 L 348.5 133.9 L 348.4 131.4 L 347.6 129.3 L 346.2 127.8 L 344.3 127.1 L 342.0 127.2 L 339.7 128.1 L 337.4 129.8 L 335.5 132.3 L 334.0 135.3 L 333.1 138.8 L 333.0 142.5 L 333.6 146.1 L 335.1 149.6 L 337.2 152.6 L 340.1 155.0 L 343.4 156.7 L 347.0 157.5 L 350.7 157.6 L 354.4 156.7 L 357.7 155.2 L 360.6 153.1 L 362.8 150.5 L 364.4 147.8 L 365.1 145.0 L 365.0 142.5 L 364.2 140.4 L 362.8 138.9 L 360.9 138.2 L 358.7 138.3 L 356.3 139.2 L 354.1 140.9 L 352.1 143.4 L 350.6 146.4 L 349.7 149.9 L 349.6 153.6 L 350.3 157.2 L 351.7 160.7 L 353.9 163.7 L 356.7 166.1 L 360.0 167.8 L 363.6 168.6 L 367.4 168.7 L 371.0 167.8 L 374.4 166.3 L 377.2 164.2 L 379.5 161.6 L 381.0 158.9 L 381.7 156.1 L 381.7 153.6 L 380.9 151.5 L 379.5 150.0 L 377.5 149.3 L 375.3 149.4 L 373.0 150.3 L 370.7 152.0 L 368.7 154.5 L 367.2 157.5 L 366.4 161.0 L 366.3 164.7 L 366.9 168.3 L 368.3 171.8 L 370.5 174.8 L 373.3 177.2" class="ink" marker-end="url(#induceddrag-ar)"/>
+  <text x="400" y="172" class="b">Tip vortex</text>
+  <text x="400" y="192" class="s">strongest when slow and heavy</text>
+
+  <!-- and the wake behind the wing is pushed down -->
+  <line x1="182" y1="147" x2="182" y2="181" class="blue ink" marker-end="url(#induceddrag-arb)"/>
+  <line x1="226" y1="139" x2="226" y2="173" class="blue ink" marker-end="url(#induceddrag-arb)"/>
+  <line x1="270" y1="130" x2="270" y2="164" class="blue ink" marker-end="url(#induceddrag-arb)"/>
+  <text x="188" y="210" class="b blue-t">Downwash</text>
+
+  <text x="18" y="258" class="b">2  The lift vector tilts back</text>
+
+  <!-- the two airflows, meeting at the induced angle -->
+  <line x1="30" y1="364" x2="198" y2="364" class="ink" opacity=".7" marker-end="url(#induceddrag-ar)"/>
+  <text x="30" y="384" class="s">Free-stream airflow</text>
+  <line x1="40" y1="314" x2="176" y2="364" class="blue ink" marker-end="url(#induceddrag-arb)"/>
+  <text x="26" y="302" class="s">Airflow tilted by the downwash</text>
+  <path d="M116 364 A 60 60 0 0 1 120 343" class="blue ink"/>
+  <text x="84" y="355" class="blue-t">αi</text>
+
+  <!-- the section, and the lift resolved -->
+  <path d="M206 358 C228 348, 266 358, 294 377 C264 375, 225 366, 206 358 Z" class="fill" opacity=".12"/>
+  <path d="M206 358 C228 348, 266 358, 294 377 C264 375, 225 366, 206 358 Z" class="ink"/>
+  <line x1="238" y1="355" x2="238" y2="254" class="ink dash" opacity=".55"/>
+  <text x="230" y="278" text-anchor="end" class="s">Supports the weight</text>
+  <line x1="238" y1="355" x2="275" y2="254" class="blue ink" marker-end="url(#induceddrag-arb)"/>
+  <line x1="238" y1="254" x2="275" y2="254" class="blue ink" marker-end="url(#induceddrag-arb)"/>
+  <text x="238" y="240" class="b blue-t">Induced drag</text>
+  <text x="288" y="272" class="b blue-t">LIFT</text>
+  <text x="288" y="292" class="s blue-t">perpendicular to the tilted airflow</text>
+
+  <!-- what reduces it -->
+  <rect x="356" y="304" width="274" height="102" rx="8" class="tint"/>
+  <text x="364" y="330" class="b">Less induced drag</text>
+  <circle cx="366" cy="350" r="2.2" class="fill"/>
+  <text x="376" y="354" class="s">higher aspect ratio (long thin wings)</text>
+  <circle cx="366" cy="370" r="2.2" class="fill"/>
+  <text x="376" y="374" class="s">winglets weaken the tip vortex</text>
+  <circle cx="366" cy="390" r="2.2" class="fill"/>
+  <text x="376" y="394" class="s">more speed — induced drag ∝ 1/V²</text>
+</svg>`
+},
+
+vhfrange: {
+  alt: 'A ground station\'s line of sight drawn as a straight ray grazing a curved earth, with aircraft at 1000 ft, 3000 ft and 10,000 ft sitting on that ray at 40, 68 and 125 nautical miles; below, a ridge casts a radio shadow in which a low aircraft is out of contact while a higher aircraft, reached by a climb arrow, stays in contact.',
+  cap: 'VHF is line of sight, so the earth\'s curve fixes how far you can talk: sitting on the same grazing ray, an aircraft is only 1000 ft up at 40 NM but 10,000 ft up at 125 NM. Terrain does the same thing far more abruptly — behind a ridge you are in its radio shadow until you climb above the line that grazes the top, which is why the first remedy for no reply is to climb.',
+  svg: `<svg class="dg" viewBox="0 0 640 424" role="img" aria-label="Radio horizon geometry: a line of sight tangent to the curved earth from a ground station, with aircraft at 1000 ft, 3000 ft and 10,000 ft reaching 40, 68 and 125 nautical miles, and a second panel showing a ridge casting a radio shadow over a low aircraft while a higher one stays in contact">
+  <defs>
+    <marker id="vhfrange-bh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9 Z" class="fblue"/></marker>
+    <marker id="vhfrange-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9 Z" class="fill"/></marker>
+  </defs>
+
+  <text x="12" y="32" class="b">Height sets the range</text>
+  <text x="628" y="32" text-anchor="end">range in NM ≈ 1.25 × √(height in ft)</text>
+  <text x="628" y="50" text-anchor="end" class="s">vertical scale exaggerated</text>
+
+  <path class="tint" d="M0,97.8 Q307,80.5 614,229.1 L614,240 L0,240 Z"/>
+  <path class="ink" d="M0,97.8 Q307,80.5 614,229.1"/>
+
+  <line x1="224" y1="96" x2="224" y2="111" class="ink dash" opacity=".55"/>
+  <line x1="339" y1="96" x2="339" y2="135" class="ink dash" opacity=".55"/>
+  <line x1="564" y1="96" x2="564" y2="212" class="ink dash" opacity=".55"/>
+
+  <line x1="64" y1="96" x2="610" y2="96" class="blue ink" marker-end="url(#vhfrange-bh)"/>
+
+  <line x1="64" y1="96" x2="64" y2="72" class="ink"/>
+  <line x1="58" y1="80" x2="70" y2="80" class="ink"/>
+  <line x1="59.5" y1="88" x2="68.5" y2="88" class="ink"/>
+
+  <path class="fill" d="M211,97.5 L211,94.5 L227,93.5 L236,96 L227,98.5 Z"/>
+  <path class="fill" d="M211,94.5 L213,87 L217,94.5 Z"/>
+  <path class="fill" d="M221,98 L215,105 L223,105 L226,98 Z"/>
+  <path class="fill" d="M326,97.5 L326,94.5 L342,93.5 L351,96 L342,98.5 Z"/>
+  <path class="fill" d="M326,94.5 L328,87 L332,94.5 Z"/>
+  <path class="fill" d="M336,98 L330,105 L338,105 L341,98 Z"/>
+  <path class="fill" d="M551,97.5 L551,94.5 L567,93.5 L576,96 L567,98.5 Z"/>
+  <path class="fill" d="M551,94.5 L553,87 L557,94.5 Z"/>
+  <path class="fill" d="M561,98 L555,105 L563,105 L566,98 Z"/>
+
+  <text x="80" y="86" class="blue-t">line of sight</text>
+  <text x="224" y="80" text-anchor="middle">1000 ft</text>
+  <text x="339" y="80" text-anchor="middle">3000 ft</text>
+  <text x="564" y="80" text-anchor="middle">10,000 ft</text>
+  <text x="558" y="160" text-anchor="end" class="s">aircraft height</text>
+  <text x="64" y="116" text-anchor="middle" class="s">ground station</text>
+  <text x="224" y="130" text-anchor="middle" class="s">40 NM</text>
+  <text x="339" y="152" text-anchor="middle" class="s">68 NM</text>
+  <text x="564" y="232" text-anchor="middle" class="s">125 NM</text>
+
+  <line x1="0" y1="244" x2="640" y2="244" class="thin"/>
+  <text x="12" y="274" class="b">Terrain blocks it too</text>
+
+  <path class="fill" opacity=".1" d="M230,334 L610,280.4 L610,394 L300,394 Z"/>
+  <path class="tint" d="M0,394 L175,394 L230,334 L300,394 L640,394 L640,424 L0,424 Z"/>
+  <path class="ink" d="M0,394 L175,394 L230,334 L300,394 L640,394"/>
+
+  <line x1="60" y1="394" x2="60" y2="358" class="ink"/>
+  <line x1="54" y1="366" x2="66" y2="366" class="ink"/>
+  <line x1="55.5" y1="374" x2="64.5" y2="374" class="ink"/>
+
+  <line x1="60" y1="358" x2="610" y2="280.4" class="blue ink" marker-end="url(#vhfrange-bh)"/>
+  <line x1="64" y1="358" x2="208.7" y2="357.2" class="blue ink dash"/>
+  <line x1="257" y1="356.9" x2="415" y2="356.1" class="blue ink dash" opacity=".3"/>
+
+  <line x1="450" y1="346" x2="490" y2="294" class="ink" marker-end="url(#vhfrange-ah)"/>
+
+  <path class="fill" d="M417,357.5 L417,354.5 L433,353.5 L442,356 L433,358.5 Z"/>
+  <path class="fill" d="M417,354.5 L419,347 L423,354.5 Z"/>
+  <path class="fill" d="M427,358 L421,365 L429,365 L432,358 Z"/>
+  <path class="fill" d="M487,281.5 L487,278.5 L503,277.5 L512,280 L503,282.5 Z"/>
+  <path class="fill" d="M487,278.5 L489,271 L493,278.5 Z"/>
+  <path class="fill" d="M497,282 L491,289 L499,289 L502,282 Z"/>
+
+  <text x="250" y="310" class="blue-t">line of sight</text>
+  <text x="330" y="344" text-anchor="middle">radio shadow</text>
+  <text x="130" y="376" text-anchor="middle" class="s">blocked</text>
+  <text x="430" y="384" text-anchor="middle">out of contact</text>
+  <text x="500" y="266" text-anchor="middle">in contact</text>
+  <text x="494" y="322" class="s">climb</text>
+  <text x="60" y="412" text-anchor="middle" class="s">ground station</text>
+</svg>`
+},
+
 };

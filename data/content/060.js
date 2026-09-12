@@ -303,6 +303,7 @@ are relative to the selected radial, not which way you are pointing.</li>
 </ul>
 
 <h3>ADF and NDB</h3>
+<figure data-d="adfBearing"></figure>
 <p>Automatic Direction Finder in the aircraft, Non-Directional Beacon on the ground, in the
 <b>LF/MF</b> band (roughly 190 to 1750 kHz). The needle points <b>at the beacon</b>, giving a
 <b>relative bearing</b> from the nose.</p>

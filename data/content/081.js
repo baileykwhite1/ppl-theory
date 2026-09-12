@@ -56,6 +56,7 @@ centre of pressure moves <b>forward</b>. At the stall it moves sharply <b>rearwa
 produces a nose-down pitching moment and is a helpful, self-correcting characteristic.</p>
 
 <h3>The three-dimensional wing</h3>
+<figure data-d="induceddrag"></figure>
 <p>A real wing has ends. Higher pressure below spills round the tip to the lower pressure above,
 creating <b>wingtip vortices</b> and a general <b>downwash</b> behind the wing. Consequences:
 the effective angle of attack is reduced, the lift vector is tilted rearwards, and the rearward
@@ -244,6 +245,7 @@ dynamically unstable — the oscillation gets bigger each time. You cannot have 
 stability without positive static stability.</p>
 
 <h3>Three axes, three stabilities</h3>
+<figure data-d="axes"></figure>
 <table>
 <thead><tr><th>Axis</th><th>Motion</th><th>Stability</th><th>Provided mainly by</th><th>Control</th></tr></thead>
 <tbody>
@@ -421,6 +423,7 @@ Correct for density (altitude and temperature) to get <b>TAS</b>. TAS exceeds IA
 groundspeed.</p>
 
 <h3>The load factor envelope</h3>
+<figure data-d="vndiagram"></figure>
 <p>Normal category limits are typically <b>+3.8g and &minus;1.52g</b>; utility category
 <b>+4.4g</b>; aerobatic <b>+6.0g</b>. The V-n diagram plots load factor against speed, bounded
 by the stall on the left (a curve, because the stall limits the g available at low speed), the

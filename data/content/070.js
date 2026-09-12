@@ -24,6 +24,7 @@ orange-and-white or red-and-white stripes, with red unserviceability lights at n
 </ul>
 
 <h3>The signals square</h3>
+<figure data-d="signalsquare"></figure>
 <p>A ground square near the tower carrying visual signals for aircraft without radio:</p>
 <ul>
 <li><b>White dumb-bell</b> — land, take off <b>and taxi</b> on runways and taxiways only.</li>
@@ -42,6 +43,7 @@ crossarm.</li>
 </ul>
 
 <h3>Light signals from the tower</h3>
+<figure data-d="lightsignals"></figure>
 <table>
 <thead><tr><th>Signal</th><th>To an aircraft in flight</th><th>To an aircraft on the ground</th></tr></thead>
 <tbody>
@@ -262,6 +264,7 @@ the <b>AAIB without delay</b> — and an accident to the <b>police</b> as well.<
   id: '070-hazards', title: 'Special operational hazards', mins: 6, tags: ['070.04', '070.07'],
   body: `
 <h3>Wake turbulence</h3>
+<figure data-d="wakeavoid"></figure>
 <p>Two counter-rotating vortices from the wingtips, strongest when the generating aircraft is
 <b>heavy, slow and clean</b>. They sink at roughly 300 to 500 ft/min, level off about 900 ft below
 the generating aircraft's path, and drift with the wind — so a light crosswind can hold one over

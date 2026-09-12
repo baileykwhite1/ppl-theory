@@ -8,7 +8,7 @@
    out from under you — losing a half-finished quiz to a background update would be
    worse than seeing yesterday's build for one more session. */
 
-const CACHE_VERSION = 'ppl-2026-09-12-i';
+const CACHE_VERSION = 'ppl-2026-09-12-j';
 
 const SHELL = [
   './',

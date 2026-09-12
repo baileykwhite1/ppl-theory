@@ -570,6 +570,8 @@ adopts them.</li>
 instruction without a frequency: tower to aircraft, marshaller to cockpit, survivor to searcher.</p>
 
 <h3>Light signals from the tower</h3>
+<figure data-d="lightsignals"></figure>
+<figure data-d="signalsquare"></figure>
 <p>One lamp, two entirely different meanings depending on whether your wheels are turning. Learn
 it as two columns, not six signals.</p>
 <table>
