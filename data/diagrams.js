@@ -839,7 +839,7 @@ semicircular: {
 
 transponder: {
   alt: 'A transponder control head — a rotary mode selector with detents OFF, SBY, ON and ALT and the pointer on ALT, a four-digit code window reading 7000, and an IDENT button — drawn beside a list of the UK squawk codes with 7700, 7600 and 7500 picked out in red.',
-  cap: 'ALT is the normal selection: it adds Mode C, which reports pressure altitude referenced to 1013 hPa whatever the subscale is set to. The three codes in red you select yourself without being asked; 7000 is the conspicuity code when not receiving an ATS, and 2000 the one to set when ATS has assigned no code.',
+  cap: 'ALT is the normal selection: it adds Mode C, which reports pressure altitude referenced to 1013 hPa whatever the subscale is set to. The three codes in red you select yourself without being asked. The two conspicuity codes split on <em>flight rules</em>, not on whether you have a service: 7000 if you are VFR and have had no code assigned, 2000 if you are IFR and have had none. Both mean the same thing — nobody has given you a discrete code.',
   svg: `<svg class="dg" viewBox="0 0 640 300" role="img" aria-label="A transponder control head with mode selector OFF SBY ON ALT, a code window reading 7000 and an IDENT button, beside the UK squawk codes 7700, 7600, 7500, 7000, 7004 and 2000">
   <defs>
     <marker id="transponder-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
@@ -895,11 +895,11 @@ transponder: {
   <line x1="388" y1="176" x2="388" y2="240" class="thin"/>
   <text x="398" y="162" class="s">Conspicuity — no discrete code</text>
   <text x="398" y="188" class="b">7000</text>
-  <text x="452" y="188" class="s">Not receiving an ATS</text>
+  <text x="452" y="188" class="s">VFR, no code assigned</text>
   <text x="398" y="212" class="b">7004</text>
   <text x="452" y="212" class="s">Aerobatics and display</text>
   <text x="398" y="236" class="b">2000</text>
-  <text x="452" y="236" class="s">No code assigned by ATS</text>
+  <text x="452" y="236" class="s">IFR, no code assigned</text>
 </svg>`
 },
 

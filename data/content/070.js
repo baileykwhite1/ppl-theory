@@ -189,7 +189,7 @@ rocking the wings. If you might be transmitting but not receiving, say so blind,
 
 <h3>Transponder and emergency codes</h3>
 <p><b>7700</b> emergency, <b>7600</b> radio failure, <b>7500</b> unlawful interference,
-<b>7000</b> conspicuity when not receiving a service, <b>2000</b> when no code has been assigned.
+<b>7000</b> conspicuity if you are VFR and have had no specific transponder instruction, <b>2000</b> the same but IFR.
 Selecting 7700 attracts immediate attention from every radar unit that can see you, which is
 usually exactly what you want.</p>
 

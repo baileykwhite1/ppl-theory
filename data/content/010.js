@@ -355,8 +355,8 @@ changing.</p>
 <tr><td><b>7700</b></td><td>Emergency</td></tr>
 <tr><td><b>7600</b></td><td>Radio communication failure</td></tr>
 <tr><td><b>7500</b></td><td>Unlawful interference (hijack)</td></tr>
-<tr><td><b>7000</b></td><td>Conspicuity — the default when not receiving an ATS</td></tr>
-<tr><td><b>2000</b></td><td>Set when no code has been assigned by ATS</td></tr>
+<tr><td><b>7000</b></td><td>Conspicuity — <b>VFR</b> with no specific transponder instruction from ATS</td></tr>
+<tr><td><b>2000</b></td><td>Conspicuity — <b>IFR</b> with no specific transponder instruction from ATS</td></tr>
 </tbody></table>
 <p>The regulation is explicit that if circumstances warrant, 7700 may be used in place of
 7500 — and that if you have selected 7500 and ATC asks you to confirm it, silence is taken as
@@ -376,7 +376,7 @@ whole syllabus.</p>
 <div class="trap"><b>Exam traps</b>
 <ul>
 <li>PAN PAN is urgency — safety concerned but <b>no immediate assistance</b> needed.</li>
-<li>7000 is conspicuity; 2000 is the no-code-assigned code. Do not swap them.</li>
+<li>Both 7000 and 2000 mean "nobody has given me a code". They split on <b>flight rules</b>, not on whether you have a service: 7000 VFR, 2000 IFR.</li>
 <li>Annex 13's purpose is prevention, not blame.</li>
 </ul></div>`
 },
@@ -827,7 +827,7 @@ quiz: [
 { q: 'A PAN PAN call indicates:', a: ['Grave and imminent danger requiring immediate assistance', 'A condition concerning safety but not requiring immediate assistance', 'A radio check', 'An unlawful interference'], c: 1, why: 'PAN PAN is the urgency signal: safety of the aircraft or a person is concerned, but immediate assistance is not required.', ref: 'SERA.14' },
 { q: 'The international aeronautical emergency frequency is:', a: ['121.500 MHz', '243.000 MHz', '123.450 MHz', '118.000 MHz'], c: 0, why: '121.500 MHz.', ref: 'SERA.14' },
 { q: 'Which transponder code indicates radio communication failure?', a: ['7500', '7600', '7700', '7000'], c: 1, why: '7600 for radio failure; 7500 unlawful interference; 7700 emergency.', ref: 'SERA.13001' },
-{ q: 'When not receiving an air traffic service, a pilot should select:', a: ['2000', '7000', '7700', '0000'], c: 1, why: 'Code 7000, the conspicuity code, to improve detection. Code 2000 is for when no code has been assigned by ATS.', ref: 'SERA.13001' },
+{ q: 'Flying VFR in UK airspace, with no specific transponder instruction from ATS, you should select:', a: ['2000', '7000', '7700', '0000'], c: 1, why: '7000 is the VFR conspicuity code; 2000 is the same idea for IFR. Neither is assigned to you — both simply say that nobody has given you a discrete code.', ref: 'UK AIP ENR 1.6 / AIC 128/2019' },
 { q: 'In a Radio Mandatory Zone you must:', a: ['Carry a serviceable transponder', 'Maintain a continuous listening watch and establish two-way communication', 'Obtain an ATC clearance', 'File a flight plan'], c: 1, why: 'An RMZ requires a continuous air-ground voice communication watch and two-way communication as necessary on the notified frequency. A transponder is the TMZ requirement.', ref: 'SERA Appendix IV note 2' },
 { q: 'The sole objective of an ICAO Annex 13 accident investigation is:', a: ['To apportion blame', 'To determine liability', 'The prevention of accidents and incidents', 'To prosecute the pilot'], c: 2, why: 'Annex 13 states the sole objective is prevention. It is expressly not the apportioning of blame or liability.', ref: 'ICAO Annex 13' },
 { q: 'Under a Basic Service in Class G, the controller:', a: ['Separates you from all traffic', 'Provides deconfliction advice', 'Is not required to monitor your flight for traffic', 'Provides radar vectors'], c: 2, why: 'A Basic Service provides generic information only; the controller is not required to monitor the flight. Collision avoidance remains entirely with the pilot.', ref: 'UK FIS' },
@@ -898,7 +898,7 @@ cards: [
 { f: 'MAYDAY versus PAN PAN', b: 'MAYDAY: grave and imminent danger, immediate assistance required. PAN PAN: safety concerned, immediate assistance not required.', ref: 'SERA.14' },
 { f: 'Emergency frequency', b: '121.500 MHz.', ref: 'SERA.14' },
 { f: 'Squawk 7700 / 7600 / 7500', b: 'Emergency / radio failure / unlawful interference.', ref: 'SERA.13001' },
-{ f: 'Squawk 7000 versus 2000', b: '7000 = conspicuity, when not receiving an ATS. 2000 = when no code has been assigned by ATS.', ref: 'SERA.13001' },
+{ f: 'Squawk 7000 versus 2000', b: 'Both are conspicuity codes for when ATS has given you no specific transponder instruction. 7000 if you are VFR, 2000 if you are IFR.', ref: 'UK AIP ENR 1.6 / AIC 128/2019' },
 { f: 'RMZ versus TMZ', b: 'RMZ: radio — listening watch and two-way communication. TMZ: transponder with the notified mode and code.', ref: 'SERA App IV' },
 { f: 'Sole objective of an Annex 13 investigation', b: 'The prevention of accidents and incidents. Not blame or liability.', ref: 'Annex 13' },
 { f: 'Prohibited, restricted, danger area', b: 'Prohibited: no flight. Restricted: flight subject to specified conditions. Danger: dangerous activities may take place at notified times.', ref: 'Annex 2' },
