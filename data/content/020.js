@@ -481,7 +481,8 @@ cards: [
 { f: 'Why does maximum zero fuel mass exist?', b: 'Wing fuel relieves wing bending loads, so extra mass beyond MZFM must be fuel in the wings.', ref: 'AGK' },
 { f: 'Pitot heat — what does it actually protect?', b: 'The pitot head and its drain hole, so the ASI keeps working. Nothing else. On many light types the static ports are unheated.', ref: 'Pitot-static anti-icing' },
 { f: 'When do you select pitot heat?', b: 'Before entering visible moisture in air near or below freezing. It prevents ice; it does not reliably clear it once formed.', ref: 'Pitot heat — operation' },
-{ f: 'Pitot heat — electrical load and how you confirm it is working?', b: 'A resistance heater, typically a 5 to 10 A circuit; selecting it gives a visible swing on the ammeter or loadmeter.', ref: 'Pitot heat — electrical load' },
+{ f: 'Ammeter versus loadmeter — what does each read on alternator failure?', b: 'An ammeter sits in the battery lead and reads charge or discharge, so it swings negative. A loadmeter sits in the alternator lead and reads only alternator output, so it falls to zero and never goes negative.', ref: 'AGK — electrics' },
+      { f: 'Pitot heat — electrical load and how you confirm it is working?', b: 'A resistance heater, typically a 5 to 10 A circuit; selecting it gives a visible swing on the ammeter or loadmeter.', ref: 'Pitot heat — electrical load' },
 { f: 'Why keep the pitot heat ground check brief?', b: 'No cooling airflow on the ramp, so the element overheats and can burn out — and the tube gets hot enough to burn your hand.', ref: 'Pitot heat — ground check' },
 { f: 'Windscreen ice protection — light aeroplane versus larger type?', b: 'Light: hot air from the cabin heat exchanger, for misting and light frost only. Larger: an electrically heated laminated screen with a conductive film, thermostatically controlled.', ref: 'Windscreen anti-icing' }
 ]

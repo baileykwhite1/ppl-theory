@@ -308,7 +308,7 @@ aerofoil: {
 
 dragcurve: {
   alt: 'Graph of drag against airspeed showing parasite drag rising, induced drag falling, and the total drag minimum',
-  cap: 'The bottom of the total curve is V<sub>MD</sub>: best lift/drag, best glide angle, best range. Below it, slower needs more power.',
+  cap: 'The bottom of the total curve is V<sub>MD</sub>: best lift/drag, best glide angle, and — in a propeller aeroplane — best range. Below it you need more <em>thrust</em> to fly slower. Careful with the word power: this is a drag curve, and the power-required curve bottoms out slower still, at V<sub>MP</sub>, which is the endurance speed.',
   svg: `<svg class="dg" viewBox="0 0 640 330" role="img" aria-label="Total drag curve against airspeed">
   <line x1="80" y1="30" x2="80" y2="260" class="ink"/>
   <line x1="80" y1="260" x2="590" y2="260" class="ink"/>
@@ -330,7 +330,7 @@ dragcurve: {
   <text x="322" y="176" text-anchor="middle" class="s blue-t">induced = parasite</text>
   <!-- back of curve -->
   <path d="M110 266 H316" class="ink red"/>
-  <text x="120" y="301" class="s red-t">Back of the drag curve — slower needs more power</text>
+  <text x="120" y="301" class="s red-t">Back of the drag curve — slower needs more thrust</text>
 </svg>`
 },
 
@@ -1351,7 +1351,7 @@ gyroProps: {
 
 elecBus: {
   alt: 'A single-line electrical diagram: a battery earthed to the airframe feeds up through a zero-centre ammeter, whose needle is deflected to the minus side, and through the BAT half of the master switch to a junction where the engine-driven alternator also feeds in; one drop from that junction runs to a solid bus bar carrying circuit breakers for radio, transponder, lights, flaps and fuel pump plus a low volts warning lamp, the alternator\'s field is taken back from the bus through the ALT half of the master and a regulator, and a magnetos box sits connected to nothing.',
-  cap: 'The ammeter sits in the battery lead, so it reads the battery and not the loads: needle to +, the alternator is carrying everything and charging the battery; needle to − with the low volts light, the battery alone is feeding the bus — the alternator has failed, so shed non-essential loads and land. The alternator\'s own field is excited from the bus through the ALT half of the master, which is why the magnetos, wired to none of it, are the one thing that keeps running.',
+  cap: 'The ammeter sits in the battery lead, so it reads the battery and not the loads: needle to +, the alternator is carrying everything and charging the battery; needle to − with the low volts light, the battery alone is feeding the bus — the alternator has failed, so shed non-essential loads and land. The alternator\'s own field is excited from the bus through the ALT half of the master, which is why the magnetos, wired to none of it, are the one thing that keeps running. Know which instrument your aeroplane has: this centre-zero <b>ammeter</b> reads battery charge or discharge and swings negative when the alternator quits, whereas a <b>loadmeter</b> sits in the alternator lead, reads only what the alternator is producing, and answers the same failure by dropping to zero — it never reads negative at all.',
   svg: `<svg class="dg" viewBox="0 0 640 410" role="img" aria-label="Single line diagram of a light aeroplane electrical system: battery through an ammeter and the battery half of the master switch to a node, alternator feeding the same node with its field circuit taken from the bus through the alternator half of the master and the regulator, and circuit breakers hanging off the bus bar feeding radio, transponder, lights, flaps and fuel pump, with a low volts lamp and the magnetos shown off the bus">
   <defs>
     <marker id="elecBus-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
