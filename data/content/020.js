@@ -156,6 +156,7 @@ which is precisely the climb — so keep the climb speed up and the mixture rich
   id: '020-prop-systems', title: 'Propellers, fuel and electrics', mins: 6, tags: ['021.07', '021.08', '021.09'],
   body: `
 <h3>Propellers</h3>
+<figure data-d="bladeAngle"></figure>
 <p>A propeller is a rotating aerofoil producing thrust. Because the tip travels much further per
 revolution than the root, the blade is <b>twisted</b> — more coarse at the root, finer at the tip
 — to keep the angle of attack roughly constant along the span.</p>

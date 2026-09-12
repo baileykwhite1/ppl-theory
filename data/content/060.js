@@ -104,6 +104,7 @@ drawn to true north. Then apply variation to get magnetic. Measure at the <b>mid
 long leg, because meridians converge.</p>
 
 <h3>Reading the ground</h3>
+<figure data-d="chartSigns"></figure>
 <p>Relief is shown by <b>contours</b>, <b>layer tinting</b> (colour bands by elevation), and
 <b>spot heights</b>. The largest figure in each half-degree graticule box is the <b>maximum
 elevation figure</b>, in <em>thousands and hundreds of feet amsl</em> — so 23 means 2300 ft. It
@@ -287,6 +288,7 @@ beats a precise one worked out while the weather closes in.</p>
   id: '060-radionav', title: 'Radio navigation for the PPL', mins: 6, tags: ['061.07', '061.08', '061.10'],
   body: `
 <h3>VOR</h3>
+<figure data-d="vorCdi"></figure>
 <p>VHF Omnidirectional Range. A ground beacon transmits in the <b>108 to 117.95 MHz</b> band,
 and the aircraft receiver compares phase to determine which of 360 <b>radials</b> you are on.
 Key points:</p>

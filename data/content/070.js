@@ -324,6 +324,7 @@ technical defects affecting airworthiness, bird strikes, laser attacks and anyth
 endangered or could have endangered the aircraft.</p>
 
 <h3>The microburst</h3>
+<figure data-d="microburst"></figure>
 <p>A shaft of cold, dense air falling out of a convective cloud, hitting the ground and spreading
 outwards in all directions. Fujita defined it by the size of that outflow: <b>0.4 to 4 km</b>
 across. Short-lived, it generally reaches <b>maximum intensity within ten minutes</b>, and needs no

@@ -15,7 +15,7 @@ def lint(d):
         if b in s: p.append('contains ' + b)
     for a in ['fill="#', 'stroke="#', 'font-size=', 'style="', 'fill="rgb', 'stroke="rgb']:
         if a in s: p.append('inline ' + a)
-    for m in re.finditer(r'id="([^"]+)"', s):
+    for m in re.finditer(r'(?<![-\w])id="([^"]+)"', s):
         if not m.group(1).startswith(i + '-'): p.append('unprefixed id ' + m.group(1))
     for m in re.finditer(r'url\(#([^)]+)\)', s):
         if 'id="%s"' % m.group(1) not in s: p.append('dangling ref ' + m.group(1))

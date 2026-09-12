@@ -123,6 +123,7 @@ warmer and drier than it started.</li>
 
 <figure data-d="seabreeze"></figure>
 <h3>Mountain waves and turbulence</h3>
+<figure data-d="leeWave"></figure>
 <p>Standing (lee) waves need a wind of about <b>20 kt or more roughly perpendicular</b> to a
 ridge, increasing with height, and a stable layer near the ridge top. Signs: <b>lenticular</b>
 clouds marking the wave crests, <b>roll or rotor</b> cloud beneath the crests, and a <b>cap</b>
@@ -182,6 +183,7 @@ Smooth, drizzle or continuous rain, poor visibility. St, Sc, As, Ns, Ci, Cc, Cs.
 (6500 to 20,000 ft) As, Ac, Ns; <b>high</b> (above 20,000 ft) Ci, Cc, Cs — ice crystals.</p>
 
 <h3>Thunderstorms</h3>
+<figure data-d="microburst"></figure>
 <p>Three ingredients: <b>unstable air</b> through a deep layer, <b>moisture</b>, and a
 <b>trigger</b> to start the lifting (surface heating, a front, or orographic lift). Three
 stages: <b>cumulus</b> (updraughts only), <b>mature</b> (updraughts and downdraughts together,
@@ -282,6 +284,7 @@ occlusion</b>; if it is warmer, a <b>warm occlusion</b>. Weather is a mix of bot
 generally with a longer spell of poor conditions and no clear warm sector.</p>
 
 <h3>Pressure systems</h3>
+<figure data-d="synopticLow"></figure>
 <ul>
 <li><b>Depression (low)</b> — converging air, ascent, cloud and precipitation. Winds
 anticlockwise (northern hemisphere) and generally strong because the isobars are packed.
@@ -308,6 +311,7 @@ steep one.</li>
   id: '050-reports', title: 'Reading METARs, TAFs and the Form 214', mins: 6, tags: ['050.10', '050.11'],
   body: `
 <h3>METAR — what it is doing now</h3>
+<figure data-d="metarDecode"></figure>
 <p>A routine actual observation, issued usually every half hour. Read it in fixed order.</p>
 <p class="mono">EGKK 121250Z 24015G27KT 3000 &minus;RA BR BKN008 OVC015 09/08 Q1004 TEMPO 1200 RADZ</p>
 <ul>

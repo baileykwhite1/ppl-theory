@@ -474,6 +474,7 @@ the best <b>rate</b>.</li>
   id: '081-propellers', title: 'The propeller, and what it does to your glide', mins: 6, tags: ['081.24', '081.25'],
   body: `
 <h3>The blade is a rotating wing</h3>
+<figure data-d="bladeAngle"></figure>
 <p>Each propeller blade is a small, twisted, rotating wing. It meets the air at an angle of
 attack and produces a total reaction: <b>thrust</b> along the flight path, and a force in the
 plane of rotation that the engine's torque must overcome. Too much blade angle of attack and it

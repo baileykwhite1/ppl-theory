@@ -49,6 +49,7 @@ question: if the tank arm is <b>aft</b> of the CG, burning fuel moves the CG <b>
 adding mass behind the CG moves the CG aft. If the answer disagrees with common sense, redo it.</p>
 
 <h3>Effects of loading errors</h3>
+<figure data-d="cgEnvelope"></figure>
 <table>
 <thead><tr><th></th><th>Overweight</th><th>CG too far forward</th><th>CG too far aft</th></tr></thead>
 <tbody>
@@ -110,6 +111,7 @@ on a 30 &deg;C day, when ISA there is about 13 &deg;C, has a density altitude ar
 
 <figure data-d="runwaydist"></figure>
 <h3>The factors, as multipliers</h3>
+<figure data-d="toPerfChart"></figure>
 <p>The POH graphs are authoritative, but the CAA-style safety factors are what the exam and good
 practice use for a rough check on take-off and landing distance:</p>
 <table>
@@ -146,6 +148,7 @@ distance</b> is from 50 ft to a full stop. The <b>take-off run</b> is to the poi
 Read carefully which one a question is asking for.</p>
 
 <h3>Climb performance</h3>
+<figure data-d="climbSpeeds"></figure>
 <p>Rate of climb depends on <b>excess power</b>; angle of climb depends on <b>excess thrust</b>.
 Both shrink with increased mass, increased altitude and increased temperature, and both are
 degraded by flap (which adds drag). Consequences:</p>
@@ -211,6 +214,7 @@ many aerodromes. Consider a <b>listening squawk</b> and a Basic Service as low-c
 even on a local flight.</p>
 
 <h3>Fuel, properly</h3>
+<figure data-d="fuelBreakdown"></figure>
 <ul>
 <li><b>Taxi</b> — a fixed allowance for start, taxi and power checks.</li>
 <li><b>Trip</b> — climb, cruise and descent for the whole route at planned power. Do not forget
@@ -239,6 +243,7 @@ paperwork is valid, and you are fit to fly. Set personal minima on the ground, i
 nobody is waiting for you — and then treat them as limits rather than as targets.</p>
 
 <h3>The ICAO flight plan, item by item</h3>
+<figure data-d="icaoFlightPlan"></figure>
 <p>One ICAO form serves everywhere. In the UK it is <b>CA48</b>, filed through AFPEx, through your
 departure ATSU, or through an app feeding the same network. The box numbers are ICAO's and they
 skip. All clock times are <b>UTC, four figures</b>.</p>

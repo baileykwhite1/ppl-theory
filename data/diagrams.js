@@ -1648,4 +1648,1384 @@ minheights: {
 </svg>`
 },
 
+icaoFlightPlan: {
+  alt: 'The ICAO flight plan form drawn flat as a grid of boxes in their real positions — item 7 aircraft identification and item 8 flight rules on the top row, then item 9 number, type and wake category with item 10 equipment, item 13 departure aerodrome and off-block time, item 15 cruising speed, level and route, item 16 destination, total EET and alternates, item 18 other information, and at the foot a highlighted item 19 supplementary block holding endurance, persons on board, emergency and survival equipment, aircraft colour and the commander\'s name, with an arrow noting that this block stays with the unit you filed it through.',
+  cap: 'Where everything actually goes on the form, with sample entries. Exam questions ask which item holds what, and the answer is nearly always item 19 — endurance, persons on board, survival equipment, colour and markings, the commander\'s name. Items 7 to 18 are transmitted as the flight plan message; item 19 is not, which is exactly why it must be true. Two more that get asked: the time in item 13 is off-blocks, while the total EET in item 16 runs from take-off to overhead the destination, and item 15 takes the letters VFR in place of a level if you are not planning a set one.',
+  svg: `<svg class="dg" viewBox="0 0 640 430" role="img" aria-label="The ICAO flight plan form drawn as it appears on paper, items 7 to 19 in their real positions, with item 19 highlighted as the box that is not transmitted">
+  <defs>
+    <marker id="icaoFlightPlan-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fblue"/>
+    </marker>
+  </defs>
+
+  <text x="14" y="18" class="b">The ICAO flight plan form (UK: CA48)</text>
+  <text x="626" y="18" text-anchor="end" class="s">all clock times UTC, four figures</text>
+
+  <rect x="14" y="26" width="612" height="358" class="ink"/>
+  <line x1="14" y1="66" x2="626" y2="66" class="ink"/>
+  <line x1="14" y1="106" x2="626" y2="106" class="ink"/>
+  <line x1="14" y1="144" x2="626" y2="144" class="ink"/>
+  <line x1="14" y1="198" x2="626" y2="198" class="ink"/>
+  <line x1="14" y1="252" x2="626" y2="252" class="ink"/>
+  <line x1="14" y1="292" x2="626" y2="292" class="ink"/>
+  <line x1="300" y1="26" x2="300" y2="106" class="ink"/>
+  <line x1="180" y1="144" x2="180" y2="198" class="ink"/>
+  <line x1="300" y1="144" x2="300" y2="252" class="ink"/>
+  <line x1="470" y1="198" x2="470" y2="252" class="ink"/>
+  <line x1="310" y1="190" x2="616" y2="190" class="thin"/>
+
+  <text x="24" y="46" class="b">7</text>
+  <text x="40" y="46">Aircraft identification</text>
+  <text x="40" y="60" class="s">GABCD, no hyphen, 7 characters</text>
+  <text x="310" y="46" class="b">8</text>
+  <text x="326" y="46">Flight rules and type of flight</text>
+  <text x="326" y="60" class="s">V = VFR throughout</text>
+  <text x="470" y="60" class="s">G = general aviation</text>
+
+  <text x="24" y="86" class="b">9</text>
+  <text x="40" y="86">Number, type, wake category</text>
+  <text x="40" y="100" class="s">C172 / L</text>
+  <text x="120" y="100" class="s">L = 7,000 kg or less</text>
+  <text x="310" y="86" class="b">10</text>
+  <text x="332" y="86">Equipment and surveillance</text>
+  <text x="332" y="100" class="s">SG/S</text>
+  <text x="390" y="100" class="s">standard plus GNSS / Mode S</text>
+
+  <text x="24" y="124" class="b">13</text>
+  <text x="46" y="124">Departure aerodrome and EOBT</text>
+  <text x="46" y="138" class="s">EGBJ 1315, estimated off-block time</text>
+
+  <text x="24" y="164" class="b">15</text>
+  <text x="46" y="164">Cruising speed</text>
+  <text x="46" y="180" class="s">N0100 = 100 kt TAS</text>
+  <text x="190" y="164">Level</text>
+  <text x="190" y="180" class="s">A045 = 4,500 ft</text>
+  <text x="310" y="164">Route</text>
+  <text x="310" y="180" class="s">waypoints, DCT between them</text>
+
+  <text x="24" y="218" class="b">16</text>
+  <text x="46" y="218">Destination</text>
+  <text x="46" y="234" class="s">EGBO</text>
+  <text x="392" y="218">0045</text>
+  <text x="310" y="218">Total EET</text>
+  <text x="310" y="237" class="s">take-off to overhead</text>
+  <text x="480" y="218">Alternate(s)</text>
+  <text x="480" y="234" class="s">EGBJ, up to two</text>
+
+  <text x="24" y="271" class="b">18</text>
+  <text x="46" y="271">Other information</text>
+  <text x="46" y="285" class="s">0 if none, or DOF/ for the date, RMK/ for the rest</text>
+
+  <rect x="14" y="292" width="612" height="92" class="fblue" opacity=".09"/>
+  <rect x="14" y="292" width="612" height="92" class="blue ink"/>
+  <text x="24" y="312" class="b blue-t">19</text>
+  <text x="46" y="312" class="b blue-t">Supplementary information</text>
+  <text x="250" y="312" class="s blue-t">not transmitted with the flight plan</text>
+  <text x="24" y="336">E/ Endurance</text>
+  <text x="210" y="336">0330</text>
+  <text x="24" y="354">P/ Persons on board</text>
+  <text x="210" y="354">3</text>
+  <text x="24" y="372">A/ Aircraft colour and markings</text>
+  <text x="330" y="336">R/ Emergency radio</text>
+  <text x="330" y="354">S/ J/ D/ Survival, jackets, dinghies</text>
+  <text x="330" y="372">C/ Pilot in command's name</text>
+
+  <line x1="44" y1="414" x2="44" y2="390" class="blue ink" marker-end="url(#icaoFlightPlan-ar)"/>
+  <text x="58" y="402" class="blue-t">Stays with the unit you filed it through</text>
+  <text x="58" y="418" class="s">produced only if you go missing, so endurance and persons on board must be true</text>
+</svg>`
+},
+
+cgEnvelope: {
+  alt: 'A loading chart with total mass in kilograms up the left axis and CG position in metres aft of datum along the bottom; the envelope is a kinked polygon with a horizontal maximum take-off mass ceiling, a vertical aft limit and a forward limit that slopes aft as mass rises, and it carries a take-off point just under MTOM joined by an arrow to a lower, slightly more forward landing point, plus a third point sitting outside the aft limit.',
+  cap: 'The POH envelope is not a rectangle: the forward limit moves aft as mass rises, so a CG of 2.20 m is legal at 900 kg and illegal at MTOM. Plot take-off and landing as two separate points — burning 120 kg of trip fuel from a tank arm aft of the CG drops the point down the chart and walks it forward. The rejected point is well under MTOM yet outside the aft limit: mass and balance are two checks, not one.',
+  svg: `<svg class="dg" viewBox="0 0 640 358" role="img" aria-label="Centre of gravity envelope from a POH loading chart, with a take-off point, a landing point after fuel burn, and a rejected point outside the aft limit">
+  <defs>
+    <marker id="cgEnvelope-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fblue"/>
+    </marker>
+  </defs>
+
+  <path d="M104.5 302 L104.5 172 L215 67 L368 67 L368 302 Z" class="tint"/>
+  <path d="M96 67 H215" class="thin dash"/>
+  <path d="M104.5 302 L104.5 172 L215 67 L368 67 L368 302" class="ink"/>
+
+  <path d="M96 62 V302 H444" class="ink"/>
+  <g class="ink">
+    <path d="M96 302 V307"/><path d="M181 302 V307"/><path d="M266 302 V307"/><path d="M351 302 V307"/><path d="M436 302 V307"/>
+    <path d="M90 302 H96"/><path d="M90 250 H96"/><path d="M90 198 H96"/><path d="M90 145 H96"/><path d="M90 93 H96"/>
+  </g>
+  <g class="thin">
+    <path d="M138.5 302 V305"/><path d="M223.5 302 V305"/><path d="M308.5 302 V305"/><path d="M393.5 302 V305"/>
+    <path d="M92.5 276 H96"/><path d="M92.5 224 H96"/><path d="M92.5 172 H96"/><path d="M92.5 119 H96"/>
+  </g>
+
+  <text x="96" y="324" text-anchor="middle" class="s">2.10</text>
+  <text x="181" y="324" text-anchor="middle" class="s">2.20</text>
+  <text x="266" y="324" text-anchor="middle" class="s">2.30</text>
+  <text x="351" y="324" text-anchor="middle" class="s">2.40</text>
+  <text x="436" y="324" text-anchor="middle" class="s">2.50</text>
+  <text x="266" y="344" text-anchor="middle" class="s">CG position — metres aft of datum</text>
+
+  <text x="84" y="306" text-anchor="end" class="s">600</text>
+  <text x="84" y="254" text-anchor="end" class="s">700</text>
+  <text x="84" y="202" text-anchor="end" class="s">800</text>
+  <text x="84" y="149" text-anchor="end" class="s">900</text>
+  <text x="84" y="97" text-anchor="end" class="s">1000</text>
+  <text x="56" y="50" class="s">Total mass, kg</text>
+  <text x="626" y="50" text-anchor="end" class="s">illustrative figures — use your own POH</text>
+
+  <text x="291" y="54" text-anchor="middle" class="b">MTOM 1050 kg</text>
+  <text x="101" y="100">fwd limit</text>
+  <text x="101" y="118" class="s">slopes aft</text>
+  <text x="374" y="226">aft limit</text>
+  <text x="374" y="244" class="s">2.42 m</text>
+
+  <path d="M300 85 V178" class="thin dash"/>
+  <path d="M275 147 V178" class="thin dash"/>
+  <path d="M300 178 H278" class="blue ink" marker-end="url(#cgEnvelope-ar)"/>
+  <text x="288" y="198" text-anchor="middle" class="s">CG moves forward</text>
+  <text x="288" y="216" text-anchor="middle" class="s">tank arm aft of the CG</text>
+
+  <path d="M297 85 L278 132" class="blue ink" marker-end="url(#cgEnvelope-ar)"/>
+  <text x="274" y="104" text-anchor="end" class="s">burn 120 kg</text>
+  <text x="274" y="122" text-anchor="end" class="s">trip fuel</text>
+
+  <circle cx="300" cy="78" r="4.5" class="fblue"/>
+  <text x="310" y="86" class="s">take-off</text>
+  <text x="310" y="104" class="s">1030 kg</text>
+
+  <circle cx="275" cy="140" r="4.5" class="fblue"/>
+  <text x="265" y="158" text-anchor="end" class="s">landing 910 kg</text>
+
+  <circle cx="402" cy="172" r="6" class="blue ink"/>
+  <path d="M397.8 167.8 L406.2 176.2 M406.2 167.8 L397.8 176.2" class="blue ink"/>
+  <path d="M409 172 H446" class="thin"/>
+  <text x="452" y="162" class="s">850 kg at 2.46 m</text>
+  <text x="452" y="182" class="blue-t">legal mass,</text>
+  <text x="452" y="200" class="blue-t">illegal balance</text>
+</svg>`
+},
+
+partialPressure: {
+  alt: 'Four columns drawn in proportion to ambient pressure at sea level, 10,000 ft, 18,000 ft and 25,000 ft, each with the bottom 21% shaded to show oxygen; the shaded proportion is identical in all four but its size falls from 212 hPa to 79 hPa, and a dashed line marks 18,000 ft as half the sea-level pressure.',
+  cap: 'The shaded fraction is the same in all four columns — air is 21% oxygen at every level. What shrinks is the column itself: ambient pressure is halved by 18,000 ft, and with it the oxygen partial pressure that drives oxygen across the lung membranes, from about 212 hPa at sea level to 106 hPa.',
+  svg: `<svg class="dg" viewBox="0 0 640 330" role="img" aria-label="Four columns drawn to ambient pressure at sea level, 10,000 feet, 18,000 feet and 25,000 feet, each with the same 21 per cent oxygen slice shaded at its base">
+  <rect x="14" y="23" width="15" height="12" class="fblue"/>
+  <text x="37" y="33" class="blue-t">O2, 21% at every level</text>
+  <text x="215" y="33" class="s">Column height = ambient pressure</text>
+
+  <line x1="30" y1="296" x2="614" y2="296" class="ink"/>
+
+  <rect x="64" y="247.7" width="64" height="48.3" class="fblue"/>
+  <rect x="184" y="262.8" width="64" height="33.2" class="fblue"/>
+  <rect x="304" y="271.9" width="64" height="24.1" class="fblue"/>
+  <rect x="424" y="278.1" width="64" height="17.9" class="fblue"/>
+
+  <rect x="64" y="66" width="64" height="230" class="ink"/>
+  <rect x="184" y="137.8" width="64" height="158.2" class="ink"/>
+  <rect x="304" y="181.1" width="64" height="114.9" class="ink"/>
+  <rect x="424" y="210.6" width="64" height="85.4" class="ink"/>
+
+  <line x1="128" y1="247.7" x2="184" y2="262.8" class="blue ink dash"/>
+  <line x1="248" y1="262.8" x2="304" y2="271.9" class="blue ink dash"/>
+  <line x1="368" y1="271.9" x2="424" y2="278.1" class="blue ink dash"/>
+
+  <line x1="44" y1="181.1" x2="304" y2="181.1" class="ink dash"/>
+  <line x1="368" y1="181.1" x2="496" y2="181.1" class="ink dash"/>
+  <text x="502" y="176">Half sea-level</text>
+  <text x="502" y="194" class="s">pressure, 18,000 ft</text>
+
+  <text x="96" y="56" text-anchor="middle">1013 hPa</text>
+  <text x="216" y="128" text-anchor="middle">697 hPa</text>
+  <text x="336" y="170" text-anchor="middle">506 hPa</text>
+  <text x="456" y="201" text-anchor="middle">376 hPa</text>
+
+  <text x="96" y="238" text-anchor="middle" class="blue-t">212 hPa</text>
+  <text x="216" y="253" text-anchor="middle" class="blue-t">146 hPa</text>
+  <text x="336" y="262" text-anchor="middle" class="blue-t">106 hPa</text>
+  <text x="456" y="268" text-anchor="middle" class="blue-t">79 hPa</text>
+
+  <text x="96" y="316" text-anchor="middle">Sea level</text>
+  <text x="216" y="316" text-anchor="middle">10,000 ft</text>
+  <text x="336" y="316" text-anchor="middle">18,000 ft</text>
+  <text x="456" y="316" text-anchor="middle">25,000 ft</text>
+</svg>`
+},
+
+fuelBreakdown: {
+  alt: 'A tall column standing for the tank contents, divided from the bottom up into a hatched final reserve, then alternate, contingency, trip, taxi and extra on top; a bracket down the left spans everything except extra, a dashed arrow runs from the contingency band up into the trip band, and a line across the top of the reserve marks the level at which you should already be on the ground.',
+  cap: 'Fuel is a stack, not a list. Contingency is a percentage of the trip band above it, and everything except the extra on top has to be aboard before you may depart. The hatched final reserve — 30 minutes by day VFR, 45 minutes at night or IFR — is not fuel you may plan to use: the top of it is the level at which you should already be on the ground. Band depths are schematic, not to scale.',
+  svg: `<svg class="dg" viewBox="0 0 640 424" role="img" aria-label="A single fuel column divided from the bottom up into final reserve, alternate, contingency, trip and taxi with extra on top, a bracket marking everything below extra as the minimum required to depart, and a tie-line showing contingency is a percentage of trip">
+  <defs>
+    <marker id="fuelBreakdown-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" class="fill"/>
+    </marker>
+  </defs>
+  <rect x="210" y="28" width="150" height="350" class="tint"/>
+  <rect x="210" y="278" width="150" height="100" class="fred" opacity=".12"/>
+  <line x1="210" y1="294" x2="226" y2="278" class="red ink" opacity=".3"/>
+  <line x1="210" y1="310" x2="242" y2="278" class="red ink" opacity=".3"/>
+  <line x1="210" y1="326" x2="258" y2="278" class="red ink" opacity=".3"/>
+  <line x1="210" y1="342" x2="274" y2="278" class="red ink" opacity=".3"/>
+  <line x1="210" y1="358" x2="290" y2="278" class="red ink" opacity=".3"/>
+  <line x1="210" y1="374" x2="306" y2="278" class="red ink" opacity=".3"/>
+  <line x1="222" y1="378" x2="322" y2="278" class="red ink" opacity=".3"/>
+  <line x1="238" y1="378" x2="338" y2="278" class="red ink" opacity=".3"/>
+  <line x1="254" y1="378" x2="354" y2="278" class="red ink" opacity=".3"/>
+  <line x1="270" y1="378" x2="360" y2="288" class="red ink" opacity=".3"/>
+  <line x1="286" y1="378" x2="360" y2="304" class="red ink" opacity=".3"/>
+  <line x1="302" y1="378" x2="360" y2="320" class="red ink" opacity=".3"/>
+  <line x1="318" y1="378" x2="360" y2="336" class="red ink" opacity=".3"/>
+  <line x1="334" y1="378" x2="360" y2="352" class="red ink" opacity=".3"/>
+  <line x1="350" y1="378" x2="360" y2="368" class="red ink" opacity=".3"/>
+  <rect x="210" y="28" width="150" height="350" class="ink"/>
+  <line x1="210" y1="76" x2="360" y2="76" class="ink"/>
+  <line x1="210" y1="98" x2="360" y2="98" class="ink"/>
+  <line x1="210" y1="194" x2="360" y2="194" class="ink"/>
+  <line x1="210" y1="236" x2="360" y2="236" class="ink"/>
+  <rect x="210" y="278" width="150" height="100" class="red ink"/>
+  <line x1="190" y1="278" x2="580" y2="278" class="red ink"/>
+  <path d="M196 76 L170 76 L170 378 L196 378" class="ink"/>
+  <text x="158" y="207" text-anchor="end" class="s">minimum required</text>
+  <text x="158" y="227" text-anchor="end" class="s">before you may depart</text>
+  <text x="158" y="247" text-anchor="end">NCO.OP.125</text>
+  <path d="M336 218 L390 218 L390 146 L336 146" class="ink dash" opacity=".6" marker-end="url(#fuelBreakdown-arrow)"/>
+  <text x="400" y="50">Extra</text>
+  <text x="400" y="70" class="s">above the minimum — your judgement</text>
+  <text x="400" y="92">Taxi</text>
+  <text x="444" y="92" class="s">start-up, taxi, power checks</text>
+  <text x="400" y="138">Trip</text>
+  <text x="400" y="158" class="s">climb, cruise and descent</text>
+  <text x="402" y="190" class="s">a percentage of trip</text>
+  <text x="400" y="212">Contingency</text>
+  <text x="400" y="232" class="s">a headwind worse than forecast</text>
+  <text x="400" y="262">Alternate</text>
+  <text x="472" y="262" class="s">plus a missed approach</text>
+  <text x="400" y="298" class="s red-t">the level at which you are</text>
+  <text x="400" y="318" class="s red-t">already on the ground</text>
+  <text x="400" y="348" class="b red-t">Final reserve</text>
+  <text x="400" y="369" class="red-t">30 min day VFR</text>
+  <text x="400" y="389" class="red-t">45 min night or IFR</text>
+  <text x="400" y="410" class="s red-t">planned to be burned: never</text>
+</svg>`
+},
+
+toPerfChart: {
+  alt: 'A four-panel take-off distance chart — temperature with a fan of pressure-altitude curves, then mass, wind component and screen height — with a single traced path entering at minus 5 degrees Celsius, rising to the 2000 ft curve, stepping down the mass guidelines to 1000 kg and the wind guidelines to 10 kt of headwind, then up the obstacle guidelines to 50 ft and out to about 530 metres on the right-hand distance axis.',
+  cap: 'How a POH chart is actually read: enter at the OAT, go up to your pressure-altitude curve, then in each panel run across to the reference line and follow the shape of the guidelines — never the reference line itself — down to mass, down to headwind, up to the 50 ft screen. The 530 m that falls out is the unfactored distance; the safety factor of ×1.33 for take-off, and any grass, slope or tailwind corrections, are applied to it afterwards. Figures here are illustrative — use the POH for the aeroplane you are flying.',
+  svg: `<svg class="dg" viewBox="0 0 640 336" role="img" aria-label="A four-panel POH take-off distance chart with the worked path traced across temperature, pressure altitude, mass, wind component and screen height to a distance on the right-hand axis">
+  <rect x="84" y="66" width="474" height="186" class="tint"/>
+  <text x="84" y="30" class="b">Take-off distance to 50 ft</text>
+  <text x="630" y="30" text-anchor="end" class="s">illustrative figures</text>
+  <text x="218" y="48" class="s">reference line</text>
+  <line x1="224" y1="55" x2="224" y2="66" class="thin"/>
+  <text x="462" y="48" class="s">ground roll</text>
+  <line x1="472" y1="55" x2="472" y2="66" class="thin"/>
+  <line x1="84" y1="66" x2="558" y2="66" class="thin"/>
+  <line x1="210" y1="66" x2="210" y2="252" class="thin"/>
+  <line x1="322" y1="66" x2="322" y2="252" class="thin"/>
+  <line x1="460" y1="66" x2="460" y2="252" class="thin"/>
+  <line x1="84" y1="66" x2="84" y2="252" class="ink"/>
+  <line x1="558" y1="66" x2="558" y2="252" class="ink"/>
+  <line x1="84" y1="252" x2="558" y2="252" class="ink"/>
+  <path d="M84 226 Q147 215 210 200" class="thin"/>
+  <path d="M84 196 Q147 185 210 170" class="ink"/>
+  <path d="M84 166 Q147 155 210 140" class="thin"/>
+  <path d="M84 136 Q147 125 210 110" class="thin"/>
+  <text x="78" y="230" text-anchor="end" class="s">SL</text>
+  <text x="78" y="200" text-anchor="end" class="s blue-t">2000 ft</text>
+  <text x="78" y="170" text-anchor="end" class="s">4000 ft</text>
+  <text x="78" y="140" text-anchor="end" class="s">6000 ft</text>
+  <circle cx="16" cy="195.5" r="9" class="ink blue"/>
+  <text x="16" y="200" text-anchor="middle" class="s blue-t">2</text>
+  <text x="90" y="96" class="s">pressure altitude</text>
+  <line x1="224" y1="66" x2="224" y2="252" class="ink dash"/>
+  <path d="M224 145 L322 187" class="thin"/>
+  <path d="M224 175 L322 217" class="thin"/>
+  <path d="M224 205 L322 247" class="thin"/>
+  <line x1="382" y1="66" x2="382" y2="252" class="ink dash"/>
+  <path d="M322 90 L382 150 L460 189" class="thin"/>
+  <path d="M322 130 L382 190 L460 229" class="thin"/>
+  <path d="M322 175 L382 235 L412 250" class="thin"/>
+  <text x="326" y="86" class="s">tailwind</text>
+  <text x="398" y="118" class="s">headwind</text>
+  <line x1="472" y1="66" x2="472" y2="252" class="ink dash"/>
+  <path d="M472 162 Q509 139 546 93" class="thin"/>
+  <path d="M472 202 Q509 179 546 133" class="thin"/>
+  <path d="M472 242 Q509 219 546 173" class="thin"/>
+  <g class="thin">
+    <line x1="84" y1="252" x2="84" y2="257"/><line x1="109.2" y1="252" x2="109.2" y2="257"/>
+    <line x1="134.4" y1="252" x2="134.4" y2="257"/><line x1="159.6" y1="252" x2="159.6" y2="257"/>
+    <line x1="184.8" y1="252" x2="184.8" y2="257"/><line x1="210" y1="252" x2="210" y2="257"/>
+    <line x1="224" y1="252" x2="224" y2="257"/><line x1="308" y1="252" x2="308" y2="257"/>
+    <line x1="352" y1="252" x2="352" y2="257"/><line x1="367" y1="252" x2="367" y2="257"/>
+    <line x1="382" y1="252" x2="382" y2="257"/><line x1="442" y1="252" x2="442" y2="257"/>
+    <line x1="472" y1="252" x2="472" y2="257"/><line x1="509" y1="252" x2="509" y2="257"/>
+    <line x1="558" y1="102" x2="561" y2="102"/><line x1="558" y1="162" x2="561" y2="162"/>
+    <line x1="558" y1="222" x2="561" y2="222"/>
+  </g>
+  <g class="ink">
+    <line x1="558" y1="72" x2="564" y2="72"/><line x1="558" y1="132" x2="564" y2="132"/>
+    <line x1="558" y1="192" x2="564" y2="192"/><line x1="558" y1="252" x2="564" y2="252"/>
+  </g>
+  <text x="568" y="76.5" class="s">800 m</text>
+  <text x="568" y="136.5" class="s">600 m</text>
+  <text x="568" y="196.5" class="s">400 m</text>
+  <text x="568" y="256.5" class="s">200 m</text>
+  <path d="M266 207 L266 257" class="ink blue dash" opacity=".55"/>
+  <path d="M412 222 L412 257" class="ink blue dash" opacity=".55"/>
+  <path d="M546 153 L546 257" class="ink blue dash" opacity=".55"/>
+  <path d="M122 257 L122 189 L224 189 L266 207 L382 207 L412 222 L472 222 Q509 199 556 153" class="ink blue"/>
+  <path d="M556 148 L566 153 L556 158 Z" class="fblue"/>
+  <text x="572" y="157.5" class="s blue-t">≈ 530 m</text>
+  <g class="s">
+    <text x="84" y="275" text-anchor="middle">−20</text>
+    <text x="134.4" y="275" text-anchor="middle">0</text>
+    <text x="159.6" y="275" text-anchor="middle">10</text>
+    <text x="184.8" y="275" text-anchor="middle">20</text>
+    <text x="224" y="275" text-anchor="middle">1100</text>
+    <text x="308" y="275" text-anchor="middle">900</text>
+    <text x="352" y="275" text-anchor="middle">10</text>
+    <text x="382" y="275" text-anchor="middle">0</text>
+    <text x="442" y="275" text-anchor="middle">20</text>
+    <text x="472" y="275" text-anchor="middle">0</text>
+    <text x="546" y="275" text-anchor="middle">50</text>
+  </g>
+  <circle cx="103" cy="291.5" r="9" class="ink blue"/>
+  <text x="103" y="296" text-anchor="middle" class="s blue-t">1</text>
+  <text x="118" y="296" class="s blue-t">−5 °C</text>
+  <circle cx="240" cy="291.5" r="9" class="ink blue"/>
+  <text x="240" y="296" text-anchor="middle" class="s blue-t">3</text>
+  <text x="255" y="296" class="s blue-t">1000 kg</text>
+  <circle cx="364" cy="291.5" r="9" class="ink blue"/>
+  <text x="364" y="296" text-anchor="middle" class="s blue-t">4</text>
+  <text x="379" y="296" class="s blue-t">10 kt headwind</text>
+  <circle cx="527" cy="291.5" r="9" class="ink blue"/>
+  <text x="527" y="296" text-anchor="middle" class="s blue-t">5</text>
+  <text x="542" y="296" class="s blue-t">50 ft</text>
+  <g class="s">
+    <text x="147" y="318" text-anchor="middle">OAT °C</text>
+    <text x="266" y="318" text-anchor="middle">Mass kg</text>
+    <text x="380" y="318" text-anchor="middle">Wind component kt</text>
+    <text x="509" y="318" text-anchor="middle">Screen height ft</text>
+  </g>
+</svg>`
+},
+
+runwayIllusion: {
+  alt: 'Three columns comparing a narrow, normal-width and wide runway: the top row shows the pilot\'s-eye sight picture of each from the same point on a three degree slope, and the bottom row shows the approach profile flown under each, low and short under the narrow runway, on slope under the normal one, and high under the wide one.',
+  cap: 'All three sight pictures are taken from the same point on a correct 3° slope, so only the width differs. A narrow runway fills less of the windscreen than you expect, which looks like being high — so you descend below the slope and end up short. A wide one does the reverse and leaves you high and steep. Slope behaves the same way: an upslope like a narrow runway, a downslope like a wide one.',
+  svg: `<svg class="dg" viewBox="0 0 640 356" role="img" aria-label="Narrow, normal and wide runway sight pictures with the approach profile flown under each">
+  <text x="320" y="14" text-anchor="middle" class="s">All three seen from the same point on a correct 3&#176; slope &#8212; only the width differs</text>
+
+  <text x="106" y="34" text-anchor="middle" class="b">Narrow runway</text>
+  <text x="320" y="34" text-anchor="middle" class="b">Normal width</text>
+  <text x="534" y="34" text-anchor="middle" class="b">Wide runway</text>
+
+  <rect x="10" y="42" width="192" height="116" class="thin"/>
+  <rect x="224" y="42" width="192" height="116" class="thin"/>
+  <rect x="438" y="42" width="192" height="116" class="thin"/>
+  <rect x="10" y="80" width="192" height="78" class="tint"/>
+  <rect x="224" y="80" width="192" height="78" class="tint"/>
+  <rect x="438" y="80" width="192" height="78" class="tint"/>
+  <line x1="10" y1="80" x2="202" y2="80" class="ink"/>
+  <line x1="224" y1="80" x2="416" y2="80" class="ink"/>
+  <line x1="438" y1="80" x2="630" y2="80" class="ink"/>
+  <text x="16" y="72" class="s">horizon</text>
+
+  <polygon points="89,152 123,152 110,92 102,92" class="tint"/>
+  <polygon points="89,152 123,152 110,92 102,92" class="ink"/>
+  <line x1="92" y1="152" x2="92" y2="145" class="ink"/>
+  <line x1="100.5" y1="152" x2="100.5" y2="145" class="ink"/>
+  <line x1="111.5" y1="152" x2="111.5" y2="145" class="ink"/>
+  <line x1="120" y1="152" x2="120" y2="145" class="ink"/>
+
+  <polygon points="290,152 350,152 327,92 313,92" class="tint"/>
+  <polygon points="290,152 350,152 327,92 313,92" class="ink"/>
+  <line x1="295.5" y1="152" x2="295.5" y2="145" class="ink"/>
+  <line x1="310.5" y1="152" x2="310.5" y2="145" class="ink"/>
+  <line x1="329.5" y1="152" x2="329.5" y2="145" class="ink"/>
+  <line x1="344.5" y1="152" x2="344.5" y2="145" class="ink"/>
+
+  <polygon points="488,152 580,152 545,92 523,92" class="tint"/>
+  <polygon points="488,152 580,152 545,92 523,92" class="ink"/>
+  <line x1="496" y1="152" x2="496" y2="145" class="ink"/>
+  <line x1="520" y1="152" x2="520" y2="145" class="ink"/>
+  <line x1="548" y1="152" x2="548" y2="145" class="ink"/>
+  <line x1="572" y1="152" x2="572" y2="145" class="ink"/>
+
+  <text x="106" y="174" text-anchor="middle" class="red-t">looks high</text>
+  <text x="320" y="174" text-anchor="middle">looks right</text>
+  <text x="534" y="174" text-anchor="middle" class="red-t">looks low</text>
+
+  <line x1="160" y1="191" x2="190" y2="191" class="ink dash"/>
+  <text x="196" y="195" class="s">correct 3&#176; slope</text>
+  <line x1="320" y1="191" x2="350" y2="191" class="red ink"/>
+  <text x="356" y="195" class="s">path actually flown</text>
+
+  <line x1="16" y1="276" x2="128" y2="276" class="thin"/>
+  <line x1="128" y1="276" x2="194" y2="276" class="ink"/>
+  <line x1="128" y1="276" x2="128" y2="270" class="ink"/>
+  <rect x="152" y="272" width="12" height="4" class="fill"/>
+  <line x1="22" y1="214" x2="158" y2="276" class="ink dash"/>
+  <polyline points="22,214 54,246 92,266 118,276" class="red ink"/>
+  <circle cx="118" cy="276" r="3" class="fred"/>
+
+  <line x1="230" y1="276" x2="342" y2="276" class="thin"/>
+  <line x1="342" y1="276" x2="408" y2="276" class="ink"/>
+  <line x1="342" y1="276" x2="342" y2="270" class="ink"/>
+  <rect x="366" y="272" width="12" height="4" class="fill"/>
+  <line x1="236" y1="214" x2="372" y2="276" class="red ink"/>
+  <line x1="236" y1="214" x2="372" y2="276" class="ink dash"/>
+  <circle cx="372" cy="276" r="3" class="fred"/>
+
+  <line x1="444" y1="276" x2="556" y2="276" class="thin"/>
+  <line x1="556" y1="276" x2="622" y2="276" class="ink"/>
+  <line x1="556" y1="276" x2="556" y2="270" class="ink"/>
+  <rect x="580" y="272" width="12" height="4" class="fill"/>
+  <line x1="450" y1="214" x2="586" y2="276" class="ink dash"/>
+  <polyline points="450,214 504,223 550,244 586,276" class="red ink"/>
+  <circle cx="586" cy="276" r="3" class="fred"/>
+
+  <text x="106" y="304" text-anchor="middle" class="red-t">flies low</text>
+  <text x="320" y="304" text-anchor="middle" class="s">on the aiming point</text>
+  <text x="534" y="304" text-anchor="middle" class="red-t">flies high</text>
+
+  <text x="106" y="326" text-anchor="middle" class="s">an upslope does what</text>
+  <text x="106" y="345" text-anchor="middle" class="s">a narrow runway does</text>
+  <text x="534" y="326" text-anchor="middle" class="s">a downslope does what</text>
+  <text x="534" y="345" text-anchor="middle" class="s">a wide runway does</text>
+</svg>`
+},
+
+somatogravic: {
+  alt: 'Two side-view panels of a level aeroplane: at steady speed a single 1 g vector points straight down from the pilot and the felt horizon lies exactly on the true horizon, while under go-around acceleration the 1 g vector and a rearward inertial vector add head-to-tail to a resultant leaning back by an angle theta, tilting the felt horizon by the same theta so the unchanged nose appears high, with a ghosted aeroplane below pushed nose-down and descending towards the ground.',
+  cap: 'Steady, the only specific force on the otoliths is 1 g down, so the felt vertical is the true vertical and the attitude reads correctly. Accelerating, a rearward inertial force of size a adds to it: the resultant — the direction the body calls "down" — leans back by θ = arctan(a/g), and the felt horizon tilts by that same θ. The nose has not moved, but it now sits above the felt horizon, so a level go-around feels like a steep climb. Push to cancel that climb, as the reflex demands, and the aeroplane really does descend. Believe the instruments.',
+  svg: `<svg class="dg" viewBox="0 0 640 434" role="img" aria-label="Somatogravic illusion drawn as a vector sum: gravity plus rearward inertia gives a felt vertical that leans back, tilting the felt horizon">
+<defs>
+<marker id="somatogravic-ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1 L 9 5 L 0 9 Z" class="fill"/></marker>
+<marker id="somatogravic-ahr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1 L 9 5 L 0 9 Z" class="fred"/></marker>
+</defs>
+
+<line x1="270" y1="10" x2="270" y2="254" class="thin"/>
+
+<text x="14" y="21" class="b">Steady speed</text>
+<text x="14" y="37" class="s">level, no acceleration</text>
+<line x1="16" y1="104" x2="256" y2="104" class="ink"/>
+<line x1="16" y1="104" x2="256" y2="104" class="red ink dash"/>
+<text x="254" y="96" text-anchor="end" class="s">true horizon</text>
+<text x="254" y="122" text-anchor="end" class="s red-t">felt horizon</text>
+<g transform="translate(80,108)">
+<path class="ink" d="M 33 2 C 33 -3 26 -7 16 -8 L 0 -9 L -14 -7 L -44 -1 L -44 3 L -26 8 L 14 8 C 26 8 32 6 33 2 Z"/>
+<path class="ink" d="M -26 -5 L -41 -21 L -46 -21 L -45 -1 Z"/>
+<path class="ink" d="M -40 -3 L -54 -4 L -54 -1 L -40 0 Z"/>
+<path class="ink" d="M -19 -11 L 15 -11 L 13 -8.5 L -17 -8.5 Z"/>
+<path class="thin" d="M -7 -9 L -17 6"/>
+<path class="thin" d="M 13 -9 L 24 -2"/>
+<path class="thin" d="M 34 -9 L 34 9"/>
+<circle cx="4" cy="-4" r="3.2" class="fill"/>
+</g>
+<line x1="84" y1="104" x2="84" y2="204" class="ink" marker-end="url(#somatogravic-ah)"/>
+<text x="92" y="150">1 g</text>
+<text x="92" y="166" class="s">gravity</text>
+<text x="136" y="224" text-anchor="middle" class="s">felt vertical = true vertical</text>
+<text x="136" y="244" text-anchor="middle" class="s">attitude read correctly</text>
+
+<text x="284" y="21" class="b">Go-around at full power</text>
+<text x="284" y="37" class="s">still level, but accelerating</text>
+<line x1="286" y1="104" x2="632" y2="104" class="ink"/>
+<line x1="294" y1="52.6" x2="630" y2="174.9" class="red ink dash"/>
+<text x="628" y="96" text-anchor="end" class="s">true horizon</text>
+<text x="628" y="192" text-anchor="end" class="red-t">felt horizon</text>
+<text x="628" y="209" text-anchor="end" class="s red-t">feels like a steep climb</text>
+<g transform="translate(430,108)">
+<path class="ink" d="M 33 2 C 33 -3 26 -7 16 -8 L 0 -9 L -14 -7 L -44 -1 L -44 3 L -26 8 L 14 8 C 26 8 32 6 33 2 Z"/>
+<path class="ink" d="M -26 -5 L -41 -21 L -46 -21 L -45 -1 Z"/>
+<path class="ink" d="M -40 -3 L -54 -4 L -54 -1 L -40 0 Z"/>
+<path class="ink" d="M -19 -11 L 15 -11 L 13 -8.5 L -17 -8.5 Z"/>
+<path class="thin" d="M -7 -9 L -17 6"/>
+<path class="thin" d="M 13 -9 L 24 -2"/>
+<path class="thin" d="M 34 -9 L 34 9"/>
+<circle cx="4" cy="-4" r="3.2" class="fill"/>
+</g>
+<line x1="476" y1="88" x2="536" y2="88" class="ink" marker-end="url(#somatogravic-ah)"/>
+<text x="476" y="78" class="s">acceleration a</text>
+<path class="red ink" d="M 478 104 A 44 44 0 0 1 475.4 119.0"/>
+<text x="498" y="119" text-anchor="middle">&#952;</text>
+<line x1="434" y1="104" x2="434" y2="204" class="ink" marker-end="url(#somatogravic-ah)"/>
+<text x="442" y="150">1 g</text>
+<text x="442" y="166" class="s">gravity</text>
+<line x1="434" y1="204" x2="397.6" y2="204" class="ink" marker-end="url(#somatogravic-ah)"/>
+<text x="416" y="224" text-anchor="middle" class="s">rearward inertia, a</text>
+<text x="416" y="244" text-anchor="middle" class="s">&#952; = arctan (a / g)</text>
+<path class="red ink" d="M 434 150 A 46 46 0 0 1 418.3 147.2"/>
+<text x="423" y="170" text-anchor="middle">&#952;</text>
+<line x1="434" y1="104" x2="397.6" y2="204" class="red ink" marker-end="url(#somatogravic-ahr)"/>
+<text x="404" y="160" text-anchor="end" class="red-t">felt vertical</text>
+<text x="404" y="176" text-anchor="end" class="s">the resultant</text>
+
+<line x1="8" y1="264" x2="632" y2="264" class="thin"/>
+<text x="14" y="288" class="b">The reflex response</text>
+<g transform="translate(120,320)" opacity=".45">
+<path class="ink" d="M 33 2 C 33 -3 26 -7 16 -8 L 0 -9 L -14 -7 L -44 -1 L -44 3 L -26 8 L 14 8 C 26 8 32 6 33 2 Z"/>
+<path class="ink" d="M -26 -5 L -41 -21 L -46 -21 L -45 -1 Z"/>
+<path class="ink" d="M -40 -3 L -54 -4 L -54 -1 L -40 0 Z"/>
+<path class="ink" d="M -19 -11 L 15 -11 L 13 -8.5 L -17 -8.5 Z"/>
+<path class="thin" d="M -7 -9 L -17 6"/>
+<path class="thin" d="M 13 -9 L 24 -2"/>
+<path class="thin" d="M 34 -9 L 34 9"/>
+</g>
+<line x1="176" y1="296" x2="176" y2="316" class="ink" marker-end="url(#somatogravic-ah)"/>
+<text x="184" y="306" class="s">nose-down push</text>
+<text x="628" y="330" text-anchor="end" class="s">worst at night or in IMC</text>
+<path class="red ink dash" d="M 160 320 C 300 320 400 336 498 366"/>
+<text x="343" y="362" text-anchor="middle" class="s red-t">an actual descent</text>
+<g transform="translate(551.3,383.3) rotate(17)" opacity=".45">
+<path class="ink" d="M 33 2 C 33 -3 26 -7 16 -8 L 0 -9 L -14 -7 L -44 -1 L -44 3 L -26 8 L 14 8 C 26 8 32 6 33 2 Z"/>
+<path class="ink" d="M -26 -5 L -41 -21 L -46 -21 L -45 -1 Z"/>
+<path class="ink" d="M -40 -3 L -54 -4 L -54 -1 L -40 0 Z"/>
+<path class="ink" d="M -19 -11 L 15 -11 L 13 -8.5 L -17 -8.5 Z"/>
+<path class="thin" d="M -7 -9 L -17 6"/>
+<path class="thin" d="M 13 -9 L 24 -2"/>
+<path class="thin" d="M 34 -9 L 34 9"/>
+</g>
+<line x1="8" y1="410" x2="632" y2="410" class="ink"/>
+<path class="thin" d="M 100 410 L 90 420 M 140 410 L 130 420 M 180 410 L 170 420 M 220 410 L 210 420 M 260 410 L 250 420 M 300 410 L 290 420 M 340 410 L 330 420 M 380 410 L 370 420 M 420 410 L 410 420 M 460 410 L 450 420 M 500 410 L 490 420 M 540 410 L 530 420 M 580 410 L 570 420 M 620 410 L 610 420"/>
+<text x="14" y="426" class="s">ground</text>
+</svg>`
+},
+
+sleepCycle: {
+  alt: 'Two stacked panels on one time axis from 2200 to 0700: above, a hypnogram whose deep NREM troughs are largest in the first two cycles while the REM blocks grow progressively longer towards morning, with a bracket over 0500 to 0700 marking the sleep an early call removes; below, the circadian alertness and body temperature curve reaching its low across a shaded band from 0300 to 0500.',
+  cap: 'Both facts on one clock. Deep NREM is front-loaded and REM back-loaded, so the hours an early call takes are mostly REM — which is why fragmented or shortened sleep leaves you unrested even when the total looks adequate. The body clock\'s low sits at 0300 to 0500 whatever time you went to bed, so an 0500 call finds you short of REM and at the bottom of the rhythm at the same time.',
+  svg: `<svg class="dg" viewBox="0 0 640 362" role="img" aria-label="A hypnogram and the circadian alertness curve drawn on one shared time axis from 2200 to 0700">
+  <defs>
+    <marker id="sleepCycle-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="fill"/>
+    </marker>
+  </defs>
+
+  <rect x="390" y="54" width="112" height="274" class="tint"/>
+
+  <text x="630" y="12" text-anchor="end" class="s">cut sleep short by an early call</text>
+  <text x="630" y="31" text-anchor="end" class="s">and it is mostly REM you lose</text>
+  <path d="M502 46 V40 H614 V46" class="ink"/>
+  <text x="6" y="40" class="b">Sleep stages</text>
+
+  <line x1="110" y1="54" x2="110" y2="186" class="thin"/>
+  <line x1="390" y1="78" x2="390" y2="148" class="thin dash"/>
+  <line x1="502" y1="78" x2="502" y2="148" class="thin dash"/>
+
+  <text x="411" y="66" text-anchor="middle" class="s">each REM episode longer than the last</text>
+  <line x1="232" y1="74" x2="590" y2="74" class="ink" opacity=".55" marker-end="url(#sleepCycle-arrow)"/>
+
+  <rect x="218.3" y="81" width="9.3" height="18" class="fblue" opacity=".34"/>
+  <rect x="292.9" y="81" width="18.7" height="18" class="fblue" opacity=".34"/>
+  <rect x="363.9" y="81" width="28" height="18" class="fblue" opacity=".34"/>
+  <rect x="444.1" y="81" width="42" height="18" class="fblue" opacity=".34"/>
+  <rect x="516" y="81" width="60.7" height="18" class="fblue" opacity=".34"/>
+
+  <path class="ink" d="M110 64 H138 V116 H145.5 V142 H158.5 V168 H201.5 V142 H210.8 V116 H218.3 V90 H227.6 V116 H236.9 V142 H246.3 V168 H283.6 V142 H292.9 V90 H311.6 V142 H322.8 V168 H347.1 V142 H363.9 V90 H391.9 V116 H401.2 V142 H434.8 V116 H444.1 V90 H486.1 V116 H496.4 V142 H516 V90 H576.7 V116 H600 V64 H614"/>
+  <path class="blue ink" d="M218.3 90 H227.6 M292.9 90 H311.6 M363.9 90 H391.9 M444.1 90 H486.1 M516 90 H576.7"/>
+
+  <text x="102" y="68" text-anchor="end" class="s">Awake</text>
+  <text x="102" y="94" text-anchor="end" class="s blue-t">REM</text>
+  <text x="102" y="120" text-anchor="end" class="s">NREM 1</text>
+  <text x="102" y="146" text-anchor="end" class="s">NREM 2</text>
+  <text x="102" y="172" text-anchor="end" class="s">NREM 3–4</text>
+
+  <line x1="366" y1="168" x2="352" y2="168" class="ink" opacity=".55" marker-end="url(#sleepCycle-arrow)"/>
+  <text x="372" y="172" class="s">deepest NREM early in the night</text>
+
+  <line x1="110" y1="186" x2="614" y2="186" class="ink"/>
+  <line x1="110" y1="186" x2="110" y2="191" class="thin"/> <text x="110" y="207" text-anchor="middle" class="s">2200</text>
+  <line x1="166" y1="186" x2="166" y2="191" class="thin"/> <text x="166" y="207" text-anchor="middle" class="s">2300</text>
+  <line x1="222" y1="186" x2="222" y2="191" class="thin"/> <text x="222" y="207" text-anchor="middle" class="s">0000</text>
+  <line x1="278" y1="186" x2="278" y2="191" class="thin"/> <text x="278" y="207" text-anchor="middle" class="s">0100</text>
+  <line x1="334" y1="186" x2="334" y2="191" class="thin"/> <text x="334" y="207" text-anchor="middle" class="s">0200</text>
+  <line x1="390" y1="186" x2="390" y2="191" class="thin"/> <text x="390" y="207" text-anchor="middle" class="s">0300</text>
+  <line x1="446" y1="186" x2="446" y2="191" class="thin"/> <text x="446" y="207" text-anchor="middle" class="s">0400</text>
+  <line x1="502" y1="186" x2="502" y2="191" class="thin"/> <text x="502" y="207" text-anchor="middle" class="s">0500</text>
+  <line x1="558" y1="186" x2="558" y2="191" class="thin"/> <text x="558" y="207" text-anchor="middle" class="s">0600</text>
+  <line x1="614" y1="186" x2="614" y2="191" class="thin"/> <text x="614" y="207" text-anchor="middle" class="s">0700</text>
+
+  <text x="6" y="230" class="b">Body clock</text>
+  <text x="120" y="230" class="s">alertness and body temperature</text>
+  <line x1="110" y1="220" x2="110" y2="328" class="thin"/>
+  <line x1="110" y1="328" x2="614" y2="328" class="thin"/>
+
+  <path class="ink" d="M110 240 C119.3 241.3, 147.3 244.7, 166 248 C184.7 251.3, 203.3 255.7, 222 260 C240.7 264.3, 259.3 269.2, 278 274 C296.7 278.8, 315.3 284.5, 334 289 C352.7 293.5, 371.3 298.0, 390 301 C408.7 304.0, 427.3 306.8, 446 307 C464.7 307.2, 483.3 305.0, 502 302 C520.7 299.0, 539.3 294.3, 558 289 C576.7 283.7, 604.7 273.2, 614 270"/>
+
+  <text x="446" y="262" text-anchor="middle" class="s">0300–0500</text>
+  <text x="446" y="280" text-anchor="middle" class="s">worst performance</text>
+
+  <text x="630" y="348" text-anchor="end" class="s">the same low comes round every 24 hours, whatever time you went to bed</text>
+</svg>`
+},
+
+climbSpeeds: {
+  alt: 'Two panels. Left: power against true airspeed at sea level, with the vertical gap between the power available and power required curves marked as excess power at Vy, and below it the same pair at high altitude where power available has fallen, power required has risen, and the gap has shrunk to almost nothing. Right: altitude against indicated airspeed, with a Vx line leaning right and a Vy line leaning left meeting at a marked point, the absolute ceiling where Vx equals Vy and the rate of climb is zero, with the service ceiling drawn as a dashed line just below it.',
+  cap: 'Rate of climb is the gap between power available and power required, and that gap closes as you climb. That is why V(x) increases with altitude while V(y) decreases: moving in opposite directions, they can only meet at the absolute ceiling, where the rate of climb is zero.',
+  svg: `<svg class="dg" viewBox="0 0 640 400" role="img" aria-label="Power against true airspeed at sea level and at high altitude, the gap between power available and power required shrinking to almost nothing, beside a plot of indicated airspeed against altitude in which Vx increases and Vy decreases until they meet at the absolute ceiling">
+  <text x="34" y="24" class="b">Rate of climb = excess power</text>
+  <text x="368" y="24" class="b">So the two climb speeds converge</text>
+
+  <line x1="68" y1="58" x2="68" y2="190" class="ink"/>
+  <line x1="68" y1="190" x2="312" y2="190" class="ink"/>
+  <text x="64" y="50" text-anchor="end" class="s">Power</text>
+  <text x="74" y="50" class="s">sea level</text>
+  <path d="M80 114 C 122 94 172 82 222 78 C 252 76 288 78 306 82" class="ink"/>
+  <path d="M78 128 C 94 162 104 172 122 172 C 154 172 192 158 230 134 C 262 114 292 94 302 78" class="ink"/>
+  <text x="306" y="68" text-anchor="end" class="s">power available</text>
+  <text x="310" y="166" text-anchor="end" class="s">power required</text>
+  <path d="M155 89 L151 98 L159 98 Z" class="fill"/>
+  <path d="M155 167 L151 158 L159 158 Z" class="fill"/>
+  <line x1="155" y1="96" x2="155" y2="160" class="ink"/>
+  <text x="165" y="110" class="s">excess power</text>
+  <line x1="155" y1="170" x2="155" y2="190" class="ink dash"/>
+  <text x="155" y="208" text-anchor="middle">Vy</text>
+  <text x="312" y="208" text-anchor="end" class="s">TAS</text>
+
+  <line x1="68" y1="234" x2="68" y2="366" class="ink"/>
+  <line x1="68" y1="366" x2="312" y2="366" class="ink"/>
+  <text x="64" y="230" text-anchor="end" class="s">Power</text>
+  <text x="74" y="230" class="s">high altitude</text>
+  <path d="M80 340 C 122 320 172 308 222 304 C 252 302 288 304 306 308" class="ink" opacity=".6"/>
+  <path d="M100 284 C 116 318 126 328 144 328 C 176 328 214 314 252 290 C 268 280 284 270 296 262" class="ink" opacity=".6"/>
+  <text x="296" y="250" text-anchor="end" class="s">power required rises</text>
+  <text x="175" y="270" text-anchor="middle" class="s">excess power nearly gone</text>
+  <line x1="175" y1="278" x2="175" y2="308" class="thin"/>
+  <line x1="175" y1="310" x2="175" y2="324" class="ink"/>
+  <line x1="169" y1="310" x2="181" y2="310" class="ink"/>
+  <line x1="169" y1="324" x2="181" y2="324" class="ink"/>
+  <text x="150" y="348" class="s">power available falls</text>
+  <text x="312" y="384" text-anchor="end" class="s">TAS</text>
+
+  <line x1="392" y1="56" x2="392" y2="366" class="ink"/>
+  <line x1="392" y1="366" x2="612" y2="366" class="ink"/>
+  <text x="368" y="48" class="s">Altitude</text>
+  <line x1="424" y1="366" x2="488" y2="80" class="ink"/>
+  <line x1="552" y1="366" x2="488" y2="80" class="ink"/>
+  <line x1="392" y1="104" x2="612" y2="104" class="ink dash"/>
+  <text x="516" y="122" class="s">service ceiling</text>
+  <text x="516" y="144" class="s">ROC = 100 ft/min</text>
+  <circle cx="488" cy="80" r="5" class="fblue"/>
+  <text x="500" y="72" class="b blue-t">absolute ceiling</text>
+  <text x="500" y="94" class="s blue-t">Vx = Vy, ROC = 0</text>
+  <text x="456" y="168" text-anchor="end" class="b">Vx</text>
+  <text x="456" y="190" text-anchor="end" class="s">increases</text>
+  <text x="528" y="168" class="b">Vy</text>
+  <text x="528" y="190" class="s">decreases</text>
+  <text x="386" y="358" text-anchor="end" class="s">sea level</text>
+  <text x="396" y="384" class="s">Vx best angle</text>
+  <text x="492" y="384" class="s">Vy best rate</text>
+  <text x="612" y="384" text-anchor="end" class="s">IAS</text>
+</svg>`
+},
+
+bladeAngle: {
+  alt: 'A propeller blade section at 75% radius with the plane of rotation drawn horizontally; arrows for rotational velocity and TAS combine into the relative airflow, the blade angle is marked from the plane of rotation to the chord line and the angle of attack in blue from the chord to the relative airflow; a dashed faster case at the same RPM swings the relative airflow forward and leaves a visibly smaller angle of attack; at the right a helix of one revolution rises to the effective pitch, with a dashed no-slip helix reaching the geometric pitch and the gap marked slip.',
+  cap: 'Blade angle is fixed by the hub; angle of attack (blue) is only what is left between the chord and the relative airflow, and the airflow is the resultant of rotational velocity and forward speed. Add TAS at the same RPM (dashed) and the resultant swings forward, so the angle of attack shrinks — the exam answer, read off rather than recalled. Right: in one revolution the blade would advance the geometric pitch with no slip, but actually advances the effective pitch.',
+  svg: `<svg class="dg" viewBox="0 0 640 290" role="img" aria-label="A propeller blade section with rotational velocity and TAS vectors resolving into the relative airflow, blade angle and angle of attack marked, a dashed faster case with a smaller angle of attack, and a helix strip showing geometric pitch, effective pitch and slip">
+  <defs>
+    <marker id="bladeAngle-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 1L10 5L0 9z" class="fill"/>
+    </marker>
+  </defs>
+
+  <text x="66" y="38" class="b">One blade section</text>
+  <text x="440" y="38" class="b">Pitch and slip</text>
+
+  <line x1="66" y1="172" x2="356" y2="172" class="thin"/>
+  <text x="74" y="162" class="s">plane of rotation</text>
+
+  <path d="M200 172Q152 203 121 251Q164 215 200 172Z" class="fill" opacity=".16"/>
+  <path d="M200 172Q152 203 121 251Q164 215 200 172Z" class="ink"/>
+  <line x1="121" y1="251" x2="295" y2="77" class="ink dash" opacity=".7"/>
+  <text x="130" y="272" class="s">section at 75% radius</text>
+  <text x="240" y="60" class="s">chord line</text>
+  <line x1="284" y1="67" x2="293" y2="77" class="thin"/>
+
+  <path d="M200 172L309 121A120 120 0 0 0 285 87Z" class="fblue" opacity=".14"/>
+  <path d="M200 172L297 102A120 120 0 0 0 285 87Z" class="fblue" opacity=".26"/>
+
+  <g opacity=".62">
+    <line x1="200" y1="172" x2="200" y2="86" class="ink dash" marker-end="url(#bladeAngle-ar)"/>
+    <line x1="200" y1="172" x2="320" y2="86" class="ink dash" marker-end="url(#bladeAngle-ar)"/>
+  </g>
+  <text x="326" y="90" class="s">faster, same RPM</text>
+
+  <line x1="200" y1="116" x2="320" y2="116" class="thin"/>
+  <line x1="200" y1="172" x2="320" y2="172" class="ink" marker-end="url(#bladeAngle-ar)"/>
+  <line x1="200" y1="172" x2="200" y2="116" class="ink" marker-end="url(#bladeAngle-ar)"/>
+  <line x1="200" y1="172" x2="320" y2="116" class="ink" marker-end="url(#bladeAngle-ar)"/>
+  <text x="192" y="116" text-anchor="end">TAS</text>
+  <text x="192" y="136" text-anchor="end" class="s">forward speed</text>
+  <text x="326" y="120">relative airflow</text>
+  <text x="280" y="192" text-anchor="middle">rotational velocity</text>
+  <text x="280" y="212" text-anchor="middle" class="s">set by RPM</text>
+
+  <path d="M276 172A76 76 0 0 0 254 118" class="ink"/>
+  <text x="288" y="160">blade angle</text>
+  <path d="M309 121A120 120 0 0 0 285 87" class="blue ink"/>
+  <text x="330" y="52" class="blue-t">angle of attack</text>
+  <line x1="334" y1="58" x2="297" y2="89" class="thin"/>
+
+  <line x1="440" y1="70" x2="520" y2="70" class="thin dash"/>
+  <text x="526" y="74" class="s">geometric pitch</text>
+  <line x1="440" y1="105" x2="520" y2="105" class="thin"/>
+  <text x="526" y="109" class="s">effective pitch</text>
+  <line x1="505" y1="72" x2="505" y2="103" class="ink" marker-start="url(#bladeAngle-ar)" marker-end="url(#bladeAngle-ar)"/>
+  <text x="498" y="92" text-anchor="end">slip</text>
+  <line x1="440" y1="220" x2="520" y2="220" class="thin"/>
+  <path d="M470 220C494 211 494 163 470 145C446 134 446 82 470 70" class="thin dash"/>
+  <path d="M470 220C494 212 494 170 470 162C446 155 446 113 470 105" class="ink"/>
+  <text x="480" y="238" text-anchor="middle" class="s">one revolution</text>
+</svg>`
+},
+
+metarDecode: {
+  alt: 'The METAR EGKK 121250Z 24015G27KT 3000 -RA BR BKN008 OVC015 09/08 Q1004 TEMPO 1200 RADZ is set out as one line of boxed groups, each with a leader dropping to a decoded label in two staggered rows, with callouts above marking the gust figure and the intensity sign, and an okta scale below showing FEW 1-2, SCT 3-4, BKN 5-7 and OVC 8.',
+  cap: 'The article\'s own METAR taken apart. The order never varies, so any group can be found by counting along the line: intensity is the sign alone (- light, + heavy, no sign moderate), cloud amount reads off the okta scale, and the two groups in colour — visibility and cloud — are the ones that decide whether the flight goes.',
+  svg: `<svg class="dg" viewBox="0 0 640 248" role="img" aria-label="A METAR split into its groups, each boxed with a leader to a decoded label, with an okta scale beside the cloud groups">
+  <text x="10" y="20" class="b">METAR</text>
+  <text x="167.5" y="20" text-anchor="middle" class="s">gust</text>
+  <text x="253.5" y="20" text-anchor="middle" class="s">intensity</text>
+  <line x1="167.5" y1="28" x2="167.5" y2="38" class="thin"/>
+  <line x1="253.5" y1="28" x2="253.5" y2="38" class="thin"/>
+
+  <rect x="10" y="38" width="38" height="24" class="thin"/>
+  <rect x="52" y="38" width="59" height="24" class="thin"/>
+  <rect x="115" y="38" width="84" height="24" class="thin"/>
+  <rect x="203" y="38" width="38" height="24" class="fblue" opacity=".12"/>
+  <rect x="203" y="38" width="38" height="24" class="blue ink"/>
+  <rect x="245" y="38" width="52" height="24" class="thin"/>
+  <rect x="299" y="38" width="56" height="24" class="fblue" opacity=".12"/>
+  <rect x="299" y="38" width="56" height="24" class="blue ink"/>
+  <rect x="357" y="38" width="52" height="24" class="fblue" opacity=".12"/>
+  <rect x="357" y="38" width="52" height="24" class="blue ink"/>
+  <rect x="413" y="38" width="45" height="24" class="thin"/>
+  <rect x="462" y="38" width="45" height="24" class="thin"/>
+  <rect x="511" y="38" width="119" height="24" class="thin"/>
+
+  <text x="29" y="54" text-anchor="middle">EGKK</text>
+  <text x="81.5" y="54" text-anchor="middle">121250Z</text>
+  <text x="157" y="54" text-anchor="middle">24015G27KT</text>
+  <text x="222" y="54" text-anchor="middle">3000</text>
+  <text x="271" y="54" text-anchor="middle">-RA BR</text>
+  <text x="327" y="54" text-anchor="middle">BKN008</text>
+  <text x="383" y="54" text-anchor="middle">OVC015</text>
+  <text x="435.5" y="54" text-anchor="middle">09/08</text>
+  <text x="484.5" y="54" text-anchor="middle">Q1004</text>
+  <text x="570.5" y="54" text-anchor="middle">TEMPO 1200 RADZ</text>
+
+  <line x1="29" y1="62" x2="29" y2="72" class="thin"/>
+  <line x1="157" y1="62" x2="157" y2="72" class="thin"/>
+  <line x1="271" y1="62" x2="271" y2="72" class="thin"/>
+  <line x1="383" y1="62" x2="383" y2="72" class="thin"/>
+  <line x1="484.5" y1="62" x2="484.5" y2="72" class="thin"/>
+  <line x1="81.5" y1="62" x2="81.5" y2="118" class="thin"/>
+  <line x1="222" y1="62" x2="222" y2="118" class="thin"/>
+  <line x1="327" y1="62" x2="327" y2="118" class="thin"/>
+  <line x1="435.5" y1="62" x2="435.5" y2="118" class="thin"/>
+  <line x1="570.5" y1="62" x2="570.5" y2="118" class="thin"/>
+
+  <text x="8" y="86">Station</text>
+  <text x="8" y="100" class="s">Gatwick</text>
+  <text x="157" y="86" text-anchor="middle">Wind 240&#176; true</text>
+  <text x="157" y="100" text-anchor="middle" class="s">15 kt, gusting 27</text>
+  <text x="271" y="86" text-anchor="middle">- = light</text>
+  <text x="271" y="100" text-anchor="middle" class="s">RA rain</text>
+  <text x="271" y="114" text-anchor="middle" class="s">BR mist</text>
+  <text x="381" y="86" text-anchor="middle" class="blue-t">OVC = 8 oktas</text>
+  <text x="381" y="100" text-anchor="middle" class="s">1500 ft aal</text>
+  <text x="488" y="86" text-anchor="middle">QNH 1004 hPa</text>
+
+  <text x="85" y="132" text-anchor="middle">12th, 1250 UTC</text>
+  <text x="85" y="146" text-anchor="middle" class="s">Z is always UTC</text>
+  <text x="213" y="132" text-anchor="middle" class="blue-t">Vis 3000 m</text>
+  <text x="213" y="146" text-anchor="middle" class="s">9999 = 10 km or more</text>
+  <text x="335" y="132" text-anchor="middle" class="blue-t">BKN 5-7 oktas</text>
+  <text x="335" y="146" text-anchor="middle" class="s">800 ft aal</text>
+  <text x="445" y="132" text-anchor="middle">Temp 09, dew 08</text>
+  <text x="445" y="146" text-anchor="middle" class="s">&#176;C, M = minus</text>
+  <text x="567" y="132" text-anchor="middle">TEMPO vis 1200 m</text>
+  <text x="567" y="146" text-anchor="middle" class="s">rain and drizzle</text>
+
+  <text x="14" y="182" class="b">Reading the cloud group</text>
+  <text x="14" y="200" class="s">Amount in oktas, eighths of sky</text>
+  <text x="14" y="216" class="s">Height in hundreds of feet above</text>
+  <text x="14" y="232" class="s">aerodrome elevation, not amsl</text>
+
+  <rect x="420" y="176" width="120" height="26" class="fblue" opacity=".12"/>
+  <rect x="300" y="176" width="30" height="26" class="thin"/>
+  <rect x="330" y="176" width="30" height="26" class="thin"/>
+  <rect x="360" y="176" width="30" height="26" class="thin"/>
+  <rect x="390" y="176" width="30" height="26" class="thin"/>
+  <rect x="420" y="176" width="30" height="26" class="thin"/>
+  <rect x="450" y="176" width="30" height="26" class="thin"/>
+  <rect x="480" y="176" width="30" height="26" class="thin"/>
+  <rect x="510" y="176" width="30" height="26" class="thin"/>
+  <text x="315" y="194" text-anchor="middle" class="s">1</text>
+  <text x="345" y="194" text-anchor="middle" class="s">2</text>
+  <text x="375" y="194" text-anchor="middle" class="s">3</text>
+  <text x="405" y="194" text-anchor="middle" class="s">4</text>
+  <text x="435" y="194" text-anchor="middle" class="s">5</text>
+  <text x="465" y="194" text-anchor="middle" class="s">6</text>
+  <text x="495" y="194" text-anchor="middle" class="s">7</text>
+  <text x="525" y="194" text-anchor="middle" class="s">8</text>
+
+  <path d="M302 204 L302 210 L358 210 L358 204" class="thin"/>
+  <path d="M362 204 L362 210 L418 210 L418 204" class="thin"/>
+  <path d="M422 204 L422 210 L508 210 L508 204" class="blue ink"/>
+  <path d="M512 204 L512 210 L538 210 L538 204" class="blue ink"/>
+  <text x="330" y="226" text-anchor="middle" class="s">FEW 1-2</text>
+  <text x="390" y="226" text-anchor="middle" class="s">SCT 3-4</text>
+  <text x="465" y="226" text-anchor="middle" class="s blue-t">BKN 5-7</text>
+  <text x="525" y="226" text-anchor="middle" class="s blue-t">OVC 8</text>
+</svg>`
+},
+
+retinaRods: {
+  alt: 'A horizontal section of the eye in which light from an object on the visual axis converges on the fovea and light from an object 10 to 15 degrees off the axis converges on rod-rich retina beside it, drawn above a plot of receptor density across the retina where cones peak sharply at the fovea, rods peak either side of it, and both fall to nothing at the optic disc.',
+  cap: 'Cones are packed into the fovea and rods are not, so at night the thing you look straight at is the thing you cannot see. Shifting the eye 10 to 15° puts the image on the rod peak instead. The optic disc, about 15° from the fovea, has no receptors of either kind — one more reason a night scan keeps moving rather than settling.',
+  svg: `<svg class="dg" viewBox="0 0 640 410" role="img" aria-label="Section through the eye with rays from an object on the axis and one 10 to 15 degrees off it, above a plot of rod and cone density across the retina">
+<defs><marker id="retinaRods-tip" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 Z" class="fill"/></marker></defs>
+<rect x="366" y="272" width="16" height="84" class="tint"/>
+<path class="fred" opacity=".12" d="M 317 218 L 323 218 L 331 272 L 331 356 L 309 356 L 309 272 Z"/>
+<path class="ink" d="M 348 107 A 70 58 0 1 1 292 107 A 32 32 0 0 1 348 107"/>
+<path class="ink" d="M 298 128 Q 320 112 342 128 Q 320 144 298 128 Z"/>
+<path class="ink" d="M 292 107 L 308 118"/>
+<path class="ink" d="M 348 107 L 332 118"/>
+<path class="ink" d="M 268 190 A 64 52 0 0 0 337 210"/>
+<path class="ink" d="M 347 207 A 64 52 0 0 0 372 190"/>
+<path class="ink" marker-mid="url(#retinaRods-tip)" d="M 320 30 L 320 74 L 320 212"/>
+<path class="ink" marker-mid="url(#retinaRods-tip)" d="M 346 30 L 334 74 L 298 209"/>
+<path class="thin" d="M 320 58 A 70 70 0 0 1 338 60"/>
+<circle cx="320" cy="30" r="3.5" class="fill"/>
+<circle cx="346" cy="30" r="3.5" class="fill"/>
+<circle cx="320" cy="212" r="3" class="fred"/>
+<circle cx="298" cy="209" r="2.6" class="fill"/>
+<path class="thin" d="M 242 90 L 298 99"/>
+<path class="thin" d="M 242 117 L 296 111"/>
+<path class="thin" d="M 242 141 L 299 131"/>
+<path class="thin" d="M 392 148 L 358 157"/>
+<path class="thin" d="M 392 194 L 371 190"/>
+<path class="thin" d="M 252 211 L 292 209"/>
+<path class="thin dash" d="M 298 209 L 266 272 L 266 295"/>
+<path class="thin dash" d="M 342 208 L 374 272 L 374 354"/>
+<path class="thin" d="M 152 356 L 486 356"/>
+<path class="thin" d="M 152 272 L 152 356"/>
+<path class="thin" d="M 158 356 L 158 361 M 212 356 L 212 361 M 266 356 L 266 361 M 320 356 L 320 361 M 374 356 L 374 361 M 428 356 L 428 361 M 482 356 L 482 361"/>
+<path class="ink" d="M 158 326 L 176 319 L 194 311 L 212 303 L 230 295 L 242 291 L 251 290 L 258 291 L 266 295 L 274 301 L 282 308 L 290 317 L 298 328 L 306 339 L 313 348 L 320 356 L 327 348 L 334 339 L 342 328 L 350 317 L 358 307 L 366 299 L 366 356"/>
+<path class="ink" d="M 382 356 L 382 297 L 390 291 L 400 289 L 412 289 L 424 292 L 438 297 L 452 303 L 466 310 L 482 320"/>
+<path class="ink dash" d="M 158 352 L 190 351 L 222 350 L 250 349 L 272 348 L 288 346 L 298 343 L 305 337 L 310 327 L 314 311 L 317 292 L 320 274 L 323 292 L 326 311 L 330 327 L 335 337 L 342 343 L 352 346 L 360 348 L 366 349 L 366 356"/>
+<path class="ink dash" d="M 382 356 L 382 349 L 390 350 L 410 351 L 440 352 L 482 353"/>
+<circle cx="266" cy="295" r="2.6" class="fill"/>
+<text x="300" y="34" class="s" text-anchor="end">object on the axis</text>
+<text x="362" y="34" class="s">the same object, off-axis</text>
+<text x="362" y="50" class="s">(off-centre viewing)</text>
+<text x="350" y="68">10–15°</text>
+<text x="236" y="94" class="s" text-anchor="end">cornea</text>
+<text x="236" y="118" class="s" text-anchor="end">iris</text>
+<text x="236" y="142" class="s" text-anchor="end">lens</text>
+<text x="398" y="150" class="s">vitreous</text>
+<text x="398" y="196" class="s">retina</text>
+<text x="246" y="213" class="s" text-anchor="end">lands on rod-rich retina</text>
+<text x="384" y="264">optic disc — no receptors</text>
+<text x="146" y="268" class="s" text-anchor="end">receptor density</text>
+<text x="494" y="326">rods</text>
+<text x="494" y="349">cones</text>
+<text x="158" y="370" class="s" text-anchor="middle">45°</text>
+<text x="212" y="370" class="s" text-anchor="middle">30°</text>
+<text x="266" y="370" class="s" text-anchor="middle">15°</text>
+<text x="320" y="370" class="s" text-anchor="middle">fovea</text>
+<text x="374" y="370" class="s" text-anchor="middle">15°</text>
+<text x="428" y="370" class="s" text-anchor="middle">30°</text>
+<text x="482" y="370" class="s" text-anchor="middle">45°</text>
+<text x="320" y="388" class="red-t" text-anchor="middle">night blind spot — no rods</text>
+</svg>`
+},
+
+vorCdi: {
+  alt: 'Top: a VOR station drawn as a compass rose with the 090 radial running east as a blue line; aircraft A north of the radial, two aircraft B on the radial flying opposite ways, and aircraft C south of it. Bottom: three VOR indicators with OBS set to 090 — the needle deflected right under A, centred under B and deflected left under C, each with the FROM flag showing.',
+  cap: 'The needle answers one question: which side of the selected radial you are on. A is north of the 090 radial so the needle sits right; B is on it so the needle centres; C is south so the needle sits left — and all three read FROM, because all three are east of the station. Both B aeroplanes give the same indication, since a VOR takes no notice of heading; "turn towards the needle" only works while your heading roughly matches the radial you have selected.',
+  svg: `<svg class="dg" viewBox="0 0 640 426" role="img" aria-label="VOR plan view with the 090 radial and three aircraft, above three VOR indicators reading needle right, centred and left">
+  <path class="ink" d="M58 96L58 74"/>
+  <path class="fill" d="M53 76L58 66L63 76Z"/>
+  <circle class="ink" cx="58" cy="118" r="20"/>
+  <path class="thin" d="M58 103L58 98M65.5 105L68 100.7M71 110.5L75.3 108M73 118L78 118M71 125.5L75.3 128M65.5 131L68 135.3M58 133L58 138M50.5 131L48 135.3M45 125.5L40.7 128M43 118L38 118M45 110.5L40.7 108M50.5 105L48 100.7"/>
+  <path class="ink" d="M58 111L64.1 114.5L64.1 121.5L58 125L51.9 121.5L51.9 114.5Z"/>
+  <path class="blue ink" d="M80 118L604 118"/>
+  <path class="fblue" d="M603 113L618 118L603 123Z"/>
+  <path class="fill" d="M140 70L124 67L117 58L113 58L116 67L106 67L103 62L100 62L101.5 70L100 78L103 78L106 73L116 73L113 82L117 82L124 73Z"/>
+  <path class="fill" d="M266 118L282 115L289 106L293 106L290 115L300 115L303 110L306 110L304.5 118L306 126L303 126L300 121L290 121L293 130L289 130L282 121Z"/>
+  <path class="fill" d="M374 118L358 115L351 106L347 106L350 115L340 115L337 110L334 110L335.5 118L334 126L337 126L340 121L350 121L347 130L351 130L358 121Z"/>
+  <path class="fill" d="M540 166L524 163L517 154L513 154L516 163L506 163L503 158L500 158L501.5 166L500 174L503 174L506 169L516 169L513 178L517 178L524 169Z"/>
+  <text x="14" y="22" class="b">Where you are</text>
+  <text x="58" y="60" text-anchor="middle">N</text>
+  <text x="58" y="158" text-anchor="middle" class="s">VOR station</text>
+  <text x="120" y="48" text-anchor="middle" class="b">A</text>
+  <text x="320" y="96" text-anchor="middle" class="b">B</text>
+  <text x="520" y="198" text-anchor="middle" class="b">C</text>
+  <text x="600" y="104" text-anchor="end" class="blue-t">090 radial</text>
+  <text x="320" y="150" text-anchor="middle" class="s blue-t">same indication on either heading</text>
+  <path class="thin" d="M6 208L634 208"/>
+  <text x="14" y="230" class="b">What the needle says</text>
+  <rect class="ink" x="89" y="238" width="62" height="26"/>
+  <path class="fill" d="M115 265L125 265L120 272Z"/>
+  <circle class="ink" cx="120" cy="318" r="46"/>
+  <circle class="thin" cx="96" cy="318" r="3"/>
+  <circle class="thin" cx="108" cy="318" r="3"/>
+  <circle class="thin" cx="132" cy="318" r="3"/>
+  <circle class="thin" cx="144" cy="318" r="3"/>
+  <rect class="fblue" x="142" y="288" width="4" height="60"/>
+  <path class="fill" d="M114 352L126 352L120 362Z"/>
+  <rect class="ink" x="289" y="238" width="62" height="26"/>
+  <path class="fill" d="M315 265L325 265L320 272Z"/>
+  <circle class="ink" cx="320" cy="318" r="46"/>
+  <circle class="thin" cx="296" cy="318" r="3"/>
+  <circle class="thin" cx="308" cy="318" r="3"/>
+  <circle class="thin" cx="332" cy="318" r="3"/>
+  <circle class="thin" cx="344" cy="318" r="3"/>
+  <rect class="fblue" x="318" y="288" width="4" height="60"/>
+  <path class="fill" d="M314 352L326 352L320 362Z"/>
+  <rect class="ink" x="489" y="238" width="62" height="26"/>
+  <path class="fill" d="M515 265L525 265L520 272Z"/>
+  <circle class="ink" cx="520" cy="318" r="46"/>
+  <circle class="thin" cx="496" cy="318" r="3"/>
+  <circle class="thin" cx="508" cy="318" r="3"/>
+  <circle class="thin" cx="532" cy="318" r="3"/>
+  <circle class="thin" cx="544" cy="318" r="3"/>
+  <rect class="fblue" x="494" y="288" width="4" height="60"/>
+  <path class="fill" d="M514 352L526 352L520 362Z"/>
+  <path class="thin" d="M72 374L110 357"/>
+  <text x="66" y="372" text-anchor="end" class="s">FROM flag</text>
+  <text x="120" y="256" text-anchor="middle">OBS 090</text>
+  <text x="320" y="256" text-anchor="middle">OBS 090</text>
+  <text x="520" y="256" text-anchor="middle">OBS 090</text>
+  <text x="120" y="394" text-anchor="middle">A: needle right, FROM</text>
+  <text x="320" y="394" text-anchor="middle">B: centred, FROM</text>
+  <text x="520" y="394" text-anchor="middle">C: needle left, FROM</text>
+  <text x="120" y="412" text-anchor="middle" class="s">turn right, towards the needle</text>
+  <text x="320" y="412" text-anchor="middle" class="s">on the radial</text>
+  <text x="520" y="412" text-anchor="middle" class="s">turn left, towards the needle</text>
+</svg>`
+},
+
+chartSigns: {
+  alt: 'A grid of twelve UK 1:500,000 chart symbols drawn at chart size, each with a label beneath: civil, military and disused aerodromes and a heliport; then ATZ, MATZ, a hatched danger area and a class D boundary, all in blue; then unlit and lit obstacles with their figures, glider and parachute sites, and a maximum elevation figure with a spot height in a graticule corner.',
+  cap: 'The conventional signs you have to recognise on sight, drawn at chart size; blue is the airspace overprint. Read the annotations as carefully as the shapes: D123/5.0 is a danger area up to 5000 ft amsl, SFC-2500\' is a class D boundary written base first then upper, 1284 (450) is elevation amsl above height agl, and a large 2 with a small raised 3 is a maximum elevation figure of 2300 ft.',
+  svg: `<svg class="dg" viewBox="0 0 640 300" role="img" aria-label="Twelve conventional signs from the UK 1:500,000 chart: civil, military and disused aerodromes, heliport, ATZ, MATZ, danger area, class D boundary, unlit and lit obstacles, glider and parachute sites, and a maximum elevation figure with a spot height">
+
+  <circle cx="80" cy="48" r="13" class="ink"/>
+  <line x1="80" y1="29" x2="80" y2="35" class="ink"/>
+  <line x1="80" y1="61" x2="80" y2="67" class="ink"/>
+  <line x1="61" y1="48" x2="67" y2="48" class="ink"/>
+  <line x1="93" y1="48" x2="99" y2="48" class="ink"/>
+  <text x="80" y="92" text-anchor="middle">Civil aerodrome</text>
+
+  <circle cx="240" cy="48" r="13" class="ink"/>
+  <circle cx="240" cy="48" r="7" class="ink"/>
+  <text x="240" y="92" text-anchor="middle">Military aerodrome</text>
+
+  <circle cx="400" cy="48" r="13" class="ink"/>
+  <line x1="391" y1="39" x2="409" y2="57" class="ink"/>
+  <line x1="391" y1="57" x2="409" y2="39" class="ink"/>
+  <text x="400" y="92" text-anchor="middle">Disused aerodrome</text>
+
+  <circle cx="560" cy="48" r="13" class="ink"/>
+  <text x="560" y="53" text-anchor="middle">H</text>
+  <text x="560" y="92" text-anchor="middle">Heliport</text>
+
+  <circle cx="80" cy="144" r="11" class="blue ink dash"/>
+  <circle cx="80" cy="144" r="4.5" class="ink"/>
+  <text x="80" y="188" text-anchor="middle">ATZ</text>
+
+  <path d="M 253.75,138 L 268,138 L 268,150 L 253.75,150 A 15 15 0 1 1 253.75,138 Z" class="blue ink"/>
+  <text x="240" y="188" text-anchor="middle">MATZ</text>
+
+  <rect x="358" y="124" width="84" height="40" class="blue ink"/>
+  <g class="blue ink" opacity=".55">
+    <line x1="368" y1="124" x2="360" y2="132"/>
+    <line x1="378" y1="124" x2="370" y2="132"/>
+    <line x1="388" y1="124" x2="380" y2="132"/>
+    <line x1="398" y1="124" x2="390" y2="132"/>
+    <line x1="408" y1="124" x2="400" y2="132"/>
+    <line x1="418" y1="124" x2="410" y2="132"/>
+    <line x1="428" y1="124" x2="420" y2="132"/>
+    <line x1="438" y1="124" x2="430" y2="132"/>
+    <line x1="362" y1="164" x2="370" y2="156"/>
+    <line x1="372" y1="164" x2="380" y2="156"/>
+    <line x1="382" y1="164" x2="390" y2="156"/>
+    <line x1="392" y1="164" x2="400" y2="156"/>
+    <line x1="402" y1="164" x2="410" y2="156"/>
+    <line x1="412" y1="164" x2="420" y2="156"/>
+    <line x1="422" y1="164" x2="430" y2="156"/>
+    <line x1="432" y1="164" x2="440" y2="156"/>
+    <line x1="358" y1="140" x2="366" y2="132"/>
+    <line x1="358" y1="150" x2="366" y2="142"/>
+    <line x1="358" y1="160" x2="366" y2="152"/>
+    <line x1="442" y1="128" x2="434" y2="136"/>
+    <line x1="442" y1="138" x2="434" y2="146"/>
+    <line x1="442" y1="148" x2="434" y2="156"/>
+  </g>
+  <text x="400" y="150" text-anchor="middle" class="blue-t">D123/5.0</text>
+  <text x="400" y="188" text-anchor="middle">Danger area</text>
+
+  <text x="529" y="132" text-anchor="end" class="blue-t">CTR</text>
+  <rect x="534" y="118" width="20" height="19" class="blue ink"/>
+  <text x="544" y="132.5" text-anchor="middle" class="blue-t b">D</text>
+  <text x="560" y="152" text-anchor="middle" class="blue-t">SFC-2500'</text>
+  <rect x="496" y="156" width="132" height="8" class="fblue" opacity=".16"/>
+  <line x1="496" y1="164" x2="628" y2="164" class="blue ink"/>
+  <text x="560" y="188" text-anchor="middle">Class D boundary</text>
+
+  <path d="M 86,246 L 93,218 L 100,246" class="ink"/>
+  <text x="80" y="226" text-anchor="end" class="s">1284</text>
+  <text x="80" y="242" text-anchor="end" class="s">(450)</text>
+  <text x="80" y="284" text-anchor="middle">Unlit obstacle</text>
+
+  <path d="M 233,246 L 240,218 L 247,246" class="ink"/>
+  <line x1="240" y1="215" x2="240" y2="208" class="ink"/>
+  <line x1="236.5" y1="216" x2="232.5" y2="210" class="ink"/>
+  <line x1="243.5" y1="216" x2="247.5" y2="210" class="ink"/>
+  <text x="240" y="284" text-anchor="middle">Lit obstacle</text>
+
+  <circle cx="368" cy="234" r="12" class="ink"/>
+  <text x="368" y="239" text-anchor="middle">G</text>
+  <text x="380" y="251" class="s">/2.5</text>
+  <circle cx="432" cy="234" r="12" class="ink"/>
+  <path d="M 425,230 A 7 7 0 0 0 439,230 Z" class="fill"/>
+  <path d="M 429,231.5 L 432,245 L 435,231.5 Z" class="fill"/>
+  <text x="400" y="284" text-anchor="middle">Glider, parachute</text>
+
+  <g class="thin">
+    <line x1="506" y1="216" x2="630" y2="216"/>
+    <line x1="506" y1="216" x2="506" y2="262"/>
+    <line x1="530" y1="216" x2="530" y2="220"/>
+    <line x1="554" y1="216" x2="554" y2="220"/>
+    <line x1="578" y1="216" x2="578" y2="220"/>
+    <line x1="602" y1="216" x2="602" y2="220"/>
+    <line x1="506" y1="232" x2="510" y2="232"/>
+    <line x1="506" y1="247" x2="510" y2="247"/>
+    <line x1="506" y1="262" x2="510" y2="262"/>
+  </g>
+  <text x="544" y="250" text-anchor="middle" class="b">2</text>
+  <text x="556" y="241" text-anchor="middle" class="s">3</text>
+  <circle cx="596" cy="244" r="2" class="fill"/>
+  <text x="602" y="248" class="s">1705</text>
+  <text x="560" y="284" text-anchor="middle">MEF and spot height</text>
+</svg>`
+},
+
+microburst: {
+  alt: 'Side elevation of an approach flown through a microburst: a cumulonimbus base with a descending shaft beneath it spreading into outflow arrows at the surface, a dashed three degree glidepath running down to the threshold, and a red track that balloons above the glidepath in the increasing headwind, sinks through it in the downdraught core, then falls away in the increasing tailwind and reaches the ground well short of the threshold.',
+  cap: 'The outflow gives you a headwind first — airspeed rises and you balloon above the slope on less power. Then the downdraught, then a tailwind that takes the airspeed away and leaves you low and slow. The performance gain at 1 is the warning; the go-around belongs there, not at 3.',
+  svg: `<svg class="dg" viewBox="0 0 640 400" role="img" aria-label="Side view of an approach flown through a microburst: the aeroplane balloons above the glidepath in the increasing headwind, sinks in the downdraught core, then falls below the glidepath in the increasing tailwind and reaches the ground short of the threshold">
+  <defs><marker id="microburst-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+    <path d="M0 0 L10 5 L0 10 z" class="fill"/></marker></defs>
+
+  <!-- cumulonimbus base -->
+  <path d="M214 14 H466 V44 q-18 30 -36 0 q-18 30 -36 0 q-18 30 -36 0 q-18 30 -36 0 q-18 30 -36 0 q-18 30 -36 0 q-18 30 -36 0 Z" class="fill" opacity=".16"/>
+  <text x="20" y="34" class="b">Cumulonimbus base</text>
+  <text x="20" y="54" class="s">or any convective cloud</text>
+
+  <!-- descending shaft -->
+  <path d="M302 58 L378 58 L436 306 L244 306 Z" class="tint"/>
+  <path d="M302 58 L244 306" class="thin"/>
+  <path d="M378 58 L436 306" class="thin"/>
+  <path d="M310 72 L308 176" class="ink" marker-end="url(#microburst-ar)"/>
+  <path d="M340 72 L340 214" class="ink" marker-end="url(#microburst-ar)"/>
+  <path d="M372 72 L374 232" class="ink" marker-end="url(#microburst-ar)"/>
+  <text x="414" y="148" class="b">Downdraught</text>
+  <text x="414" y="168" class="s">1000 to 5000 ft/min</text>
+
+  <!-- ground, runway, threshold -->
+  <line x1="16" y1="336" x2="624" y2="336" class="ink"/>
+  <rect x="580" y="333" width="44" height="6" class="fill" opacity=".28"/>
+  <line x1="580" y1="328" x2="580" y2="344" class="ink"/>
+  <text x="628" y="318" text-anchor="end" class="s">Threshold</text>
+
+  <!-- outflow, with the vortex roll at each leading edge -->
+  <path d="M254 316 L164 316" class="ink" marker-end="url(#microburst-ar)"/>
+  <path d="M162 312 C 138 310, 134 288, 158 284 C 174 281, 180 290, 173 295" class="ink" marker-end="url(#microburst-ar)"/>
+  <text x="190" y="280" class="s">Outflow</text>
+  <path d="M448 316 L512 316" class="ink" marker-end="url(#microburst-ar)"/>
+  <path d="M514 304 C 538 302, 542 280, 518 276 C 502 273, 496 282, 503 287" class="ink" marker-end="url(#microburst-ar)"/>
+  <text x="452" y="266" class="s">Outflow</text>
+
+  <!-- nominal glidepath -->
+  <path d="M48 116 L580 336" class="ink dash"/>
+  <text x="44" y="100" class="s">Nominal 3&#176; glidepath</text>
+
+  <!-- the aeroplane and its actual track -->
+  <path d="M16 110 L40 117 L16 124 L22 117 Z" class="fred"/>
+  <path d="M48 116 C 96 136, 148 152, 196 158 C 224 162, 244 164, 262 172 C 286 182, 306 208, 330 236 C 352 262, 372 288, 398 306 C 414 316, 430 326, 452 336" class="red ink"/>
+  <line x1="452" y1="330" x2="452" y2="342" class="red ink"/>
+  <text x="16" y="156" class="s red-t">Actual track</text>
+  <circle cx="262" cy="172" r="4.5" class="fred"/>
+  <circle cx="346" cy="255" r="4.5" class="fred"/>
+  <circle cx="433" cy="327" r="4.5" class="fred"/>
+  <text x="244" y="152" class="b red-t">1</text>
+  <text x="326" y="278" class="b red-t">2</text>
+  <text x="444" y="302" class="b red-t">3</text>
+
+  <!-- what happens at each station -->
+  <text x="20" y="360" class="b red-t">1</text>
+  <text x="34" y="360">Increasing headwind</text>
+  <text x="34" y="380" class="s">IAS rises, you balloon high</text>
+  <text x="214" y="360" class="b red-t">2</text>
+  <text x="228" y="360">The downdraught</text>
+  <text x="228" y="380" class="s">AoA falls, sink begins</text>
+  <text x="414" y="360" class="b red-t">3</text>
+  <text x="428" y="360">Increasing tailwind</text>
+  <text x="428" y="380" class="s">IAS decays, lands short</text>
+</svg>`
+},
+
+synopticLow: {
+  alt: 'Plan view of a mature depression on a surface chart: three closed isobars labelled 984, 992 and 1000 hPa around a central L with arrows showing anticlockwise circulation, an occluded front of alternating triangles and half-discs running out from the centre to a triple point, from which a warm front marked with half-discs runs east and a cold front marked with triangles runs south-west, enclosing a tinted warm sector; three wind arrows show a backing south-easterly ahead of the warm front, a steady south-westerly in the warm sector and a veered north-westerly behind the cold front, and a dashed line A to B cuts across both fronts.',
+  cap: 'One system, not two unrelated slices. Every symbol sits on the side the front is moving towards, so the cold front\'s triangles point into the warm sector and the warm front\'s half-discs point into the cold air ahead; the occlusion carries both because it is both. Wind backs ahead of the warm front, holds steady in the warm sector, then veers behind the cold front — and A–B is the line the two cross-sections above are cut along.',
+  svg: `<svg class="dg" viewBox="0 0 640 400" role="img" aria-label="Surface chart of a mature depression: closed isobars round a central L with anticlockwise arrows, an occluded front running out to a triple point where a warm front with half-discs and a cold front with triangles enclose a tinted warm sector, wind arrows backing ahead of the warm front and veering behind the cold front, and a dashed section line A to B">
+  <defs>
+    <marker id="synopticLow-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="fill"/>
+    </marker>
+  </defs>
+  <path d="M355 245 L634 285 L634 390 L238 390 Z" class="tint"/>
+  <ellipse cx="215" cy="110" rx="36" ry="27" class="thin"/>
+  <ellipse cx="215" cy="110" rx="70" ry="52" class="thin"/>
+  <ellipse cx="215" cy="110" rx="104" ry="78" class="thin"/>
+  <path d="M251 37 A104 78 0 0 0 179 37" class="ink" marker-end="url(#synopticLow-arw)"/>
+  <path d="M281 128 A70 52 0 0 0 281 92" class="ink" marker-end="url(#synopticLow-arw)"/>
+  <path d="M149 92 A70 52 0 0 0 149 128" class="ink" marker-end="url(#synopticLow-arw)"/>
+  <line x1="232" y1="126" x2="355" y2="245" class="ink"/>
+  <line x1="355" y1="245" x2="632" y2="284" class="red ink"/>
+  <line x1="355" y1="245" x2="243" y2="384" class="blue ink"/>
+  <g class="fill">
+    <path d="M-7 0 L0 -11 L7 0 Z" transform="translate(292 184) rotate(44.1)"/>
+    <path d="M-7 0 A7 7 0 0 1 7 0 Z" transform="translate(310 201) rotate(44.1)"/>
+    <path d="M-7 0 L0 -11 L7 0 Z" transform="translate(327 218) rotate(44.1)"/>
+    <path d="M-7 0 A7 7 0 0 1 7 0 Z" transform="translate(341 232) rotate(44.1)"/>
+  </g>
+  <g class="fred">
+    <path d="M-7 0 A7 7 0 0 1 7 0 Z" transform="translate(387 250) rotate(8.1)"/>
+    <path d="M-7 0 A7 7 0 0 1 7 0 Z" transform="translate(432 256) rotate(8.1)"/>
+    <path d="M-7 0 A7 7 0 0 1 7 0 Z" transform="translate(478 262) rotate(8.1)"/>
+    <path d="M-7 0 A7 7 0 0 1 7 0 Z" transform="translate(567 275) rotate(8.1)"/>
+    <path d="M-7 0 A7 7 0 0 1 7 0 Z" transform="translate(603 280) rotate(8.1)"/>
+  </g>
+  <g class="fblue">
+    <path d="M-7 0 L0 -11 L7 0 Z" transform="translate(339 265) rotate(128.9)"/>
+    <path d="M-7 0 L0 -11 L7 0 Z" transform="translate(319 290) rotate(128.9)"/>
+    <path d="M-7 0 L0 -11 L7 0 Z" transform="translate(285 332) rotate(128.9)"/>
+    <path d="M-7 0 L0 -11 L7 0 Z" transform="translate(265 357) rotate(128.9)"/>
+  </g>
+  <line x1="150" y1="340" x2="628" y2="251" class="ink dash" opacity=".55"/>
+  <line x1="540" y1="222" x2="496" y2="178" class="ink" marker-end="url(#synopticLow-arw)"/>
+  <line x1="400" y1="352" x2="452" y2="308" class="ink" marker-end="url(#synopticLow-arw)"/>
+  <line x1="95" y1="265" x2="143" y2="313" class="ink" marker-end="url(#synopticLow-arw)"/>
+  <text x="215" y="52" text-anchor="middle" class="s">1000 hPa</text>
+  <text x="215" y="76" text-anchor="middle" class="s">992</text>
+  <text x="215" y="101" text-anchor="middle" class="s">984</text>
+  <text x="215" y="124" text-anchor="middle" class="b">L</text>
+  <text x="104" y="108" text-anchor="end">Anticlockwise</text>
+  <text x="290" y="235" text-anchor="end">Occlusion</text>
+  <text x="400" y="276" text-anchor="middle" class="red-t">Warm front</text>
+  <text x="292" y="290" text-anchor="end" class="blue-t">Cold front</text>
+  <text x="470" y="150" text-anchor="middle">Cold air ahead</text>
+  <text x="630" y="200" text-anchor="end">SE, backing</text>
+  <text x="520" y="364" text-anchor="middle">Warm sector</text>
+  <text x="468" y="326">SW, steady</text>
+  <text x="100" y="336" text-anchor="end">NW, veered</text>
+  <text x="110" y="370" text-anchor="middle">Cold air behind</text>
+  <text x="140" y="336" text-anchor="end">A</text>
+  <text x="628" y="238" text-anchor="end">B</text>
+  <text x="260" y="390" class="s">A–B: line of the two cross-sections</text>
+</svg>`
+},
+
+leeWave: {
+  alt: 'Cross-section of a ridge with wind arriving from the left: streamlines rise over the summit and oscillate downwind, with a cap cloud on the ridge, lenticular clouds at the wave crests, and a rotor beneath the first crest inside a shaded danger zone on the lee side.',
+  cap: 'Standing waves need about 20 kt or more roughly across the ridge, increasing with height, and a stable layer near ridge top. The crests are fixed in space while the air flows through them, which is why the lenticulars sit still. The danger is the lee side and low down — severe downdraught on the slope and the rotor beneath the first crest, whose surface flow runs back against the wind. Height is what keeps you out of it.',
+  svg: `<svg class="dg" viewBox="0 0 640 400" role="img" aria-label="Mountain wave over a ridge with cap cloud, lenticular clouds at the wave crests and a rotor in the lee">
+  <defs>
+    <marker id="leeWave-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fill"/></marker>
+    <marker id="leeWave-arR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="fred"/></marker>
+  </defs>
+
+  <!-- danger zone: severe downdraught on the lee slope plus the rotor -->
+  <path d="M192 268 C250 256 320 258 384 272 C394 306 390 348 380 380 L226 380 Z" class="fred" opacity=".13"/>
+  <path d="M192 268 C250 256 320 258 384 272 C394 306 390 348 380 380" class="red ink dash" opacity=".55"/>
+
+  <!-- stable layer near ridge top -->
+  <rect x="14" y="240" width="192" height="28" class="tint"/>
+  <line x1="14" y1="240" x2="206" y2="240" class="thin dash"/>
+  <line x1="14" y1="268" x2="206" y2="268" class="thin dash"/>
+
+  <!-- the ridge -->
+  <path d="M10 380 H30 C74 376 104 342 128 288 C136 256 184 254 190 290 C204 326 212 358 226 380 H630 V392 H10 Z" class="fill" opacity=".14"/>
+  <path d="M10 380 H30 C74 376 104 342 128 288 C136 256 184 254 190 290 C204 326 212 358 226 380 H630" class="ink"/>
+
+  <!-- upwind wind profile: speed increasing with height -->
+  <line x1="20" y1="164" x2="20" y2="372" class="thin"/>
+  <line x1="22" y1="356" x2="38" y2="356" class="ink" marker-end="url(#leeWave-ar)"/>
+  <line x1="22" y1="328" x2="48" y2="328" class="ink" marker-end="url(#leeWave-ar)"/>
+  <line x1="22" y1="300" x2="58" y2="300" class="ink" marker-end="url(#leeWave-ar)"/>
+  <line x1="22" y1="224" x2="68" y2="224" class="ink" marker-end="url(#leeWave-ar)"/>
+  <line x1="22" y1="196" x2="74" y2="196" class="ink" marker-end="url(#leeWave-ar)"/>
+  <line x1="22" y1="168" x2="80" y2="168" class="ink" marker-end="url(#leeWave-ar)"/>
+  <text x="16" y="134" class="s">Wind 20 kt+ roughly across the ridge</text>
+  <text x="16" y="154" class="s">and increasing with height</text>
+  <text x="26" y="258" class="s">Stable layer</text>
+
+  <!-- streamlines rise over the ridge, then oscillate downwind -->
+  <path d="M112 200 H130 C141 200 146 166 156 166 C188 166 204 226 235 226 C267 226 283 168 315 168 C347 168 363 218 395 218 C427 218 443 174 475 174 C507 174 523 212 555 212 C583 212 598 200 626 200" class="ink" marker-end="url(#leeWave-ar)"/>
+  <path d="M112 288 H126 C138 288 145 234 156 234 C188 234 204 314 235 314 C267 314 283 240 315 240 C347 240 363 302 395 302 C427 302 443 246 475 246 C507 246 523 298 555 298 C583 298 598 284 626 284" class="ink" marker-end="url(#leeWave-ar)"/>
+
+  <!-- crest markers -->
+  <line x1="315" y1="160" x2="315" y2="296" class="thin dash"/>
+  <line x1="475" y1="160" x2="475" y2="238" class="thin dash"/>
+
+  <!-- cap cloud on the summit -->
+  <ellipse cx="158" cy="252" rx="40" ry="10" class="fill" opacity=".4"/>
+  <line x1="158" y1="228" x2="158" y2="242" class="thin"/>
+  <text x="158" y="224" text-anchor="middle" class="s">Cap cloud</text>
+
+  <!-- lenticular clouds sit at the wave crests -->
+  <ellipse cx="315" cy="150" rx="40" ry="9" class="fill" opacity=".32"/>
+  <ellipse cx="475" cy="150" rx="40" ry="9" class="fill" opacity=".32"/>
+  <text x="395" y="150" text-anchor="middle" class="s">Lenticular</text>
+
+  <!-- rotor beneath the first crest, turning against the flow -->
+  <g class="fill" opacity=".32">
+    <ellipse cx="315" cy="326" rx="18" ry="11"/>
+    <circle cx="303" cy="320" r="9"/>
+    <circle cx="328" cy="318" r="10"/>
+    <circle cx="315" cy="314" r="11"/>
+  </g>
+  <path d="M292 318 A24 24 0 0 1 338 318" class="red ink" marker-end="url(#leeWave-arR)"/>
+  <path d="M338 330 A24 24 0 0 1 292 330" class="red ink" marker-end="url(#leeWave-arR)"/>
+
+  <!-- severe downdraught on the immediate lee slope -->
+  <path d="M198 294 C206 312 214 330 218 344" class="red ink" marker-end="url(#leeWave-arR)"/>
+  <line x1="248" y1="359" x2="226" y2="351" class="thin"/>
+  <text x="232" y="368" class="s red-t">Severe downdraught</text>
+  <line x1="398" y1="360" x2="344" y2="342" class="thin"/>
+  <text x="396" y="368" class="s red-t">Rotor — violent turbulence</text>
+
+  <!-- caught in it, at about ridge-top height -->
+  <path d="M280 277 C270 273 260 272 252 273 L245 265 L250 265 L249 274 L243 277 C254 280 268 280 280 277 Z" class="fred"/>
+  <path d="M264 278 L256 286 L264 286 L270 278 Z" class="fred"/>
+  <!-- clear above the wave -->
+  <path d="M218 49 C208 45 198 44 190 45 L183 37 L188 37 L187 46 L181 49 C192 52 206 52 218 49 Z" class="fill"/>
+  <path d="M202 50 L194 58 L202 58 L208 50 Z" class="fill"/>
+  <text x="226" y="52" class="s">Plenty of height — smooth air above the wave</text>
+
+  <!-- wavelength -->
+  <line x1="315" y1="100" x2="475" y2="100" class="ink"/>
+  <line x1="315" y1="94" x2="315" y2="106" class="ink"/>
+  <line x1="475" y1="94" x2="475" y2="106" class="ink"/>
+  <text x="395" y="86" text-anchor="middle" class="s">Wavelength — crest to crest</text>
+  <text x="395" y="124" text-anchor="middle" class="s">Crests stay put — the air flows through</text>
+</svg>`
+},
+
+earSection: {
+  alt: 'A cutaway section of the ear showing the pinna and ear canal leading to a flat eardrum, the three ossicles inside the air-filled middle-ear cavity, the Eustachian tube running down at about 45 degrees to a narrow slit at the back of the throat with a solid arrow carrying air out of it on climb and a dashed arrow forcing air back up it on descent, the cochlea and three semicircular canals with the otoliths at their base bracketed together as the inner ear, and a small inset in which the eardrum bows inwards over a low-pressure cavity.',
+  cap: 'The middle ear\'s only vent is the Eustachian tube, which runs downhill to the back of the throat and normally lies shut there. On climb the higher pressure inside blows that end open and air escapes freely, so the eardrum stays flat. On descent the higher pressure outside presses it shut, so air has to be forced back in — swallow, yawn, or a gentle Valsalva. Block the tube with a head cold and it cannot be forced, the eardrum is dragged inwards, and it hurts: descent is the painful direction. The same inner ear carries the cochlea for hearing and, on the semicircular canals sensing angular acceleration, the otoliths sensing linear acceleration and gravity.',
+  svg: `<svg class="dg" viewBox="0 0 640 396" role="img" aria-label="Section through the ear: pinna, ear canal, eardrum, the three ossicles in the middle-ear cavity, the Eustachian tube sloping down to the throat, and the cochlea and semicircular canals of the inner ear, with air leaving freely on climb and having to be forced back in on descent">
+  <defs>
+    <marker id="earSection-ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="fblue"/>
+    </marker>
+  </defs>
+  <g transform="translate(0,-28)">
+
+  <path d="M151,132 C158,116 168,106 182,104 L224,104 C240,106 248,120 248,140 C248,158 238,172 222,178 C210,182 190,184 176,180 L158,170 Z" class="tint"/>
+
+  <path d="M62,106 C28,106 16,126 16,144 C16,162 30,182 62,182" class="ink"/>
+  <path d="M56,122 C36,122 28,134 28,146 C28,158 38,170 56,170" class="thin"/>
+  <line x1="56" y1="136" x2="152" y2="136" class="ink"/>
+  <line x1="56" y1="164" x2="157" y2="164" class="ink"/>
+
+  <path d="M151,132 C158,116 168,106 182,104 L224,104 C240,106 248,120 248,140 C248,158 238,172 222,178 C210,182 190,184 176,180 L158,170" class="ink"/>
+  <line x1="151" y1="132" x2="158" y2="170" class="ink"/>
+
+  <path d="M154,152 L170,127" class="ink"/>
+  <circle cx="176" cy="121" r="6" class="ink"/>
+  <path d="M182,123 L189,126" class="ink"/>
+  <circle cx="196" cy="129" r="5.5" class="ink"/>
+  <path d="M200,133 L209,137" class="ink"/>
+  <ellipse cx="220" cy="141" rx="11" ry="7" transform="rotate(-14 220 141)" class="ink"/>
+  <line x1="232" y1="132" x2="236" y2="152" class="ink"/>
+  <line x1="248" y1="145" x2="259" y2="148" class="ink"/>
+
+  <ellipse cx="272" cy="152" rx="12" ry="15" class="ink"/>
+  <ellipse cx="279.8" cy="123" rx="24" ry="9" transform="rotate(-105 279.8 123)" class="ink"/>
+  <ellipse cx="289.2" cy="127.4" rx="24" ry="9" transform="rotate(-55 289.2 127.4)" class="ink"/>
+  <ellipse cx="301.7" cy="147.8" rx="24" ry="9" transform="rotate(-8 301.7 147.8)" class="ink"/>
+  <line x1="286" y1="158" x2="317" y2="183" class="ink"/>
+
+  <path d="M317.4,183.4 L319.8,180.9 L322.4,178.8 L325.3,176.9 L328.3,175.5 L331.4,174.5 L334.7,173.8 L337.9,173.6 L341.2,173.7 L344.4,174.3 L347.4,175.2 L350.3,176.5 L353.0,178.1 L355.4,180.1 L357.6,182.3 L359.5,184.7 L361.0,187.3 L362.2,190.1 L363.1,192.9 L363.6,195.8 L363.7,198.8 L363.5,201.7 L362.9,204.5 L361.9,207.2 L360.7,209.7 L359.2,212.1 L357.4,214.2 L355.4,216.1 L353.2,217.7 L350.8,219.0 L348.3,219.9 L345.7,220.6 L343.1,220.9 L340.5,220.9 L338.0,220.6 L335.5,220.0 L333.2,219.1 L331.0,218.0 L329.0,216.5 L327.2,214.9 L325.6,213.1 L324.3,211.1 L323.2,209.0 L322.5,206.8 L322.0,204.5 L321.8,202.3 L321.8,200.0 L322.2,197.8 L322.8,195.7 L323.6,193.7 L324.7,191.8 L326.0,190.2 L327.5,188.7 L329.1,187.4 L330.9,186.3 L332.7,185.5 L334.6,184.9 L336.5,184.6 L338.5,184.5 L340.4,184.6 L342.2,185.0 L344.0,185.6 L345.7,186.4 L347.2,187.4 L348.5,188.5 L349.7,189.8 L350.8,191.2 L351.6,192.7 L352.2,194.3 L352.6,195.9 L352.8,197.5 L352.8,199.1 L352.6,200.6 L352.2,202.1 L351.7,203.6 L350.9,204.9 L350.1,206.1 L349.1,207.1 L348.0,208.0 L346.8,208.8 L345.6,209.4 L344.3,209.8 L343.0,210.0 L341.7,210.1 L340.5,210.0 L339.2,209.8 L338.1,209.4 L337.0,208.9 L336.0,208.3 L335.2,207.6 L334.4,206.8 L333.8,205.9 L333.3,204.9 L332.9,204.0 L332.7,203.0 L332.6,202.0 L332.6,201.1 L332.7,200.1 L333.0,199.3 L333.3,198.5 L333.8,197.7 L334.3,197.1 L334.9,196.5 L335.5,196.1 L336.1,195.7 L336.8,195.4 L337.5,195.3 L338.2,195.2 L338.8,195.2 L339.4,195.3 L340.0,195.5" class="ink"/>
+
+  <line x1="216" y1="172" x2="309" y2="265" class="ink"/>
+  <line x1="200" y1="188" x2="293" y2="281" class="ink"/>
+  <path d="M309,265 L320,286" class="ink blue"/>
+  <path d="M293,281 L316,290" class="ink blue"/>
+
+  <line x1="240" y1="202" x2="304" y2="267" class="ink blue" marker-end="url(#earSection-ab)"/>
+  <line x1="295" y1="276" x2="230" y2="212" class="ink blue dash" marker-end="url(#earSection-ab)"/>
+
+  <path d="M376,100 L382,100 L382,226 L376,226" class="ink"/>
+  <line x1="382" y1="152" x2="390" y2="152" class="ink"/>
+
+  <line x1="148" y1="118" x2="152" y2="133" class="thin"/>
+  <line x1="154" y1="208" x2="178" y2="184" class="thin"/>
+  <line x1="132" y1="284" x2="228" y2="217" class="thin"/>
+  <line x1="252" y1="168" x2="262" y2="158" class="thin"/>
+  <line x1="336" y1="280" x2="302" y2="266" class="thin"/>
+  <line x1="336" y1="332" x2="320" y2="293" class="thin"/>
+
+  <text x="270" y="86">three semicircular canals</text>
+  <text x="454" y="86" class="s">angular acceleration</text>
+  <text x="150" y="94" text-anchor="middle" class="s">ossicles: malleus, incus, stapes</text>
+  <text x="140" y="112" text-anchor="end">eardrum</text>
+  <text x="44" y="202" text-anchor="middle">pinna</text>
+  <text x="106" y="192" text-anchor="middle">ear canal</text>
+  <text x="150" y="214" text-anchor="end" class="b">middle ear</text>
+  <text x="150" y="234" text-anchor="end" class="s">air-filled cavity</text>
+  <text x="244" y="186">otoliths</text>
+  <text x="340" y="246" text-anchor="middle">cochlea</text>
+  <text x="396" y="142" class="b">inner ear</text>
+  <text x="396" y="162" class="s">hearing and balance</text>
+
+  <text x="340" y="278" class="b blue-t">On climb</text>
+  <text x="340" y="298" class="s">air escapes freely down the tube</text>
+  <text x="340" y="316" class="s">and the eardrum stays flat</text>
+
+  <text x="44" y="290" class="b blue-t">On descent</text>
+  <text x="44" y="310" class="s">the tube must be forced open</text>
+  <text x="44" y="328" class="s">swallow, yawn or Valsalva</text>
+
+  <text x="340" y="338" class="s">opens into the back of the throat</text>
+  <text x="340" y="356" class="s blue-t">normally shut at this end</text>
+
+  <rect x="44" y="348" width="246" height="68" rx="10" class="tint"/>
+  <line x1="56" y1="366" x2="96" y2="366" class="ink"/>
+  <line x1="56" y1="394" x2="96" y2="394" class="ink"/>
+  <rect x="98" y="354" width="110" height="50" rx="12" class="ink"/>
+  <path d="M96,362 C112,372 112,388 98,398" class="ink blue"/>
+  <line x1="208" y1="391" x2="244" y2="405" class="ink"/>
+  <line x1="204" y1="401" x2="240" y2="415" class="ink"/>
+  <line x1="238" y1="408" x2="214" y2="399" class="ink blue" marker-end="url(#earSection-ab)"/>
+  <text x="158" y="384" text-anchor="middle" class="s blue-t">low pressure</text>
+  <text x="302" y="378" class="b">eardrum on descent</text>
+  <text x="302" y="398" class="s">bows inwards — that is the pain</text>
+  </g>
+</svg>`
+},
+
 };

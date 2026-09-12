@@ -6,6 +6,7 @@ articles: [
   id: '040-physiology', title: 'Basic aviation physiology', mins: 7, tags: ['040.02', '040.03'],
   body: `
 <h3>Why altitude is a problem</h3>
+<figure data-d="partialPressure"></figure>
 <p>The <em>proportion</em> of oxygen in air stays at about 21% all the way up. What falls is
 <b>partial pressure</b>, and it is partial pressure that drives oxygen across the membranes in
 your lungs into the blood. Halve the pressure and you halve the driving force, however much
@@ -63,6 +64,8 @@ after a dive requiring decompression stops or if flying above 8000 ft. When in d
 </ul>
 
 <h3>Vision, and how it fails at night</h3>
+<figure data-d="retinaRods"></figure>
+<figure data-d="runwayIllusion"></figure>
 <p>The retina has <b>cones</b> — concentrated in the fovea at the centre, giving colour and
 sharp detail, but needing good light — and <b>rods</b>, spread outside the centre, monochrome,
 poor detail, but far more sensitive. So at night your <b>central vision has a blind spot</b> and
@@ -79,6 +82,7 @@ fly low; wide or downsloping does the reverse); and <b>false horizons</b> from s
 tops or a line of coastal lights.</p>
 
 <h3>The vestibular system and disorientation</h3>
+<figure data-d="somatogravic"></figure>
 <p>The <b>semicircular canals</b> sense angular acceleration; the <b>otoliths</b> sense linear
 acceleration and gravity. Both are easily fooled, because they respond to <em>acceleration</em>,
 not to steady motion. A prolonged constant-rate turn feels like straight flight; rolling out then
@@ -98,6 +102,7 @@ hypothermia, glare and sunburn at altitude, and the ordinary head cold, which qu
 you.</p>
 
 <h3>Hearing, and the ear</h3>
+<figure data-d="earSection"></figure>
 <p>Hearing gives you the radio, the engine note and the stall warner. The ear does it in three parts.</p>
 <ul>
 <li><b>Outer ear</b> — the pinna and the ear canal, gathering sound onto the eardrum (tympanic membrane).</li>
@@ -158,6 +163,7 @@ prioritisation). Aviation strongly favours problem-focused coping — but the fi
 emotion-focused: slow down, breathe, then decide.</p>
 
 <h3>Sleep and fatigue</h3>
+<figure data-d="sleepCycle"></figure>
 <p>Sleep runs in cycles of roughly <b>90 minutes</b> alternating <b>NREM</b> (physically
 restorative, deepest early in the night) and <b>REM</b> (dreaming, and important for
 consolidating learning, concentrated in the later cycles). Wake someone repeatedly and they lose
