@@ -284,6 +284,28 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
    plastic rather than leaving a white disc glaring out of a black screen. */
 #crpTab{overflow-x:auto;-webkit-overflow-scrolling:touch}
 #crpTab button{flex:0 0 auto;padding-left:12px;padding-right:12px;white-space:nowrap}
+/* ---------- the chart ---------- */
+/* Paper colours are fixed rather than themed: a chart is a printed sheet, and the
+   land/sea contrast has to survive both app themes unchanged. */
+.chwrap{background:var(--card);border-radius:var(--r-lg);padding:8px;box-shadow:var(--sh);
+  margin-top:12px;overflow-x:auto}
+.chsvg{width:100%;min-width:560px;height:auto;display:block;touch-action:none;
+  user-select:none;-webkit-user-select:none;cursor:grab}
+.chsvg:active{cursor:grabbing}
+.chsvg .chbg{fill:#eef4f7}
+.chsvg .coast{fill:none;stroke:#6b7b82;stroke-width:1.1;stroke-linejoin:round}
+.chsvg .grat{fill:none;stroke:#9aa9b0;stroke-width:.8;stroke-dasharray:4 4}
+.chsvg .gl{fill:#5b6a71;font:500 11px system-ui,sans-serif}
+.chsvg .trk{stroke:#c1272d;stroke-width:2.2;stroke-linecap:round}
+.chsvg .apt{fill:#1b4f9c;stroke:#fff;stroke-width:1.6}
+.chsvg .al{fill:#1b4f9c;font:700 12px system-ui,sans-serif}
+.chsvg .prim{fill:rgba(255,255,255,.16);stroke:#2b2b2b;stroke-width:1.4}
+.chsvg .pax{stroke:#2b2b2b;stroke-width:.9;opacity:.75}
+.chsvg .pn{fill:#c1272d}
+.chsvg .pt{stroke:#2b2b2b;stroke-width:.8;opacity:.8}
+.chsvg .pt.pb{stroke-width:1.5;opacity:1}
+.chsvg .pl{fill:#2b2b2b;font:600 10px system-ui,sans-serif}
+.chsvg .phub{fill:#2b2b2b}
 .crpwrap{background:var(--card);border-radius:var(--r-lg);padding:8px;box-shadow:var(--sh);
   margin-top:12px;display:flex;justify-content:center}
 .crp{width:100%;max-width:400px;height:auto;display:block;touch-action:none;cursor:grab;

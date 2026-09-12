@@ -626,12 +626,15 @@ VIEWS.home = function () {
       <div class="tx"><b>My training</b><i>${S.stage ? esc(stageLabel(S.stage)) : 'Stage not set'}${S.field ? ' · ' + esc(S.field) : ''}</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rCrp"><div class="ic" style="--c:var(--green)">&#9881;</div>
       <div class="tx"><b>Navigation computer</b><i>Work a CRP-1 circular slide rule</i></div><div class="chev">&#8250;</div></button>
+    <button class="row" id="rChart"><div class="ic" style="--c:var(--blue)">&#9906;</div>
+      <div class="tx"><b>The chart</b><i>Measure a true track and a distance</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rGaps"><div class="ic" style="--c:var(--orange)">!</div>
       <div class="tx"><b>What this app will not teach you</b><i>Read this before you rely on it</i></div><div class="chev">&#8250;</div></button>
     <button class="row" id="rSrc"><div class="ic" style="--c:var(--tx3)">&#8599;</div>
       <div class="tx"><b>Sources &amp; settings</b><i>Every source, plus export</i></div><div class="chev">&#8250;</div></button>
     </div>`);
   $('#rCrp').onclick = () => go('crp');
+  $('#rChart').onclick = () => go('chart');
   $('#rGaps').onclick = () => go('limits');
   $('#rTrn').onclick = () => go('training');
   $('#rRules').onclick = () => go('rules');
@@ -4210,6 +4213,395 @@ function wireDial() {
   svg.addEventListener('pointermove', move);
   svg.addEventListener('pointerup', up);
   svg.addEventListener('pointercancel', up);
+}
+
+
+/* ============================ THE CHART ============================
+   A plotting trainer. The CAA 1:500,000 sheet is copyright, so nothing here
+   reproduces it — the coastline is Natural Earth and the aerodrome positions are
+   OurAirports, both public domain, drawn on the same projection the real chart
+   uses (Lambert conformal conic, standard parallels 49N and 55N). That matters
+   for more than looks: on a Lambert the meridians converge, so the angle a
+   protractor reads depends on WHICH meridian you set it against, and measuring
+   at the mid-point is the whole reason the convention exists. A picture cannot
+   show that; letting you put the protractor in the wrong place can. */
+
+const LCC = (function () {
+  const r = Math.PI / 180, p1 = 49 * r, p2 = 55 * r, p0 = 52 * r, l0 = -2.6 * r;
+  const t = p => Math.tan(Math.PI / 4 + p / 2);
+  const n = Math.log(Math.cos(p1) / Math.cos(p2)) / Math.log(t(p2) / t(p1));
+  const F = Math.cos(p1) * Math.pow(t(p1), n) / n;
+  const rho = p => F / Math.pow(t(p), n);
+  const rho0 = rho(p0);
+  return {
+    n: n,
+    /** lat/lon in degrees -> projected units. Standard Lambert has y increasing
+        north; screen y increases downward, so it is negated here once and the rest
+        of the drawing can treat +y as "down the page" like every other SVG. */
+    xy: (lat, lon) => {
+      const p = lat * r, d = n * (lon * r - l0), R = rho(p);
+      return { x: R * Math.sin(d), y: R * Math.cos(d) - rho0 };
+    },
+    /** Grid convergence at a longitude: how far the meridian leans from chart north. */
+    conv: lon => n * (lon - (l0 / r))
+  };
+})();
+
+/** The angle a straight chart line makes with the meridian through a given longitude.
+    This is what a protractor actually reads, and it is not the same at both ends. */
+function chartTrack(a, b, atLon) {
+  const A = LCC.xy(a[0], a[1]), B = LCC.xy(b[0], b[1]);
+  const grid = (Math.atan2(B.x - A.x, -(B.y - A.y)) * 180 / Math.PI + 360) % 360;
+  return (grid - LCC.conv(atLon) + 360) % 360;
+}
+
+/** Screen point back to lat/lon, by coarse search then refinement. Cheap at this
+    size, and it cannot drift away from the forward projection the way a second set
+    of hand-written inverse formulas would. */
+function chartInv(px, py) {
+  const t = CH.tf; if (!t) return null;
+  const at = (lat, lon) => {
+    const q = LCC.xy(lat, lon);
+    return Math.hypot(t.ox + (q.x - t.x0) * t.s - px, t.oy + (q.y - t.y0) * t.s - py);
+  };
+  let best = { lat: 53, lon: -2, d: Infinity };
+  for (let lat = 47; lat <= 62; lat += 0.5) for (let lon = -12; lon <= 4; lon += 0.5) {
+    const d = at(lat, lon); if (d < best.d) best = { lat: lat, lon: lon, d: d };
+  }
+  for (let step = 0.25; step > 0.002; step /= 2) {
+    let moved = true;
+    while (moved) {
+      moved = false;
+      for (const dla of [-step, 0, step]) for (const dlo of [-step, 0, step]) {
+        if (!dla && !dlo) continue;
+        const d = at(best.lat + dla, best.lon + dlo);
+        if (d < best.d) { best = { lat: best.lat + dla, lon: best.lon + dlo, d: d }; moved = true; }
+      }
+    }
+  }
+  return best;
+}
+
+/** The two procedural mistakes: north arrow not on a meridian, and centre not on the
+    track. Reports both without revealing the track angle itself — the reading is
+    still the student's job. */
+function protAlign() {
+  if (!CH.placed || !CH.tf) return null;
+  const c = chartInv(CH.cx, CH.cy); if (!c) return null;
+  const t = CH.tf;
+  const P = (lat, lon) => {
+    const q = LCC.xy(lat, lon);
+    return [t.ox + (q.x - t.x0) * t.s, t.oy + (q.y - t.y0) * t.s];
+  };
+  const p0 = P(c.lat - 0.2, c.lon), p1 = P(c.lat + 0.2, c.lon);
+  const merid = Math.atan2(p1[0] - p0[0], -(p1[1] - p0[1])) * 180 / Math.PI;
+  const off = ((CH.rot - merid + 540) % 360) - 180;
+  const A = CH.trkA, B = CH.trkB;
+  const vx = B[0] - A[0], vy = B[1] - A[1];
+  const u = Math.max(0, Math.min(1, ((CH.cx - A[0]) * vx + (CH.cy - A[1]) * vy) / (vx * vx + vy * vy)));
+  const dx = A[0] + u * vx - CH.cx, dy = A[1] + u * vy - CH.cy;
+  return { off: off, nm: Math.hypot(dx, dy) * (CH.nmPerUnit || 0), along: u, lon: c.lon };
+}
+
+/* A handful of UK legs with something to teach: a long east-west one where
+   convergence bites, a short one where it does not, and a couple in between. */
+const CH_LEGS = [
+  ['EGLM', 'EGBJ'], ['EGBJ', 'EGNX'], ['EGHR', 'EGKA'],
+  ['EGTK', 'EGSH'], ['EGFF', 'EGGD'], ['EGNH', 'EGNT'],
+  ['EGPF', 'EGPH'], ['EGSU', 'EGSC'], ['EGCJ', 'EGNM'], ['EGTF', 'EGKB']
+];
+
+let CH = null;
+
+VIEWS.chart = function () {
+  navbar('The chart', '');
+  if (!CH) CH = { i: 0, rot: 0, cx: 0, cy: 0, placed: false, v: {}, said: '', tab: 'plot' };
+
+  html(`<div class="seg" id="chTab" style="margin-top:12px">
+    <button data-ct="plot" aria-selected="${CH.tab === 'plot'}">Measure a track</button>
+    <button data-ct="learn" aria-selected="${CH.tab === 'learn'}">How the chart works</button></div>`);
+  bind('#chTab button', e => { CH.tab = e.currentTarget.dataset.ct; render(); });
+
+  if (CH.tab === 'learn') return chartLearn();
+
+  const pair = CH_LEGS[CH.i % CH_LEGS.length];
+  const A = afByCode(pair[0]), B = afByCode(pair[1]);
+  if (!A || !B) { html('<div class="note o">That leg is not in the bundled aerodrome list.</div>'); return; }
+  const a = [A[3], A[4]], b = [B[3], B[4]];
+
+  html(`<div class="hd" style="padding-top:12px"><h1 class="vt">Measure a track</h1>
+    <div class="sub">Real coastline and real aerodrome positions on the projection the
+    1:500,000 uses. Drag the protractor onto the track, line its north arrow up with a
+    meridian, and read the angle where the track leaves it.</div></div>`);
+
+  html(`<div class="note b"><b>${esc(A[0])} ${esc(A[1])} &#8594; ${esc(B[0])} ${esc(B[1])}</b>
+    Measure the <b>true track</b> and the <b>distance</b>.</div>`);
+
+  html(`<div class="chwrap">${chartPanel(a, b, A[0], B[0])}</div>`);
+
+  const tMid = chartTrack(a, b, (a[1] + b[1]) / 2);
+  const tA = chartTrack(a, b, a[1]), tB = chartTrack(a, b, b[1]);
+  const nm = haversineNM(a, b);
+
+  html(`<div class="brow" style="margin-top:10px">
+      <button class="btn sec sm" id="chAlign">Check my alignment</button>
+      <button class="btn grey sm" id="chReset">Reset the protractor</button>
+      <button class="btn grey sm" id="chNext">Another leg</button></div>`);
+
+  html('<div class="card" style="margin-top:12px">' + `
+    <div class="fld"><label class="f" for="ch_t">True track <span style="opacity:.6">(&#176;)</span></label>
+      <input type="number" inputmode="decimal" id="ch_t" class="ti" value="${CH.v.t == null ? '' : CH.v.t}"></div>
+    <div class="fld"><label class="f" for="ch_d">Distance <span style="opacity:.6">(nm)</span></label>
+      <input type="number" inputmode="decimal" id="ch_d" class="ti" value="${CH.v.d == null ? '' : CH.v.d}"></div>
+    <div class="brow" style="margin-top:12px">
+      <button class="btn sec sm" id="chGo">Check</button>
+      <button class="btn grey sm" id="chShow">Show me</button></div>
+    ${CH.said ? `<div class="note ${CH.okd ? 'b' : 'o'}" style="margin-top:12px">${CH.said}</div>` : ''}
+    </div>`);
+
+  $('#chAlign').onclick = () => {
+    const g = protAlign();
+    if (!g) { CH.okd = false; CH.said = 'Move the protractor onto the chart first.'; render(); return; }
+    const sq = Math.abs(g.off) <= 2, on = g.nm <= 4;
+    const mid = Math.abs(g.along - 0.5) <= 0.25;
+    CH.okd = sq && on;
+    CH.said = (sq ? 'North arrow is on the meridian. '
+                  : 'North arrow is <b>' + Math.abs(g.off).toFixed(0) + '&#176; off</b> the meridian '
+                    + 'beneath it — turn it ' + (g.off > 0 ? 'anticlockwise' : 'clockwise') + '. ')
+      + (on ? 'Centre is on the track. '
+            : 'Centre is about <b>' + Math.round(g.nm) + ' nm</b> off the track — slide it on. ')
+      + (sq && on && !mid
+          ? 'You are near one end of the leg, though: slide along to the middle, where the mean '
+            + 'track is, before you read it.'
+          : sq && on ? 'Now read the angle where the track crosses the rim.' : '');
+    render();
+  };
+  $('#chReset').onclick = () => { CH.rot = 0; CH.cx = 0; CH.cy = 0; CH.placed = false; render(); };
+  $('#chNext').onclick = () => { CH.i++; CH.v = {}; CH.said = ''; CH.rot = 0; CH.cx = 0; CH.cy = 0; CH.placed = false; render(); };
+  $('#chShow').onclick = () => {
+    CH.okd = true;
+    CH.said = 'True track <b>' + Math.round(tMid) + '&#176;</b> measured at the mid-meridian, '
+      + 'distance <b>' + Math.round(nm) + ' nm</b>. Against the meridian through '
+      + esc(A[0]) + ' the same line reads ' + Math.round(tA) + '&#176;, and through '
+      + esc(B[0]) + ' it reads ' + Math.round(tB) + '&#176; &#8212; '
+      + (Math.abs(((tA - tB + 540) % 360) - 180) < 1
+          ? 'barely different on a leg this short.'
+          : 'a difference of ' + Math.abs(Math.round(((tA - tB + 540) % 360) - 180))
+            + '&#176;, which is why you measure in the middle.');
+    render();
+  };
+  $('#chGo').onclick = () => {
+    const t = parseFloat($('#ch_t').value), d = parseFloat($('#ch_d').value);
+    CH.v = { t: isFinite(t) ? t : null, d: isFinite(d) ? d : null };
+    if (!isFinite(t) || !isFinite(d)) { CH.okd = false; CH.said = 'Fill in both boxes.'; render(); return; }
+    let et = Math.abs(((t - tMid + 540) % 360) - 180);
+    const ed = Math.abs(d - nm);
+    const tOk = et <= 3, dOk = ed <= Math.max(2, nm * 0.04);
+    CH.okd = tOk && dOk;
+    CH.said = (tOk ? 'Track within ' + (et < 0.5 ? 'half a degree' : Math.round(et) + '&#176;') + '. '
+                   : 'Track is out by ' + Math.round(et) + '&#176; &#8212; it should be <b>'
+                     + Math.round(tMid) + '&#176;</b>. ')
+      + (dOk ? 'Distance within ' + (ed < 1 ? 'a mile' : Math.round(ed) + ' nm') + '.'
+             : 'Distance is out by ' + Math.round(ed) + ' nm &#8212; it should be <b>'
+               + Math.round(nm) + ' nm</b>.')
+      + (tOk && dOk ? ' Now apply variation to get the magnetic track, and only then the wind.' : '');
+    render();
+  };
+
+  wireProtractor();
+
+  html(`<h2 class="sec">Why the middle</h2>
+    <div class="note">A Lambert chart is a cone unrolled, so its meridians are not parallel &#8212;
+    they fan out from the pole. A straight line therefore crosses each one at a slightly different
+    angle, and the longer and more east&#8211;west your leg, the bigger the spread. Measuring at
+    the meridian nearest the <b>mid-point</b> of the leg gives the mean, which is the track you
+    fly. Measure at the departure meridian on a long westerly leg and you will be several degrees
+    out before the wind is even considered.</div>`);
+};
+
+/** The chart extract: coastline, graticule, the two aerodromes and the track,
+    plus the protractor the student moves. Drawn in a 640x460 viewBox so it
+    matches the diagram vocabulary the articles already use. */
+function chartPanel(a, b, ca, cb) {
+  const W = 640, H = 460, PAD = 34;
+  // frame the leg with margin either side, then fit the projection to the box
+  const pts = [LCC.xy(a[0], a[1]), LCC.xy(b[0], b[1])];
+  let x0 = Math.min(pts[0].x, pts[1].x), x1 = Math.max(pts[0].x, pts[1].x);
+  let y0 = Math.min(pts[0].y, pts[1].y), y1 = Math.max(pts[0].y, pts[1].y);
+  const mx = Math.max((x1 - x0), (y1 - y0)) * 0.55 + 0.012;
+  x0 -= mx; x1 += mx; y0 -= mx * (H / W); y1 += mx * (H / W);
+  // keep the aspect honest — a squashed chart would teach the wrong angles
+  const sx = (W - 2 * PAD) / (x1 - x0), sy = (H - 2 * PAD) / (y1 - y0);
+  const s = Math.min(sx, sy);
+  const ox = PAD + ((W - 2 * PAD) - (x1 - x0) * s) / 2;
+  const oy = PAD + ((H - 2 * PAD) - (y1 - y0) * s) / 2;
+  const P = (lat, lon) => { const q = LCC.xy(lat, lon); return [ox + (q.x - x0) * s, oy + (q.y - y0) * s]; };
+
+  // graticule: whole degrees of latitude and longitude across the visible span
+  const corners = [[x0, y0], [x1, y0], [x0, y1], [x1, y1]];
+  let latLo = 90, latHi = -90, lonLo = 180, lonHi = -180;
+  // invert by search — cheap at this size and avoids a second set of formulas
+  for (let lat = 48; lat <= 61; lat += 0.25) for (let lon = -11; lon <= 3; lon += 0.25) {
+    const q = LCC.xy(lat, lon);
+    if (q.x >= x0 && q.x <= x1 && q.y >= y0 && q.y <= y1) {
+      latLo = Math.min(latLo, lat); latHi = Math.max(latHi, lat);
+      lonLo = Math.min(lonLo, lon); lonHi = Math.max(lonHi, lon);
+    }
+  }
+  if (latLo > latHi) { latLo = 50; latHi = 56; lonLo = -6; lonHi = 1; }
+  let grat = '';
+  for (let lon = Math.ceil(lonLo); lon <= Math.floor(lonHi); lon++) {
+    const seg = [];
+    for (let lat = latLo - 1; lat <= latHi + 1; lat += 0.5) seg.push(P(lat, lon).map(v => v.toFixed(1)).join(','));
+    grat += `<polyline class="grat" points="${seg.join(' ')}"/>`;
+    const lab = P(latLo, lon);
+    grat += `<text class="gl" x="${lab[0].toFixed(1)}" y="${(H - 10).toFixed(1)}" text-anchor="middle">${Math.abs(lon)}&#176;${lon < 0 ? 'W' : 'E'}</text>`;
+  }
+  for (let lat = Math.ceil(latLo); lat <= Math.floor(latHi); lat++) {
+    const seg = [];
+    for (let lon = lonLo - 1; lon <= lonHi + 1; lon += 0.5) seg.push(P(lat, lon).map(v => v.toFixed(1)).join(','));
+    grat += `<polyline class="grat" points="${seg.join(' ')}"/>`;
+    const lab = P(lat, lonLo);
+    grat += `<text class="gl" x="8" y="${(lab[1] + 4).toFixed(1)}">${lat}&#176;N</text>`;
+  }
+
+  // coastline, clipped roughly to the frame by dropping far-away rings
+  let coast = '';
+  (window.COAST_UK || []).forEach(ring => {
+    const seg = [];
+    let any = false;
+    ring.forEach(c => {
+      const q = LCC.xy(c[1], c[0]);
+      const px = ox + (q.x - x0) * s, py = oy + (q.y - y0) * s;
+      if (px > -400 && px < W + 400 && py > -400 && py < H + 400) any = true;
+      seg.push(px.toFixed(1) + ',' + py.toFixed(1));
+    });
+    if (any && seg.length > 2) coast += `<polyline class="coast" points="${seg.join(' ')}"/>`;
+  });
+
+  const PA = P(a[0], a[1]), PB = P(b[0], b[1]);
+  // keep the transform so the protractor's placement can be judged against the
+  // meridian actually under it, rather than against the panel's edges
+  CH.tf = { ox: ox, oy: oy, s: s, x0: x0, y0: y0 };
+  CH.trkA = PA; CH.trkB = PB;
+  CH.nmPerUnit = haversineNM(a, b) / Math.hypot(PB[0] - PA[0], PB[1] - PA[1]);
+  const half = 118, prot = protractorSvg(half);
+
+  return `<svg class="chsvg" viewBox="0 0 ${W} ${H}" role="img"
+    aria-label="A chart extract with coastline, a graticule of meridians and parallels, the two aerodromes and the track between them, and a movable protractor">
+    <rect x="0" y="0" width="${W}" height="${H}" class="chbg"/>
+    <g clip-path="url(#chclip)">
+      <clipPath id="chclip"><rect x="1" y="1" width="${W - 2}" height="${H - 2}"/></clipPath>
+      ${coast}${grat}
+      <line class="trk" x1="${PA[0].toFixed(1)}" y1="${PA[1].toFixed(1)}" x2="${PB[0].toFixed(1)}" y2="${PB[1].toFixed(1)}"/>
+      <circle class="apt" cx="${PA[0].toFixed(1)}" cy="${PA[1].toFixed(1)}" r="5"/>
+      <circle class="apt" cx="${PB[0].toFixed(1)}" cy="${PB[1].toFixed(1)}" r="5"/>
+      <text class="al" x="${(PA[0] + 9).toFixed(1)}" y="${(PA[1] - 8).toFixed(1)}">${esc(ca || '')}</text>
+      <text class="al" x="${(PB[0] + 9).toFixed(1)}" y="${(PB[1] - 8).toFixed(1)}">${esc(cb || '')}</text>
+    </g>
+    <g class="protg" transform="translate(${(CH.placed ? CH.cx : W / 2).toFixed(1)},${(CH.placed ? CH.cy : H / 2).toFixed(1)}) rotate(${CH.rot.toFixed(1)})">${prot}</g>
+  </svg>`;
+}
+
+/** A square protractor, as sold for navigation: a full 360 scale round the rim,
+    a north arrow, and a transparent middle so the track shows through. */
+function protractorSvg(R) {
+  let ticks = '';
+  for (let d = 0; d < 360; d += 5) {
+    const big = d % 30 === 0, mid = d % 10 === 0;
+    const r1 = R - (big ? 16 : mid ? 11 : 7), r2 = R;
+    const t = (d - 90) * Math.PI / 180;
+    ticks += `<line class="pt${big ? ' pb' : ''}" x1="${(r1 * Math.cos(t)).toFixed(1)}" y1="${(r1 * Math.sin(t)).toFixed(1)}"
+      x2="${(r2 * Math.cos(t)).toFixed(1)}" y2="${(r2 * Math.sin(t)).toFixed(1)}"/>`;
+    if (big) {
+      const rt = R - 26;
+      ticks += `<text class="pl" x="${(rt * Math.cos(t)).toFixed(1)}" y="${(rt * Math.sin(t) + 4).toFixed(1)}"
+        text-anchor="middle">${d === 0 ? '0' : d}</text>`;
+    }
+  }
+  return `<circle class="prim" cx="0" cy="0" r="${R}"/>
+    <line class="pax" x1="0" y1="${-R}" x2="0" y2="${R}"/>
+    <line class="pax" x1="${-R}" y1="0" x2="${R}" y2="0"/>
+    <polygon class="pn" points="0,${-R + 4} -6,${-R + 18} 6,${-R + 18}"/>
+    ${ticks}
+    <circle class="phub" cx="0" cy="0" r="3"/>`;
+}
+
+/** Drag to move the protractor; drag near the rim to rotate it. Same pointer-capture
+    care as the CRP dial — capture throws for a pointer the element never saw. */
+function wireProtractor() {
+  const svg = $('.chsvg'); if (!svg) return;
+  const g = svg.querySelector('.protg'); if (!g) return;
+  let mode = null, last = null, start = null;
+  const at = e => {
+    const r = svg.getBoundingClientRect();
+    const vb = svg.viewBox.baseVal;
+    return { x: (e.clientX - r.left) * vb.width / r.width, y: (e.clientY - r.top) * vb.height / r.height };
+  };
+  const centre = () => ({ x: CH.placed ? CH.cx : svg.viewBox.baseVal.width / 2,
+                          y: CH.placed ? CH.cy : svg.viewBox.baseVal.height / 2 });
+  const paint = () => g.setAttribute('transform', `translate(${CH.cx.toFixed(1)},${CH.cy.toFixed(1)}) rotate(${CH.rot.toFixed(1)})`);
+
+  svg.addEventListener('pointerdown', e => {
+    const p = at(e), c = centre();
+    const d = Math.hypot(p.x - c.x, p.y - c.y);
+    if (d > 130) return;                       // outside the protractor: ignore
+    CH.cx = c.x; CH.cy = c.y; CH.placed = true;
+    mode = d > 84 ? 'rot' : 'move';            // rim rotates, middle moves
+    last = Math.atan2(p.y - c.y, p.x - c.x) * 180 / Math.PI;
+    start = { px: p.x, py: p.y, cx: c.x, cy: c.y };
+    try { svg.setPointerCapture(e.pointerId); } catch (err) {}
+    e.preventDefault();
+  });
+  svg.addEventListener('pointermove', e => {
+    if (!mode) return;
+    const p = at(e);
+    if (mode === 'move') { CH.cx = start.cx + (p.x - start.px); CH.cy = start.cy + (p.y - start.py); }
+    else {
+      const aNow = Math.atan2(p.y - CH.cy, p.x - CH.cx) * 180 / Math.PI;
+      let d = aNow - last; if (d > 180) d -= 360; if (d < -180) d += 360;
+      CH.rot = ((CH.rot + d) % 360 + 360) % 360; last = aNow;
+    }
+    paint(); e.preventDefault();
+  });
+  const up = () => { mode = null; };
+  svg.addEventListener('pointerup', up);
+  svg.addEventListener('pointercancel', up);
+}
+
+/** The chart facts that are asked directly, kept beside the tool that uses them. */
+function chartLearn() {
+  html(`<div class="hd" style="padding-top:12px"><h1 class="vt">How the chart works</h1>
+    <div class="sub">Scale, projection, and the three measurements every leg needs.</div></div>`);
+  const S1 = [
+    ['Scale', '1:500,000 means one unit on the paper is 500,000 of the same units on the ground. '
+      + 'So <b>1 cm = 5 km</b>, and <b>1 inch is about 6.86 nm</b>. Distances are measured with the '
+      + 'nautical-mile scale printed on the sheet, or with a rule marked for it &#8212; never by '
+      + 'converting in your head.'],
+    ['Projection', 'Lambert conformal conic. Angles are true locally, which is what lets you use a '
+      + 'protractor at all; a straight line drawn on it is very nearly a great circle, so it is also '
+      + 'very nearly the shortest route. The price is that the <b>meridians converge</b>.'],
+    ['Measuring a track', 'Draw the line, then set the protractor with its centre on the line and '
+      + 'its north arrow along the <b>meridian nearest the middle</b> of the leg. Read the angle at '
+      + 'which the track leaves the protractor. That is the <b>true</b> track.'],
+    ['Then variation, then wind', 'True track plus westerly variation gives the <b>magnetic</b> '
+      + 'track. Only after that do you apply the wind, on the computer, to get heading and '
+      + 'groundspeed. Doing it in any other order mixes two corrections that are measured '
+      + 'against different norths.'],
+    ['Latitude is your ruler', 'One minute of <b>latitude</b> is one nautical mile, anywhere on the '
+      + 'chart, so the latitude scale up the side is a distance scale. One minute of '
+      + '<b>longitude</b> is not &#8212; it shrinks as you go north, which is the same convergence '
+      + 'again seen a different way.']
+  ];
+  html('<div class="grp" style="margin-top:12px">' + S1.map(([h, b]) =>
+    `<div class="row" style="display:block;padding:14px 16px"><b>${h}</b>
+      <div style="margin-top:5px;opacity:.85">${b}</div></div>`).join('') + '</div>');
+
+  html(`<div class="note o" style="margin-top:14px"><b>What this is not.</b> The panel on the other
+    tab is not a reproduction of the CAA 1:500,000 chart, which is copyright. It is real coastline
+    and real aerodrome positions on the same projection, so the angles and distances you measure
+    are true &#8212; but the symbols, airspace and terrain of the real sheet are not here. Practise
+    the measurement here; learn the sheet from the sheet.</div>`);
 }
 
 /* ============================ FLIGHT LOG ============================ */
