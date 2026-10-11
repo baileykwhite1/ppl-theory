@@ -3322,16 +3322,17 @@ vndiagram: {
   <line x1="96" y1="220" x2="261" y2="220" class="thin dash"/>
   <!-- the envelope: stall curve, +3.8 limit, VNE, -1.52 limit, negative stall curve -->
   <path d="M 96 264 L 142 261 L 172 255 L 203 246 L 233 233 L 261 220 L 291 202 L 322 181 L 352 158 L 383 131 L 416 97 L 599 97 L 599 331 L 299 331 L 264 310 L 230 293 L 194 279 L 157 270 Z" class="ink"/>
-  <!-- same aeroplane, lighter: stalls slower, so the curve slides left -->
-  <path d="M 96 264 L 142 260 L 172 252 L 194 244 L 218 233 L 242 220 L 273 200 L 303 176 L 334 148 L 358 123 L 382 97" class="blue ink dash"/>
+  <!-- Same aeroplane, lighter. Stall speed goes with the square root of weight, so the
+       whole curve scales horizontally about the origin — which is exactly what one
+       scaleX does. Drawn here at full mass; the scrubber shrinks it. -->
+  <g class="dgx"><path d="M 96 264 L 142 261 L 172 255 L 203 246 L 233 233 L 261 220 L 291 202 L 322 181 L 352 158 L 383 131 L 416 97" class="blue ink dash"/>
+    <line x1="416" y1="97" x2="416" y2="338" class="blue thin dash"/></g>
   <line x1="416" y1="97" x2="416" y2="338" class="thin dash"/>
   <line x1="477" y1="97" x2="477" y2="338" class="thin dash"/>
   <line x1="599" y1="331" x2="599" y2="338" class="thin dash"/>
-  <line x1="382" y1="97" x2="382" y2="338" class="blue thin dash"/>
   <circle cx="261" cy="220" r="3" class="fill"/>
   <circle cx="416" cy="97" r="4" class="fill"/>
-  <circle cx="382" cy="97" r="4" class="fblue"/>
-  <line x1="406" y1="110" x2="372" y2="110" class="blue ink" marker-end="url(#vndiagram-ar)"/>
+  <g class="dgt"><circle cx="416" cy="97" r="4" class="fblue"/></g>
   <text x="507" y="86" text-anchor="middle" class="s">Structural failure</text>
   <text x="106" y="132" class="s">Below VA the wing stalls before</text>
   <text x="106" y="150" class="s">full deflection can break it</text>
@@ -3343,7 +3344,7 @@ vndiagram: {
   <text x="416" y="360" text-anchor="middle">VA</text>
   <text x="477" y="360" text-anchor="middle">VNO</text>
   <text x="599" y="360" text-anchor="middle">VNE</text>
-  <text x="382" y="382" text-anchor="middle" class="s blue-t">VA when lighter</text>
+  <g class="dgt"><text x="416" y="382" text-anchor="middle" class="s blue-t">VA when lighter</text></g>
 </svg>`
 },
 

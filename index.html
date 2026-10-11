@@ -303,6 +303,17 @@ input::placeholder{text-transform:none;letter-spacing:normal;color:var(--tx3);op
 .shsvg .pto{fill:var(--blue)}
 .shsvg .pld{fill:var(--orange)}
 .shsvg .ptl{fill:currentColor;font:600 12px system-ui,sans-serif}
+/* A figure's scrubber. The two transform classes are generic: any diagram can opt in
+   by wrapping the part that moves, and the maths stays in app.js. */
+.dg .dgx{transform-box:view-box;transform-origin:var(--dgox,0) 0;transform:scaleX(var(--dgk,1))}
+.dg .dgt{transform-box:view-box;transform:translateX(var(--dgd,0))}
+.dgctl{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;
+  margin:10px 2px 0;font:600 13px -apple-system,system-ui,sans-serif}
+.dgctl label{color:var(--tx2)}
+.dgctl output{font-variant-numeric:tabular-nums;color:var(--blue);min-width:112px;text-align:right}
+.dgctl input[type=range]{width:100%;accent-color:var(--blue)}
+.dgctl .say{grid-column:1/-1;font:500 13px/1.5 -apple-system,system-ui,sans-serif;
+  color:var(--tx2);margin-top:2px}
 /* ---------- the chart ---------- */
 /* Paper colours are fixed rather than themed: a chart is a printed sheet, and the
    land/sea contrast has to survive both app themes unchanged. */

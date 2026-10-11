@@ -921,6 +921,50 @@ VIEWS.article = function (p) {
 };
 
 /** Replace <figure data-d="id"> placeholders with the drawing, caption and a11y label. */
+/* A scrubber under a figure, for the few diagrams whose point IS a motion rather than
+   a picture. The SVG stays static data — all the movement is one CSS custom property —
+   so the spec lint and the geometry audit still apply to the drawing as drawn. No
+   autoplay: a looping animation beside text you are trying to read is a distraction,
+   and the reader asks for the motion when they want it. */
+const DG_CTL = {
+  vndiagram: {
+    label: 'Mass', unit: '% of maximum', min: 60, max: 100, step: 1, value: 80,
+    originX: 96, span: 320,
+    read: function (v) {
+      const k = Math.sqrt(v / 100);
+      return { k: k, say: 'Stall speed goes with the <b>square root</b> of weight, so at '
+        + v + '% of maximum mass every stall speed is <b>&#215;' + k.toFixed(3)
+        + '</b> &mdash; and V<sub>A</sub> slides left with the curve, because V<sub>A</sub> is '
+        + 'only the speed at which the stall curve reaches the limit load factor.' };
+    }
+  }
+};
+
+/** Render and wire the scrubber for one figure, if that diagram has one. */
+function wireDgCtl(fig, id) {
+  const c = DG_CTL[id]; if (!c) return;
+  const svg = fig.querySelector('svg'); if (!svg) return;
+  const box = document.createElement('div');
+  box.className = 'dgctl';
+  box.innerHTML = '<label for="dgc_' + id + '">' + c.label + '</label>'
+    + '<input id="dgc_' + id + '" type="range" min="' + c.min + '" max="' + c.max
+    + '" step="' + c.step + '" value="' + c.value + '">'
+    + '<output>' + c.value + ' ' + c.unit + '</output><div class="say"></div>';
+  fig.insertBefore(box, fig.querySelector('figcaption'));
+  const inp = box.querySelector('input'), out = box.querySelector('output'),
+        say = box.querySelector('.say');
+  svg.style.setProperty('--dgox', c.originX + 'px');
+  const paint = () => {
+    const v = +inp.value, r = c.read(v);
+    svg.style.setProperty('--dgk', r.k.toFixed(4));
+    svg.style.setProperty('--dgd', ((r.k - 1) * c.span).toFixed(1) + 'px');
+    out.textContent = v + ' ' + c.unit;
+    say.innerHTML = r.say;
+  };
+  inp.addEventListener('input', paint);
+  paint();
+}
+
 function expandDiagrams() {
   document.querySelectorAll('figure[data-d]').forEach(f => {
     const d = window.DIAG && window.DIAG[f.dataset.d];
@@ -930,6 +974,7 @@ function expandDiagrams() {
       '<figcaption>' + d.cap + '</figcaption>';
     const svg = f.querySelector('svg');
     if (svg && d.alt) svg.setAttribute('aria-label', d.alt);
+    wireDgCtl(f, f.dataset.d);
   });
 }
 

@@ -71,6 +71,8 @@ figure .swipe{display:block}
    key block. Purely declarative: it paints nothing, and the geometry audit skips it the
    way it skips .tint, so a legend inside its own panel is not reported as a collision. */
 .dg .panel{}
+.dg .dgx{transform-box:view-box;transform-origin:var(--dgox,0) 0;transform:scaleX(var(--dgk,1))}
+.dg .dgt{transform-box:view-box;transform:translateX(var(--dgd,0))}
 :root[data-t="dark"] .fc,
 :root:not([data-t="light"]) .fc{box-shadow:none}
 :root:not([data-t="light"]) .fc{box-shadow:none}
